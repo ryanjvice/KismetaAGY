@@ -461,6 +461,9 @@ namespace Kismeta.Game.Bootstrap
 
         // ── Adept decision panel ──────────────────────────────────────────────────
 
+        // Tracks the Adept instance ID the player chose to evict when swapping
+        private string? _swapOutAdeptId;
+
         private void DrawAdeptDecisionPanel(HotSeatController hs, int pid, PlayerState player)
         {
             string adeptId = _loop?.PendingCardId ?? "";
@@ -482,16 +485,67 @@ namespace Kismeta.Game.Bootstrap
             }
 
             GUILayout.Space(8f);
-            GUILayout.Label("Cost to purchase: discard 3 cards (any).");
-            GUILayout.Label($"Current Arcanum: {player.Arcanum.Count} Adept(s)");
-            GUILayout.Space(4f);
 
+            // Determine which Arcanum slots are Adepts vs Fate cards
+            var arcanumAdepts = new List<string>();
+            if (_db != null && _session != null)
+            {
+                foreach (var id in player.Arcanum)
+                {
+                    var cardInst = _session.GetCard(id);
+                    var cardDef  = cardInst != null ? _db.GetById(cardInst.DefinitionId) : null;
+                    if (cardDef?.MajorArcanaType == MajorArcanaType.Adept)
+                        arcanumAdepts.Add(id);
+                }
+            }
+
+            // Determine Arcanum limit (The Hermit bumps it from 2 → 3)
+            int arcanaLimit = 2;
+            if (_db != null && _session != null)
+            {
+                foreach (var id in player.Arcanum)
+                {
+                    var cardInst = _session.GetCard(id);
+                    var cardDef  = cardInst != null ? _db.GetById(cardInst.DefinitionId) : null;
+                    if (cardDef?.ArcanaNumber == 9) { arcanaLimit = 3; break; }
+                }
+            }
+
+            bool arcanumFull = arcanumAdepts.Count >= arcanaLimit;
+            GUILayout.Label($"Arcanum: {arcanumAdepts.Count} / {arcanaLimit} Adept(s)");
+            GUILayout.Label("Cost to purchase: discard 3 cards from your Spread or Hand.");
+
+            // ── Swap-out selector (only shown when Arcanum is at capacity) ─────────
+            if (arcanumFull)
+            {
+                GUILayout.Space(4f);
+                GUILayout.Label("── ARCANUM FULL — Choose one to swap out: ──");
+                foreach (var id in arcanumAdepts)
+                {
+                    var cardInst = _session?.GetCard(id);
+                    var cardDef  = cardInst != null ? _db?.GetById(cardInst.DefinitionId) : null;
+                    string tag   = _swapOutAdeptId == id ? "▶ " : "  ";
+                    string lbl   = tag + (cardDef != null
+                        ? $"★{cardDef.ArcanaNumber} {cardDef.EffectType} ({cardDef.Sign})"
+                        : id);
+                    if (GUILayout.Button(lbl))
+                        _swapOutAdeptId = (_swapOutAdeptId == id) ? null : id;
+                }
+                GUILayout.Space(4f);
+            }
+            else
+            {
+                _swapOutAdeptId = null; // clear if Arcanum no longer full
+            }
+
+            // ── Payment card selector ─────────────────────────────────────────────
+            GUILayout.Space(4f);
             GUILayout.Label("── SELECT 3 PAYMENT CARDS ──");
             var allCards = new List<string>(player.Spread.Count + player.Hand.Count);
             foreach (var id in player.Spread) allCards.Add(id);
             foreach (var id in player.Hand)   allCards.Add(id);
 
-            _actionsScroll = GUILayout.BeginScrollView(_actionsScroll, GUILayout.Height(160f));
+            _actionsScroll = GUILayout.BeginScrollView(_actionsScroll, GUILayout.Height(140f));
             foreach (var id in allCards)
             {
                 bool sel = _selectedCards.Contains(id);
@@ -505,17 +559,34 @@ namespace Kismeta.Game.Bootstrap
             GUILayout.EndScrollView();
 
             GUILayout.Space(4f);
-            GUILayout.Label($"Selected: {_selectedCards.Count} / 3");
+            GUILayout.Label($"Payment: {_selectedCards.Count} / 3 selected");
+
+            // Buy requires 3 payment cards; if Arcanum is full, also requires a swap target
+            bool canBuy = _selectedCards.Count == 3 && def != null
+                          && (!arcanumFull || _swapOutAdeptId != null);
 
             GUILayout.Space(6f);
-            GUI.enabled = _selectedCards.Count == 3 && def != null;
-            if (GUILayout.Button("Buy Adept  (discard 3 selected)"))
-                SubmitAction(hs, new BuyAdeptCommand(pid, adeptId, _selectedCards.ToList()));
+            GUI.enabled = canBuy;
+            string buyLabel = arcanumFull
+                ? $"Buy  (swap out {CardLabel(_swapOutAdeptId ?? "?")})"
+                : "Buy Adept  (discard 3 selected)";
+            if (GUILayout.Button(buyLabel))
+            {
+                var payment = _selectedCards.ToList();
+                string? swapOut = arcanumFull ? _swapOutAdeptId : null;
+                _selectedCards.Clear();
+                _swapOutAdeptId = null;
+                SubmitAction(hs, new BuyAdeptCommand(pid, adeptId, payment, swapOut));
+            }
             GUI.enabled = true;
 
             GUILayout.Space(4f);
             if (GUILayout.Button("Discard  (skip purchase)"))
+            {
+                _selectedCards.Clear();
+                _swapOutAdeptId = null;
                 SubmitAction(hs, new DeclineAdeptCommand(pid, adeptId));
+            }
         }
 
         // ── Fate: Moon decision ───────────────────────────────────────────────────
@@ -831,8 +902,10 @@ namespace Kismeta.Game.Bootstrap
             if (def.IsMajorArcana)
                 return $"★{def.ArcanaNumber} {def.EffectType}";
 
-            // Minor arcana
-            return $"{SuitGlyph(def.Suit)} {def.Rank}";
+            // Minor arcana — show suit glyph, rank, planet, and variant number
+            string planet  = def.Planet != Planet.None ? $" [{def.Planet}]" : "";
+            string variant = def.Variant == CardVariant.Two ? " (II)" : "";
+            return $"{SuitGlyph(def.Suit)} {def.Rank}{planet}{variant}";
         }
 
         private static char SuitGlyph(Suit suit) => suit switch

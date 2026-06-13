@@ -275,7 +275,24 @@ namespace Kismeta.Core.Players
                 ? _session.Board.FateMoonDrawnCardIds
                 : null;
 
-            var ctx = new GameContext(pubView, privView, playerId, hint, pendingCardId, moonDrawnIds);
+            // For Adept decisions, pass which Arcanum slots are already Adepts (vs Fate cards)
+            IReadOnlyList<string>? arcanumAdeptIds = null;
+            if (hint == ActionHint.AdeptDecision)
+            {
+                var player = _session.Players[playerId];
+                var adepts = new List<string>();
+                foreach (var id in player.Arcanum)
+                {
+                    var inst = _session.GetCard(id);
+                    var def  = inst != null ? _session.Rules?.CardDatabase.GetById(inst.DefinitionId) : null;
+                    if (def?.MajorArcanaType == Domain.MajorArcanaType.Adept)
+                        adepts.Add(id);
+                }
+                arcanumAdeptIds = adepts;
+            }
+
+            var ctx = new GameContext(pubView, privView, playerId, hint, pendingCardId,
+                moonDrawnIds, arcanumAdeptIds);
 
             if (controller is HotSeatController hs)
             {

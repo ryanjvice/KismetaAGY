@@ -28,16 +28,24 @@ namespace Kismeta.Core.Players
         /// </summary>
         public IReadOnlyList<string>? MoonDrawnCardIds { get; }
 
+        /// <summary>
+        /// When Hint == AdeptDecision: instance IDs of Adept cards currently in the player's
+        /// Arcanum. If this list is at the limit the player must specify a swap-out target.
+        /// </summary>
+        public IReadOnlyList<string>? ArcanumAdeptIds { get; }
+
         public GameContext(GamePublicView publicView, PlayerPrivateView privateView,
             int activePlayerId, ActionHint hint = ActionHint.None, string? pendingCardId = null,
-            IReadOnlyList<string>? moonDrawnCardIds = null)
+            IReadOnlyList<string>? moonDrawnCardIds = null,
+            IReadOnlyList<string>? arcanumAdeptIds = null)
         {
-            PublicView       = publicView;
-            PrivateView      = privateView;
-            ActivePlayerId   = activePlayerId;
-            Hint             = hint;
-            PendingCardId    = pendingCardId;
+            PublicView      = publicView;
+            PrivateView     = privateView;
+            ActivePlayerId  = activePlayerId;
+            Hint            = hint;
+            PendingCardId   = pendingCardId;
             MoonDrawnCardIds = moonDrawnCardIds;
+            ArcanumAdeptIds  = arcanumAdeptIds;
         }
     }
 }

@@ -141,19 +141,23 @@ namespace Kismeta.Core.Players
         {
             if (ctx.PendingCardId == null) return new DeclineAdeptCommand(Slot.Index, "");
 
-            var pid      = Slot.Index;
-            var allCards = AllPlayerCards(ctx);
-            var player   = ctx.PublicView.Players[pid];
-            int adeptCount = player.Arcanum.Count; // Arcanum already contains any Fate cards too (transient)
+            var pid        = Slot.Index;
+            var allCards   = AllPlayerCards(ctx);
+            var arcanumAdepts = ctx.ArcanumAdeptIds ?? System.Array.Empty<string>();
 
-            // Buy if we have space and can afford 3 cards for payment
-            if (adeptCount < 2 && allCards.Count >= 3)
+            // Need 3 payment cards to buy
+            if (allCards.Count < 3) return new DeclineAdeptCommand(pid, ctx.PendingCardId);
+
+            var payment = allCards.GetRange(0, 3);
+
+            // If Arcanum is full, swap out the first existing Adept
+            if (arcanumAdepts.Count >= 2)
             {
-                var payment = allCards.GetRange(0, 3);
-                return new BuyAdeptCommand(pid, ctx.PendingCardId, payment);
+                string swapOut = arcanumAdepts[0];
+                return new BuyAdeptCommand(pid, ctx.PendingCardId, payment, swapOut);
             }
 
-            return new DeclineAdeptCommand(pid, ctx.PendingCardId);
+            return new BuyAdeptCommand(pid, ctx.PendingCardId, payment);
         }
 
         private IGameCommand DecideFateMoon(GameContext ctx)
