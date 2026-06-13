@@ -2,18 +2,19 @@ using System;
 using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Rules;
 using UnityEngine;
 
 namespace Kismeta.Data.Loaders
 {
     /// <summary>
     /// Loads all 156 CardDefinitions from the generated cards.json at runtime.
-    /// Provides a single lookup point for the game layer to resolve definitions by ID.
+    /// Implements <see cref="ICardDatabase"/> so it can be passed into Core rule services.
     ///
     /// Usage: Call CardDatabase.Load() once at startup (e.g. from GameBootstrap).
     /// cards.json must live in Assets/_Project/Data/Resources/ so Resources.Load can find it.
     /// </summary>
-    public sealed class CardDatabase
+    public sealed class CardDatabase : ICardDatabase
     {
         public const int ExpectedCardCount = 156;
         public const string ResourcePath   = "cards";
@@ -64,6 +65,8 @@ namespace Kismeta.Data.Loaders
 
         public CardDefinition? GetById(string id) =>
             _byId.TryGetValue(id, out var def) ? def : null;
+
+        public IEnumerable<CardDefinition> GetAll() => _byId.Values;
 
         public IEnumerable<CardDefinition> GetBySuit(Suit suit)
         {

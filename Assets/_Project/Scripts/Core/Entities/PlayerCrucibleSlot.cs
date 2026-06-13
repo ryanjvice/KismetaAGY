@@ -11,6 +11,8 @@ namespace Kismeta.Core.Entities
         public CrucibleCardState State { get; private set; }
         public bool HasCoal { get; private set; }
         public int WardCount { get; private set; }
+        /// <summary>Round number in which the stone was fired via this slot. -1 = not yet fired.</summary>
+        public int FiredAtRound { get; private set; } = -1;
 
         public PlayerCrucibleSlot(string cardInstanceId)
         {
@@ -25,10 +27,13 @@ namespace Kismeta.Core.Entities
                 State = CrucibleCardState.Active;
         }
 
-        public void Fire()
+        public void Fire(int currentRound)
         {
             if (State == CrucibleCardState.Active)
+            {
                 State = CrucibleCardState.Fired;
+                FiredAtRound = currentRound;
+            }
         }
 
         public void Discard() => State = CrucibleCardState.Discarded;

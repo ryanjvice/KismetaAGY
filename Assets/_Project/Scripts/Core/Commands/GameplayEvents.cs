@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using Kismeta.Core.Domain;
+using Kismeta.Core.Entities;
 
 namespace Kismeta.Core.Commands
 {
@@ -10,13 +12,12 @@ namespace Kismeta.Core.Commands
 
     public sealed class CosmicAgeSetEvent : IGameEvent
     {
-        public ZodiacSign Sign      { get; }
-        public Planet     Planet    { get; }
-        public Element    Element   { get; }
-        public string     EffectText { get; }
-        public CosmicAgeSetEvent(ZodiacSign sign, Planet planet, Element element, string effectText)
+        public ZodiacSign Sign    { get; }
+        public Planet     Planet  { get; }
+        public Element    Element { get; }
+        public CosmicAgeSetEvent(ZodiacSign sign, Planet planet, Element element)
         {
-            Sign = sign; Planet = planet; Element = element; EffectText = effectText;
+            Sign = sign; Planet = planet; Element = element;
         }
     }
 
@@ -35,11 +36,12 @@ namespace Kismeta.Core.Commands
 
     public sealed class CrucibleActivatedEvent : IGameEvent
     {
-        public int PlayerId  { get; }
-        public int SlotIndex { get; }
-        public CrucibleActivatedEvent(int playerId, int slotIndex)
+        public int    PlayerId        { get; }
+        public int    SlotIndex       { get; }
+        public string CardInstanceId  { get; }
+        public CrucibleActivatedEvent(int playerId, int slotIndex, string cardInstanceId)
         {
-            PlayerId = playerId; SlotIndex = slotIndex;
+            PlayerId = playerId; SlotIndex = slotIndex; CardInstanceId = cardInstanceId;
         }
     }
 
@@ -52,28 +54,38 @@ namespace Kismeta.Core.Commands
 
     public sealed class StoneFiredEvent : IGameEvent
     {
-        public int PlayerId    { get; }
-        public int NewPosition { get; }
-        public StoneFiredEvent(int playerId, int newPosition) { PlayerId = playerId; NewPosition = newPosition; }
+        public int           PlayerId     { get; }
+        public int           SlotIndex    { get; }
+        public StonePosition NewPosition  { get; }
+        public StoneFiredEvent(int playerId, int slotIndex, StonePosition newPos)
+        {
+            PlayerId = playerId; SlotIndex = slotIndex; NewPosition = newPos;
+        }
     }
 
     public sealed class StoneTemperedEvent : IGameEvent
     {
-        public int PlayerId    { get; }
-        public int NewPosition { get; }
-        public StoneTemperedEvent(int playerId, int newPosition) { PlayerId = playerId; NewPosition = newPosition; }
+        public int           PlayerId    { get; }
+        public StonePosition NewPosition { get; }
+        public StoneTemperedEvent(int playerId, StonePosition newPos) { PlayerId = playerId; NewPosition = newPos; }
     }
 
+    /// <summary>
+    /// Dice-only opposition result. Both rolls stored for log/replay.
+    /// The loser's stone enters Stasis.
+    /// </summary>
     public sealed class OppositionResolvedEvent : IGameEvent
     {
-        public int  AttackerId            { get; }
-        public int  DefenderId            { get; }
-        public int  WinnerId              { get; }
-        public bool DefenderSentToStasis  { get; }
-        public OppositionResolvedEvent(int attackerId, int defenderId, int winnerId, bool defenderSentToStasis)
+        public int AttackerId  { get; }
+        public int DefenderId  { get; }
+        public int AttackRoll  { get; }
+        public int DefendRoll  { get; }
+        public int LoserId     { get; }
+        public OppositionResolvedEvent(int attackerId, int defenderId, int attackRoll, int defendRoll, int loserId)
         {
             AttackerId = attackerId; DefenderId = defenderId;
-            WinnerId = winnerId; DefenderSentToStasis = defenderSentToStasis;
+            AttackRoll = attackRoll; DefendRoll = defendRoll;
+            LoserId    = loserId;
         }
     }
 

@@ -11,6 +11,7 @@ namespace Kismeta.Core.Rules
     public interface ICardDatabase
     {
         CardDefinition? GetById(string id);
+        IEnumerable<CardDefinition> GetAll();
         IEnumerable<CardDefinition> GetCrucibleByGroup(CrucibleGroup group);
         IEnumerable<CardDefinition> GetBySuit(Suit suit);
         int Count { get; }
