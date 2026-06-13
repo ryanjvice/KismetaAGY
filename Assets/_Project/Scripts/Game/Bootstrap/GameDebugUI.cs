@@ -152,6 +152,12 @@ namespace Kismeta.Game.Bootstrap
 
         private void DrawMiddleColumn(float colW, float colH)
         {
+            if (_session!.IsOver)
+            {
+                DrawGameOverPanel();
+                return;
+            }
+
             var hs = _loop?.PendingHumanController;
 
             if (hs == null)
@@ -208,6 +214,48 @@ namespace Kismeta.Game.Bootstrap
             }
         }
 
+        private void DrawGameOverPanel()
+        {
+            GUILayout.Space(20f);
+
+            var prevSize = GUI.skin.label.fontSize;
+            GUI.skin.label.fontSize = 22;
+            GUILayout.Label("══ GAME OVER ══");
+            GUI.skin.label.fontSize = prevSize;
+
+            GUILayout.Space(8f);
+
+            if (_session!.WinnerPlayerId.HasValue)
+            {
+                int wid = _session.WinnerPlayerId.Value;
+                var wp  = _session.Players[wid];
+                GUILayout.Label($"Winner: P{wid} ({wp.Color})");
+            }
+            else
+            {
+                GUILayout.Label("Game ended — no winner recorded.");
+            }
+
+            GUILayout.Space(10f);
+            GUILayout.Label("── Final Stone Positions ──");
+            foreach (var p in _session.Players)
+                GUILayout.Label($"P{p.PlayerId} ({p.Color}): position {p.StonePosition} [{p.StoneState}]");
+
+            GUILayout.Space(10f);
+            GUILayout.Label("── Reagents at End ──");
+            foreach (var p in _session.Players)
+                GUILayout.Label(
+                    $"P{p.PlayerId}: " +
+                    $"Sa:{p.GetReagent(ReagentType.Salt)} " +
+                    $"Su:{p.GetReagent(ReagentType.Sulphur)} " +
+                    $"AR:{p.GetReagent(ReagentType.AquaRegia)} " +
+                    $"V:{p.GetReagent(ReagentType.Vitriol)} " +
+                    $"Qk:{p.GetReagent(ReagentType.Quicksilver)}");
+
+            GUILayout.Space(16f);
+            GUILayout.Label("Press ■ Stop in the Unity toolbar to exit Play Mode.");
+        }
+
         private void DrawWaitingPanel()
         {
             GUILayout.Label("── WAITING ──");
@@ -222,10 +270,6 @@ namespace Kismeta.Game.Bootstrap
             {
                 var p = _session.Players[active];
                 GUILayout.Label($"AI player P{active} ({p.Color}) is thinking…");
-            }
-            else if (_session.IsOver)
-            {
-                GUILayout.Label($"Game over — winner: P{_session.WinnerPlayerId}");
             }
             else
             {

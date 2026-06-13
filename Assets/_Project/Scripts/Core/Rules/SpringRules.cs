@@ -64,6 +64,19 @@ namespace Kismeta.Core.Rules
             if (AgekeeperMatchesCosmic(session))
                 bonus += 2;
 
+            // Spread Element Match: each Spread card whose suit matches the Cosmic Age's element earns +1
+            var cosmicElement = Correspondence.ElementFor(cosmicSign);
+            if (cosmicElement != Element.None)
+            {
+                foreach (var cardId in player.Spread)
+                {
+                    var inst = session.GetCard(cardId);
+                    var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
+                    if (def != null && Correspondence.ElementFor(def.Suit) == cosmicElement)
+                        bonus++;
+                }
+            }
+
             return 3 + bonus;
         }
 

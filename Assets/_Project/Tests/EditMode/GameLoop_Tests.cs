@@ -38,7 +38,7 @@ namespace Kismeta.Core.Tests
                 harvest:      new SpringRules(db, seed),
                 crucible:     new CrucibleRules(db, seed),
                 crafting:     new CraftingRules(db),
-                winter:       new WinterRules(),
+                winter:       new WinterRules(db),
                 validator:    new ActionValidator());
 
             var players     = new List<PlayerState>(playerCount);

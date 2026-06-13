@@ -32,7 +32,7 @@ namespace Kismeta.Core.Tests
             harvest:      new SpringRules(db, seed),
             crucible:     new CrucibleRules(db, seed),
             crafting:     new CraftingRules(db),
-            winter:       new WinterRules(),
+            winter:       new WinterRules(db),
             validator:    new ActionValidator());
 
         private static GameSession BuildSession(CardDatabase db, int playerCount = 2, int seed = 42)

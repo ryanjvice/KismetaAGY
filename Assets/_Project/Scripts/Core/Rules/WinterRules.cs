@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Kismeta.Core.Commands;
+using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 
 namespace Kismeta.Core.Rules
@@ -11,18 +12,47 @@ namespace Kismeta.Core.Rules
     /// </summary>
     public sealed class WinterRules
     {
+        private readonly ICardDatabase _db;
+
+        public WinterRules(ICardDatabase db) => _db = db;
+
         public const int SpreadLimit = 5;
         public const int HandLimit   = 5;
 
-        /// <summary>Winter Step 3: trim each player's Spread and Hand to their limits.</summary>
+        /// <summary>Winter Step 3: discard Fate cards from Arcanum, then trim Spread and Hand.</summary>
         public void EnforceLimits(GameSession session)
         {
+            ClearFateCards(session);
+
             foreach (var player in session.Players)
             {
                 int discarded = 0;
                 discarded += TrimZone(player.Spread, SpreadLimit, session.Board.CommonDiscard);
                 discarded += TrimZone(player.Hand,   HandLimit,   session.Board.CommonDiscard);
                 session.EmitEvent(new CardLimitsEnforcedEvent(player.PlayerId, discarded));
+            }
+        }
+
+        /// <summary>
+        /// Discard all Fate cards from every player's Arcanum back to Common Discard.
+        /// Fate cards have Effect Duration = single round; they never carry over to the next round.
+        /// </summary>
+        private void ClearFateCards(GameSession session)
+        {
+            foreach (var player in session.Players)
+            {
+                for (int i = player.Arcanum.Count - 1; i >= 0; i--)
+                {
+                    var id   = player.Arcanum[i];
+                    var inst = session.GetCard(id);
+                    var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
+                    if (def?.MajorArcanaType == MajorArcanaType.Fate)
+                    {
+                        player.Arcanum.RemoveAt(i);
+                        inst!.MoveTo(CardZone.Discard, -1);
+                        session.Board.CommonDiscard.Add(id);
+                    }
+                }
             }
         }
 

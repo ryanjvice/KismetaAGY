@@ -96,7 +96,7 @@ namespace Kismeta.Game.Bootstrap
                 harvest:      new SpringRules(_db!),
                 crucible:     new CrucibleRules(_db!),
                 crafting:     new CraftingRules(_db!),
-                winter:       new WinterRules(),
+                winter:       new WinterRules(_db!),
                 validator:    new ActionValidator());
 
             _session = new GameSession(
