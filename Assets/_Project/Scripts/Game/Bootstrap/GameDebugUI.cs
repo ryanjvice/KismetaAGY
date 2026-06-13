@@ -45,6 +45,7 @@ namespace Kismeta.Game.Bootstrap
         private Vector2 _spreadScroll;
         private Vector2 _handScroll;
         private Vector2 _crucibleScroll;
+        private Vector2 _actionsScroll;
         private Vector2 _playersScroll;
         private Vector2 _commSpreadScroll;
         private Vector2 _commHandScroll;
@@ -187,18 +188,23 @@ namespace Kismeta.Game.Bootstrap
             }
             else
             {
-                // Card lists occupy the top portion; actions below
-                float cardH     = colH * 0.42f;
-                float crucibleH = colH * 0.18f;
-
+                // Top ~45 % — card lists (fixed, internally scrollable)
+                float headerH  = 24f; // header label + error
+                float cardH    = (colH - headerH) * 0.44f;
                 DrawCardLists(pid, player, cardH);
+
+                // Bottom remainder — crucible + actions in a single scroll view
+                float bottomH = colH - headerH - cardH - 6f;
                 GUILayout.Space(4f);
-                DrawCrucibleSection(pid, player, crucibleH);
+                _actionsScroll = GUILayout.BeginScrollView(_actionsScroll,
+                    GUILayout.Height(bottomH));
+                DrawCrucibleSection(pid, player, 0f); // 0 = natural height inside scroll
                 GUILayout.Space(4f);
                 GUILayout.Label($"── ACTIONS ({hint}) ──");
                 GUILayout.Label($"Selected: {_selectedCards.Count} card(s)");
                 GUILayout.Space(2f);
                 DrawActionPanel(hs, pid, player, hint);
+                GUILayout.EndScrollView();
             }
         }
 
@@ -231,16 +237,26 @@ namespace Kismeta.Game.Bootstrap
 
         private void DrawCardLists(int pid, PlayerState player, float totalH)
         {
-            float halfH = totalH * 0.5f;
+            // Arcanum is fixed-height (no interaction needed); Spread + Hand split the rest
+            float arcH  = player.Arcanum.Count > 0 ? Mathf.Min(player.Arcanum.Count * 22f + 24f, 100f) : 0f;
+            float listH = (totalH - arcH) * 0.5f;
+
+            if (player.Arcanum.Count > 0)
+            {
+                GUILayout.Label($"── ARCANUM ({player.Arcanum.Count}) ── [Major Arcana — not selectable]");
+                foreach (var id in player.Arcanum)
+                    GUILayout.Label($"  ★ {CardLabel(id)}");
+                GUILayout.Space(4f);
+            }
 
             GUILayout.Label($"── SPREAD ({player.Spread.Count}) ──");
-            _spreadScroll = GUILayout.BeginScrollView(_spreadScroll, GUILayout.Height(halfH - 20f));
+            _spreadScroll = GUILayout.BeginScrollView(_spreadScroll, GUILayout.Height(listH - 20f));
             foreach (var id in player.Spread)
                 DrawCardToggle(id);
             GUILayout.EndScrollView();
 
             GUILayout.Label($"── HAND ({player.Hand.Count}) ──");
-            _handScroll = GUILayout.BeginScrollView(_handScroll, GUILayout.Height(halfH - 20f));
+            _handScroll = GUILayout.BeginScrollView(_handScroll, GUILayout.Height(listH - 20f));
             foreach (var id in player.Hand)
                 DrawCardToggle(id);
             GUILayout.EndScrollView();
@@ -261,23 +277,37 @@ namespace Kismeta.Game.Bootstrap
 
         // ── Crucible section ─────────────────────────────────────────────────────
 
+        // scrollH == 0 means render at natural height (when already inside a parent scroll view)
         private void DrawCrucibleSection(int pid, PlayerState player, float scrollH)
         {
             GUILayout.Label("── YOUR CRUCIBLE CARDS ──");
-            _crucibleScroll = GUILayout.BeginScrollView(_crucibleScroll, GUILayout.Height(scrollH));
-            for (int i = 0; i < player.CrucibleSlots.Count; i++)
+
+            void DrawSlots()
             {
-                var slot = player.CrucibleSlots[i];
-                var inst = _session!.GetCard(slot.CardInstanceId);
-                var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
-                string name     = def != null ? $"[{def.CrucibleGroup}] {def.ActivationFormula}" : "?";
-                string coalStr  = slot.HasCoal ? " ·Coal" : "";
-                string wardStr  = slot.WardCount > 0 ? $" Ward×{slot.WardCount}" : "";
-                GUILayout.Label($"Slot {i}: {slot.State,-10} {name}{coalStr}{wardStr}");
-                if (def != null && def.AlchemicalFormula != "")
-                    GUILayout.Label($"   Formula: {def.AlchemicalFormula}");
+                for (int i = 0; i < player.CrucibleSlots.Count; i++)
+                {
+                    var slot = player.CrucibleSlots[i];
+                    var inst = _session!.GetCard(slot.CardInstanceId);
+                    var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
+                    string name    = def != null ? $"[{def.CrucibleGroup}] {def.ActivationFormula}" : "?";
+                    string coalStr = slot.HasCoal ? " ·Coal" : "";
+                    string wardStr = slot.WardCount > 0 ? $" Ward×{slot.WardCount}" : "";
+                    GUILayout.Label($"Slot {i}: {slot.State,-10} {name}{coalStr}{wardStr}");
+                    if (def != null && def.AlchemicalFormula != "")
+                        GUILayout.Label($"   Formula: {def.AlchemicalFormula}");
+                }
             }
-            GUILayout.EndScrollView();
+
+            if (scrollH > 0f)
+            {
+                _crucibleScroll = GUILayout.BeginScrollView(_crucibleScroll, GUILayout.Height(scrollH));
+                DrawSlots();
+                GUILayout.EndScrollView();
+            }
+            else
+            {
+                DrawSlots();
+            }
         }
 
         // ── Commune panel ────────────────────────────────────────────────────────
@@ -295,44 +325,14 @@ namespace Kismeta.Game.Bootstrap
             }
 
             GUILayout.Label($"── COMMUNE — Assign {_communeSpread.Count + _communeHand.Count} card(s) ──");
+            if (player.Arcanum.Count > 0)
+                GUILayout.Label($"Arcanum ({player.Arcanum.Count}): " +
+                    string.Join(", ", player.Arcanum.ConvertAll(CardLabel)) +
+                    " — already placed");
             GUILayout.Label($"Hand limit: 5  (currently → Hand: {_communeHand.Count})");
+
+            // ── Action controls pinned at the top so they're always visible ──────
             GUILayout.Space(4f);
-
-            float halfH = (colH - 160f) * 0.5f;
-
-            // Spread column
-            GUILayout.Label($"→ SPREAD ({_communeSpread.Count})  [click to move to Hand]");
-            _commSpreadScroll = GUILayout.BeginScrollView(_commSpreadScroll, GUILayout.Height(halfH));
-            for (int i = _communeSpread.Count - 1; i >= 0; i--)
-            {
-                string id = _communeSpread[i];
-                if (GUILayout.Button($"[ ] {CardLabel(id)} →Hand"))
-                {
-                    _communeSpread.RemoveAt(i);
-                    _communeHand.Add(id);
-                }
-            }
-            GUILayout.EndScrollView();
-
-            GUILayout.Space(4f);
-
-            // Hand column
-            GUILayout.Label($"→ HAND ({_communeHand.Count})  [click to move to Spread]");
-            _commHandScroll = GUILayout.BeginScrollView(_commHandScroll, GUILayout.Height(halfH));
-            for (int i = _communeHand.Count - 1; i >= 0; i--)
-            {
-                string id = _communeHand[i];
-                if (GUILayout.Button($"[H] {CardLabel(id)} →Spread"))
-                {
-                    _communeHand.RemoveAt(i);
-                    _communeSpread.Add(id);
-                }
-            }
-            GUILayout.EndScrollView();
-
-            GUILayout.Space(6f);
-
-            // Quick-assign helpers
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("All to Spread"))
             {
@@ -346,8 +346,6 @@ namespace Kismeta.Game.Bootstrap
             }
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(4f);
-
             bool tooManyHand = _communeHand.Count > 5;
             if (tooManyHand)
             {
@@ -358,7 +356,7 @@ namespace Kismeta.Game.Bootstrap
             }
 
             GUI.enabled = !tooManyHand;
-            if (GUILayout.Button("✔ Confirm Commune", GUILayout.Height(30f)))
+            if (GUILayout.Button("✔ End Turn — Confirm Commune", GUILayout.Height(30f)))
             {
                 var spreadIds = new List<string>(_communeSpread);
                 var handIds   = new List<string>(_communeHand);
@@ -366,6 +364,39 @@ namespace Kismeta.Game.Bootstrap
                 SubmitAction(hs, new CommuneCommand(pid, spreadIds, handIds));
             }
             GUI.enabled = true;
+
+            // ── Scrollable card lists below ───────────────────────────────────────
+            GUILayout.Space(6f);
+            // Reserve ~110px for header + buttons above; split remainder equally
+            float listH = (colH - 140f) * 0.5f;
+
+            GUILayout.Label($"→ SPREAD ({_communeSpread.Count})  [click to move to Hand]");
+            _commSpreadScroll = GUILayout.BeginScrollView(_commSpreadScroll, GUILayout.Height(listH));
+            for (int i = _communeSpread.Count - 1; i >= 0; i--)
+            {
+                string id = _communeSpread[i];
+                if (GUILayout.Button($"[ ] {CardLabel(id)} →Hand"))
+                {
+                    _communeSpread.RemoveAt(i);
+                    _communeHand.Add(id);
+                }
+            }
+            GUILayout.EndScrollView();
+
+            GUILayout.Space(4f);
+
+            GUILayout.Label($"→ HAND ({_communeHand.Count})  [click to move to Spread]");
+            _commHandScroll = GUILayout.BeginScrollView(_commHandScroll, GUILayout.Height(listH));
+            for (int i = _communeHand.Count - 1; i >= 0; i--)
+            {
+                string id = _communeHand[i];
+                if (GUILayout.Button($"[H] {CardLabel(id)} →Spread"))
+                {
+                    _communeHand.RemoveAt(i);
+                    _communeSpread.Add(id);
+                }
+            }
+            GUILayout.EndScrollView();
         }
 
         // ── Action panel (Summer / Autumn / None) ────────────────────────────────

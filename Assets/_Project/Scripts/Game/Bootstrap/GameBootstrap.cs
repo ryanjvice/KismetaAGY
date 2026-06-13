@@ -93,7 +93,7 @@ namespace Kismeta.Game.Bootstrap
             var rules = new GameRuleSet(
                 cardDatabase: _db!,
                 setup:        new GameSetupService(_db!),
-                harvest:      new SpringRules(),
+                harvest:      new SpringRules(_db!),
                 crucible:     new CrucibleRules(_db!),
                 crafting:     new CraftingRules(_db!),
                 winter:       new WinterRules(),

@@ -16,13 +16,19 @@ namespace Kismeta.Core.Rules
     ///
     /// Alignment bonus: same Sign +3, same Planet +2, same Element +1 (highest applies).
     /// Agekeeper's Boon: if Agekeeper's sign matches Cosmic Age, ALL players get +2 extra.
+    ///
+    /// Major Arcana routing during Harvest (per rules):
+    ///   Fate cards  → placed in Arcanum immediately (face-up), never enter Hand.
+    ///   Adept cards → discarded back to Common Discard (purchase mechanic not yet in M2).
     /// </summary>
     public sealed class SpringRules : IHarvestService
     {
         private readonly Random _rng;
+        private readonly ICardDatabase _db;
 
-        public SpringRules(int? seed = null)
+        public SpringRules(ICardDatabase db, int? seed = null)
         {
+            _db  = db;
             _rng = seed.HasValue ? new Random(seed.Value) : new Random();
         }
 
@@ -63,9 +69,9 @@ namespace Kismeta.Core.Rules
 
         public void ExecuteHarvest(GameSession session, int playerId)
         {
-            int count   = CalculateHarvestCount(session, playerId);
-            var player  = session.Players[playerId];
-            var drawn   = new List<string>(count);
+            int count  = CalculateHarvestCount(session, playerId);
+            var player = session.Players[playerId];
+            var drawn  = new List<string>(count);
 
             for (int i = 0; i < count; i++)
             {
@@ -76,9 +82,30 @@ namespace Kismeta.Core.Rules
 
                 var id   = session.Board.CommonDeck.Pop();
                 var inst = session.GetCard(id);
-                inst?.MoveTo(CardZone.Hand, playerId);
-                player.Hand.Add(id);
-                drawn.Add(id);
+                if (inst == null) continue;
+
+                var def = _db.GetById(inst.DefinitionId);
+
+                if (def?.MajorArcanaType == MajorArcanaType.Fate)
+                {
+                    // Fate cards go directly to Arcanum, face-up — never enter Hand or Spread
+                    inst.MoveTo(CardZone.Arcanum, playerId);
+                    player.Arcanum.Add(id);
+                    drawn.Add(id);
+                }
+                else if (def?.MajorArcanaType == MajorArcanaType.Adept)
+                {
+                    // Adept cards must be purchased to keep; discard until purchase mechanic is implemented
+                    inst.MoveTo(CardZone.Discard, -1);
+                    session.Board.CommonDiscard.Add(id);
+                }
+                else
+                {
+                    // Minor Arcana → Hand as normal
+                    inst.MoveTo(CardZone.Hand, playerId);
+                    player.Hand.Add(id);
+                    drawn.Add(id);
+                }
             }
 
             session.EmitEvent(new CardsDrawnEvent(playerId, drawn.Count));

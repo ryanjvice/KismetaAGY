@@ -35,7 +35,7 @@ namespace Kismeta.Core.Tests
             var rules = new GameRuleSet(
                 cardDatabase: db,
                 setup:        new GameSetupService(db, seed),
-                harvest:      new SpringRules(seed),
+                harvest:      new SpringRules(db, seed),
                 crucible:     new CrucibleRules(db, seed),
                 crafting:     new CraftingRules(db),
                 winter:       new WinterRules(),
