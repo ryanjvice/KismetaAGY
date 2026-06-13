@@ -108,4 +108,55 @@ namespace Kismeta.Core.Commands
             NewRoundNumber = newRound; NewAgekeeperId = newAgekeeper;
         }
     }
+
+    public sealed class AdeptPurchasedEvent : IGameEvent
+    {
+        public int    PlayerId    { get; }
+        public string AdeptCardId { get; }
+        public AdeptPurchasedEvent(int playerId, string adeptCardId)
+        {
+            PlayerId = playerId; AdeptCardId = adeptCardId;
+        }
+    }
+
+    public sealed class AdeptDeclinedEvent : IGameEvent
+    {
+        public int    PlayerId    { get; }
+        public string AdeptCardId { get; }
+        public AdeptDeclinedEvent(int playerId, string adeptCardId)
+        {
+            PlayerId = playerId; AdeptCardId = adeptCardId;
+        }
+    }
+
+    public sealed class AstralHouseBuiltEvent : IGameEvent
+    {
+        public int        PlayerId { get; }
+        public ZodiacSign Sign     { get; }
+        public AstralHouseBuiltEvent(int playerId, ZodiacSign sign)
+        {
+            PlayerId = playerId; Sign = sign;
+        }
+    }
+
+    public sealed class FateResolvedEvent : IGameEvent
+    {
+        public int    PlayerId   { get; }
+        public string FateCardId { get; }
+        public int    ArcanaNum  { get; }
+        public FateResolvedEvent(int playerId, string fateCardId, int arcanaNum)
+        {
+            PlayerId = playerId; FateCardId = fateCardId; ArcanaNum = arcanaNum;
+        }
+    }
+
+    public sealed class CosmicEffectAppliedEvent : IGameEvent
+    {
+        public ZodiacSign Sign { get; }
+        public string     EffectSummary { get; }
+        public CosmicEffectAppliedEvent(ZodiacSign sign, string effectSummary)
+        {
+            Sign = sign; EffectSummary = effectSummary;
+        }
+    }
 }

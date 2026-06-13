@@ -19,11 +19,22 @@ namespace Kismeta.Core.Rules
         /// <summary>Returns the number of cards the player draws this Harvest.</summary>
         int CalculateHarvestCount(GameSession session, int playerId);
 
-        /// <summary>Spring Step 3: Deal Harvest cards from the common deck into the player's Hand.</summary>
+        /// <summary>
+        /// Spring Step 3: Deal Harvest cards. Any Adept cards drawn are queued in
+        /// <see cref="BoardState.PendingAdeptDecisions"/> for GameLoop to resolve.
+        /// Any async Fate effects are queued in <see cref="BoardState.PendingFateDecisions"/>.
+        /// </summary>
         void ExecuteHarvest(GameSession session, int playerId);
 
-        /// <summary>Spring Step 4: Player assigns all current Hand cards to Spread or Hand zones.</summary>
+        /// <summary>Spring Step 4: Player assigns all current Hand+Spread cards to zones.</summary>
         CommandResult HandleCommune(GameSession session, int playerId,
             IReadOnlyList<string> spreadCardIds, IReadOnlyList<string> handCardIds);
+
+        /// <summary>Player purchases an Adept card by spending 3 cards.</summary>
+        CommandResult HandleBuyAdept(GameSession session, int playerId, string adeptCardId,
+            IReadOnlyList<string> paymentCardIds, string? swapOutAdeptId = null);
+
+        /// <summary>Player declines an Adept card; it is discarded to the Common Discard.</summary>
+        CommandResult HandleDeclineAdept(GameSession session, int playerId, string adeptCardId);
     }
 }

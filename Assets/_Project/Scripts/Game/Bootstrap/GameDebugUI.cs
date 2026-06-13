@@ -192,6 +192,22 @@ namespace Kismeta.Game.Bootstrap
             {
                 DrawCommunePanel(hs, pid, player, colH);
             }
+            else if (hint == ActionHint.AdeptDecision)
+            {
+                DrawAdeptDecisionPanel(hs, pid, player);
+            }
+            else if (hint == ActionHint.FateMoonDecision)
+            {
+                DrawFateMoonPanel(hs, pid, player, colH);
+            }
+            else if (hint == ActionHint.FateReagentChoice)
+            {
+                DrawFateReagentChoicePanel(hs, pid);
+            }
+            else if (hint == ActionHint.FateLoversChoice)
+            {
+                DrawFateLoversChoicePanel(hs, pid);
+            }
             else
             {
                 // Top ~45 % — card lists (fixed, internally scrollable)
@@ -443,6 +459,149 @@ namespace Kismeta.Game.Bootstrap
             GUILayout.EndScrollView();
         }
 
+        // ── Adept decision panel ──────────────────────────────────────────────────
+
+        private void DrawAdeptDecisionPanel(HotSeatController hs, int pid, PlayerState player)
+        {
+            string adeptId = _loop?.PendingCardId ?? "";
+            var inst = _session?.GetCard(adeptId);
+            var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
+
+            GUILayout.Label("── ADEPT CARD DRAWN ──");
+            GUILayout.Space(6f);
+
+            if (def != null)
+            {
+                GUILayout.Label($"Card:   ★{def.ArcanaNumber}  {def.EffectType}");
+                GUILayout.Label($"Sign:   {def.Sign}   Planet: {def.Planet}");
+                GUILayout.Label($"Effect: {def.EffectText}");
+            }
+            else
+            {
+                GUILayout.Label("(Unknown Adept card)");
+            }
+
+            GUILayout.Space(8f);
+            GUILayout.Label("Cost to purchase: discard 3 cards (any).");
+            GUILayout.Label($"Current Arcanum: {player.Arcanum.Count} Adept(s)");
+            GUILayout.Space(4f);
+
+            GUILayout.Label("── SELECT 3 PAYMENT CARDS ──");
+            var allCards = new List<string>(player.Spread.Count + player.Hand.Count);
+            foreach (var id in player.Spread) allCards.Add(id);
+            foreach (var id in player.Hand)   allCards.Add(id);
+
+            _actionsScroll = GUILayout.BeginScrollView(_actionsScroll, GUILayout.Height(160f));
+            foreach (var id in allCards)
+            {
+                bool sel = _selectedCards.Contains(id);
+                string label = (sel ? "✔ " : "  ") + CardLabel(id);
+                if (GUILayout.Button(label))
+                {
+                    if (sel) _selectedCards.Remove(id);
+                    else     _selectedCards.Add(id);
+                }
+            }
+            GUILayout.EndScrollView();
+
+            GUILayout.Space(4f);
+            GUILayout.Label($"Selected: {_selectedCards.Count} / 3");
+
+            GUILayout.Space(6f);
+            GUI.enabled = _selectedCards.Count == 3 && def != null;
+            if (GUILayout.Button("Buy Adept  (discard 3 selected)"))
+                SubmitAction(hs, new BuyAdeptCommand(pid, adeptId, _selectedCards.ToList()));
+            GUI.enabled = true;
+
+            GUILayout.Space(4f);
+            if (GUILayout.Button("Discard  (skip purchase)"))
+                SubmitAction(hs, new DeclineAdeptCommand(pid, adeptId));
+        }
+
+        // ── Fate: Moon decision ───────────────────────────────────────────────────
+
+        // Scroll position for Moon's 4-card offer list
+        private Vector2 _fateMoonScroll;
+        private readonly HashSet<string> _moonKeep = new();
+
+        private void DrawFateMoonPanel(HotSeatController hs, int pid, PlayerState player, float colH)
+        {
+            GUILayout.Label("── THE MOON — Keep 2 of 4 ──");
+            GUILayout.Space(4f);
+
+            // The 4 drawn Moon cards are temporarily in player's Hand after inline resolve
+            GUILayout.Label("Select exactly 2 cards to keep. The rest return to the deck.");
+
+            _fateMoonScroll = GUILayout.BeginScrollView(_fateMoonScroll, GUILayout.Height(200f));
+            foreach (var id in player.Hand)
+            {
+                bool sel = _moonKeep.Contains(id);
+                string label = (sel ? "★ " : "  ") + CardLabel(id);
+                if (GUILayout.Button(label))
+                {
+                    if (sel) _moonKeep.Remove(id);
+                    else     _moonKeep.Add(id);
+                }
+            }
+            GUILayout.EndScrollView();
+
+            GUILayout.Label($"Keeping: {_moonKeep.Count} / 2");
+
+            GUI.enabled = _moonKeep.Count == 2;
+            if (GUILayout.Button("Confirm Keep"))
+            {
+                _moonKeep.Clear();
+                SubmitAction(hs, new FateMoonDecisionCommand(pid, _moonKeep.ToList()));
+            }
+            GUI.enabled = true;
+        }
+
+        // ── Fate: Reagent choice (Fool / Lovers) ──────────────────────────────────
+
+        private void DrawFateReagentChoicePanel(HotSeatController hs, int pid)
+        {
+            GUILayout.Label("── FATE: Choose 1 Reagent ──");
+            GUILayout.Space(6f);
+            GUILayout.Label("Pick one Reagent to receive:");
+            GUILayout.Space(4f);
+
+            var reagents = new[]
+            {
+                ReagentType.Salt, ReagentType.Sulphur, ReagentType.AquaRegia,
+                ReagentType.Vitriol, ReagentType.Quicksilver
+            };
+            foreach (var r in reagents)
+            {
+                if (GUILayout.Button($"Take 1 {r}"))
+                    SubmitAction(hs, new FateReagentChoiceCommand(pid, r));
+            }
+        }
+
+        private void DrawFateLoversChoicePanel(HotSeatController hs, int pid)
+        {
+            GUILayout.Label("── THE LOVERS — Choose a Reward for the Drawer ──");
+            GUILayout.Space(6f);
+            GUILayout.Label("You decide what the other player receives:");
+            GUILayout.Space(4f);
+
+            if (GUILayout.Button("Give them: Draw 2 Cards"))
+                SubmitAction(hs, new FateLoversChoiceCommand(pid, drawCards: true));
+
+            GUILayout.Space(4f);
+            GUILayout.Label("  — or —  Give 1 Reagent:");
+
+            var reagents = new[]
+            {
+                ReagentType.Salt, ReagentType.Sulphur, ReagentType.AquaRegia,
+                ReagentType.Vitriol, ReagentType.Quicksilver
+            };
+            foreach (var r in reagents)
+            {
+                if (GUILayout.Button($"Give 1 {r}"))
+                    SubmitAction(hs, new FateLoversChoiceCommand(pid, drawCards: false, r));
+            }
+        }
+
         // ── Action panel (Summer / Autumn / None) ────────────────────────────────
 
         private void DrawActionPanel(HotSeatController hs, int pid, PlayerState player, ActionHint hint)
@@ -501,8 +660,44 @@ namespace Kismeta.Game.Bootstrap
             GUI.enabled = true;
 
             GUILayout.Space(4f);
+
+            // Build Astral House — only on current sign, needs 2 planet-matching cards, unplaced houses remaining
+            DrawBuildHouseButton(hs, pid, player, selList);
+
+            GUILayout.Space(4f);
             if (GUILayout.Button("Pass"))
                 SubmitAction(hs, new PassCrucibleActionCommand(pid));
+        }
+
+        private void DrawBuildHouseButton(HotSeatController hs, int pid, PlayerState player,
+            List<string> selList)
+        {
+            GUILayout.Space(2f);
+            GUILayout.Label("── Build Astral House ──");
+
+            var sign   = player.CurrentSign;
+            bool hasHouses = player.UnplacedAstralHouses > 0;
+            bool signFree  = true;
+            if (_session != null)
+                foreach (var p in _session.Players)
+                    if (p.PlayerId != pid && p.AstralHouses.Contains(sign))
+                    { signFree = false; break; }
+
+            bool alreadyBuilt = player.AstralHouses.Contains(sign);
+            bool canBuild     = hasHouses && signFree && !alreadyBuilt && selList.Count == 2;
+
+            string houseLabel = !hasHouses
+                ? "Build House  (no tokens left)"
+                : !signFree
+                    ? $"Build House on {sign}  (sign taken)"
+                    : alreadyBuilt
+                        ? $"Build House on {sign}  (already built)"
+                        : $"Build House on {sign}  (select 2 planet-matching cards)";
+
+            GUI.enabled = canBuild;
+            if (GUILayout.Button(houseLabel))
+                SubmitAction(hs, new BuildAstralHouseCommand(pid, sign, selList));
+            GUI.enabled = true;
         }
 
         private void DrawAutumnActions(HotSeatController hs, int pid, PlayerState player)
@@ -671,17 +866,22 @@ namespace Kismeta.Game.Bootstrap
 
         private string FormatEvent(IGameEvent evt) => evt switch
         {
-            CosmicAgeSetEvent e      => $"[CosmicAge] Sign={e.Sign} Planet={e.Planet}",
-            ZodiacRolledEvent e      => $"[Zodiac] P{e.PlayerId} → {e.Sign}",
-            CardsDrawnEvent e        => $"[Harvest] P{e.PlayerId} drew {e.Count}",
-            StoneFiredEvent e        => $"[Fire] P{e.PlayerId} → pos {e.NewPosition}",
-            StoneTemperedEvent e     => $"[Temper] P{e.PlayerId} → pos {e.NewPosition}",
-            OppositionResolvedEvent e=> $"[Oppose] Att:{e.AttackerId} Def:{e.DefenderId} Loser:{e.LoserId} ({e.AttackRoll}v{e.DefendRoll})",
-            GameSetupCompleteEvent e => $"[Setup] {e.PlayerCount}p ready",
-            AgeTransitedEvent e      => $"[Transit] Round {e.NewRoundNumber} AK→P{e.NewAgekeeperId}",
-            GameEndedEvent e         => $"[GAME OVER] Winner: P{e.WinnerPlayerId}",
-            PhaseChangedEvent e      => $"[Phase] {e.Season} step {e.StepIndex}",
-            _                        => $"[{evt.GetType().Name}]"
+            CosmicAgeSetEvent e         => $"[CosmicAge] Sign={e.Sign} Planet={e.Planet}",
+            CosmicEffectAppliedEvent e  => $"[CosmicFx] {e.Sign}: {e.EffectSummary}",
+            ZodiacRolledEvent e         => $"[Zodiac] P{e.PlayerId} → {e.Sign}",
+            CardsDrawnEvent e           => $"[Harvest] P{e.PlayerId} drew {e.Count}",
+            AdeptPurchasedEvent e       => $"[Adept] P{e.PlayerId} bought {e.AdeptCardId}",
+            AdeptDeclinedEvent e        => $"[Adept] P{e.PlayerId} declined {e.AdeptCardId}",
+            AstralHouseBuiltEvent e     => $"[House] P{e.PlayerId} built on {e.Sign}",
+            FateResolvedEvent e         => $"[Fate] P{e.PlayerId} drew ★{e.ArcanaNum}",
+            StoneFiredEvent e           => $"[Fire] P{e.PlayerId} → pos {e.NewPosition}",
+            StoneTemperedEvent e        => $"[Temper] P{e.PlayerId} → pos {e.NewPosition}",
+            OppositionResolvedEvent e   => $"[Oppose] Att:{e.AttackerId} Def:{e.DefenderId} Loser:{e.LoserId} ({e.AttackRoll}v{e.DefendRoll})",
+            GameSetupCompleteEvent e    => $"[Setup] {e.PlayerCount}p ready",
+            AgeTransitedEvent e         => $"[Transit] Round {e.NewRoundNumber} AK→P{e.NewAgekeeperId}",
+            GameEndedEvent e            => $"[GAME OVER] Winner: P{e.WinnerPlayerId}",
+            PhaseChangedEvent e         => $"[Phase] {e.Season} step {e.StepIndex}",
+            _                           => $"[{evt.GetType().Name}]"
         };
     }
 }

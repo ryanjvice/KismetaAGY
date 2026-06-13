@@ -6,6 +6,7 @@ using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
 using Kismeta.Core.Domain;
+using Kismeta.Core.Commands;
 using Kismeta.Data.Loaders;
 using UnityEngine;
 
@@ -90,14 +91,19 @@ namespace Kismeta.Game.Bootstrap
                 _controllers.Add(ctrl);
             }
 
+            var cosmicSvc  = new CosmicEffectService();
+            var fateResolver = new FateCardResolver(_db!);
             var rules = new GameRuleSet(
-                cardDatabase: _db!,
-                setup:        new GameSetupService(_db!),
-                harvest:      new SpringRules(_db!),
-                crucible:     new CrucibleRules(_db!),
-                crafting:     new CraftingRules(_db!),
-                winter:       new WinterRules(_db!),
-                validator:    new ActionValidator());
+                cardDatabase:  _db!,
+                setup:         new GameSetupService(_db!),
+                harvest:       new SpringRules(_db!, cosmicEffect: cosmicSvc, fateResolver: fateResolver),
+                crucible:      new CrucibleRules(_db!),
+                crafting:      new CraftingRules(_db!),
+                winter:        new WinterRules(_db!),
+                validator:     new ActionValidator(),
+                astralHouse:   new AstralHouseService(_db!),
+                cosmicEffect:  cosmicSvc,
+                fateResolver:  fateResolver);
 
             _session = new GameSession(
                 sessionId: Guid.NewGuid().ToString(),

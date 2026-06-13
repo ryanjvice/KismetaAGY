@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
+using Kismeta.Core.Entities;
 using Kismeta.Core.Views;
 
 namespace Kismeta.Core.Players
@@ -27,10 +28,14 @@ namespace Kismeta.Core.Players
         {
             IGameCommand action = context.Hint switch
             {
-                ActionHint.Commune      => DecideCommune(context),
-                ActionHint.SummerAction => DecideSummer(context),
-                ActionHint.AutumnAction => DecideAutumn(context),
-                _                       => new PassActionCommand(Slot.Index)
+                ActionHint.Commune        => DecideCommune(context),
+                ActionHint.SummerAction   => DecideSummer(context),
+                ActionHint.AutumnAction   => DecideAutumn(context),
+                ActionHint.AdeptDecision  => DecideAdept(context),
+                ActionHint.FateReagentChoice => new FateReagentChoiceCommand(Slot.Index, ReagentType.Salt),
+                ActionHint.FateLoversChoice  => new FateLoversChoiceCommand(Slot.Index, false), // choose Reagent
+                ActionHint.FateMoonDecision  => DecideFateMoon(context),
+                _                            => new PassActionCommand(Slot.Index)
             };
 
             return Task.FromResult(action);
@@ -64,6 +69,25 @@ namespace Kismeta.Core.Players
                 {
                     var payment = allCards.GetRange(0, 3);
                     return new ActivateCrucibleCommand(pid, i, payment);
+                }
+            }
+
+            // Try to build an Astral House on current sign if unplaced houses remain
+            if (player.UnplacedAstralHouses > 0 && player.CurrentSign != ZodiacSign.None)
+            {
+                var sign = player.CurrentSign;
+                bool signFree = true;
+                foreach (var p in ctx.PublicView.Players)
+                    if (p.PlayerId != pid && p.AstralHouses.Contains(sign))
+                    { signFree = false; break; }
+
+                if (signFree && !player.AstralHouses.Contains(sign))
+                {
+                    // Find 2 cards matching the sign's planet in Spread
+                    var planet = Correspondence.PlanetFor(sign);
+                    // AI can't look up card definitions here without db — pass based on Spread labels
+                    // Simple fallback: skip if we can't easily validate
+                    // (Full validation happens in AstralHouseService)
                 }
             }
 
@@ -108,6 +132,37 @@ namespace Kismeta.Core.Players
             }
 
             return new PassCrucibleActionCommand(pid);
+        }
+
+        // ─── Adept + Fate decisions ───────────────────────────────────────────────
+
+        private IGameCommand DecideAdept(GameContext ctx)
+        {
+            if (ctx.PendingCardId == null) return new DeclineAdeptCommand(Slot.Index, "");
+
+            var pid      = Slot.Index;
+            var allCards = AllPlayerCards(ctx);
+            var player   = ctx.PublicView.Players[pid];
+            int adeptCount = player.Arcanum.Count; // Arcanum already contains any Fate cards too (transient)
+
+            // Buy if we have space and can afford 3 cards for payment
+            if (adeptCount < 2 && allCards.Count >= 3)
+            {
+                var payment = allCards.GetRange(0, 3);
+                return new BuyAdeptCommand(pid, ctx.PendingCardId, payment);
+            }
+
+            return new DeclineAdeptCommand(pid, ctx.PendingCardId);
+        }
+
+        private IGameCommand DecideFateMoon(GameContext ctx)
+        {
+            // Keep the first 2 offered cards (already in context as a subset of Hand)
+            // FateMoonDecisionCommand carries the list of card IDs to keep
+            var keep = ctx.PrivateView.Hand.Count >= 2
+                ? new List<string> { ctx.PrivateView.Hand[0], ctx.PrivateView.Hand[1] }
+                : new List<string>(ctx.PrivateView.Hand);
+            return new FateMoonDecisionCommand(Slot.Index, keep);
         }
 
         // ─── Helpers ──────────────────────────────────────────────────────────────

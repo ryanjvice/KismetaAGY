@@ -35,6 +35,8 @@ namespace Kismeta.Core.Entities
         public IReadOnlyDictionary<string, CardInstance> Cards => _cards;
 
         private readonly GameRuleSet? _rules;
+        /// <summary>Exposes the rule set for GameLoop to call specialized service methods.</summary>
+        public GameRuleSet? Rules => _rules;
 
         public event Action<IGameEvent>? OnEvent;
 
@@ -102,6 +104,20 @@ namespace Kismeta.Core.Entities
                     ? _rules.Harvest.HandleCommune(this, cmd.PlayerId, cmd.SpreadCardIds, cmd.HandCardIds)
                     : CommandResult.NotImplemented(nameof(CommuneCommand)),
 
+                BuyAdeptCommand      cmd => _rules is not null
+                    ? _rules.Harvest.HandleBuyAdept(this, cmd.PlayerId, cmd.AdeptCardId,
+                        cmd.PaymentCardIds, cmd.SwapOutAdeptId)
+                    : CommandResult.NotImplemented(nameof(BuyAdeptCommand)),
+
+                DeclineAdeptCommand  cmd => _rules is not null
+                    ? _rules.Harvest.HandleDeclineAdept(this, cmd.PlayerId, cmd.AdeptCardId)
+                    : CommandResult.NotImplemented(nameof(DeclineAdeptCommand)),
+
+                // ── Spring extensions ─────────────────────────────────────────────
+                BuildAstralHouseCommand  cmd => _rules?.AstralHouse is not null
+                    ? _rules.AstralHouse.TryBuild(this, cmd.PlayerId, cmd.Sign, cmd.PaymentCardIds)
+                    : CommandResult.NotImplemented(nameof(BuildAstralHouseCommand)),
+
                 // ── Summer ────────────────────────────────────────────────────────
                 ActivateCrucibleCommand cmd => _rules is not null
                     ? _rules.Crucible.TryActivate(this, cmd.PlayerId, cmd.SlotIndex, cmd.CardInstanceIds)
@@ -136,6 +152,19 @@ namespace Kismeta.Core.Entities
                 TransitAgeCommand    _   => _rules is not null
                     ? RunVoid(() => _rules.Winter.Transit(this))
                     : CommandResult.NotImplemented(nameof(TransitAgeCommand)),
+
+                // ── Fate async decisions ──────────────────────────────────────────
+                FateMoonDecisionCommand   cmd => _rules?.FateResolver is not null
+                    ? _rules.FateResolver.HandleMoonDecision(this, cmd.PlayerId, cmd.KeepCardIds)
+                    : CommandResult.NotImplemented(nameof(FateMoonDecisionCommand)),
+
+                FateReagentChoiceCommand  cmd => _rules?.FateResolver is not null
+                    ? _rules.FateResolver.HandleFoolReagentChoice(this, cmd.PlayerId, cmd.ReagentType)
+                    : CommandResult.NotImplemented(nameof(FateReagentChoiceCommand)),
+
+                FateLoversChoiceCommand   cmd => _rules?.FateResolver is not null
+                    ? _rules.FateResolver.HandleLoversChoice(this, cmd.PlayerId, cmd.DrawCards, cmd.ChosenReagent)
+                    : CommandResult.NotImplemented(nameof(FateLoversChoiceCommand)),
 
                 // ── Pass actions ──────────────────────────────────────────────────
                 PassActionCommand        _ => CommandResult.Ok("Action passed."),

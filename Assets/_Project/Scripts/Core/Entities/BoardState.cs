@@ -22,7 +22,52 @@ namespace Kismeta.Core.Entities
         // Stasis zones indexed by player id
         public Dictionary<int, bool> StasisOccupancy { get; } = new();
 
+        // Pending Adept purchase decisions dequeued by GameLoop after each player's Harvest
+        // Each entry is (playerId, adeptCardId)
+        public List<(int PlayerId, string AdeptCardId)> PendingAdeptDecisions { get; } = new();
+
+        // Pending Fate card async decisions (Moon, Fool, Lovers) after all Harvests
+        // Each entry is (playerId, fateCardId, arcanaNumber)
+        public List<(int PlayerId, string FateCardId, int ArcanaNumber)> PendingFateDecisions { get; } = new();
+
+        // Per-round Cosmic Effect flags set by CosmicEffectService; cleared each Transit
+        public CosmicEffectFlags CosmicEffect { get; set; }
+
+        // Whether duels this round resolve as best-of-3 (set by Justice Fate card)
+        public bool BestOfThreeDuels { get; set; }
+
         public int CommonDeckCount    => CommonDeck.Count;
         public int CommonDiscardCount => CommonDiscard.Count;
+    }
+
+    /// <summary>
+    /// Flags derived from the active Cosmic Age sign that modify harvest and crafting rules.
+    /// Reset to default each Winter Transit.
+    /// </summary>
+    public struct CosmicEffectFlags
+    {
+        /// <summary>Bonus added to the base Harvest of 3 (Aries +1, Libra +1).</summary>
+        public int HarvestBaseBonus;
+
+        /// <summary>Court Cards of this Suit count as any Suit for crafting/activation. None = no effect.</summary>
+        public Suit WildCourtSuit;
+
+        /// <summary>Craft Salt for 2 cards instead of 3 (Cancer, Capricorn).</summary>
+        public bool SaltCostsTwo;
+
+        /// <summary>Craft this Suit's Reagent for 2 cards instead of 3 (requires lit Cauldron).</summary>
+        public Suit CheapCraftSuit;
+
+        /// <summary>The Reagent type that benefits from the cheap-craft rule.</summary>
+        public ReagentType CheapCraftReagent;
+
+        public static CosmicEffectFlags Default => new()
+        {
+            HarvestBaseBonus  = 0,
+            WildCourtSuit     = Suit.None,
+            SaltCostsTwo      = false,
+            CheapCraftSuit    = Suit.None,
+            CheapCraftReagent = ReagentType.Salt,
+        };
     }
 }

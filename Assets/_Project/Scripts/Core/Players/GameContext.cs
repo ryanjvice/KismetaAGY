@@ -15,13 +15,20 @@ namespace Kismeta.Core.Players
         public int ActivePlayerId            { get; }
         public ActionHint Hint               { get; }
 
+        /// <summary>
+        /// When Hint == AdeptDecision: the instance ID of the Adept card being offered.
+        /// When Hint == FateMoonDecision / FateLoversDecision etc.: the Fate card's instance ID.
+        /// </summary>
+        public string? PendingCardId { get; }
+
         public GameContext(GamePublicView publicView, PlayerPrivateView privateView,
-            int activePlayerId, ActionHint hint = ActionHint.None)
+            int activePlayerId, ActionHint hint = ActionHint.None, string? pendingCardId = null)
         {
             PublicView    = publicView;
             PrivateView   = privateView;
             ActivePlayerId = activePlayerId;
             Hint           = hint;
+            PendingCardId  = pendingCardId;
         }
     }
 }

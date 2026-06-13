@@ -26,10 +26,21 @@ namespace Kismeta.Core.Rules
         public CommandResult TryCraft(GameSession session, int playerId,
             ReagentType reagentType, IReadOnlyList<string> cardInstanceIds)
         {
-            if (cardInstanceIds.Count < CardCost)
-                return CommandResult.Invalid($"Crafting requires {CardCost} cards.");
+            var player   = session.Players[playerId];
+            var cosEffect = session.Board.CosmicEffect;
 
-            var player = session.Players[playerId];
+            // Determine the effective card cost for this crafting action
+            int effectiveCost = CardCost; // default: 3
+
+            if (reagentType == ReagentType.Salt && cosEffect.SaltCostsTwo)
+                effectiveCost = 2;
+            else if (reagentType != ReagentType.Salt
+                     && cosEffect.CheapCraftReagent == reagentType
+                     && cosEffect.CheapCraftSuit    != Suit.None)
+                effectiveCost = 2;
+
+            if (cardInstanceIds.Count < effectiveCost)
+                return CommandResult.Invalid($"Crafting {reagentType} requires {effectiveCost} cards.");
 
             // Validate ownership
             var playerCards = BuildPlayerCardSet(player);
@@ -39,14 +50,14 @@ namespace Kismeta.Core.Rules
 
             if (reagentType == ReagentType.Salt)
             {
-                // Salt: any 3 cards
+                // Salt: any cards (count already validated above)
                 DiscardCards(session, player, cardInstanceIds);
                 player.AddReagent(ReagentType.Salt);
                 session.EmitEvent(new ReagentCraftedEvent(playerId, ReagentType.Salt));
                 return CommandResult.Ok("Crafted 1 Salt.");
             }
 
-            // Elemental reagent: all cards must share the required Suit
+            // Elemental reagent: all cards must share the required Suit (or be Wild Court Cards)
             var requiredSuit = Correspondence.SuitFor(reagentType);
             if (requiredSuit == Suit.None)
                 return CommandResult.Invalid($"Unknown reagent type: {reagentType}.");
@@ -55,7 +66,15 @@ namespace Kismeta.Core.Rules
             {
                 var inst = session.GetCard(id);
                 var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
-                if (def?.Suit != requiredSuit)
+                if (def == null)
+                    return CommandResult.Invalid($"Unknown card {id}.");
+
+                bool suitMatch = def.Suit == requiredSuit;
+                bool wildMatch = cosEffect.WildCourtSuit != Suit.None
+                    && def.Suit == cosEffect.WildCourtSuit
+                    && IsCourtCard(def.Rank);
+
+                if (!suitMatch && !wildMatch)
                     return CommandResult.Invalid(
                         $"All cards must be {requiredSuit} to craft {reagentType}.");
             }
@@ -70,6 +89,9 @@ namespace Kismeta.Core.Rules
             session.EmitEvent(new ReagentCraftedEvent(playerId, reagentType));
             return CommandResult.Ok($"Crafted 1 {reagentType}.");
         }
+
+        private static bool IsCourtCard(Rank rank) =>
+            rank == Rank.Princess || rank == Rank.Knight || rank == Rank.Queen || rank == Rank.King;
 
         private static HashSet<string> BuildPlayerCardSet(PlayerState player)
         {

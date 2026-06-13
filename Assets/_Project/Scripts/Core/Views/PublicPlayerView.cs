@@ -27,6 +27,7 @@ namespace Kismeta.Core.Views
 
         public IReadOnlyDictionary<ReagentType, int> Reagents { get; }
         public IReadOnlyCollection<ZodiacSign> AstralHouses { get; }
+        public int UnplacedAstralHouses { get; }
         public IReadOnlyList<CrucibleSlotView> CrucibleSlots { get; }
 
         private PublicPlayerView(PlayerState p)
@@ -47,7 +48,8 @@ namespace Kismeta.Core.Views
                 reagents[t] = p.GetReagent(t);
             Reagents = reagents;
 
-            AstralHouses = p.AstralHouses;
+            AstralHouses         = p.AstralHouses;
+            UnplacedAstralHouses = p.UnplacedAstralHouses;
 
             var slots = new List<CrucibleSlotView>(p.CrucibleSlots.Count);
             foreach (var slot in p.CrucibleSlots)

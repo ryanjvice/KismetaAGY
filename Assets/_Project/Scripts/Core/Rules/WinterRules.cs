@@ -58,13 +58,17 @@ namespace Kismeta.Core.Rules
 
         /// <summary>
         /// Winter Step 4: shuffle all common discard back into the deck, increment round,
-        /// and rotate the Agekeeper key clockwise.
+        /// rotate the Agekeeper key clockwise, and clear per-round Cosmic Effect flags.
         /// </summary>
         public void Transit(GameSession session)
         {
             ReshuffleCommonDeck(session);
 
             session.Board.RoundNumber++;
+
+            // Clear all per-round effect flags
+            session.Board.CosmicEffect    = CosmicEffectFlags.Default;
+            session.Board.BestOfThreeDuels = false;
 
             int newAgekeeper = RotateAgekeeper(session);
             session.EmitEvent(new AgeTransitedEvent(session.Board.RoundNumber, newAgekeeper));

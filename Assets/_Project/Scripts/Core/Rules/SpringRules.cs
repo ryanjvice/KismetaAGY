@@ -25,11 +25,17 @@ namespace Kismeta.Core.Rules
     {
         private readonly Random _rng;
         private readonly ICardDatabase _db;
+        private readonly CosmicEffectService? _cosmicEffect;
+        private readonly FateCardResolver? _fateResolver;
 
-        public SpringRules(ICardDatabase db, int? seed = null)
+        public SpringRules(ICardDatabase db, int? seed = null,
+            CosmicEffectService? cosmicEffect = null,
+            FateCardResolver? fateResolver = null)
         {
-            _db  = db;
-            _rng = seed.HasValue ? new Random(seed.Value) : new Random();
+            _db           = db;
+            _rng          = seed.HasValue ? new Random(seed.Value) : new Random();
+            _cosmicEffect = cosmicEffect;
+            _fateResolver = fateResolver;
         }
 
         // ─── Step 1: Cosmic Age roll ──────────────────────────────────────────────
@@ -39,6 +45,7 @@ namespace Kismeta.Core.Rules
             var sign = RollSign();
             session.Board.CosmicAgeSign = sign;
             session.EmitEvent(new CosmicAgeSetEvent(sign, Correspondence.PlanetFor(sign), Correspondence.ElementFor(sign)));
+            _cosmicEffect?.Apply(session, sign);
         }
 
         // ─── Step 2: Personal Zodiac roll ─────────────────────────────────────────
@@ -77,7 +84,20 @@ namespace Kismeta.Core.Rules
                 }
             }
 
-            return 3 + bonus;
+            // Adept card Aspects: each Adept in Arcanum contributes its Sign independently
+            foreach (var cardId in player.Arcanum)
+            {
+                var inst = session.GetCard(cardId);
+                var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
+                if (def?.MajorArcanaType == MajorArcanaType.Adept && def.Sign != ZodiacSign.None)
+                    bonus += AlignmentBonus(def.Sign, cosmicSign);
+            }
+
+            // Astral Houses: each built house's sign is an independent Alignment source
+            foreach (var houseSign in player.AstralHouses)
+                bonus += AlignmentBonus(houseSign, cosmicSign);
+
+            return 3 + session.Board.CosmicEffect.HarvestBaseBonus + bonus;
         }
 
         public void ExecuteHarvest(GameSession session, int playerId)
@@ -101,16 +121,30 @@ namespace Kismeta.Core.Rules
 
                 if (def?.MajorArcanaType == MajorArcanaType.Fate)
                 {
-                    // Fate cards go directly to Arcanum, face-up — never enter Hand or Spread
+                    // Fate cards go directly to Arcanum, face-up — resolve effect immediately or queue async
                     inst.MoveTo(CardZone.Arcanum, playerId);
                     player.Arcanum.Add(id);
                     drawn.Add(id);
+
+                    if (_fateResolver != null)
+                    {
+                        // If auto-resolved, we're done; otherwise queue for GameLoop to handle
+                        bool resolved = _fateResolver.Resolve(session, playerId, id, def.ArcanaNumber);
+                        if (!resolved)
+                            session.Board.PendingFateDecisions.Add((playerId, id, def.ArcanaNumber));
+                    }
+                    else
+                    {
+                        // No resolver wired (e.g. tests): just queue
+                        session.Board.PendingFateDecisions.Add((playerId, id, def.ArcanaNumber));
+                    }
                 }
                 else if (def?.MajorArcanaType == MajorArcanaType.Adept)
                 {
-                    // Adept cards must be purchased to keep; discard until purchase mechanic is implemented
-                    inst.MoveTo(CardZone.Discard, -1);
-                    session.Board.CommonDiscard.Add(id);
+                    // Adept sits in a limbo zone until the player buys or declines
+                    // Keep it in the card registry (no zone yet — leave as Deck temporarily)
+                    inst.MoveTo(CardZone.Deck, -1); // neutral placeholder zone
+                    session.Board.PendingAdeptDecisions.Add((playerId, id));
                 }
                 else
                 {
@@ -124,11 +158,113 @@ namespace Kismeta.Core.Rules
             session.EmitEvent(new CardsDrawnEvent(playerId, drawn.Count));
         }
 
+        // ─── Step 4 extension: Adept buy / decline ─────────────────────────────────
+
+        public CommandResult HandleBuyAdept(GameSession session, int playerId, string adeptCardId,
+            IReadOnlyList<string> paymentCardIds, string? swapOutAdeptId = null)
+        {
+            var player = session.Players[playerId];
+
+            if (paymentCardIds.Count != 3)
+                return CommandResult.Invalid("Purchasing an Adept costs exactly 3 cards.");
+
+            // Ownership check
+            var playerCards = BuildCardSet(player);
+            foreach (var id in paymentCardIds)
+                if (!playerCards.Contains(id))
+                    return CommandResult.Invalid($"Card {id} does not belong to player {playerId}.");
+
+            // Arcanum limit: 2 (3 with The Hermit in Arcanum)
+            int limit      = ArcanaLimitFor(session, player);
+            int adeptCount = CountAdeptsInArcanum(session, player);
+
+            if (adeptCount >= limit)
+            {
+                if (swapOutAdeptId == null)
+                    return CommandResult.Invalid(
+                        $"Arcanum is full ({limit} Adepts). Specify SwapOutAdeptId to swap.");
+
+                // Remove the outgoing Adept and return it to Common Deck
+                if (!player.Arcanum.Remove(swapOutAdeptId))
+                    return CommandResult.Invalid($"SwapOut card {swapOutAdeptId} not in Arcanum.");
+
+                var outInst = session.GetCard(swapOutAdeptId);
+                outInst?.MoveTo(CardZone.Deck, -1);
+                // Shuffle back into deck rather than discard (swap rule)
+                session.Board.CommonDeck.Push(swapOutAdeptId);
+            }
+
+            // Discard the 3 payment cards
+            foreach (var id in paymentCardIds)
+            {
+                player.Spread.Remove(id);
+                player.Hand.Remove(id);
+                session.Board.CommonDiscard.Add(id);
+                session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
+            }
+
+            // Place the Adept into Arcanum
+            session.GetCard(adeptCardId)?.MoveTo(CardZone.Arcanum, playerId);
+            player.Arcanum.Add(adeptCardId);
+
+            session.EmitEvent(new AdeptPurchasedEvent(playerId, adeptCardId));
+            return CommandResult.Ok("Adept purchased.");
+        }
+
+        public CommandResult HandleDeclineAdept(GameSession session, int playerId, string adeptCardId)
+        {
+            // Discard the Adept back to the Common Discard pile
+            session.GetCard(adeptCardId)?.MoveTo(CardZone.Discard, -1);
+            session.Board.CommonDiscard.Add(adeptCardId);
+            session.EmitEvent(new AdeptDeclinedEvent(playerId, adeptCardId));
+            return CommandResult.Ok("Adept declined.");
+        }
+
+        // ─── Helpers ──────────────────────────────────────────────────────────────
+
+        /// <summary>Max Adept cards allowed in Arcanum. The Hermit grants +1.</summary>
+        private int ArcanaLimitFor(GameSession session, PlayerState player)
+        {
+            foreach (var id in player.Arcanum)
+            {
+                var inst = session.GetCard(id);
+                var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
+                if (def?.ArcanaNumber == 9) // The Hermit
+                    return 3;
+            }
+            return 2;
+        }
+
+        /// <summary>Count only Adept-type cards in the player's Arcanum.</summary>
+        private int CountAdeptsInArcanum(GameSession session, PlayerState player)
+        {
+            int count = 0;
+            foreach (var id in player.Arcanum)
+            {
+                var inst = session.GetCard(id);
+                var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
+                if (def?.MajorArcanaType == MajorArcanaType.Adept)
+                    count++;
+            }
+            return count;
+        }
+
+        private static HashSet<string> BuildCardSet(PlayerState player)
+        {
+            var set = new HashSet<string>(player.Spread.Count + player.Hand.Count);
+            foreach (var id in player.Spread) set.Add(id);
+            foreach (var id in player.Hand)   set.Add(id);
+            return set;
+        }
+
         // ─── Step 4: Commune ──────────────────────────────────────────────────────
 
         public CommandResult HandleCommune(GameSession session, int playerId,
             IReadOnlyList<string> spreadCardIds, IReadOnlyList<string> handCardIds)
         {
+            if (session.CardLockActive)
+                return CommandResult.Invalid("Cards are locked until Winter.");
+
             var player  = session.Players[playerId];
 
             // All provided IDs must currently belong to this player
@@ -186,6 +322,8 @@ namespace Kismeta.Core.Rules
                     return true;
             return false;
         }
+
+        public static void ReshuffleDiscardStatic(GameSession session) => ReshuffleDiscard(session);
 
         private static void ReshuffleDiscard(GameSession session)
         {
