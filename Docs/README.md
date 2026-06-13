@@ -76,6 +76,27 @@ Quick-lookup tables for use during development and play.
 
 ---
 
+## Reference Images
+
+Photography and visual reference of the physical game — 4-player table shots across all phases, component close-ups, board overheads, and card scans. Used to guide mobile UI implementation.
+
+- [Image index & naming conventions](_images/README.md)
+
+| Subfolder | Contents |
+|-----------|---------|
+| [`_images/gameplay/spring/`](_images/gameplay/spring/) | Phase 1 — dice rolls, Harvest, card layout |
+| [`_images/gameplay/summer/`](_images/gameplay/summer/) | Phase 2 — Crafting, Duels, Gambits, Trades |
+| [`_images/gameplay/autumn/`](_images/gameplay/autumn/) | Phase 3 — Opposition, Forge, Stasis |
+| [`_images/gameplay/winter/`](_images/gameplay/winter/) | Phase 4 — Card Unlock, Wager, reset |
+| [`_images/setup/`](_images/setup/) | Pre-game table setup |
+| [`_images/components/`](_images/components/) | Dice, tokens, Stones, Meeples |
+| [`_images/board/`](_images/board/) | Great Year Board; Zodiac Wheel |
+| [`_images/cards/`](_images/cards/) | Kismeta deck and Crucible deck card photography |
+
+> Images are tracked by Git LFS. See [`_images/README.md`](_images/README.md) for the naming convention and how to add new images.
+
+---
+
 ## Known discrepancies in source material
 
 These inconsistencies exist in the canonical source files. They are preserved as-is in all generated output and should be reconciled in a dedicated rules pass before implementing game logic.
