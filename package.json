@@ -1,0 +1,7 @@
+{
+  "name": "kismeta-agy",
+  "private": true,
+  "scripts": {
+    "docs:sync": "node tools/docs-sync/sync-docs.mjs"
+  }
+}

@@ -1,0 +1,258 @@
+{
+  "handMaintained": [
+    "README.md",
+    "Cards/README.md"
+  ],
+
+  "linkRewrites": [
+    {
+      "from": "/games/alchemists-of-the-great-year/rules/major-arcana/",
+      "to": "../Cards/major-arcana/overview.md"
+    }
+  ],
+
+  "entries": [
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/introduction.md",
+      "start": { "text": "# KISMETA", "exact": true },
+      "end": "# COMPONENTS",
+      "title": "# Introduction"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/components.md",
+      "start": "# COMPONENTS",
+      "end": "# GAME OVERVIEW",
+      "title": "# Components"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/overview.md",
+      "start": "# GAME OVERVIEW",
+      "end": "# SETUP",
+      "title": "# Game Overview"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/setup.md",
+      "start": "# SETUP",
+      "end": "# ROUND OVERVIEW",
+      "title": "# Setup"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/round-overview.md",
+      "start": "# ROUND OVERVIEW",
+      "end": "## PHASE 1: 🌸 SPRING",
+      "title": "# Round Overview"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/phases/spring.md",
+      "start": "## PHASE 1: 🌸 SPRING",
+      "end": "## PHASE 2: ☀️ SUMMER",
+      "title": "# Phase 1: Spring",
+      "seeAlso": [
+        { "label": "Round Overview", "path": "../round-overview.md" },
+        { "label": "Cosmic Ages & Effects", "path": "../../Reference/cosmic-ages.md" }
+      ]
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/phases/summer.md",
+      "start": "## PHASE 2: ☀️ SUMMER",
+      "end": "## PHASE 3: 🍂 AUTUMN",
+      "title": "# Phase 2: Summer",
+      "seeAlso": [
+        { "label": "Glossary (Duel, Gambit, Trade)", "path": "../../Glossary.md" },
+        { "label": "Crucible Overview", "path": "../../Cards/crucible/overview.md" }
+      ]
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/phases/autumn.md",
+      "start": "## PHASE 3: 🍂 AUTUMN",
+      "end": "## PHASE 4: ⛰️ WINTER",
+      "title": "# Phase 3: Autumn"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/phases/winter.md",
+      "start": "## PHASE 4: ⛰️ WINTER",
+      "end": "# WINNING THE GAME",
+      "title": "# Phase 4: Winter"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/winning.md",
+      "start": "# WINNING THE GAME",
+      "end": "# QUICK TIPS",
+      "title": "# Winning the Game"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/quick-tips.md",
+      "start": "# QUICK TIPS",
+      "end": "# STRATEGY GUIDE",
+      "title": "# Quick Tips"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Rules/strategy-guide.md",
+      "start": "# STRATEGY GUIDE",
+      "end": "# APPENDIX",
+      "title": "# Strategy Guide"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Lore/prologue.md",
+      "start": "## LORE: PROLOGUE",
+      "end": "## Cosmic Ages & Effects",
+      "title": "# Lore: Prologue"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Reference/cosmic-ages.md",
+      "start": "## Cosmic Ages & Effects",
+      "end": "## Correspondence",
+      "title": "# Cosmic Ages & Effects"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Reference/correspondence.md",
+      "start": "## Correspondence",
+      "end": "## Kismeta Cards",
+      "title": "# Correspondence"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Reference/major-arcana-rules.md",
+      "start": "## Kismeta Cards",
+      "end": "## Commune:",
+      "title": "# Kismeta Cards Reference",
+      "seeAlso": [
+        { "label": "Major Arcana card effects", "path": "../Cards/major-arcana/overview.md" }
+      ]
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Reference/card-zones.md",
+      "start": "## Commune:",
+      "end": "# GLOSSARY OF TERMS",
+      "title": "# Card Zones: Spread, Hand & Arcanum",
+      "seeAlso": [
+        { "label": "Glossary", "path": "../Glossary.md" }
+      ]
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Glossary.md",
+      "start": "# GLOSSARY OF TERMS",
+      "end": "# LORE: EPILOGUE",
+      "title": "# Glossary of Terms"
+    },
+    {
+      "source": "Kismeta_GameGuide.md",
+      "output": "Lore/epilogue.md",
+      "start": "# LORE: EPILOGUE",
+      "end": null,
+      "title": "# Lore: Epilogue"
+    },
+
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/major-arcana/overview.md",
+      "start": null,
+      "end": "### Fate Cards",
+      "title": "# Major Arcana Overview"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/major-arcana/fates.md",
+      "start": "### Fate Cards",
+      "end": "### ADEPT CARDS",
+      "title": "# Fate Cards"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/major-arcana/adepts.md",
+      "start": "### ADEPT CARDS",
+      "end": "## CRUCIBLE CARDS",
+      "title": "# Adept Cards"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/crucible/overview.md",
+      "start": "## CRUCIBLE CARDS",
+      "end": "### GROUP A",
+      "title": "# Crucible Cards Overview"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/crucible/group-a.md",
+      "start": "### GROUP A",
+      "end": "### GROUP B",
+      "title": "# Crucible Group A — Beginner"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/crucible/group-b.md",
+      "start": "### GROUP B",
+      "end": "### GROUP C",
+      "title": "# Crucible Group B — Standard"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/crucible/group-c.md",
+      "start": "### GROUP C",
+      "end": "### GROUP D",
+      "title": "# Crucible Group C — Advanced"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/crucible/group-d.md",
+      "start": "### GROUP D",
+      "end": "## MINOR ARCANA",
+      "title": "# Crucible Group D — Mastery"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/minor-arcana/overview.md",
+      "start": "## MINOR ARCANA",
+      "end": "## Cups ·",
+      "title": "# Minor Arcana Overview",
+      "seeAlso": [
+        { "label": "Correspondence", "path": "../../Reference/correspondence.md" }
+      ]
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/minor-arcana/cups.md",
+      "start": "## Cups ·",
+      "end": "## Pentacles ·",
+      "title": "# Cups — Water · Aqua Regia · Blue Cauldron"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/minor-arcana/pentacles.md",
+      "start": "## Pentacles ·",
+      "end": "## Swords ·",
+      "title": "# Pentacles — Earth · Vitriol · Green Cauldron"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/minor-arcana/swords.md",
+      "start": "## Swords ·",
+      "end": "## Wands ·",
+      "title": "# Swords — Air · Quicksilver · Yellow Cauldron"
+    },
+    {
+      "source": "Kismeta_CardReference.md",
+      "output": "Cards/minor-arcana/wands.md",
+      "start": "## Wands ·",
+      "end": null,
+      "title": "# Wands — Fire · Sulphur · Red Cauldron"
+    }
+  ]
+}

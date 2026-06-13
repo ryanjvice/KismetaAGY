@@ -169,3 +169,11 @@ Packages/packages-lock.json linguist-generated
 
 # Exceptions for .asset files such as lightning pre-baking
 LightingData.asset     binary
+
+# Kismeta docs: source monoliths are canonical; generated split files are text
+Docs/_source/**        text eol=lf
+Docs/Rules/**          text eol=lf linguist-generated
+Docs/Reference/**      text eol=lf linguist-generated
+Docs/Lore/**           text eol=lf linguist-generated
+Docs/Cards/**          text eol=lf
+Docs/Glossary.md       text eol=lf linguist-generated
