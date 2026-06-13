@@ -8,7 +8,7 @@ The Kismeta Deck (blue cover) is your primary tool across the Great Year. Its 13
 
 **Minor Arcana** (112 cards) - the building blocks of the Great Work. Each card has four traits:
 
-- **Rank** - 2–10, plus Page (11), Knight (12), Queen (13), King (14), Ace (1 or 15)
+- **Rank** - 2–10, plus Princess (11), Knight (12), Queen (13), King (14), Ace (1 or 15)
 - **Suit** - Wands (Fire/Red), Cups (Water/Blue), Pentacles (Earth/Green), Swords (Air/Yellow)
 - **Planet** - one of seven planets; used for Aspect Alignments
 - **Card Effects** - special effects that activate under conditions printed on the card

@@ -82,12 +82,6 @@ If you rename a heading in a `_source/` file that is referenced as a `start` or 
 
 ---
 
-## Known discrepancies in the source material
+## Known discrepancies
 
-These inconsistencies exist in the source files. They are preserved as-is in generated output; reconcile them in a future rules pass:
-
-| Issue | Locations |
-|-------|-----------|
-| Base Harvest count: **3** in phase rules tables vs **2** in Glossary | Spring phase section; Glossary entry for "Harvest" |
-| Major Arcana count: **12 Adept / 10 Fate** in Components vs **11 / 11** in Glossary | Components section; Glossary entry for "Major Arcana" |
-| Court rank naming: **Princess** in Card Reference vs **Page** in Game Guide | Minor Arcana suit files; Game Guide spring/harvest rules |
+None currently. If you spot an inconsistency between sections, fix it in `_source/` and re-run sync. If you want to flag it for a future rules pass without fixing it immediately, add a note here.

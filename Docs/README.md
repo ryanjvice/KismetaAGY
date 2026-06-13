@@ -97,18 +97,6 @@ Photography and visual reference of the physical game — 4-player table shots a
 
 ---
 
-## Known discrepancies in source material
-
-These inconsistencies exist in the canonical source files. They are preserved as-is in all generated output and should be reconciled in a dedicated rules pass before implementing game logic.
-
-| Issue | Affected files |
-|-------|---------------|
-| Base Harvest is **3** in phase rules but **2** in Glossary | [Spring](Rules/phases/spring.md), [Glossary](Glossary.md) |
-| Major Arcana count: **12 Adept / 10 Fate** in Components vs **11 / 11** in Glossary | [Components](Rules/components.md), [Glossary](Glossary.md) |
-| Court rank naming: **Princess** in Card Reference vs **Page** in Game Guide | [Minor Arcana](Cards/minor-arcana/overview.md), [Spring phase](Rules/phases/spring.md) |
-
----
-
 ## Source & tooling
 
 | Path | Role |
