@@ -152,10 +152,15 @@ namespace Kismeta.Core.Players
             {
                 int playerId = _session.Players[currentIdx].PlayerId;
                 var cmd      = await RequestAsync(playerId, hint, ct);
-                Apply(cmd);
+                var result   = Apply(cmd);
 
+                // A player is considered to have "given up their turn" if they:
+                //   (a) explicitly passed, OR
+                //   (b) submitted a command that the rule engine rejected (nothing changed).
+                // Only a successfully applied non-pass action resets the streak.
                 bool passed = cmd is PassActionCommand or PassCrucibleActionCommand;
-                consecutivePasses = passed ? consecutivePasses + 1 : 0;
+                bool acted  = !passed && result.IsOk;
+                consecutivePasses = acted ? 0 : consecutivePasses + 1;
 
                 currentIdx = (currentIdx + 1) % playerCount;
             }

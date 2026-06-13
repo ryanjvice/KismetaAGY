@@ -84,16 +84,27 @@ namespace Kismeta.Core.Players
             var pid    = Slot.Index;
             var player = ctx.PublicView.Players[pid];
 
-            // Temper if we have a Fired slot (from a prior round)
+            // Temper if stone is currently Forging (completed a full round in the Forge)
             if (player.StoneState == StoneState.Forging)
                 return new TemperCommand(pid);
 
-            // Fire the first Active slot if stone is on Mantle
-            if (player.StoneState == StoneState.Tempering || player.StoneState == StoneState.Stasis)
+            // Fire the first Active slot — only if we have at least one non-Salt reagent
+            // to cover the Alchemical Formula cost (exact cost unknown without the DB,
+            // but zero non-Salt reagents guarantees failure, so skip it).
+            if (player.StoneState == StoneState.Tempering)
             {
-                for (int i = 0; i < player.CrucibleSlots.Count; i++)
-                    if (player.CrucibleSlots[i].State == CrucibleCardState.Active)
-                        return new FireStoneCommand(pid, i);
+                bool hasFireReagents =
+                    player.Reagents.TryGetValue(ReagentType.Sulphur,    out int su) && su > 0 ||
+                    player.Reagents.TryGetValue(ReagentType.AquaRegia,  out int ar) && ar > 0 ||
+                    player.Reagents.TryGetValue(ReagentType.Vitriol,    out int vi) && vi > 0 ||
+                    player.Reagents.TryGetValue(ReagentType.Quicksilver,out int qk) && qk > 0;
+
+                if (hasFireReagents)
+                {
+                    for (int i = 0; i < player.CrucibleSlots.Count; i++)
+                        if (player.CrucibleSlots[i].State == CrucibleCardState.Active)
+                            return new FireStoneCommand(pid, i);
+                }
             }
 
             return new PassCrucibleActionCommand(pid);
