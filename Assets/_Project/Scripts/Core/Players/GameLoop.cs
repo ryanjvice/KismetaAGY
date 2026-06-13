@@ -159,16 +159,19 @@ namespace Kismeta.Core.Players
                         }
                         break;
 
-                    case 6: // Lovers: drawer picks a target; target chooses the reward
-                        Log($"Spring — Fate: The Lovers — P{playerId} picks target");
+                    case 6: // Lovers: target chooses reward; BOTH drawer and target receive it
                         // Simple fallback: target = next player in sequence
                         int targetId = (playerId + 1) % _session.Players.Count;
                         if (targetId == playerId) targetId = (targetId + 1) % _session.Players.Count;
-                        Log($"Spring — Fate: The Lovers — P{targetId} chooses reward for P{playerId}");
+                        Log($"Spring — Fate: The Lovers — P{targetId} chooses reward (both players receive it)");
                         var loversCmd = await RequestAsync(targetId, ActionHint.FateLoversChoice, ct, fateCardId);
-                        // Lovers command contains the actual effect for the drawer
                         if (loversCmd is FateLoversChoiceCommand lc)
+                        {
+                            // Drawer receives the reward
                             Apply(new FateLoversChoiceCommand(playerId, lc.DrawCards, lc.ChosenReagent));
+                            // Target (chooser) also receives the same reward
+                            Apply(new FateLoversChoiceCommand(targetId, lc.DrawCards, lc.ChosenReagent));
+                        }
                         break;
                 }
             }

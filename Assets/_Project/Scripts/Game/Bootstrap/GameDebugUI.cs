@@ -659,16 +659,16 @@ namespace Kismeta.Game.Bootstrap
 
         private void DrawFateLoversChoicePanel(HotSeatController hs, int pid)
         {
-            GUILayout.Label("── THE LOVERS — Choose a Reward for the Drawer ──");
-            GUILayout.Space(6f);
-            GUILayout.Label("You decide what the other player receives:");
+            GUILayout.Label("── THE LOVERS ──");
             GUILayout.Space(4f);
+            GUILayout.Label("Choose a reward — BOTH players receive it:");
+            GUILayout.Space(6f);
 
-            if (GUILayout.Button("Give them: Draw 2 Cards"))
+            if (GUILayout.Button("Both Draw 2 Cards"))
                 SubmitAction(hs, new FateLoversChoiceCommand(pid, drawCards: true));
 
             GUILayout.Space(4f);
-            GUILayout.Label("  — or —  Give 1 Reagent:");
+            GUILayout.Label("  — or —  Both Receive 1 Reagent:");
 
             var reagents = new[]
             {
@@ -677,7 +677,7 @@ namespace Kismeta.Game.Bootstrap
             };
             foreach (var r in reagents)
             {
-                if (GUILayout.Button($"Give 1 {r}"))
+                if (GUILayout.Button($"Both receive 1 {r}"))
                     SubmitAction(hs, new FateLoversChoiceCommand(pid, drawCards: false, r));
             }
         }
