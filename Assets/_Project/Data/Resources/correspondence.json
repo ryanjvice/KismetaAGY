@@ -1,0 +1,30 @@
+[
+  {
+    "color": "Red",
+    "element": "Fire",
+    "suit": "Wands",
+    "reagent": "Sulphur",
+    "cauldron": "Red"
+  },
+  {
+    "color": "Blue",
+    "element": "Water",
+    "suit": "Cups",
+    "reagent": "AquaRegia",
+    "cauldron": "Blue"
+  },
+  {
+    "color": "Green",
+    "element": "Earth",
+    "suit": "Pentacles",
+    "reagent": "Vitriol",
+    "cauldron": "Green"
+  },
+  {
+    "color": "Yellow",
+    "element": "Air",
+    "suit": "Swords",
+    "reagent": "Quicksilver",
+    "cauldron": "Yellow"
+  }
+]

@@ -2,6 +2,7 @@
   "name": "kismeta-agy",
   "private": true,
   "scripts": {
-    "docs:sync": "node tools/docs-sync/sync-docs.mjs"
+    "docs:sync": "node tools/docs-sync/sync-docs.mjs",
+    "data:sync": "node tools/data-sync/export-all.mjs"
   }
 }

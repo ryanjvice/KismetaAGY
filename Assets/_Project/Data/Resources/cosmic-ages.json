@@ -1,0 +1,74 @@
+[
+  {
+    "sign": "Aries",
+    "planet": "Mars",
+    "element": "Fire",
+    "effect": "+1 Base Harvest Card each round."
+  },
+  {
+    "sign": "Taurus",
+    "planet": "Venus",
+    "element": "Earth",
+    "effect": "Court Cards of Pentacles are a Wild Suit."
+  },
+  {
+    "sign": "Gemini",
+    "planet": "Mercury",
+    "element": "Air",
+    "effect": "Craft Quicksilver with 2 Swords cards (Cauldron must be lit)."
+  },
+  {
+    "sign": "Cancer",
+    "planet": "Sun/Moon",
+    "element": "Water",
+    "effect": "Craft Salt for any 2 cards."
+  },
+  {
+    "sign": "Leo",
+    "planet": "Sun/Moon",
+    "element": "Fire",
+    "effect": "Court Cards of Wands are a Wild Suit."
+  },
+  {
+    "sign": "Virgo",
+    "planet": "Mercury",
+    "element": "Earth",
+    "effect": "Craft Vitriol with 2 Pentacles cards (Cauldron must be lit)."
+  },
+  {
+    "sign": "Libra",
+    "planet": "Venus",
+    "element": "Air",
+    "effect": "+1 Base Harvest Card each round."
+  },
+  {
+    "sign": "Scorpio",
+    "planet": "Mars",
+    "element": "Water",
+    "effect": "Court Cards of Cups are a Wild Suit."
+  },
+  {
+    "sign": "Sagittarius",
+    "planet": "Jupiter",
+    "element": "Fire",
+    "effect": "Craft Sulphur with 2 Wands cards (Cauldron must be lit)."
+  },
+  {
+    "sign": "Capricorn",
+    "planet": "Saturn",
+    "element": "Earth",
+    "effect": "Craft Salt for any 2 cards."
+  },
+  {
+    "sign": "Aquarius",
+    "planet": "Saturn",
+    "element": "Air",
+    "effect": "Court Cards of Swords are a Wild Suit."
+  },
+  {
+    "sign": "Pisces",
+    "planet": "Jupiter",
+    "element": "Water",
+    "effect": "Craft Aqua Regia with 2 Cups cards (Cauldron must be lit)."
+  }
+]

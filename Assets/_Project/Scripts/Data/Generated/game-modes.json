@@ -1,0 +1,32 @@
+[
+  {
+    "id": "Quickplay",
+    "displayName": "Quickplay / First Play",
+    "description": "Recommended for first playthroughs.",
+    "astralHouseCost": "Pay 1 Kismeta Card whose Planet matches your current Zodiac Sign.",
+    "craftingRule": "Discard 3 matching-Suit cards into a lit Cauldron to craft 1 Reagent. No Cauldron modifier.",
+    "crucibleBuild": "Quickplay build (see Crucible deck table in docs).",
+    "magnusModifiers": false
+  },
+  {
+    "id": "Standard",
+    "displayName": "Standard Game",
+    "description": "Recommended once you are familiar with the rules.",
+    "astralHouseCost": "As written in the rules.",
+    "craftingRule": "Standard crafting with Cauldron modifiers.",
+    "crucibleBuild": "Standard build.",
+    "magnusModifiers": false
+  },
+  {
+    "id": "MagnusAlchemist",
+    "displayName": "Magnus Alchemist (Mastery)",
+    "description": "For those returning from previous Great Years.",
+    "astralHouseCost": "As written in the rules.",
+    "craftingRule": "Standard crafting with Cauldron modifiers.",
+    "crucibleBuild": "Magnus Alchemist build.",
+    "magnusModifiers": true,
+    "magnusAlignedRule": "Aligned players trade freely.",
+    "magnusMisalignedTradeRule": "Misaligned players trade 2:1 in favour of the non-initiating player.",
+    "magnusMisalignedCombatBonus": "+1 dice roll or +1 Alignment Points when confronting a Misaligned opponent."
+  }
+]

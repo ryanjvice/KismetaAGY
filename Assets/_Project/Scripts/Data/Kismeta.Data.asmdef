@@ -1,0 +1,16 @@
+{
+    "name": "Kismeta.Data",
+    "rootNamespace": "Kismeta.Data",
+    "references": [
+        "Kismeta.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
