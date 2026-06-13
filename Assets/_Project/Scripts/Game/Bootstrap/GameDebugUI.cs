@@ -528,12 +528,20 @@ namespace Kismeta.Game.Bootstrap
         {
             GUILayout.Label("── THE MOON — Keep 2 of 4 ──");
             GUILayout.Space(4f);
+            GUILayout.Label("Select exactly 2 cards to keep. The rest return to the bottom of the deck.");
+            GUILayout.Space(4f);
 
-            // The 4 drawn Moon cards are temporarily in player's Hand after inline resolve
-            GUILayout.Label("Select exactly 2 cards to keep. The rest return to the deck.");
+            // Show only the 4 Moon-specific drawn cards (tracked on BoardState)
+            var moonCards = _session?.Board.FateMoonDrawnCardIds ?? new System.Collections.Generic.List<string>();
+
+            if (moonCards.Count == 0)
+            {
+                GUILayout.Label("(Waiting for Moon cards to be drawn…)");
+                return;
+            }
 
             _fateMoonScroll = GUILayout.BeginScrollView(_fateMoonScroll, GUILayout.Height(200f));
-            foreach (var id in player.Hand)
+            foreach (var id in moonCards)
             {
                 bool sel = _moonKeep.Contains(id);
                 string label = (sel ? "★ " : "  ") + CardLabel(id);
@@ -550,8 +558,9 @@ namespace Kismeta.Game.Bootstrap
             GUI.enabled = _moonKeep.Count == 2;
             if (GUILayout.Button("Confirm Keep"))
             {
+                var keep = _moonKeep.ToList();
                 _moonKeep.Clear();
-                SubmitAction(hs, new FateMoonDecisionCommand(pid, _moonKeep.ToList()));
+                SubmitAction(hs, new FateMoonDecisionCommand(pid, keep));
             }
             GUI.enabled = true;
         }

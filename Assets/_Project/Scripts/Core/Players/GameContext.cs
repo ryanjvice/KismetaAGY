@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Views;
 
@@ -21,14 +22,22 @@ namespace Kismeta.Core.Players
         /// </summary>
         public string? PendingCardId { get; }
 
+        /// <summary>
+        /// When Hint == FateMoonDecision: the 4 card instance IDs drawn by The Moon.
+        /// The player must keep exactly 2 of these; the rest return to the bottom of the deck.
+        /// </summary>
+        public IReadOnlyList<string>? MoonDrawnCardIds { get; }
+
         public GameContext(GamePublicView publicView, PlayerPrivateView privateView,
-            int activePlayerId, ActionHint hint = ActionHint.None, string? pendingCardId = null)
+            int activePlayerId, ActionHint hint = ActionHint.None, string? pendingCardId = null,
+            IReadOnlyList<string>? moonDrawnCardIds = null)
         {
-            PublicView    = publicView;
-            PrivateView   = privateView;
-            ActivePlayerId = activePlayerId;
-            Hint           = hint;
-            PendingCardId  = pendingCardId;
+            PublicView       = publicView;
+            PrivateView      = privateView;
+            ActivePlayerId   = activePlayerId;
+            Hint             = hint;
+            PendingCardId    = pendingCardId;
+            MoonDrawnCardIds = moonDrawnCardIds;
         }
     }
 }

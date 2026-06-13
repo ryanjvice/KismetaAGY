@@ -138,10 +138,13 @@ namespace Kismeta.Core.Players
                 // Async fates require player input
                 switch (arcanaNum)
                 {
-                    case 18: // Moon: drawer keeps 2 of 4 extra-drawn cards
-                        Log($"Spring — Fate: The Moon — P{playerId} must keep 2");
+                    case 18: // Moon: draw 4 cards, then player keeps 2
+                        Log($"Spring — Fate: The Moon — P{playerId} draws 4, keeps 2");
+                        _session.Board.FateMoonDrawnCardIds.Clear();
+                        DrawCards(_session, playerId, 4, _session.Board.FateMoonDrawnCardIds);
                         var moonCmd = await RequestAsync(playerId, ActionHint.FateMoonDecision, ct, fateCardId);
                         Apply(moonCmd);
+                        _session.Board.FateMoonDrawnCardIds.Clear();
                         break;
 
                     case 0: // Fool: drawer draws 2; each opponent picks 1 Reagent
@@ -266,7 +269,13 @@ namespace Kismeta.Core.Players
 
             var pubView  = GamePublicView.From(_session);
             var privView = PlayerPrivateView.From(_session, playerId);
-            var ctx      = new GameContext(pubView, privView, playerId, hint, pendingCardId);
+
+            // For The Moon decision, pass the 4 drawn card IDs so controllers can validate
+            IReadOnlyList<string>? moonDrawnIds = hint == ActionHint.FateMoonDecision
+                ? _session.Board.FateMoonDrawnCardIds
+                : null;
+
+            var ctx = new GameContext(pubView, privView, playerId, hint, pendingCardId, moonDrawnIds);
 
             if (controller is HotSeatController hs)
             {
@@ -313,8 +322,10 @@ namespace Kismeta.Core.Players
             return 0;
         }
 
-        /// <summary>Draw <paramref name="count"/> cards from CommonDeck into the player's Hand.</summary>
-        private static void DrawCards(GameSession session, int playerId, int count)
+        /// <summary>Draw <paramref name="count"/> cards from CommonDeck into the player's Hand.
+        /// Optionally collects the drawn card IDs into <paramref name="drawnIds"/>.</summary>
+        private static void DrawCards(GameSession session, int playerId, int count,
+            List<string>? drawnIds = null)
         {
             var player = session.Players[playerId];
             for (int i = 0; i < count; i++)
@@ -325,6 +336,7 @@ namespace Kismeta.Core.Players
                 var id = session.Board.CommonDeck.Pop();
                 session.GetCard(id)?.MoveTo(CardZone.Hand, playerId);
                 player.Hand.Add(id);
+                drawnIds?.Add(id);
             }
         }
 

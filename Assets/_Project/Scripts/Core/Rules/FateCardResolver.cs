@@ -178,38 +178,43 @@ namespace Kismeta.Core.Rules
 
         // ── Async fate resolution (called by GameLoop after RequestAsync returns) ──
 
-        /// <summary>Moon (18): Player kept 2 cards; return the rest to the bottom of the deck.</summary>
+        /// <summary>
+        /// Moon (18): Player chose 2 cards to keep from the 4 Moon-drawn cards.
+        /// The unchosen 2 Moon cards return to the bottom of the deck.
+        /// The player's existing hand cards are untouched.
+        /// </summary>
         public CommandResult HandleMoonDecision(GameSession session, int playerId,
             IReadOnlyList<string> keepCardIds)
         {
             if (keepCardIds.Count != 2)
                 return CommandResult.Invalid("The Moon: you must keep exactly 2 cards.");
 
-            var player   = session.Players[playerId];
-            var keepSet  = new HashSet<string>(keepCardIds);
+            var player        = session.Players[playerId];
+            var keepSet       = new HashSet<string>(keepCardIds);
+            var moonDrawn     = session.Board.FateMoonDrawnCardIds;
 
-            // Any Hand card not in keepSet goes to the bottom of the deck
+            // Validate that the chosen cards are from the Moon draw
+            foreach (var id in keepCardIds)
+                if (!moonDrawn.Contains(id))
+                    return CommandResult.Invalid($"The Moon: card {id} was not drawn by the Moon.");
+
+            // Return the unchosen Moon cards to the bottom of the deck
             var toReturn = new List<string>();
-            for (int i = player.Hand.Count - 1; i >= 0; i--)
+            foreach (var id in moonDrawn)
             {
-                var id = player.Hand[i];
-                if (!keepSet.Contains(id))
-                {
-                    player.Hand.RemoveAt(i);
-                    toReturn.Add(id);
-                }
+                if (keepSet.Contains(id)) continue; // player keeps this one
+
+                player.Hand.Remove(id);
+                session.GetCard(id)?.MoveTo(CardZone.Deck, -1);
+                toReturn.Add(id);
             }
 
-            // Push to bottom (we reverse so last-removed ends up at bottom)
-            toReturn.Reverse();
+            // Append to bottom (bottom of a Stack<T> = enumerated first, pushed last)
             var deckList = new List<string>(session.Board.CommonDeck);
             deckList.AddRange(toReturn);
             session.Board.CommonDeck.Clear();
             foreach (var id in deckList)
-            {
-                session.GetCard(id)?.MoveTo(CardZone.Deck, -1);
                 session.Board.CommonDeck.Push(id);
-            }
 
             return CommandResult.Ok("Moon resolved.");
         }

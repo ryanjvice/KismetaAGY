@@ -30,6 +30,12 @@ namespace Kismeta.Core.Entities
         // Each entry is (playerId, fateCardId, arcanaNumber)
         public List<(int PlayerId, string FateCardId, int ArcanaNumber)> PendingFateDecisions { get; } = new();
 
+        /// <summary>
+        /// Temporarily holds the 4 card instance IDs drawn by The Moon so the UI can
+        /// present exactly those cards for the keep-2 decision. Cleared after resolution.
+        /// </summary>
+        public List<string> FateMoonDrawnCardIds { get; } = new();
+
         // Per-round Cosmic Effect flags set by CosmicEffectService; cleared each Transit
         public CosmicEffectFlags CosmicEffect { get; set; }
 

@@ -158,11 +158,11 @@ namespace Kismeta.Core.Players
 
         private IGameCommand DecideFateMoon(GameContext ctx)
         {
-            // Keep the first 2 offered cards (already in context as a subset of Hand)
-            // FateMoonDecisionCommand carries the list of card IDs to keep
-            var keep = ctx.PrivateView.Hand.Count >= 2
-                ? new List<string> { ctx.PrivateView.Hand[0], ctx.PrivateView.Hand[1] }
-                : new List<string>(ctx.PrivateView.Hand);
+            // Pick the first 2 from the 4 Moon-drawn cards (provided via context)
+            var source = ctx.MoonDrawnCardIds ?? ctx.PrivateView.Hand;
+            var keep = source.Count >= 2
+                ? new List<string> { source[0], source[1] }
+                : new List<string>(source);
             return new FateMoonDecisionCommand(Slot.Index, keep);
         }
 
