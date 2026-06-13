@@ -60,17 +60,17 @@ namespace Kismeta.Core.Players
         {
             var pid     = Slot.Index;
             var player  = ctx.PublicView.Players[pid];
-            var allCards = AllPlayerCards(ctx);
+            var spreadIds = new List<string>(player.Spread);
 
-            // Try to activate the first Dormant slot (needs 3 cards)
+            // Try to activate each Dormant slot by finding a valid card set from Spread.
             for (int i = 0; i < player.CrucibleSlots.Count; i++)
             {
                 var slot = player.CrucibleSlots[i];
-                if (slot.State == CrucibleCardState.Dormant && allCards.Count >= 3)
-                {
-                    var payment = allCards.GetRange(0, 3);
+                if (slot.State != CrucibleCardState.Dormant || !slot.HasCoal) continue;
+
+                var payment = FindActivationCards(ctx, player.AssignedCodex, i, spreadIds);
+                if (payment != null)
                     return new ActivateCrucibleCommand(pid, i, payment);
-                }
             }
 
             // Try to build an Astral House on current sign if unplaced houses remain
@@ -92,10 +92,10 @@ namespace Kismeta.Core.Players
                 }
             }
 
-            // Try to craft Salt (needs any 3 cards)
-            if (allCards.Count >= 3)
+            // Try to craft Salt (needs any 3 cards from Spread)
+            if (spreadIds.Count >= 3)
             {
-                var payment = allCards.GetRange(0, 3);
+                var payment = spreadIds.GetRange(0, 3);
                 return new CraftReagentCommand(pid, ReagentType.Salt, payment);
             }
 
@@ -180,6 +180,73 @@ namespace Kismeta.Core.Players
             foreach (var id in spread)                list.Add(id);
             foreach (var id in ctx.PrivateView.Hand)  list.Add(id);
             return list;
+        }
+
+        /// <summary>
+        /// Attempts to assemble a valid card set from Spread for the given codex slot.
+        /// Returns the card IDs to submit, or null if no valid set was found.
+        /// </summary>
+        private static List<string>? FindActivationCards(
+            GameContext ctx, CodexVariant codex, int slotIndex, IReadOnlyList<string> spreadIds)
+        {
+            if (ctx.CodexDatabase == null || ctx.CardDatabase == null || spreadIds.Count == 0)
+                return null;
+
+            var formula = ctx.CodexDatabase.GetFormula(codex, slotIndex);
+            if (formula == null) return null;
+
+            // Resolve all spread card definitions.
+            var cardMap = ctx.PublicView.CardInstanceToDefinition;
+            var spreadDefs = new List<(string id, CardDefinition def)>();
+            foreach (var id in spreadIds)
+            {
+                if (!cardMap.TryGetValue(id, out var defId)) continue;
+                var def = ctx.CardDatabase.GetById(defId);
+                if (def != null) spreadDefs.Add((id, def));
+            }
+
+            if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
+            {
+                // Find exactly 3 cards matching the required planet.
+                var matching = new List<string>();
+                foreach (var (id, def) in spreadDefs)
+                    if (def.Planet == formula.RequiredPlanet)
+                        matching.Add(id);
+
+                return matching.Count >= 3 ? matching.GetRange(0, 3) : null;
+            }
+            else if (formula.FormulaType == CodexFormulaType.RankSum)
+            {
+                // Find cards of the required suit with combined rank sum >= minRankSum.
+                var matching = new List<(string id, CardDefinition def)>();
+                foreach (var (id, def) in spreadDefs)
+                    if (def.Suit == formula.RequiredSuit)
+                        matching.Add((id, def));
+
+                if (matching.Count == 0) return null;
+
+                // Greedy: sort by rank descending (Aces as 15), pick until sum >= threshold.
+                matching.Sort((a, b) =>
+                {
+                    int ra = a.def.Rank == Rank.Ace ? 15 : (int)a.def.Rank;
+                    int rb = b.def.Rank == Rank.Ace ? 15 : (int)b.def.Rank;
+                    return rb.CompareTo(ra);
+                });
+
+                var chosen  = new List<string>();
+                int running = 0;
+                foreach (var (id, def) in matching)
+                {
+                    chosen.Add(id);
+                    running += def.Rank == Rank.Ace ? 15 : (int)def.Rank;
+                    if (running >= formula.MinRankSum)
+                        return chosen;
+                }
+
+                return null; // Couldn't reach the threshold.
+            }
+
+            return null;
         }
     }
 }

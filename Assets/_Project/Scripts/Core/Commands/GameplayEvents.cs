@@ -34,14 +34,22 @@ namespace Kismeta.Core.Commands
         public CardLockChangedEvent(bool locked) => IsLocked = locked;
     }
 
+    public sealed class CodexAssignedEvent : IGameEvent
+    {
+        public int          PlayerId { get; }
+        public CodexVariant Codex    { get; }
+        public CodexAssignedEvent(int playerId, CodexVariant codex) { PlayerId = playerId; Codex = codex; }
+    }
+
     public sealed class CrucibleActivatedEvent : IGameEvent
     {
         public int    PlayerId        { get; }
         public int    SlotIndex       { get; }
         public string CardInstanceId  { get; }
-        public CrucibleActivatedEvent(int playerId, int slotIndex, string cardInstanceId)
+        public Suit   CauldronSuit    { get; }
+        public CrucibleActivatedEvent(int playerId, int slotIndex, string cardInstanceId, Suit cauldronSuit)
         {
-            PlayerId = playerId; SlotIndex = slotIndex; CardInstanceId = cardInstanceId;
+            PlayerId = playerId; SlotIndex = slotIndex; CardInstanceId = cardInstanceId; CauldronSuit = cauldronSuit;
         }
     }
 

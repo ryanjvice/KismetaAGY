@@ -7,27 +7,28 @@ using Kismeta.Core.Entities;
 namespace Kismeta.Core.Rules
 {
     /// <summary>
-    /// Implements the full Crucible Card lifecycle for M2:
-    ///   Activate (Summer)  — discard 3 cards, make slot Active, light Cauldron.
+    /// Implements the full Crucible Card lifecycle:
+    ///   Activate (Summer)  — validate Codex formula, discard cards, remove coal, light cauldron, reveal card.
     ///   Fire    (Autumn)   — pay Alchemical Cost in reagents; stone moves to Forging.
     ///   Temper  (Autumn)   — advance stone one step; check for Altar win.
     ///   LeaveStasis        — spend 2 Salt to exit Stasis.
     ///   Opposition (Autumn)— dice-only: higher roll wins; loser's stone → Stasis.
-    ///
-    /// M2 simplification: Activate requires any 3 cards (formula type not validated).
     /// </summary>
     public sealed class CrucibleRules : ICrucibleService
     {
-        private const int ActivationCardCost = 3;
-        private const int StasisSaltCost     = 2;
+        private const int StasisSaltCost = 2;
 
-        private readonly ICardDatabase _db;
-        private readonly Random _rng;
+        private readonly ICardDatabase          _db;
+        private readonly ICrucibleCodexDatabase _codexDb;
+        private readonly CodexFormulaValidator  _validator;
+        private readonly Random                 _rng;
 
-        public CrucibleRules(ICardDatabase db, int? seed = null)
+        public CrucibleRules(ICardDatabase db, ICrucibleCodexDatabase codexDb, int? seed = null)
         {
-            _db  = db;
-            _rng = seed.HasValue ? new Random(seed.Value) : new Random();
+            _db        = db;
+            _codexDb   = codexDb;
+            _validator = new CodexFormulaValidator(db);
+            _rng       = seed.HasValue ? new Random(seed.Value) : new Random();
         }
 
         // ─── Activate ─────────────────────────────────────────────────────────────
@@ -44,36 +45,57 @@ namespace Kismeta.Core.Rules
             if (slot.State != CrucibleCardState.Dormant)
                 return CommandResult.Invalid("Slot must be Dormant to Activate.");
 
-            if (cardInstanceIds.Count < ActivationCardCost)
-                return CommandResult.Invalid($"Activation requires at least {ActivationCardCost} cards.");
+            if (!slot.HasCoal)
+                return CommandResult.Invalid("Slot has no Coal; cannot Activate.");
 
-            // Validate all supplied cards belong to this player
-            var playerCards = BuildPlayerCardSet(player);
+            if (cardInstanceIds == null || cardInstanceIds.Count == 0)
+                return CommandResult.Invalid("No cards submitted for activation.");
+
+            // Look up the Codex formula for this player's codex + slot.
+            var formula = _codexDb.GetFormula(player.AssignedCodex, slotIndex);
+            if (formula == null)
+                return CommandResult.Invalid(
+                    $"No Codex formula found for Codex {player.AssignedCodex}, slot {slotIndex}.");
+
+            // All submitted cards must come from Spread only (Hand not allowed for activation).
+            var spreadSet = new HashSet<string>(player.Spread);
             foreach (var id in cardInstanceIds)
-                if (!playerCards.Contains(id))
-                    return CommandResult.Invalid($"Card {id} is not in player {playerId}'s zones.");
+                if (!spreadSet.Contains(id))
+                    return CommandResult.Invalid($"Card {id} is not in your Spread. Activation requires Spread cards only.");
 
-            // Discard them
+            // Resolve definitions.
+            var defs = new List<CardDefinition>(cardInstanceIds.Count);
+            foreach (var id in cardInstanceIds)
+            {
+                var inst = session.GetCard(id);
+                if (inst == null)
+                    return CommandResult.Invalid($"Card instance {id} not found.");
+                var def = _db.GetById(inst.DefinitionId);
+                if (def == null)
+                    return CommandResult.Invalid($"Card definition for {id} not found.");
+                defs.Add(def);
+            }
+
+            // Validate against the Codex formula.
+            var (ok, reason) = _validator.ValidateDefs(defs, formula);
+            if (!ok)
+                return CommandResult.Invalid($"Formula not satisfied: {reason}");
+
+            // Discard submitted cards from Spread.
             foreach (var id in cardInstanceIds)
             {
                 player.Spread.Remove(id);
-                player.Hand.Remove(id);
                 session.Board.CommonDiscard.Add(id);
                 session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
             }
 
-            // Activate slot + light the matching Cauldron
+            // Activate slot (removes coal, transitions Dormant → Active).
             slot.Activate();
 
-            var crucibleInst = session.GetCard(slot.CardInstanceId);
-            if (crucibleInst != null)
-            {
-                var def = _db.GetById(crucibleInst.DefinitionId);
-                if (def != null && def.Suit != Suit.None)
-                    player.LightCauldron(def.Suit);
-            }
+            // Light the cauldron determined by the formula (not the crucible card's suit).
+            player.LightCauldron(formula.CauldronSuit);
 
-            session.EmitEvent(new CrucibleActivatedEvent(playerId, slotIndex, slot.CardInstanceId));
+            session.EmitEvent(new CrucibleActivatedEvent(playerId, slotIndex, slot.CardInstanceId, formula.CauldronSuit));
             return CommandResult.Ok();
         }
 
@@ -197,14 +219,6 @@ namespace Kismeta.Core.Rules
         }
 
         // ─── Private helpers ──────────────────────────────────────────────────────
-
-        private static HashSet<string> BuildPlayerCardSet(PlayerState player)
-        {
-            var set = new HashSet<string>(player.Spread.Count + player.Hand.Count);
-            foreach (var id in player.Spread) set.Add(id);
-            foreach (var id in player.Hand)   set.Add(id);
-            return set;
-        }
 
         private static bool CanPayCost(PlayerState player, ReagentCost cost) =>
             player.GetReagent(ReagentType.Sulphur)     >= cost.Sulphur     &&

@@ -37,7 +37,9 @@ namespace Kismeta.Game.Bootstrap
 
             var publicView  = GamePublicView.From(_session);
             var privateView = PlayerPrivateView.From(_session, playerId);
-            var context     = new GameContext(publicView, privateView, playerId);
+            var context     = new GameContext(publicView, privateView, playerId,
+                codexDatabase: _session.Rules?.CodexDatabase,
+                cardDatabase:  _session.Rules?.CardDatabase);
 
             var command = await controller.RequestActionAsync(context, ct);
 

@@ -29,17 +29,27 @@ namespace Kismeta.Core.Tests
             return CardDatabase.LoadFromJson(File.ReadAllText(path));
         }
 
+        private static CrucibleCodexDatabase LoadCodexDb()
+        {
+            var path = Path.Combine(Application.dataPath,
+                "_Project/Data/Resources/crucible-codex.json");
+            Assert.IsTrue(File.Exists(path), $"crucible-codex.json not found. Place it in Resources.");
+            return CrucibleCodexDatabase.LoadFromJson(File.ReadAllText(path));
+        }
+
         private static (GameSession session, GameLoop loop) BuildAIGame(CardDatabase db,
             int playerCount = 2, int seed = 42)
         {
+            var codexDb = LoadCodexDb();
             var rules = new GameRuleSet(
-                cardDatabase: db,
-                setup:        new GameSetupService(db, seed),
-                harvest:      new SpringRules(db, seed),
-                crucible:     new CrucibleRules(db, seed),
-                crafting:     new CraftingRules(db),
-                winter:       new WinterRules(db),
-                validator:    new ActionValidator());
+                cardDatabase:  db,
+                codexDatabase: codexDb,
+                setup:         new GameSetupService(db, seed),
+                harvest:       new SpringRules(db, seed),
+                crucible:      new CrucibleRules(db, codexDb, seed),
+                crafting:      new CraftingRules(db),
+                winter:        new WinterRules(db),
+                validator:     new ActionValidator());
 
             var players     = new List<PlayerState>(playerCount);
             var controllers = new List<IPlayerController>(playerCount);

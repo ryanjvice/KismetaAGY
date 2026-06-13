@@ -295,7 +295,9 @@ namespace Kismeta.Core.Players
             }
 
             var ctx = new GameContext(pubView, privView, playerId, hint, pendingCardId,
-                moonDrawnIds, arcanumAdeptIds);
+                moonDrawnIds, arcanumAdeptIds,
+                _session.Rules?.CodexDatabase,
+                _session.Rules?.CardDatabase);
 
             if (controller is HotSeatController hs)
             {

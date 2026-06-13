@@ -27,8 +27,12 @@ namespace Kismeta.Core.Views
 
         public IReadOnlyList<PublicPlayerView> Players { get; }
 
+        /// <summary>Maps every visible card instance ID to its definition ID. Used by AI/UI to inspect card properties.</summary>
+        public IReadOnlyDictionary<string, string> CardInstanceToDefinition { get; }
+
         private GamePublicView(GameSession session)
         {
+            var db    = session.Rules?.CardDatabase;
             SessionId = session.SessionId;
             Mode = session.Mode;
             CurrentSeason = session.Phase.CurrentSeason;
@@ -43,9 +47,15 @@ namespace Kismeta.Core.Views
             CommonDeckCount = session.Board.CommonDeckCount;
             CommonDiscardCount = session.Board.CommonDiscardCount;
 
+            // Build instance → definition map first so we can pass it to player views.
+            var cardMap = new Dictionary<string, string>(session.Cards.Count);
+            foreach (var kv in session.Cards)
+                cardMap[kv.Key] = kv.Value.DefinitionId;
+            CardInstanceToDefinition = cardMap;
+
             var players = new List<PublicPlayerView>(session.Players.Count);
             foreach (var p in session.Players)
-                players.Add(PublicPlayerView.From(p));
+                players.Add(PublicPlayerView.From(p, db, cardMap));
             Players = players;
         }
 

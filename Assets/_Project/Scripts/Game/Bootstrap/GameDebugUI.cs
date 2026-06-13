@@ -5,6 +5,7 @@ using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
+using Kismeta.Core.Rules;
 using Kismeta.Data.Loaders;
 using UnityEngine;
 
@@ -21,9 +22,10 @@ namespace Kismeta.Game.Bootstrap
     {
         // ─── Bound references ─────────────────────────────────────────────────────
 
-        private GameSession?  _session;
-        private GameLoop?     _loop;
-        private CardDatabase? _db;
+        private GameSession?             _session;
+        private GameLoop?                _loop;
+        private CardDatabase?            _db;
+        private ICrucibleCodexDatabase?  _codexDb;
 
         // ─── Card selection state ─────────────────────────────────────────────────
 
@@ -57,11 +59,13 @@ namespace Kismeta.Game.Bootstrap
 
         // ─── Public API ───────────────────────────────────────────────────────────
 
-        public void Bind(GameSession session, GameLoop loop, CardDatabase db)
+        public void Bind(GameSession session, GameLoop loop, CardDatabase db,
+            ICrucibleCodexDatabase? codexDb = null)
         {
             _session = session;
             _loop    = loop;
             _db      = db;
+            _codexDb = codexDb;
 
             session.OnEvent += evt => AddLog(FormatEvent(evt));
             loop.OnLog      += msg => AddLog($"[Loop] {msg}");
@@ -303,7 +307,20 @@ namespace Kismeta.Game.Bootstrap
 
             if (player.Arcanum.Count > 0)
             {
-                GUILayout.Label($"── ARCANUM ({player.Arcanum.Count}) ── [Major Arcana — not selectable]");
+                // Break down Arcanum into Adepts (capped at 2/3) and Fate cards (uncapped)
+                int adeptCount = 0, fateCount = 0, adeptLimit = 2;
+                if (_db != null && _session != null)
+                {
+                    foreach (var id in player.Arcanum)
+                    {
+                        var cardInst = _session.GetCard(id);
+                        var cardDef  = cardInst != null ? _db.GetById(cardInst.DefinitionId) : null;
+                        if (cardDef?.MajorArcanaType == MajorArcanaType.Adept)      adeptCount++;
+                        else if (cardDef?.MajorArcanaType == MajorArcanaType.Fate)   fateCount++;
+                        if (cardDef?.ArcanaNumber == 9) adeptLimit = 3; // The Hermit
+                    }
+                }
+                GUILayout.Label($"── ARCANUM — Adepts: {adeptCount}/{adeptLimit}  Fates: {fateCount} ──");
                 foreach (var id in player.Arcanum)
                     GUILayout.Label($"  ★ {CardLabel(id)}");
                 GUILayout.Space(4f);
@@ -340,7 +357,10 @@ namespace Kismeta.Game.Bootstrap
         // scrollH == 0 means render at natural height (when already inside a parent scroll view)
         private void DrawCrucibleSection(int pid, PlayerState player, float scrollH)
         {
-            GUILayout.Label("── YOUR CRUCIBLE CARDS ──");
+            string codexLabel = player.AssignedCodex != CodexVariant.None
+                ? $"── YOUR CRUCIBLE CARDS  [Codex {player.AssignedCodex}] ──"
+                : "── YOUR CRUCIBLE CARDS ──";
+            GUILayout.Label(codexLabel);
 
             void DrawSlots()
             {
@@ -349,12 +369,26 @@ namespace Kismeta.Game.Bootstrap
                     var slot = player.CrucibleSlots[i];
                     var inst = _session!.GetCard(slot.CardInstanceId);
                     var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
-                    string name    = def != null ? $"[{def.CrucibleGroup}] {def.ActivationFormula}" : "?";
-                    string coalStr = slot.HasCoal ? " ·Coal" : "";
-                    string wardStr = slot.WardCount > 0 ? $" Ward×{slot.WardCount}" : "";
-                    GUILayout.Label($"Slot {i}: {slot.State,-10} {name}{coalStr}{wardStr}");
-                    if (def != null && def.AlchemicalFormula != "")
-                        GUILayout.Label($"   Formula: {def.AlchemicalFormula}");
+
+                    // Card name is always visible; alchemical formula only once Active.
+                    string cardName = def != null ? $"[{def.CrucibleGroup}] {def.Name}" : "?";
+                    string coalStr  = slot.HasCoal ? " ·Coal" : "";
+                    string wardStr  = slot.WardCount > 0 ? $" Ward×{slot.WardCount}" : "";
+                    GUILayout.Label($"Slot {i}: {slot.State,-10} {cardName}{coalStr}{wardStr}");
+
+                    // Codex activation formula for this slot (always visible to owner).
+                    if (_codexDb != null && player.AssignedCodex != CodexVariant.None)
+                    {
+                        var formula = _codexDb.GetFormula(player.AssignedCodex, i);
+                        if (formula != null)
+                            GUILayout.Label($"   Codex formula: {formula.DisplayName}");
+                    }
+
+                    // Alchemical formula: hidden while Dormant, revealed once Active.
+                    if (slot.State >= CrucibleCardState.Active && def != null && def.AlchemicalFormula != "")
+                        GUILayout.Label($"   Alchemical Formula: {def.AlchemicalFormula}");
+                    else if (slot.State == CrucibleCardState.Dormant)
+                        GUILayout.Label("   Alchemical Formula: [hidden until activated]");
                 }
             }
 
@@ -703,19 +737,26 @@ namespace Kismeta.Game.Bootstrap
             int selCount = _selectedCards.Count;
             var selList  = _selectedCards.ToList();
 
-            // Activate Crucible (one button per Dormant slot)
-            GUILayout.Label("Activate Crucible (need 3+ selected):");
-            GUILayout.BeginHorizontal();
+            // Activate Crucible (one button per Dormant slot; formula shown in tooltip label)
+            GUILayout.Label($"Activate Crucible [{selCount} selected]:");
             for (int i = 0; i < player.CrucibleSlots.Count; i++)
             {
                 var slot = player.CrucibleSlots[i];
-                GUI.enabled = selCount >= 3 && slot.State == CrucibleCardState.Dormant;
+                if (slot.State != CrucibleCardState.Dormant) continue;
+
+                string formulaLabel = "?";
+                if (_codexDb != null && player.AssignedCodex != CodexVariant.None)
+                {
+                    var formula = _codexDb.GetFormula(player.AssignedCodex, i);
+                    if (formula != null) formulaLabel = formula.DisplayName;
+                }
+
                 int captured = i;
-                if (GUILayout.Button($"Slot {captured}"))
+                GUI.enabled = selCount >= 1;
+                if (GUILayout.Button($"Activate Slot {captured}  [{formulaLabel}]"))
                     SubmitAction(hs, new ActivateCrucibleCommand(pid, captured, selList));
             }
             GUI.enabled = true;
-            GUILayout.EndHorizontal();
 
             GUILayout.Space(4f);
 
@@ -897,7 +938,7 @@ namespace Kismeta.Game.Bootstrap
             if (def == null) return $"[?:{inst.DefinitionId}]";
 
             if (def.IsCrucible)
-                return $"[{def.CrucibleGroup}] {def.ActivationFormula}";
+                return $"[{def.CrucibleGroup}] {def.Name}";
 
             if (def.IsMajorArcana)
                 return $"★{def.ArcanaNumber} {def.EffectType}";
@@ -959,6 +1000,7 @@ namespace Kismeta.Game.Bootstrap
             StoneFiredEvent e           => $"[Fire] P{e.PlayerId} → pos {e.NewPosition}",
             StoneTemperedEvent e        => $"[Temper] P{e.PlayerId} → pos {e.NewPosition}",
             OppositionResolvedEvent e   => $"[Oppose] Att:{e.AttackerId} Def:{e.DefenderId} Loser:{e.LoserId} ({e.AttackRoll}v{e.DefendRoll})",
+            CodexAssignedEvent e        => $"[Codex] P{e.PlayerId} assigned Codex {e.Codex}",
             GameSetupCompleteEvent e    => $"[Setup] {e.PlayerCount}p ready",
             AgeTransitedEvent e         => $"[Transit] Round {e.NewRoundNumber} AK→P{e.NewAgekeeperId}",
             GameEndedEvent e            => $"[GAME OVER] Winner: P{e.WinnerPlayerId}",

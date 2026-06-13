@@ -1,0 +1,23 @@
+{
+  "entries": [
+    { "codex": "A", "slotIndex": 0, "cauldron": "Red",    "formulaType": "AnyThreePlanet", "planet": "Mars",    "suit": null, "minRankSum": 0, "displayName": "Any Three Mars" },
+    { "codex": "A", "slotIndex": 1, "cauldron": "Blue",   "formulaType": "AnyThreePlanet", "planet": "Venus",   "suit": null, "minRankSum": 0, "displayName": "Any Three Venus" },
+    { "codex": "A", "slotIndex": 2, "cauldron": "Green",  "formulaType": "RankSum",        "planet": null,      "suit": "Pentacles", "minRankSum": 25, "displayName": "25 Total Ranks · Pentacles" },
+    { "codex": "A", "slotIndex": 3, "cauldron": "Yellow", "formulaType": "RankSum",        "planet": null,      "suit": "Swords",    "minRankSum": 25, "displayName": "25 Total Ranks · Swords" },
+
+    { "codex": "B", "slotIndex": 0, "cauldron": "Red",    "formulaType": "RankSum",        "planet": null,      "suit": "Wands",     "minRankSum": 25, "displayName": "25 Total Ranks · Wands" },
+    { "codex": "B", "slotIndex": 1, "cauldron": "Blue",   "formulaType": "RankSum",        "planet": null,      "suit": "Cups",      "minRankSum": 25, "displayName": "25 Total Ranks · Cups" },
+    { "codex": "B", "slotIndex": 2, "cauldron": "Green",  "formulaType": "AnyThreePlanet", "planet": "Jupiter", "suit": null, "minRankSum": 0, "displayName": "Any Three Jupiter" },
+    { "codex": "B", "slotIndex": 3, "cauldron": "Yellow", "formulaType": "AnyThreePlanet", "planet": "Saturn",  "suit": null, "minRankSum": 0, "displayName": "Any Three Saturn" },
+
+    { "codex": "C", "slotIndex": 0, "cauldron": "Red",    "formulaType": "AnyThreePlanet", "planet": "Mars",    "suit": null, "minRankSum": 0, "displayName": "Any Three Mars" },
+    { "codex": "C", "slotIndex": 1, "cauldron": "Blue",   "formulaType": "RankSum",        "planet": null,      "suit": "Cups",      "minRankSum": 25, "displayName": "25 Total Ranks · Cups" },
+    { "codex": "C", "slotIndex": 2, "cauldron": "Green",  "formulaType": "AnyThreePlanet", "planet": "Jupiter", "suit": null, "minRankSum": 0, "displayName": "Any Three Jupiter" },
+    { "codex": "C", "slotIndex": 3, "cauldron": "Yellow", "formulaType": "RankSum",        "planet": null,      "suit": "Swords",    "minRankSum": 25, "displayName": "25 Total Ranks · Swords" },
+
+    { "codex": "D", "slotIndex": 0, "cauldron": "Red",    "formulaType": "RankSum",        "planet": null,      "suit": "Wands",     "minRankSum": 25, "displayName": "25 Total Ranks · Wands" },
+    { "codex": "D", "slotIndex": 1, "cauldron": "Blue",   "formulaType": "AnyThreePlanet", "planet": "Venus",   "suit": null, "minRankSum": 0, "displayName": "Any Three Venus" },
+    { "codex": "D", "slotIndex": 2, "cauldron": "Green",  "formulaType": "RankSum",        "planet": null,      "suit": "Pentacles", "minRankSum": 25, "displayName": "25 Total Ranks · Pentacles" },
+    { "codex": "D", "slotIndex": 3, "cauldron": "Yellow", "formulaType": "AnyThreePlanet", "planet": "Saturn",  "suit": null, "minRankSum": 0, "displayName": "Any Three Saturn" }
+  ]
+}

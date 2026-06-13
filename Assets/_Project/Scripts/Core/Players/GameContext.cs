@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 
 namespace Kismeta.Core.Players
@@ -11,10 +12,12 @@ namespace Kismeta.Core.Players
     /// </summary>
     public sealed class GameContext
     {
-        public GamePublicView  PublicView    { get; }
-        public PlayerPrivateView PrivateView { get; }
-        public int ActivePlayerId            { get; }
-        public ActionHint Hint               { get; }
+        public GamePublicView        PublicView    { get; }
+        public PlayerPrivateView     PrivateView   { get; }
+        public int                   ActivePlayerId { get; }
+        public ActionHint            Hint           { get; }
+        public ICrucibleCodexDatabase? CodexDatabase { get; }
+        public ICardDatabase?          CardDatabase  { get; }
 
         /// <summary>
         /// When Hint == AdeptDecision: the instance ID of the Adept card being offered.
@@ -37,15 +40,19 @@ namespace Kismeta.Core.Players
         public GameContext(GamePublicView publicView, PlayerPrivateView privateView,
             int activePlayerId, ActionHint hint = ActionHint.None, string? pendingCardId = null,
             IReadOnlyList<string>? moonDrawnCardIds = null,
-            IReadOnlyList<string>? arcanumAdeptIds = null)
+            IReadOnlyList<string>? arcanumAdeptIds = null,
+            ICrucibleCodexDatabase? codexDatabase = null,
+            ICardDatabase? cardDatabase = null)
         {
-            PublicView      = publicView;
-            PrivateView     = privateView;
-            ActivePlayerId  = activePlayerId;
-            Hint            = hint;
-            PendingCardId   = pendingCardId;
+            PublicView       = publicView;
+            PrivateView      = privateView;
+            ActivePlayerId   = activePlayerId;
+            Hint             = hint;
+            PendingCardId    = pendingCardId;
             MoonDrawnCardIds = moonDrawnCardIds;
             ArcanumAdeptIds  = arcanumAdeptIds;
+            CodexDatabase    = codexDatabase;
+            CardDatabase     = cardDatabase;
         }
     }
 }

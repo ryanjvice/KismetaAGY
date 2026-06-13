@@ -21,9 +21,14 @@ import './export-cards.mjs';
 // Mirror generated JSON into the Unity Resources folder after generation completes.
 // Using setTimeout(0) to run after the imported modules' top-level code finishes.
 setTimeout(() => {
-  const files = ['cards.json', 'cosmic-ages.json', 'correspondence.json', 'game-modes.json'];
-  for (const f of files) {
+  // Mirror generated JSON into the Unity Resources folder.
+  const generatedFiles = ['cards.json', 'cosmic-ages.json', 'correspondence.json', 'game-modes.json'];
+  for (const f of generatedFiles) {
     copyFileSync(join(GEN_DIR, f), join(RES_DIR, f));
     console.log(`[sync] mirrored ${f} → Assets/_Project/Data/Resources/`);
   }
+
+  // crucible-codex.json is hand-authored in Resources; copy it into Generated for consistency.
+  copyFileSync(join(RES_DIR, 'crucible-codex.json'), join(GEN_DIR, 'crucible-codex.json'));
+  console.log('[sync] mirrored crucible-codex.json → Assets/_Project/Scripts/Data/Generated/');
 }, 0);

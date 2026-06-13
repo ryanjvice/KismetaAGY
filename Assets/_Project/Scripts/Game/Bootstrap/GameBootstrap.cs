@@ -7,6 +7,7 @@ using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Commands;
+using Kismeta.Core.Rules;
 using Kismeta.Data.Loaders;
 using UnityEngine;
 
@@ -35,6 +36,7 @@ namespace Kismeta.Game.Bootstrap
         // ─── Runtime state ────────────────────────────────────────────────────────
 
         private CardDatabase?            _db;
+        private CrucibleCodexDatabase?   _codexDb;
         private GameSession?             _session;
         private GameLoop?                _loop;
         private List<IPlayerController>? _controllers;
@@ -47,8 +49,9 @@ namespace Kismeta.Game.Bootstrap
         {
             try
             {
-                _db = CardDatabase.Load();
-                _ui = gameObject.AddComponent<GameDebugUI>();
+                _db      = CardDatabase.Load();
+                _codexDb = CrucibleCodexDatabase.Load();
+                _ui      = gameObject.AddComponent<GameDebugUI>();
                 BuildSession();
                 _ = StartLoopAsync(_cts.Token);
             }
@@ -95,9 +98,10 @@ namespace Kismeta.Game.Bootstrap
             var fateResolver = new FateCardResolver(_db!);
             var rules = new GameRuleSet(
                 cardDatabase:  _db!,
+                codexDatabase: _codexDb!,
                 setup:         new GameSetupService(_db!),
                 harvest:       new SpringRules(_db!, cosmicEffect: cosmicSvc, fateResolver: fateResolver),
-                crucible:      new CrucibleRules(_db!),
+                crucible:      new CrucibleRules(_db!, _codexDb!),
                 crafting:      new CraftingRules(_db!),
                 winter:        new WinterRules(_db!),
                 validator:     new ActionValidator(),
@@ -116,7 +120,7 @@ namespace Kismeta.Game.Bootstrap
             _loop = new GameLoop(_session, _controllers);
             _loop.OnLog += msg => Debug.Log($"[GameLoop] {msg}");
 
-            _ui!.Bind(_session, _loop, _db!);
+            _ui!.Bind(_session, _loop, _db!, _codexDb);
         }
 
         private async Task StartLoopAsync(CancellationToken ct)

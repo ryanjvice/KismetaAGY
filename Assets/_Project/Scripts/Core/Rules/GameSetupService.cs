@@ -74,6 +74,9 @@ namespace Kismeta.Core.Rules
 
             DealCrucibleCards(session, crucibleDeckInsts);
 
+            // Assign a random Codex variant to each player.
+            AssignCodexVariants(session);
+
             // Starter Spread card per player
             DealStarterSpreadCards(session);
 
@@ -141,6 +144,23 @@ namespace Kismeta.Core.Rules
                     slot.PlaceCoal();
                     player.CrucibleSlots.Add(slot);
                 }
+            }
+        }
+
+        private static readonly CodexVariant[] AllCodexVariants =
+            { CodexVariant.A, CodexVariant.B, CodexVariant.C, CodexVariant.D };
+
+        private void AssignCodexVariants(GameSession session)
+        {
+            // Build a shuffled pool; each player must receive a unique variant.
+            var pool = new List<CodexVariant>(AllCodexVariants);
+            Shuffle(pool);
+
+            for (int i = 0; i < session.Players.Count; i++)
+            {
+                var variant = pool[i % pool.Count];
+                session.Players[i].AssignedCodex = variant;
+                session.EmitEvent(new CodexAssignedEvent(session.Players[i].PlayerId, variant));
             }
         }
 

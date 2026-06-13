@@ -6,30 +6,33 @@ namespace Kismeta.Core.Rules
     /// </summary>
     public sealed class GameRuleSet
     {
-        public ICardDatabase      CardDatabase  { get; }
-        public GameSetupService   Setup         { get; }
-        public IHarvestService    Harvest       { get; }
-        public ICrucibleService   Crucible      { get; }
-        public ICraftingService   Crafting      { get; }
-        public WinterRules        Winter        { get; }
-        public IActionValidator   Validator     { get; }
-        public AstralHouseService?  AstralHouse   { get; }
-        public CosmicEffectService? CosmicEffect  { get; }
-        public FateCardResolver?    FateResolver  { get; }
+        public ICardDatabase           CardDatabase  { get; }
+        public ICrucibleCodexDatabase  CodexDatabase { get; }
+        public GameSetupService        Setup         { get; }
+        public IHarvestService         Harvest       { get; }
+        public ICrucibleService        Crucible      { get; }
+        public ICraftingService        Crafting      { get; }
+        public WinterRules             Winter        { get; }
+        public IActionValidator        Validator     { get; }
+        public AstralHouseService?     AstralHouse   { get; }
+        public CosmicEffectService?    CosmicEffect  { get; }
+        public FateCardResolver?       FateResolver  { get; }
 
         public GameRuleSet(
-            ICardDatabase      cardDatabase,
-            GameSetupService   setup,
-            IHarvestService    harvest,
-            ICrucibleService   crucible,
-            ICraftingService   crafting,
-            WinterRules        winter,
-            IActionValidator   validator,
-            AstralHouseService? astralHouse   = null,
-            CosmicEffectService? cosmicEffect = null,
-            FateCardResolver?  fateResolver   = null)
+            ICardDatabase           cardDatabase,
+            ICrucibleCodexDatabase  codexDatabase,
+            GameSetupService        setup,
+            IHarvestService         harvest,
+            ICrucibleService        crucible,
+            ICraftingService        crafting,
+            WinterRules             winter,
+            IActionValidator        validator,
+            AstralHouseService?     astralHouse  = null,
+            CosmicEffectService?    cosmicEffect = null,
+            FateCardResolver?       fateResolver = null)
         {
             CardDatabase  = cardDatabase;
+            CodexDatabase = codexDatabase;
             Setup         = setup;
             Harvest       = harvest;
             Crucible      = crucible;

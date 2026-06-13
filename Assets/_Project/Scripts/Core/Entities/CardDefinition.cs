@@ -34,7 +34,6 @@ namespace Kismeta.Core.Entities
 
         // Crucible-specific
         public CrucibleGroup CrucibleGroup { get; }
-        public string ActivationFormula { get; }
         public string AlchemicalFormula { get; }
         public ReagentCost AlchemicalCost { get; }
 
@@ -56,7 +55,6 @@ namespace Kismeta.Core.Entities
             string effectText,
             int wildcardArcanaNumber,
             CrucibleGroup crucibleGroup,
-            string activationFormula,
             string alchemicalFormula,
             ReagentCost alchemicalCost)
         {
@@ -73,7 +71,6 @@ namespace Kismeta.Core.Entities
             EffectText = effectText;
             WildcardArcanaNumber = wildcardArcanaNumber;
             CrucibleGroup = crucibleGroup;
-            ActivationFormula = activationFormula;
             AlchemicalFormula = alchemicalFormula;
             AlchemicalCost = alchemicalCost;
         }

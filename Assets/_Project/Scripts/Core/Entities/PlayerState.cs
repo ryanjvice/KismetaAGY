@@ -14,6 +14,9 @@ namespace Kismeta.Core.Entities
         public bool IsAgekeeper { get; set; }
         public ZodiacSign CurrentSign { get; set; }
 
+        /// <summary>Crucible Codex variant assigned to this player at game start (persists whole game).</summary>
+        public CodexVariant AssignedCodex { get; set; } = CodexVariant.None;
+
         // Card zones
         public List<string> Spread { get; } = new();
         public List<string> Hand   { get; } = new();

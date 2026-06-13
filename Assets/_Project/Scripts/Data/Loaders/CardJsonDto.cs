@@ -27,7 +27,6 @@ namespace Kismeta.Data.Loaders
         public int    wildcardArcanaNumber = -1;
         public string? wildcardArcanaMajorName = null;
         public string? crucibleGroup = null;
-        public string? activationFormula  = null;
         public string? alchemicalFormula  = null;
         public AlchemicalCostDto? alchemicalCost = null;
     }

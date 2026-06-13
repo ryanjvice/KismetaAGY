@@ -116,7 +116,6 @@ namespace Kismeta.Data.Loaders
                 effectText:          d.effectText ?? "",
                 wildcardArcanaNumber:d.wildcardArcanaNumber,
                 crucibleGroup:       crucibleGroup,
-                activationFormula:   d.activationFormula ?? "",
                 alchemicalFormula:   d.alchemicalFormula ?? "",
                 alchemicalCost:      cost);
         }

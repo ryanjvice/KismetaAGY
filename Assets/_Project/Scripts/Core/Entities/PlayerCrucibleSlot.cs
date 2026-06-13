@@ -24,8 +24,13 @@ namespace Kismeta.Core.Entities
         public void Activate()
         {
             if (State == CrucibleCardState.Dormant)
+            {
                 State = CrucibleCardState.Active;
+                RemoveCoal();
+            }
         }
+
+        public void RemoveCoal() => HasCoal = false;
 
         public void Fire(int currentRound)
         {
