@@ -27,6 +27,9 @@ namespace Kismeta.Core.Players
         /// <summary>Set while the loop is awaiting a human controller's input.</summary>
         public HotSeatController? PendingHumanController { get; private set; }
 
+        /// <summary>The action context hint that was provided with the current pending request.</summary>
+        public ActionHint PendingHint { get; private set; }
+
         /// <summary>0-based index of the player the loop is currently asking to act.</summary>
         public int ActivePlayerId { get; private set; } = -1;
 
@@ -170,7 +173,10 @@ namespace Kismeta.Core.Players
             var ctx      = new GameContext(pubView, privView, playerId, hint);
 
             if (controller is HotSeatController hs)
+            {
                 PendingHumanController = hs;
+                PendingHint            = hint;
+            }
 
             IGameCommand command;
             try

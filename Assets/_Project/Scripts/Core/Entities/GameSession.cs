@@ -124,6 +124,10 @@ namespace Kismeta.Core.Entities
                     ? _rules.Crucible.TryOppose(this, cmd.AttackerId, cmd.DefenderId)
                     : CommandResult.NotImplemented(nameof(InitiateOppositionCommand)),
 
+                LeaveStasisCommand       cmd => _rules is not null
+                    ? _rules.Crucible.TryLeaveStasis(this, cmd.PlayerId)
+                    : CommandResult.NotImplemented(nameof(LeaveStasisCommand)),
+
                 // ── Winter ────────────────────────────────────────────────────────
                 EnforceCardLimitsCommand _ => _rules is not null
                     ? RunVoid(() => _rules.Winter.EnforceLimits(this))

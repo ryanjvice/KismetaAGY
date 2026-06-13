@@ -72,6 +72,13 @@ namespace Kismeta.Core.Commands
         }
     }
 
+    /// <summary>Player spends 2 Salt to leave Stasis and return to Tempering.</summary>
+    public sealed class LeaveStasisCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public LeaveStasisCommand(int playerId) => PlayerId = playerId;
+    }
+
     /// <summary>Player explicitly passes their current action window (Summer or Autumn crucible step).</summary>
     public sealed class PassCrucibleActionCommand : IGameCommand
     {

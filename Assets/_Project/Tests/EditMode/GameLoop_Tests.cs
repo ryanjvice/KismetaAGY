@@ -85,14 +85,20 @@ namespace Kismeta.Core.Tests
         public void GameLoop_Setup_Populates_All_Decks()
         {
             var db = LoadDb();
-            var (session, loop) = BuildAIGame(db);
+            var (session, _) = BuildAIGame(db);
 
-            // Apply only setup
             session.Apply(new SetupGameCommand());
 
-            Assert.Greater(session.Board.CommonDeck.Count,   0, "Common deck must be non-empty.");
-            Assert.AreEqual(0,                                  session.Board.CrucibleDeck.Count,
-                "CrucibleDeck should be empty after dealing (all cards dealt to players).");
+            Assert.Greater(session.Board.CommonDeck.Count, 0,
+                "Common deck must be non-empty after setup.");
+            Assert.AreEqual(0, session.Board.CrucibleDeck.Count,
+                "CrucibleDeck should be empty — all Crucible cards were dealt to players.");
+
+            // Verify the cards are actually on players
+            int totalSlots = 0;
+            foreach (var p in session.Players) totalSlots += p.CrucibleSlots.Count;
+            Assert.AreEqual(4 * session.Players.Count, totalSlots,
+                "Each player should hold exactly 4 Crucible slots.");
         }
 
         [Test]

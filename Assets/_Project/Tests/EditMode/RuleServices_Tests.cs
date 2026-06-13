@@ -188,13 +188,15 @@ namespace Kismeta.Core.Tests
         {
             var db      = LoadDb();
             var session = SetupSession(db);
-            // Force Cosmic Age and player sign to match → +3 bonus = 6 total
-            session.Board.CosmicAgeSign       = ZodiacSign.Aries;
-            session.Players[0].CurrentSign    = ZodiacSign.Aries;
-            int handBefore = session.Players[0].Hand.Count;
-            session.Apply(new HarvestCommand(0, 0));
-            Assert.AreEqual(6, session.Players[0].Hand.Count - handBefore,
-                "Same Sign should yield base 3 + alignment 3 = 6 cards.");
+            // Use player 1 (not Agekeeper) so the Agekeeper's Boon doesn't apply.
+            // Ensure the Agekeeper (player 0) does NOT match the Cosmic Age sign.
+            session.Board.CosmicAgeSign    = ZodiacSign.Aries;
+            session.Players[1].CurrentSign = ZodiacSign.Aries;  // matches → +3
+            session.Players[0].CurrentSign = ZodiacSign.Taurus; // Agekeeper, no match → no Boon
+            int handBefore = session.Players[1].Hand.Count;
+            session.Apply(new HarvestCommand(1, 0));
+            Assert.AreEqual(6, session.Players[1].Hand.Count - handBefore,
+                "Same Sign (non-Agekeeper, no Boon) should yield base 3 + alignment 3 = 6 cards.");
         }
 
         [Test]
@@ -365,10 +367,8 @@ namespace Kismeta.Core.Tests
         {
             var db      = LoadDb();
             var session = SetupSession(db);
-            // Give 3 Wands cards (for Sulphur)
-            GivePlayerWandsCards(session, db, 0, 3);
-            var cards  = session.Players[0].Spread.GetRange(0, 3);
-            var result = session.Apply(new CraftReagentCommand(0, ReagentType.Sulphur, cards));
+            var cards   = GivePlayerWandsCards(session, db, 0, 3);
+            var result  = session.Apply(new CraftReagentCommand(0, ReagentType.Sulphur, cards));
             Assert.IsFalse(result.IsOk, "Should fail without a lit Fire Cauldron.");
         }
 
@@ -377,10 +377,9 @@ namespace Kismeta.Core.Tests
         {
             var db      = LoadDb();
             var session = SetupSession(db);
-            GivePlayerWandsCards(session, db, 0, 3);
+            var cards   = GivePlayerWandsCards(session, db, 0, 3);
             session.Players[0].LightCauldron(Suit.Wands);
-            var cards  = session.Players[0].Spread.GetRange(0, 3);
-            var result = session.Apply(new CraftReagentCommand(0, ReagentType.Sulphur, cards));
+            var result  = session.Apply(new CraftReagentCommand(0, ReagentType.Sulphur, cards));
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.AreEqual(1, session.Players[0].GetReagent(ReagentType.Sulphur));
         }
@@ -447,10 +446,15 @@ namespace Kismeta.Core.Tests
             }
         }
 
-        /// <summary>Register N Wands cards (for Sulphur crafting tests).</summary>
-        private static void GivePlayerWandsCards(GameSession session, CardDatabase db,
+        /// <summary>
+        /// Register N Wands cards for Sulphur crafting tests.
+        /// Returns the list of added instance IDs so tests can reference them directly
+        /// (avoids confusion with pre-existing Spread cards from setup).
+        /// </summary>
+        private static List<string> GivePlayerWandsCards(GameSession session, CardDatabase db,
             int playerId, int count)
         {
+            var added = new List<string>(count);
             int idx = 0;
             foreach (var def in db.GetBySuit(Suit.Wands))
             {
@@ -459,8 +463,10 @@ namespace Kismeta.Core.Tests
                 var inst = new CardInstance(id, def.Id, CardZone.Spread, playerId);
                 session.RegisterCard(inst);
                 session.Players[playerId].Spread.Add(id);
+                added.Add(id);
                 idx++;
             }
+            return added;
         }
 
         /// <summary>

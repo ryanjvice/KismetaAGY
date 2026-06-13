@@ -126,16 +126,18 @@ namespace Kismeta.Core.Rules
         {
             int playerCount = session.Players.Count;
             int perPlayer   = crucibleDeck.Count / playerCount;
-            int idx = 0;
 
+            // Pop from the deck stack so it is empty after dealing (all cards go to players).
             foreach (var player in session.Players)
             {
-                for (int i = 0; i < perPlayer && idx < crucibleDeck.Count; i++, idx++)
+                for (int i = 0; i < perPlayer && session.Board.CrucibleDeck.Count > 0; i++)
                 {
-                    var inst = crucibleDeck[idx];
-                    inst.MoveTo(CardZone.Deck, player.PlayerId);
+                    var id   = session.Board.CrucibleDeck.Pop();
+                    var inst = session.GetCard(id);
+                    if (inst == null) continue;
 
-                    var slot = new PlayerCrucibleSlot(inst.InstanceId);
+                    inst.MoveTo(CardZone.Deck, player.PlayerId);
+                    var slot = new PlayerCrucibleSlot(id);
                     slot.PlaceCoal();
                     player.CrucibleSlots.Add(slot);
                 }
