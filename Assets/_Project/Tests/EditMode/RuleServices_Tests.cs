@@ -190,9 +190,10 @@ namespace Kismeta.Core.Tests
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
-            int handBefore = session.Players[0].Hand.Count;
+            var before  = CaptureHarvestSnapshot(session, 0);
             session.Apply(new HarvestCommand(0, 0));
-            Assert.GreaterOrEqual(session.Players[0].Hand.Count - handBefore, 3);
+            Assert.GreaterOrEqual(HarvestCardsReceived(session, 0, before), 3,
+                "Harvest deals at least 3 cards (Hand, Arcanum, or pending Adept).");
         }
 
         [Test]
@@ -205,10 +206,10 @@ namespace Kismeta.Core.Tests
             session.Board.CosmicAgeSign    = ZodiacSign.Aries;
             session.Players[1].CurrentSign = ZodiacSign.Aries;  // matches → +3
             session.Players[0].CurrentSign = ZodiacSign.Taurus; // Agekeeper, no match → no Boon
-            int handBefore = session.Players[1].Hand.Count;
+            var before = CaptureHarvestSnapshot(session, 1);
             session.Apply(new HarvestCommand(1, 0));
-            Assert.AreEqual(6, session.Players[1].Hand.Count - handBefore,
-                "Same Sign (non-Agekeeper, no Boon) should yield base 3 + alignment 3 = 6 cards.");
+            Assert.AreEqual(6, HarvestCardsReceived(session, 1, before),
+                "Same Sign (non-Agekeeper, no Boon) should yield base 3 + alignment 3 = 6 cards dealt.");
         }
 
         [Test]
@@ -260,7 +261,7 @@ namespace Kismeta.Core.Tests
             session.Players[0].AssignedCodex = CodexVariant.A;
             GiveMarsCards(session, 0, 3);
 
-            var cards  = session.Players[0].Spread.GetRange(0, 3);
+            var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsFalse(result.IsOk, "Activating a non-Dormant slot should fail.");
         }
@@ -283,7 +284,7 @@ namespace Kismeta.Core.Tests
             // Force Codex A so slot 0 = "Any Three Mars". Give 3 Mars cards (minor.cups.seven.1).
             session.Players[0].AssignedCodex = CodexVariant.A;
             GiveMarsCards(session, 0, 3);
-            var cards  = session.Players[0].Spread.GetRange(0, 3);
+            var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.AreEqual(CrucibleCardState.Active, session.Players[0].CrucibleSlots[0].State);
@@ -325,12 +326,14 @@ namespace Kismeta.Core.Tests
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
             ActivateSlot(session, db, 0, 0);
-            // Fire in a "previous round"
-            session.Players[0].CrucibleSlots[0].Fire(0);
-            session.Players[0].StoneState = StoneState.Forging;
-            session.Board.RoundNumber = 2; // current round > FiredAtRound(0)
+            var player = session.Players[0];
+            // Fire in a "previous round" — stone must reach a Forge position (Fire advances from Mantle).
+            player.CrucibleSlots[0].Fire(session.Board.RoundNumber);
+            player.StonePosition = StonePosition.Start.Advance();
+            player.StoneState    = StoneState.Forging;
+            session.Board.RoundNumber++; // current round > FiredAtRound
 
-            var before = session.Players[0].StonePosition;
+            var before = player.StonePosition;
             var result = session.Apply(new TemperCommand(0));
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.AreEqual(before.Advance().Value, session.Players[0].StonePosition.Value);
@@ -494,7 +497,7 @@ namespace Kismeta.Core.Tests
             session.Players[playerId].AssignedCodex = CodexVariant.A;
             GiveMarsCards(session, playerId, 3);
             var spread = session.Players[playerId].Spread;
-            var cards  = spread.GetRange(spread.Count - 3, 3);
+            var cards  = LastSpreadCards(session.Players[playerId], 3);
             var result = session.Apply(new ActivateCrucibleCommand(playerId, slotIdx, cards));
             Assume.That(result.IsOk, $"ActivateSlot helper failed: {result.Message}");
         }
@@ -509,6 +512,44 @@ namespace Kismeta.Core.Tests
                 session.RegisterCard(inst);
                 session.Players[playerId].Spread.Add(id);
             }
+        }
+
+        /// <summary>Last N Spread cards — avoids mixing setup starter cards with test cards.</summary>
+        private static List<string> LastSpreadCards(PlayerState player, int count) =>
+            player.Spread.GetRange(player.Spread.Count - count, count);
+
+        private struct HarvestSnapshot
+        {
+            public int Hand;
+            public int Arcanum;
+            public int PendingAdepts;
+        }
+
+        /// <summary>
+        /// Cards dealt during Harvest land in Hand, Arcanum (Fate), or pending Adept limbo — not always Hand.
+        /// </summary>
+        private static HarvestSnapshot CaptureHarvestSnapshot(GameSession session, int playerId) =>
+            new HarvestSnapshot
+            {
+                Hand          = session.Players[playerId].Hand.Count,
+                Arcanum       = session.Players[playerId].Arcanum.Count,
+                PendingAdepts = CountPendingAdepts(session, playerId),
+            };
+
+        private static int HarvestCardsReceived(GameSession session, int playerId, HarvestSnapshot before)
+        {
+            var player = session.Players[playerId];
+            return (player.Hand.Count - before.Hand)
+                 + (player.Arcanum.Count - before.Arcanum)
+                 + (CountPendingAdepts(session, playerId) - before.PendingAdepts);
+        }
+
+        private static int CountPendingAdepts(GameSession session, int playerId)
+        {
+            int count = 0;
+            foreach (var (pid, _) in session.Board.PendingAdeptDecisions)
+                if (pid == playerId) count++;
+            return count;
         }
 
         // ─── Setup: Codex assignment tests ────────────────────────────────────────
@@ -554,7 +595,7 @@ namespace Kismeta.Core.Tests
                 session.RegisterCard(inst);
                 session.Players[0].Spread.Add(id);
             }
-            var cards  = session.Players[0].Spread.GetRange(0, 3);
+            var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsFalse(result.IsOk, "Wrong planet cards should not satisfy the formula.");
         }
@@ -568,7 +609,7 @@ namespace Kismeta.Core.Tests
             session.Players[0].AssignedCodex = CodexVariant.A;
             Assert.IsTrue(session.Players[0].CrucibleSlots[0].HasCoal, "Slot should start with coal.");
             GiveMarsCards(session, 0, 3);
-            var cards  = session.Players[0].Spread.GetRange(0, 3);
+            var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.IsFalse(session.Players[0].CrucibleSlots[0].HasCoal, "Coal should be removed after activation.");
@@ -651,7 +692,7 @@ namespace Kismeta.Core.Tests
             session.Players[0].AssignedCodex = CodexVariant.A;
             session.Players[0].CrucibleSlots[0].RemoveCoal();
             GiveMarsCards(session, 0, 3);
-            var cards  = session.Players[0].Spread.GetRange(0, 3);
+            var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsFalse(result.IsOk, "Cannot activate a slot with no coal.");
         }
@@ -924,6 +965,7 @@ namespace Kismeta.Core.Tests
             var db      = LoadDb();  var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
             var player  = session.Players[0];
+            player.Spread.Clear();
 
             // Give player 7 cards in Spread
             for (int i = 0; i < 7; i++)
@@ -950,6 +992,7 @@ namespace Kismeta.Core.Tests
             var db      = LoadDb();  var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
             var player  = session.Players[0];
+            player.Spread.Clear();
 
             // Give player exactly 3 cards — within limit
             for (int i = 0; i < 3; i++)

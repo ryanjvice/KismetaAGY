@@ -112,7 +112,7 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
-        public void GameLoop_Spring_Gives_Each_Player_At_Least_3_Cards_In_Hand()
+        public void GameLoop_Spring_Gives_Each_Player_At_Least_3_Cards_From_Harvest()
         {
             var db = LoadDb();
             var (session, _) = BuildAIGame(db);
@@ -125,11 +125,28 @@ namespace Kismeta.Core.Tests
                 session.Apply(new RollZodiacCommand(player.PlayerId));
 
             foreach (var player in session.Players)
+            {
+                int handBefore    = player.Hand.Count;
+                int arcanumBefore = player.Arcanum.Count;
+                int adeptsBefore  = CountPendingAdepts(session, player.PlayerId);
+
                 session.Apply(new HarvestCommand(player.PlayerId, 0));
 
-            foreach (var player in session.Players)
-                Assert.GreaterOrEqual(player.Hand.Count, 3,
-                    $"Player {player.PlayerId} should have at least 3 cards in Hand after Harvest.");
+                int received = (player.Hand.Count - handBefore)
+                             + (player.Arcanum.Count - arcanumBefore)
+                             + (CountPendingAdepts(session, player.PlayerId) - adeptsBefore);
+
+                Assert.GreaterOrEqual(received, 3,
+                    $"Player {player.PlayerId} should receive at least 3 cards from Harvest.");
+            }
+        }
+
+        private static int CountPendingAdepts(GameSession session, int playerId)
+        {
+            int count = 0;
+            foreach (var (pid, _) in session.Board.PendingAdeptDecisions)
+                if (pid == playerId) count++;
+            return count;
         }
 
         [Test]
