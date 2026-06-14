@@ -132,6 +132,17 @@ namespace Kismeta.Core.Rules
             // Validate and pay alchemical alignment cards (Stage 2 — handled here when validator present)
             if (_alignmentValidator != null && crucibleDef != null)
             {
+                // Verify all supplied alignment cards are actually in this player's Spread
+                if (alignmentCardIds != null)
+                {
+                    foreach (var id in alignmentCardIds)
+                    {
+                        if (!player.Spread.Contains(id))
+                            return CommandResult.Invalid(
+                                $"Alignment card {id} is not in Player {playerId}'s Spread.");
+                    }
+                }
+
                 var cards = ResolveCardDefs(session, alignmentCardIds);
                 var (ok, reason) = _alignmentValidator.Validate(crucibleDef.AlchemicalFormula, cards);
                 if (!ok) return CommandResult.Invalid($"Alignment not satisfied: {reason}");
@@ -258,6 +269,35 @@ namespace Kismeta.Core.Rules
                 s => s.State == CrucibleCardState.Fired && s.FiredAtRound == session.Board.RoundNumber);
             if (defenderFiredSlot != null)
                 return CommandResult.Invalid("This stone was Fired this Autumn and cannot be targeted yet.");
+
+            // Attacker must pay entry fee equal to defender's ward count
+            var attacker = session.Players[attackerId];
+            if (defender.StoneWardCount > 0)
+            {
+                int totalReagents = attacker.GetReagent(ReagentType.Salt)
+                                  + attacker.GetReagent(ReagentType.Sulphur)
+                                  + attacker.GetReagent(ReagentType.Quicksilver)
+                                  + attacker.GetReagent(ReagentType.Vitriol)
+                                  + attacker.GetReagent(ReagentType.AquaRegia);
+                if (totalReagents < defender.StoneWardCount)
+                    return CommandResult.Invalid(
+                        $"Attacker must pay {defender.StoneWardCount} reagent(s) to breach Ward — only {totalReagents} available.");
+
+                int remaining = defender.StoneWardCount;
+                foreach (ReagentType rt in new[]
+                {
+                    ReagentType.Salt, ReagentType.Sulphur, ReagentType.Quicksilver,
+                    ReagentType.Vitriol, ReagentType.AquaRegia
+                })
+                {
+                    while (remaining > 0 && attacker.GetReagent(rt) > 0)
+                    {
+                        attacker.SpendReagent(rt);
+                        remaining--;
+                    }
+                    if (remaining == 0) break;
+                }
+            }
 
             // Score each side using alignment points (if the service is wired) + a dice roll for tiebreaking
             int attackScore, defendScore;

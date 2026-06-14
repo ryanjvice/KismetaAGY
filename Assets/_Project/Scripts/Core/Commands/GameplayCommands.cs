@@ -5,7 +5,7 @@ namespace Kismeta.Core.Commands
 {
     /// <summary>
     /// Player activates a Dormant Crucible Card by discarding the required card set.
-    /// M2 simplification: card type matching is not enforced; only card count is checked.
+    /// Full Codex formula validation (planet match or rank-sum threshold) is enforced by CrucibleRules.
     /// </summary>
     public sealed class ActivateCrucibleCommand : IGameCommand
     {

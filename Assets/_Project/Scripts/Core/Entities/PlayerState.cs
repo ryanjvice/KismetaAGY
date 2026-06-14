@@ -56,6 +56,13 @@ namespace Kismeta.Core.Entities
         public HashSet<ZodiacSign> AstralHouses { get; } = new();
         public int UnplacedAstralHouses { get; set; } = 4;
 
+        /// <summary>
+        /// Per-player personal Cosmic Effect: union of the player's rolled sign and each built
+        /// Astral House sign, excluding any sign already covered by the board-wide Cosmic Age.
+        /// Updated after RollZodiac and after placing an Astral House.
+        /// </summary>
+        public CosmicEffectFlags PersonalCosmicEffects { get; set; } = CosmicEffectFlags.Default;
+
         // Crucible Card slots (4 per player)
         public List<PlayerCrucibleSlot> CrucibleSlots { get; } = new();
 

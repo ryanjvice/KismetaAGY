@@ -75,6 +75,13 @@ namespace Kismeta.Core.Entities
 
         public CommandResult Apply(IGameCommand command)
         {
+            // Pre-check: season/agekeeper gating
+            if (_rules?.Validator != null)
+            {
+                var validation = _rules.Validator.Validate(this, command);
+                if (!validation.IsOk) return validation;
+            }
+
             return command switch
             {
                 // ── Phase + lock (always available without rules) ─────────────────
@@ -161,9 +168,10 @@ namespace Kismeta.Core.Entities
                     ? _rules.Winter.TryDiscardToLimit(this, cmd.PlayerId, cmd.DiscardSpreadIds, cmd.DiscardHandIds)
                     : CommandResult.NotImplemented(nameof(DiscardToLimitCommand)),
 
-                EnforceCardLimitsCommand _ => _rules is not null
-                    ? RunVoid(() => _rules.Winter.EnforceLimits(this))
-                    : CommandResult.NotImplemented(nameof(EnforceCardLimitsCommand)),
+                // EnforceCardLimitsCommand was superseded by the per-player DiscardToLimit flow;
+                // kept here to avoid hard failures if stale code submits it.
+                EnforceCardLimitsCommand _ =>
+                    CommandResult.Invalid("EnforceCardLimitsCommand is deprecated — use DiscardToLimitCommand instead."),
 
                 TransitAgeCommand    _   => _rules is not null
                     ? RunVoid(() => _rules.Winter.Transit(this))

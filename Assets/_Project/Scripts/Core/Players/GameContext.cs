@@ -16,8 +16,9 @@ namespace Kismeta.Core.Players
         public PlayerPrivateView     PrivateView   { get; }
         public int                   ActivePlayerId { get; }
         public ActionHint            Hint           { get; }
-        public ICrucibleCodexDatabase? CodexDatabase { get; }
-        public ICardDatabase?          CardDatabase  { get; }
+        public ICrucibleCodexDatabase?      CodexDatabase       { get; }
+        public ICardDatabase?               CardDatabase        { get; }
+        public AlchemicalAlignmentValidator? AlchemicalValidator { get; }
 
         /// <summary>
         /// When Hint == AdeptDecision: the instance ID of the Adept card being offered.
@@ -42,17 +43,19 @@ namespace Kismeta.Core.Players
             IReadOnlyList<string>? moonDrawnCardIds = null,
             IReadOnlyList<string>? arcanumAdeptIds = null,
             ICrucibleCodexDatabase? codexDatabase = null,
-            ICardDatabase? cardDatabase = null)
+            ICardDatabase? cardDatabase = null,
+            AlchemicalAlignmentValidator? alchemicalValidator = null)
         {
-            PublicView       = publicView;
-            PrivateView      = privateView;
-            ActivePlayerId   = activePlayerId;
-            Hint             = hint;
-            PendingCardId    = pendingCardId;
-            MoonDrawnCardIds = moonDrawnCardIds;
-            ArcanumAdeptIds  = arcanumAdeptIds;
-            CodexDatabase    = codexDatabase;
-            CardDatabase     = cardDatabase;
+            PublicView          = publicView;
+            PrivateView         = privateView;
+            ActivePlayerId      = activePlayerId;
+            Hint                = hint;
+            PendingCardId       = pendingCardId;
+            MoonDrawnCardIds    = moonDrawnCardIds;
+            ArcanumAdeptIds     = arcanumAdeptIds;
+            CodexDatabase       = codexDatabase;
+            CardDatabase        = cardDatabase;
+            AlchemicalValidator = alchemicalValidator;
         }
     }
 }

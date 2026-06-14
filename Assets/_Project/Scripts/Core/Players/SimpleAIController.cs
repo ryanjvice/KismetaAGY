@@ -34,8 +34,9 @@ namespace Kismeta.Core.Players
                 ActionHint.SummerAction      => DecideSummer(context),
                 ActionHint.AutumnAction      => DecideAutumn(context),
                 ActionHint.AdeptDecision     => DecideAdept(context),
-                ActionHint.FateReagentChoice => new FateReagentChoiceCommand(Slot.Index, ReagentType.Salt),
-                ActionHint.FateLoversChoice  => new FateLoversChoiceCommand(Slot.Index, false),
+                ActionHint.FateReagentChoice    => new FateReagentChoiceCommand(Slot.Index, ReagentType.Salt),
+                ActionHint.FateLoversChoice     => new FateLoversChoiceCommand(Slot.Index, false),
+                ActionHint.FateLoversTargetPick => DecideFateLoversTarget(context),
                 ActionHint.FateMoonDecision  => DecideFateMoon(context),
                 ActionHint.WinterAction      => DecideWinter(context),
                 ActionHint.DiscardToLimit    => DecideDiscardToLimit(context),
@@ -78,21 +79,32 @@ namespace Kismeta.Core.Players
             }
 
             // Try to build an Astral House on current sign if unplaced houses remain
-            if (player.UnplacedAstralHouses > 0 && player.CurrentSign != ZodiacSign.None)
+            if (player.UnplacedAstralHouses > 0
+                && player.CurrentSign != ZodiacSign.None
+                && !player.AstralHouses.Contains(player.CurrentSign)
+                && ctx.CardDatabase != null)
             {
-                var sign = player.CurrentSign;
+                var sign   = player.CurrentSign;
                 bool signFree = true;
                 foreach (var p in ctx.PublicView.Players)
                     if (p.PlayerId != pid && p.AstralHouses.Contains(sign))
                     { signFree = false; break; }
 
-                if (signFree && !player.AstralHouses.Contains(sign))
+                if (signFree)
                 {
-                    // Find 2 cards matching the sign's planet in Spread
-                    var planet = Correspondence.PlanetFor(sign);
-                    // AI can't look up card definitions here without db — pass based on Spread labels
-                    // Simple fallback: skip if we can't easily validate
-                    // (Full validation happens in AstralHouseService)
+                    var planet   = Correspondence.PlanetFor(sign);
+                    var cardMap  = ctx.PublicView.CardInstanceToDefinition;
+                    var payment  = new List<string>();
+                    foreach (var id in spreadIds)
+                    {
+                        if (!cardMap.TryGetValue(id, out var defId)) continue;
+                        var def = ctx.CardDatabase.GetById(defId);
+                        if (def != null && def.Planet == planet)
+                            payment.Add(id);
+                        if (payment.Count == 2) break;
+                    }
+                    if (payment.Count == 2)
+                        return new BuildAstralHouseCommand(pid, sign, payment);
                 }
             }
 
@@ -110,8 +122,9 @@ namespace Kismeta.Core.Players
 
         private IGameCommand DecideAutumn(GameContext ctx)
         {
-            var pid    = Slot.Index;
-            var player = ctx.PublicView.Players[pid];
+            var pid       = Slot.Index;
+            var player    = ctx.PublicView.Players[pid];
+            var spreadIds = new List<string>(player.Spread);
 
             // Temper: stone must be Forging AND at a Forge position AND not returned from Stasis this round
             if (player.StoneState == StoneState.Forging
@@ -125,8 +138,6 @@ namespace Kismeta.Core.Players
                 return new LeaveStasisCommand(pid);
 
             // Fire: stone must be at Mantle and we need reagents + an Active slot.
-            // AI passes empty alignment cards — the validator allows it when no validator is wired in tests;
-            // in full game the Fire will fail gracefully if cards are insufficient, and AI will Pass.
             if (player.StoneState == StoneState.Tempering && player.StonePosition.IsMantle)
             {
                 bool hasFireReagents =
@@ -137,11 +148,14 @@ namespace Kismeta.Core.Players
 
                 if (hasFireReagents)
                 {
-                    // Build a best-effort alignment card list from Spread
-                    var spreadCards = new System.Collections.Generic.List<string>(player.Spread);
                     for (int i = 0; i < player.CrucibleSlots.Count; i++)
-                        if (player.CrucibleSlots[i].State == CrucibleCardState.Active)
-                            return new FireStoneCommand(pid, i, spreadCards);
+                    {
+                        if (player.CrucibleSlots[i].State != CrucibleCardState.Active) continue;
+
+                        // Submit only the minimum cards that satisfy the alchemical formula.
+                        var alignCards = FindMinimumFireCards(ctx, player.AssignedCodex, i, spreadIds);
+                        return new FireStoneCommand(pid, i, alignCards);
+                    }
                 }
             }
 
@@ -209,6 +223,14 @@ namespace Kismeta.Core.Players
             return new BuyAdeptCommand(pid, ctx.PendingCardId, payment);
         }
 
+        private IGameCommand DecideFateLoversTarget(GameContext ctx)
+        {
+            // Pick the first opponent (the one after us in player order)
+            int count    = ctx.PublicView.Players.Count;
+            int targetId = (Slot.Index + 1) % count;
+            return new FateLoversTargetCommand(Slot.Index, targetId);
+        }
+
         private IGameCommand DecideFateMoon(GameContext ctx)
         {
             // Pick the first 2 from the 4 Moon-drawn cards (provided via context)
@@ -240,6 +262,52 @@ namespace Kismeta.Core.Players
                 return true;
             var def = ctx.CardDatabase.GetById(defId);
             return def != null && !def.IsMajorArcana;
+        }
+
+        /// <summary>
+        /// Returns the minimum set of Spread cards needed to satisfy the alchemical formula
+        /// for the given crucible slot, or an empty list when the formula is not wired/satisfied.
+        /// Submitting fewer cards prevents discarding unneeded Spread cards.
+        /// </summary>
+        private static List<string> FindMinimumFireCards(
+            GameContext ctx, CodexVariant codex, int slotIndex, IReadOnlyList<string> spreadIds)
+        {
+            if (ctx.AlchemicalValidator == null || ctx.CardDatabase == null)
+                return new List<string>(); // validator not wired — submit empty, server will validate
+
+            int pid   = ctx.ActivePlayerId;
+            var slots = ctx.PublicView.Players[pid].CrucibleSlots;
+            if (slotIndex >= slots.Count) return new List<string>();
+
+            var formulaStr = slots[slotIndex].AlchemicalFormula;
+            if (formulaStr == null) return new List<string>(); // formula not yet visible (Dormant)
+
+            var cardMap = ctx.PublicView.CardInstanceToDefinition;
+
+            // Resolve spread card definitions
+            var defs = new List<(string id, CardDefinition def)>();
+            foreach (var id in spreadIds)
+            {
+                if (!cardMap.TryGetValue(id, out var defId)) continue;
+                var def = ctx.CardDatabase.GetById(defId);
+                if (def != null) defs.Add((id, def));
+            }
+
+            // Try increasing subset sizes until validator says OK
+            for (int size = 0; size <= defs.Count; size++)
+            {
+                var candidate    = new List<CardDefinition>();
+                var candidateIds = new List<string>();
+                for (int j = 0; j < size && j < defs.Count; j++)
+                {
+                    candidateIds.Add(defs[j].id);
+                    candidate.Add(defs[j].def);
+                }
+                var (ok, _) = ctx.AlchemicalValidator.Validate(formulaStr, candidate);
+                if (ok) return candidateIds;
+            }
+
+            return new List<string>(); // can't satisfy formula — submit empty; server will reject
         }
 
         /// <summary>

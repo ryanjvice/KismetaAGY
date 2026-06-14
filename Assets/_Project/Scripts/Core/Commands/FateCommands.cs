@@ -36,6 +36,21 @@ namespace Kismeta.Core.Commands
     }
 
     /// <summary>
+    /// The Lovers (6): the drawer nominates which opponent will choose their reward.
+    /// </summary>
+    public sealed class FateLoversTargetCommand : IGameCommand
+    {
+        public int DrawerId       { get; }
+        public int ChosenTargetId { get; }
+
+        public FateLoversTargetCommand(int drawerId, int chosenTargetId)
+        {
+            DrawerId       = drawerId;
+            ChosenTargetId = chosenTargetId;
+        }
+    }
+
+    /// <summary>
     /// The Lovers (6): the chosen target decides the drawer's reward.
     /// DrawCards = true → drawer draws 2 cards; false → drawer gains 1 Reagent of target's choice.
     /// </summary>

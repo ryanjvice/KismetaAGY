@@ -171,18 +171,18 @@ namespace Kismeta.Core.Players
                         }
                         break;
 
-                    case 6: // Lovers: target chooses reward; BOTH drawer and target receive it
-                        // Simple fallback: target = next player in sequence
+                    case 6: // Lovers: drawer picks a target; that target chooses the reward for the drawer only
+                        Log($"Spring — Fate: The Lovers — P{playerId} picks a target to choose their reward");
+                        var loversTargetCmd = await RequestAsync(playerId, ActionHint.FateLoversTargetPick, ct, fateCardId);
                         int targetId = (playerId + 1) % _session.Players.Count;
-                        if (targetId == playerId) targetId = (targetId + 1) % _session.Players.Count;
-                        Log($"Spring — Fate: The Lovers — P{targetId} chooses reward (both players receive it)");
-                        var loversCmd = await RequestAsync(targetId, ActionHint.FateLoversChoice, ct, fateCardId);
-                        if (loversCmd is FateLoversChoiceCommand lc)
+                        if (loversTargetCmd is FateLoversTargetCommand lt && lt.ChosenTargetId != playerId)
+                            targetId = lt.ChosenTargetId;
+                        Log($"Spring — Fate: The Lovers — P{targetId} now chooses the reward for P{playerId}");
+                        var loversRewardCmd = await RequestAsync(targetId, ActionHint.FateLoversChoice, ct, fateCardId);
+                        if (loversRewardCmd is FateLoversChoiceCommand lc)
                         {
-                            // Drawer receives the reward
+                            // Only the drawer receives the reward (the target is the chooser, not the recipient)
                             Apply(new FateLoversChoiceCommand(playerId, lc.DrawCards, lc.ChosenReagent));
-                            // Target (chooser) also receives the same reward
-                            Apply(new FateLoversChoiceCommand(targetId, lc.DrawCards, lc.ChosenReagent));
                         }
                         break;
                 }
@@ -330,7 +330,8 @@ namespace Kismeta.Core.Players
             var ctx = new GameContext(pubView, privView, playerId, hint, pendingCardId,
                 moonDrawnIds, arcanumAdeptIds,
                 _session.Rules?.CodexDatabase,
-                _session.Rules?.CardDatabase);
+                _session.Rules?.CardDatabase,
+                _session.Rules?.AlchemicalValidator);
 
             if (controller is HotSeatController hs)
             {
@@ -423,6 +424,8 @@ namespace Kismeta.Core.Players
         FateReagentChoice,
         /// <summary>The Lovers Fate: target player chooses the drawer's reward.</summary>
         FateLoversChoice,
+        /// <summary>The Lovers Fate: drawer picks which opponent will choose the reward.</summary>
+        FateLoversTargetPick,
         /// <summary>Winter Activities free-action pool: move cards Hand↔Spread, craft, or place Fateful Wager.</summary>
         WinterAction,
         /// <summary>Player must choose which cards to discard because they are over the zone limit.</summary>

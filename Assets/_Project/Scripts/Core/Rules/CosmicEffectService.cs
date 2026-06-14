@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
@@ -77,6 +78,75 @@ namespace Kismeta.Core.Rules
         {
             session.Board.CosmicEffect    = CosmicEffectFlags.Default;
             session.Board.BestOfThreeDuels = false;
+        }
+
+        // ─── Static helpers for per-player personal effect computation ────────────
+
+        /// <summary>Returns the <see cref="CosmicEffectFlags"/> produced by a single sign.</summary>
+        public static CosmicEffectFlags EffectFor(ZodiacSign sign)
+        {
+            switch (sign)
+            {
+                case ZodiacSign.Aries:
+                case ZodiacSign.Libra:
+                    return new CosmicEffectFlags { HarvestBaseBonus = 1 };
+
+                case ZodiacSign.Taurus:
+                    return new CosmicEffectFlags { WildCourtSuit = Suit.Pentacles };
+                case ZodiacSign.Leo:
+                    return new CosmicEffectFlags { WildCourtSuit = Suit.Wands };
+                case ZodiacSign.Scorpio:
+                    return new CosmicEffectFlags { WildCourtSuit = Suit.Cups };
+                case ZodiacSign.Aquarius:
+                    return new CosmicEffectFlags { WildCourtSuit = Suit.Swords };
+
+                case ZodiacSign.Cancer:
+                case ZodiacSign.Capricorn:
+                    return new CosmicEffectFlags { SaltCostsTwo = true };
+
+                case ZodiacSign.Gemini:
+                    return new CosmicEffectFlags { CheapCraftSuit = Suit.Swords,    CheapCraftReagent = ReagentType.Quicksilver };
+                case ZodiacSign.Virgo:
+                    return new CosmicEffectFlags { CheapCraftSuit = Suit.Pentacles, CheapCraftReagent = ReagentType.Vitriol };
+                case ZodiacSign.Sagittarius:
+                    return new CosmicEffectFlags { CheapCraftSuit = Suit.Wands,     CheapCraftReagent = ReagentType.Sulphur };
+                case ZodiacSign.Pisces:
+                    return new CosmicEffectFlags { CheapCraftSuit = Suit.Cups,      CheapCraftReagent = ReagentType.AquaRegia };
+
+                default:
+                    return CosmicEffectFlags.Default;
+            }
+        }
+
+        /// <summary>Merges two effect sets, combining bonuses additively and taking the first non-None value for suites/reagents.</summary>
+        public static CosmicEffectFlags Merge(CosmicEffectFlags a, CosmicEffectFlags b)
+        {
+            return new CosmicEffectFlags
+            {
+                HarvestBaseBonus  = a.HarvestBaseBonus + b.HarvestBaseBonus,
+                WildCourtSuit     = a.WildCourtSuit  != Suit.None ? a.WildCourtSuit  : b.WildCourtSuit,
+                SaltCostsTwo      = a.SaltCostsTwo || b.SaltCostsTwo,
+                CheapCraftSuit    = a.CheapCraftSuit != Suit.None ? a.CheapCraftSuit : b.CheapCraftSuit,
+                CheapCraftReagent = a.CheapCraftSuit != Suit.None ? a.CheapCraftReagent : b.CheapCraftReagent,
+            };
+        }
+
+        /// <summary>
+        /// Computes a player's personal cosmic effects from their rolled sign and house signs,
+        /// excluding any sign that matches the board-wide Cosmic Age (already applied to all players).
+        /// </summary>
+        public static CosmicEffectFlags ComputePersonalEffects(
+            ZodiacSign rolledSign,
+            IEnumerable<ZodiacSign> houseSigns,
+            ZodiacSign cosmicAgeSign)
+        {
+            var result = CosmicEffectFlags.Default;
+            if (rolledSign != ZodiacSign.None && rolledSign != cosmicAgeSign)
+                result = Merge(result, EffectFor(rolledSign));
+            foreach (var hs in houseSigns)
+                if (hs != ZodiacSign.None && hs != cosmicAgeSign)
+                    result = Merge(result, EffectFor(hs));
+            return result;
         }
 
         private static string DescribeEffect(ZodiacSign sign) => sign switch

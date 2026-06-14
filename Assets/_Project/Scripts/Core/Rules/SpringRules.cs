@@ -19,7 +19,7 @@ namespace Kismeta.Core.Rules
     ///
     /// Major Arcana routing during Harvest (per rules):
     ///   Fate cards  → placed in Arcanum immediately (face-up), never enter Hand.
-    ///   Adept cards → discarded back to Common Discard (purchase mechanic not yet in M2).
+    ///   Adept cards → held in PendingAdeptDecisions queue; player is prompted to Buy or Decline.
     /// </summary>
     public sealed class SpringRules : IHarvestService
     {
@@ -55,6 +55,8 @@ namespace Kismeta.Core.Rules
             var player = session.Players[playerId];
             var sign   = RollSign();
             player.CurrentSign = sign;
+            player.PersonalCosmicEffects = CosmicEffectService.ComputePersonalEffects(
+                sign, player.AstralHouses, session.Board.CosmicAgeSign);
             session.EmitEvent(new ZodiacRolledEvent(playerId, sign));
         }
 
@@ -97,7 +99,10 @@ namespace Kismeta.Core.Rules
             foreach (var houseSign in player.AstralHouses)
                 bonus += AlignmentBonus(houseSign, cosmicSign);
 
-            return 3 + session.Board.CosmicEffect.HarvestBaseBonus + bonus;
+            // Board-wide Cosmic Age effect + player's personal effect (own sign + houses)
+            int cosmicBonus = session.Board.CosmicEffect.HarvestBaseBonus
+                            + player.PersonalCosmicEffects.HarvestBaseBonus;
+            return 3 + cosmicBonus + bonus;
         }
 
         public void ExecuteHarvest(GameSession session, int playerId)

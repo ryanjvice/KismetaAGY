@@ -26,17 +26,21 @@ namespace Kismeta.Core.Rules
         public CommandResult TryCraft(GameSession session, int playerId,
             ReagentType reagentType, IReadOnlyList<string> cardInstanceIds)
         {
-            var player   = session.Players[playerId];
+            var player    = session.Players[playerId];
             var cosEffect = session.Board.CosmicEffect;
+            var personal  = player.PersonalCosmicEffects;
 
             // Determine the effective card cost for this crafting action
+            // Board-wide Cosmic Age effect OR player's personal sign/house effect can reduce cost
             int effectiveCost = CardCost; // default: 3
 
-            if (reagentType == ReagentType.Salt && cosEffect.SaltCostsTwo)
+            bool saltCheap = cosEffect.SaltCostsTwo || personal.SaltCostsTwo;
+            bool elemCheap = (cosEffect.CheapCraftReagent == reagentType && cosEffect.CheapCraftSuit != Suit.None)
+                          || (personal.CheapCraftReagent  == reagentType && personal.CheapCraftSuit  != Suit.None);
+
+            if (reagentType == ReagentType.Salt && saltCheap)
                 effectiveCost = 2;
-            else if (reagentType != ReagentType.Salt
-                     && cosEffect.CheapCraftReagent == reagentType
-                     && cosEffect.CheapCraftSuit    != Suit.None)
+            else if (reagentType != ReagentType.Salt && elemCheap)
                 effectiveCost = 2;
 
             if (cardInstanceIds.Count < effectiveCost)
@@ -70,8 +74,9 @@ namespace Kismeta.Core.Rules
                     return CommandResult.Invalid($"Unknown card {id}.");
 
                 bool suitMatch = def.Suit == requiredSuit;
-                bool wildMatch = cosEffect.WildCourtSuit != Suit.None
-                    && def.Suit == cosEffect.WildCourtSuit
+                var  activeWild = cosEffect.WildCourtSuit != Suit.None ? cosEffect.WildCourtSuit : personal.WildCourtSuit;
+                bool wildMatch  = activeWild != Suit.None
+                    && def.Suit == activeWild
                     && IsCourtCard(def.Rank);
 
                 if (!suitMatch && !wildMatch)

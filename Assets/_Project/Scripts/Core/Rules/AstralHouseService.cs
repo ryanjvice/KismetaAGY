@@ -80,6 +80,10 @@ namespace Kismeta.Core.Rules
             player.AstralHouses.Add(sign);
             player.UnplacedAstralHouses--;
 
+            // Recompute personal cosmic effects now that the house roster changed
+            player.PersonalCosmicEffects = CosmicEffectService.ComputePersonalEffects(
+                player.CurrentSign, player.AstralHouses, session.Board.CosmicAgeSign);
+
             session.EmitEvent(new AstralHouseBuiltEvent(playerId, sign));
             return CommandResult.Ok($"Astral House built on {sign}.");
         }

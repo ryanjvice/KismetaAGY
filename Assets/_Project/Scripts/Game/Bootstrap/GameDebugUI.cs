@@ -234,6 +234,10 @@ namespace Kismeta.Game.Bootstrap
             {
                 DrawFateLoversChoicePanel(hs, pid);
             }
+            else if (hint == ActionHint.FateLoversTargetPick)
+            {
+                DrawFateLoversTargetPickPanel(hs, pid);
+            }
             else
             {
                 // Top ~45 % — card lists (fixed, internally scrollable)
@@ -717,18 +721,34 @@ namespace Kismeta.Game.Bootstrap
             }
         }
 
+        private void DrawFateLoversTargetPickPanel(HotSeatController hs, int pid)
+        {
+            GUILayout.Label("── THE LOVERS ──");
+            GUILayout.Space(4f);
+            GUILayout.Label("Pick an opponent to choose your reward:");
+            GUILayout.Space(6f);
+
+            if (_session == null) return;
+            foreach (var opp in _session.Players)
+            {
+                if (opp.PlayerId == pid) continue;
+                if (GUILayout.Button($"P{opp.PlayerId} chooses my reward"))
+                    SubmitAction(hs, new FateLoversTargetCommand(pid, opp.PlayerId));
+            }
+        }
+
         private void DrawFateLoversChoicePanel(HotSeatController hs, int pid)
         {
             GUILayout.Label("── THE LOVERS ──");
             GUILayout.Space(4f);
-            GUILayout.Label("Choose a reward — BOTH players receive it:");
+            GUILayout.Label("Choose the drawer's reward (only they receive it):");
             GUILayout.Space(6f);
 
-            if (GUILayout.Button("Both Draw 2 Cards"))
+            if (GUILayout.Button("Drawer Draws 2 Cards"))
                 SubmitAction(hs, new FateLoversChoiceCommand(pid, drawCards: true));
 
             GUILayout.Space(4f);
-            GUILayout.Label("  — or —  Both Receive 1 Reagent:");
+            GUILayout.Label("  — or —  Drawer Receives 1 Reagent:");
 
             var reagents = new[]
             {
@@ -737,7 +757,7 @@ namespace Kismeta.Game.Bootstrap
             };
             foreach (var r in reagents)
             {
-                if (GUILayout.Button($"Both receive 1 {r}"))
+                if (GUILayout.Button($"Drawer receives 1 {r}"))
                     SubmitAction(hs, new FateLoversChoiceCommand(pid, drawCards: false, r));
             }
         }
@@ -1189,6 +1209,20 @@ namespace Kismeta.Game.Bootstrap
             GUI.enabled = selCount >= 3;
             if (GUILayout.Button($"Craft Salt  ({selCount}/3 sel)"))
                 SubmitAction(hs, new CraftReagentCommand(pid, ReagentType.Salt, selList));
+            GUI.enabled = true;
+
+            // ── Craft Elemental ───────────────────────────────────────────────────
+            Suit? wUSuit = GetUniformSuit(selList);
+            bool wCauldronLit = wUSuit.HasValue && player.IsCauldronLit(wUSuit.Value);
+            GUI.enabled = selCount >= 3 && wUSuit.HasValue && wCauldronLit;
+            string wCraftLabel = wUSuit.HasValue
+                ? $"Craft {wUSuit.Value} Reagent  (cauldron {(wCauldronLit ? "lit" : "UNLIT")})"
+                : "Craft Elemental  (select 3+ same-suit)";
+            if (GUILayout.Button(wCraftLabel))
+            {
+                var rtype = SuitToReagent(wUSuit!.Value);
+                SubmitAction(hs, new CraftReagentCommand(pid, rtype, selList));
+            }
             GUI.enabled = true;
 
             GUILayout.Space(4f);
