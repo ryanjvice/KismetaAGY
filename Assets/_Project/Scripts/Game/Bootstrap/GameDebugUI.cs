@@ -59,6 +59,7 @@ namespace Kismeta.Game.Bootstrap
 
         private Vector2 _spreadScroll;
         private Vector2 _handScroll;
+        private Vector2 _arcanumScroll;
         private Vector2 _crucibleScroll;
         private Vector2 _actionsScroll;
         private Vector2 _playersScroll;
@@ -240,13 +241,13 @@ namespace Kismeta.Game.Bootstrap
             }
             else
             {
-                // Top ~45 % — card lists (fixed, internally scrollable)
-                float headerH  = 24f; // header label + error
-                float cardH    = (colH - headerH) * 0.44f;
-                DrawCardLists(pid, player, cardH);
+                // Fixed-height card bar (3 equal columns): Spread | Hand | Arcanum
+                float headerH  = 24f;
+                const float CARD_BAR_H = 200f;
+                DrawCardLists(pid, player, CARD_BAR_H, colW);
 
-                // Bottom remainder — crucible + actions in a single scroll view
-                float bottomH = colH - headerH - cardH - 6f;
+                // Remaining height — crucible + actions, gains space vs. the old 44% split
+                float bottomH = colH - headerH - CARD_BAR_H - 6f;
                 GUILayout.Space(4f);
                 _actionsScroll = GUILayout.BeginScrollView(_actionsScroll,
                     GUILayout.Height(bottomH));
@@ -325,48 +326,65 @@ namespace Kismeta.Game.Bootstrap
 
         // ── Card lists ───────────────────────────────────────────────────────────
 
-        private void DrawCardLists(int pid, PlayerState player, float totalH)
+        private void DrawCardLists(int pid, PlayerState player, float barH, float barW)
         {
-            // Arcanum is fixed-height (no interaction needed); Spread + Hand split the rest
-            float arcH  = player.Arcanum.Count > 0 ? Mathf.Min(player.Arcanum.Count * 22f + 24f, 100f) : 0f;
-            float listH = (totalH - arcH) * 0.5f;
+            const float COL_GAP    = 6f;
+            const float LABEL_H    = 20f;
+            float colW = (barW - COL_GAP * 2f) / 3f;
+            float scrollH = barH - LABEL_H;
 
-            if (player.Arcanum.Count > 0)
+            // Arcanum counts (needed for Arcanum column header)
+            int adeptCount = 0, fateCount = 0, adeptLimit = 2;
+            if (_db != null && _session != null)
             {
-                // Break down Arcanum into Adepts (capped at 2/3) and Fate cards (uncapped)
-                int adeptCount = 0, fateCount = 0, adeptLimit = 2;
-                if (_db != null && _session != null)
-                {
-                    foreach (var id in player.Arcanum)
-                    {
-                        var cardInst = _session.GetCard(id);
-                        var cardDef  = cardInst != null ? _db.GetById(cardInst.DefinitionId) : null;
-                        if (cardDef?.MajorArcanaType == MajorArcanaType.Adept)      adeptCount++;
-                        else if (cardDef?.MajorArcanaType == MajorArcanaType.Fate)   fateCount++;
-                        if (cardDef?.ArcanaNumber == 9) adeptLimit = 3; // The Hermit
-                    }
-                }
-                GUILayout.Label($"── ARCANUM — Adepts: {adeptCount}/{adeptLimit}  Fates: {fateCount} ──");
                 foreach (var id in player.Arcanum)
                 {
-                    bool arrested = player.ArrestedAdepts.Contains(id);
-                    string arrestTag = arrested ? "  [ARRESTED]" : "";
-                    GUILayout.Label($"  ★ {CardLabel(id)}{arrestTag}");
+                    var cardInst = _session.GetCard(id);
+                    var cardDef  = cardInst != null ? _db.GetById(cardInst.DefinitionId) : null;
+                    if (cardDef?.MajorArcanaType == MajorArcanaType.Adept)    adeptCount++;
+                    else if (cardDef?.MajorArcanaType == MajorArcanaType.Fate) fateCount++;
+                    if (cardDef?.ArcanaNumber == 9) adeptLimit = 3; // The Hermit
                 }
-                GUILayout.Space(4f);
             }
 
+            GUILayout.BeginHorizontal();
+
+            // ── Column 1: Spread ────────────────────────────────────────────────
+            GUILayout.BeginVertical(GUILayout.Width(colW));
             GUILayout.Label($"── SPREAD ({player.Spread.Count}) ──");
-            _spreadScroll = GUILayout.BeginScrollView(_spreadScroll, GUILayout.Height(listH - 20f));
+            _spreadScroll = GUILayout.BeginScrollView(_spreadScroll, GUILayout.Height(scrollH));
             foreach (var id in player.Spread)
                 DrawCardToggle(id);
             GUILayout.EndScrollView();
+            GUILayout.EndVertical();
 
+            GUILayout.Space(COL_GAP);
+
+            // ── Column 2: Hand ──────────────────────────────────────────────────
+            GUILayout.BeginVertical(GUILayout.Width(colW));
             GUILayout.Label($"── HAND ({player.Hand.Count}) ──");
-            _handScroll = GUILayout.BeginScrollView(_handScroll, GUILayout.Height(listH - 20f));
+            _handScroll = GUILayout.BeginScrollView(_handScroll, GUILayout.Height(scrollH));
             foreach (var id in player.Hand)
                 DrawCardToggle(id);
             GUILayout.EndScrollView();
+            GUILayout.EndVertical();
+
+            GUILayout.Space(COL_GAP);
+
+            // ── Column 3: Arcanum ───────────────────────────────────────────────
+            GUILayout.BeginVertical(GUILayout.Width(colW));
+            GUILayout.Label($"── ARCANUM — Adepts: {adeptCount}/{adeptLimit}  Fates: {fateCount} ──");
+            _arcanumScroll = GUILayout.BeginScrollView(_arcanumScroll, GUILayout.Height(scrollH));
+            foreach (var id in player.Arcanum)
+            {
+                bool arrested = player.ArrestedAdepts.Contains(id);
+                string arrestTag = arrested ? "  [ARRESTED]" : "";
+                GUILayout.Label($"  ★ {CardLabel(id)}{arrestTag}");
+            }
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
+
+            GUILayout.EndHorizontal();
         }
 
         private void DrawCardToggle(string instanceId)
