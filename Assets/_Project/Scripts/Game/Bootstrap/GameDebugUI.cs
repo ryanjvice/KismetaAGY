@@ -136,10 +136,10 @@ namespace Kismeta.Game.Bootstrap
 
             // Cauldrons
             string cauldr = $"   Cauldrons: " +
-                $"♦{(p.IsCauldronLit(Suit.Wands)     ? "[lit]" : "[ ]")} " +
-                $"♥{(p.IsCauldronLit(Suit.Cups)       ? "[lit]" : "[ ]")} " +
-                $"♣{(p.IsCauldronLit(Suit.Pentacles)  ? "[lit]" : "[ ]")} " +
-                $"♠{(p.IsCauldronLit(Suit.Swords)     ? "[lit]" : "[ ]")}";
+                $"🪄{(p.IsCauldronLit(Suit.Wands)     ? "[lit]" : "[ ]")} " +
+                $"🍷{(p.IsCauldronLit(Suit.Cups)       ? "[lit]" : "[ ]")} " +
+                $"🪙{(p.IsCauldronLit(Suit.Pentacles)  ? "[lit]" : "[ ]")} " +
+                $"🗡️{(p.IsCauldronLit(Suit.Swords)     ? "[lit]" : "[ ]")}";
             GUILayout.Label(cauldr);
 
             // Crucible slots (compact)
@@ -371,7 +371,7 @@ namespace Kismeta.Game.Bootstrap
                     var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
 
                     // Card name is always visible; alchemical formula only once Active.
-                    string cardName = def != null ? $"[{def.CrucibleGroup}] {def.Name}" : "?";
+                    string cardName = def != null ? $"[{def.CrucibleGroup}] {def.EffectType}" : "?";
                     string coalStr  = slot.HasCoal ? " ·Coal" : "";
                     string wardStr  = slot.WardCount > 0 ? $" Ward×{slot.WardCount}" : "";
                     GUILayout.Label($"Slot {i}: {slot.State,-10} {cardName}{coalStr}{wardStr}");
@@ -938,24 +938,24 @@ namespace Kismeta.Game.Bootstrap
             if (def == null) return $"[?:{inst.DefinitionId}]";
 
             if (def.IsCrucible)
-                return $"[{def.CrucibleGroup}] {def.Name}";
+                return $"[{def.CrucibleGroup}] {def.EffectType}";
 
             if (def.IsMajorArcana)
                 return $"★{def.ArcanaNumber} {def.EffectType}";
 
-            // Minor arcana — show suit glyph, rank, planet, and variant number
+            // Minor arcana — suit emoji, rank, suit name, planet, variant
             string planet  = def.Planet != Planet.None ? $" [{def.Planet}]" : "";
             string variant = def.Variant == CardVariant.Two ? " (II)" : "";
-            return $"{SuitGlyph(def.Suit)} {def.Rank}{planet}{variant}";
+            return $"{SuitGlyph(def.Suit)} {def.Rank} {def.Suit}{planet}{variant}";
         }
 
-        private static char SuitGlyph(Suit suit) => suit switch
+        private static string SuitGlyph(Suit suit) => suit switch
         {
-            Suit.Wands     => '♦',
-            Suit.Cups      => '♥',
-            Suit.Pentacles => '♣',
-            Suit.Swords    => '♠',
-            _              => '·'
+            Suit.Wands     => "🪄",
+            Suit.Cups      => "🍷",
+            Suit.Pentacles => "🪙",
+            Suit.Swords    => "🗡️",
+            _              => "·"
         };
 
         // ── Crafting helpers ─────────────────────────────────────────────────────
