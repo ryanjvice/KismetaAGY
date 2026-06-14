@@ -1,6 +1,6 @@
 # Kismeta: Alchemists of the Great Year — Design Docs
 
-Design and rules documentation for the Unity mobile port of **Kismeta: Alchemists of the Great Year**, a strategic card-and-dice game by Goodmagik. This folder is the authoritative reference for all game rules, card data, and lore used during development.
+Design and rules documentation for the Unity mobile port of **Kismeta: Alchemists of the Great Year**, a strategic card-and-dice game by Goodmagik Games. This folder is the authoritative reference for all game rules, card data, and lore used during development.
 
 > **Editing these docs:** Edit `_source/Kismeta_GameGuide.md` or `_source/Kismeta_CardReference.md`, then run `npm run docs:sync` from the repo root. See [MAINTENANCE.md](MAINTENANCE.md) for the full workflow.
 
@@ -8,13 +8,14 @@ Design and rules documentation for the Unity mobile port of **Kismeta: Alchemist
 
 ## Quick Start
 
-| You want to… | Start here |
-|--------------|-----------|
-| Understand the game | [Introduction](Rules/introduction.md) → [Game Overview](Rules/overview.md) |
-| Set up a game | [Setup](Rules/setup.md) |
-| Follow a round step by step | [Round Overview](Rules/round-overview.md) |
-| Look up a card's effect | [Cards →](Cards/README.md) |
-| Decode a game term | [Glossary](Glossary.md) |
+| You want to…                            | Start here                                                                 |
+| --------------------------------------- | -------------------------------------------------------------------------- |
+| Understand the game                     | [Introduction](Rules/introduction.md) → [Game Overview](Rules/overview.md) |
+| Set up a game                           | [Setup](Rules/setup.md)                                                    |
+| Follow a round step by step             | [Round Overview](Rules/round-overview.md)                                  |
+| Look up a card's effect                 | [Cards →](Cards/README.md)                                                 |
+| Decode a game term                      | [Glossary](Glossary.md)                                                    |
+| Understand the codebase / build the GUI | [ARCHITECTURE.md](ARCHITECTURE.md)                                         |
 
 ---
 
@@ -82,27 +83,37 @@ Photography and visual reference of the physical game — 4-player table shots a
 
 - [Image index & naming conventions](_images/README.md)
 
-| Subfolder | Contents |
-|-----------|---------|
-| [`_images/gameplay/spring/`](_images/gameplay/spring/) | Phase 1 — dice rolls, Harvest, card layout |
-| [`_images/gameplay/summer/`](_images/gameplay/summer/) | Phase 2 — Crafting, Duels, Gambits, Trades |
-| [`_images/gameplay/autumn/`](_images/gameplay/autumn/) | Phase 3 — Opposition, Forge, Stasis |
-| [`_images/gameplay/winter/`](_images/gameplay/winter/) | Phase 4 — Card Unlock, Wager, reset |
-| [`_images/setup/`](_images/setup/) | Pre-game table setup |
-| [`_images/components/`](_images/components/) | Dice, tokens, Stones, Meeples |
-| [`_images/board/`](_images/board/) | Great Year Board; Zodiac Wheel |
-| [`_images/cards/`](_images/cards/) | Kismeta deck and Crucible deck card photography |
+| Subfolder                                              | Contents                                        |
+| ------------------------------------------------------ | ----------------------------------------------- |
+| [`_images/gameplay/spring/`](_images/gameplay/spring/) | Phase 1 — dice rolls, Harvest, card layout      |
+| [`_images/gameplay/summer/`](_images/gameplay/summer/) | Phase 2 — Crafting, Duels, Gambits, Trades      |
+| [`_images/gameplay/autumn/`](_images/gameplay/autumn/) | Phase 3 — Opposition, Forge, Stasis             |
+| [`_images/gameplay/winter/`](_images/gameplay/winter/) | Phase 4 — Card Unlock, Wager, reset             |
+| [`_images/setup/`](_images/setup/)                     | Pre-game table setup                            |
+| [`_images/components/`](_images/components/)           | Dice, tokens, Stones, Meeples                   |
+| [`_images/board/`](_images/board/)                     | Great Year Board; Zodiac Wheel                  |
+| [`_images/cards/`](_images/cards/)                     | Kismeta deck and Crucible deck card photography |
 
 > Images are tracked by Git LFS. See [`_images/README.md`](_images/README.md) for the naming convention and how to add new images.
 
 ---
 
+## Developer / Technical Reference
+
+Documentation for developers building or extending the Unity game on top of the C# engine. For game rules, use the sections above.
+
+| Document                           | Contents                                                                                                                                                                                                                                                                    |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Layer map, assembly dependencies, core patterns (Command/Event, GameSession, Phase Machine, Visibility Model), rule services, player controller pattern, data pipeline, bootstrap wiring, full command/event flow diagram, implementation status, and GUI integration guide |
+
+---
+
 ## Source & tooling
 
-| Path | Role |
-|------|------|
-| [`_source/Kismeta_GameGuide.md`](_source/Kismeta_GameGuide.md) | Canonical rules — you edit this |
-| [`_source/Kismeta_CardReference.md`](_source/Kismeta_CardReference.md) | Canonical card data — you edit this |
-| [`docs-split.manifest.json`](docs-split.manifest.json) | Maps source headings → output files |
-| [`MAINTENANCE.md`](MAINTENANCE.md) | Full editing and sync workflow |
-| `npm run docs:sync` | Regenerates all split files from source |
+| Path                                                                   | Role                                    |
+| ---------------------------------------------------------------------- | --------------------------------------- |
+| [`_source/Kismeta_GameGuide.md`](_source/Kismeta_GameGuide.md)         | Canonical rules — you edit this         |
+| [`_source/Kismeta_CardReference.md`](_source/Kismeta_CardReference.md) | Canonical card data — you edit this     |
+| [`docs-split.manifest.json`](docs-split.manifest.json)                 | Maps source headings → output files     |
+| [`MAINTENANCE.md`](MAINTENANCE.md)                                     | Full editing and sync workflow          |
+| `npm run docs:sync`                                                    | Regenerates all split files from source |
