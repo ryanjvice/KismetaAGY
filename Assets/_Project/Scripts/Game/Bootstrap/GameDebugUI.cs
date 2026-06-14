@@ -410,13 +410,13 @@ namespace Kismeta.Game.Bootstrap
 
         private void DrawCommunePanel(HotSeatController hs, int pid, PlayerState player, float colH)
         {
-            // Lazy-initialise: all owned cards start in Spread column
+            // Lazy-initialise: only minor arcana start in Spread column (Major Arcana live in Arcanum)
             if (!_communeInit)
             {
                 _communeSpread.Clear();
                 _communeHand.Clear();
-                _communeSpread.AddRange(player.Spread);
-                _communeSpread.AddRange(player.Hand);
+                foreach (var id in player.Spread) if (IsMinorArcana(id)) _communeSpread.Add(id);
+                foreach (var id in player.Hand)   if (IsMinorArcana(id)) _communeSpread.Add(id);
                 _communeInit = true;
             }
 
@@ -574,12 +574,12 @@ namespace Kismeta.Game.Bootstrap
                 _swapOutAdeptId = null; // clear if Arcanum no longer full
             }
 
-            // ── Payment card selector ─────────────────────────────────────────────
+            // ── Payment card selector (minor arcana only) ─────────────────────────
             GUILayout.Space(4f);
-            GUILayout.Label("── SELECT 3 PAYMENT CARDS ──");
+            GUILayout.Label("── SELECT 3 PAYMENT CARDS (minor arcana only) ──");
             var allCards = new List<string>(player.Spread.Count + player.Hand.Count);
-            foreach (var id in player.Spread) allCards.Add(id);
-            foreach (var id in player.Hand)   allCards.Add(id);
+            foreach (var id in player.Spread) if (IsMinorArcana(id)) allCards.Add(id);
+            foreach (var id in player.Hand)   if (IsMinorArcana(id)) allCards.Add(id);
 
             _actionsScroll = GUILayout.BeginScrollView(_actionsScroll, GUILayout.Height(140f));
             foreach (var id in allCards)
@@ -1053,6 +1053,16 @@ namespace Kismeta.Game.Bootstrap
         {
             _log.Add(msg);
             if (_log.Count > 200) _log.RemoveAt(0);
+        }
+
+        // ── Card helpers ─────────────────────────────────────────────────────────
+
+        /// <summary>Returns true when the card instance is a minor arcana (not Fate or Adept).</summary>
+        private bool IsMinorArcana(string instanceId)
+        {
+            var inst = _session?.GetCard(instanceId);
+            var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
+            return def != null && !def.IsMajorArcana;
         }
 
         // ── Card label resolution ────────────────────────────────────────────────

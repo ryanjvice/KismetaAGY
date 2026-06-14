@@ -104,8 +104,9 @@ namespace Kismeta.Core.Rules
         /// <summary>Judgement (20): Drawing player draws 1 card per lit Cauldron.</summary>
         private static void ResolveJudgement(GameSession session, int drawerId)
         {
-            var player = session.Players[drawerId];
-            int count  = 0;
+            var player  = session.Players[drawerId];
+            var harvest = session.Rules?.Harvest;
+            int count   = 0;
             foreach (Suit suit in Enum.GetValues(typeof(Suit)))
                 if (suit != Suit.None && player.IsCauldronLit(suit))
                     count++;
@@ -116,11 +117,16 @@ namespace Kismeta.Core.Rules
                     SpringRules.ReshuffleDiscardStatic(session);
                 if (session.Board.CommonDeck.Count == 0) break;
 
-                var id   = session.Board.CommonDeck.Pop();
-                var inst = session.GetCard(id);
-                if (inst == null) continue;
-                inst.MoveTo(CardZone.Hand, drawerId);
-                player.Hand.Add(id);
+                var id = session.Board.CommonDeck.Pop();
+                if (harvest != null)
+                    harvest.RouteDrawnCard(session, drawerId, id);
+                else
+                {
+                    var inst = session.GetCard(id);
+                    if (inst == null) continue;
+                    inst.MoveTo(CardZone.Hand, drawerId);
+                    player.Hand.Add(id);
+                }
             }
         }
 
@@ -193,10 +199,16 @@ namespace Kismeta.Core.Rules
             var keepSet       = new HashSet<string>(keepCardIds);
             var moonDrawn     = session.Board.FateMoonDrawnCardIds;
 
-            // Validate that the chosen cards are from the Moon draw
+            // Validate that the chosen cards are from the Moon draw and are minor arcana
             foreach (var id in keepCardIds)
+            {
                 if (!moonDrawn.Contains(id))
                     return CommandResult.Invalid($"The Moon: card {id} was not drawn by the Moon.");
+                var inst = session.GetCard(id);
+                var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
+                if (def?.IsMajorArcana == true)
+                    return CommandResult.Invalid($"The Moon: card {id} is a Major Arcana card and cannot be kept in Hand.");
+            }
 
             // Return the unchosen Moon cards to the bottom of the deck
             var toReturn = new List<string>();
@@ -233,19 +245,25 @@ namespace Kismeta.Core.Rules
         {
             if (drawCards)
             {
-                // Drawer draws 2 cards
-                var player = session.Players[drawerId];
+                // Drawer draws 2 cards — routed through harvest so Major Arcana go to Arcanum
+                var player  = session.Players[drawerId];
+                var harvest = session.Rules?.Harvest;
                 for (int i = 0; i < 2; i++)
                 {
                     if (session.Board.CommonDeck.Count == 0)
                         SpringRules.ReshuffleDiscardStatic(session);
                     if (session.Board.CommonDeck.Count == 0) break;
 
-                    var id   = session.Board.CommonDeck.Pop();
-                    var inst = session.GetCard(id);
-                    if (inst == null) continue;
-                    inst.MoveTo(CardZone.Hand, drawerId);
-                    player.Hand.Add(id);
+                    var id = session.Board.CommonDeck.Pop();
+                    if (harvest != null)
+                        harvest.RouteDrawnCard(session, drawerId, id);
+                    else
+                    {
+                        var inst = session.GetCard(id);
+                        if (inst == null) continue;
+                        inst.MoveTo(CardZone.Hand, drawerId);
+                        player.Hand.Add(id);
+                    }
                 }
             }
             else

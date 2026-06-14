@@ -40,7 +40,7 @@ namespace Kismeta.Core.Tests
                 codexDatabase: codexDb,
                 setup:         new GameSetupService(db, seed),
                 harvest:       new SpringRules(db, seed),
-                crucible:      new CrucibleRules(db, codexDb, seed),
+                crucible:      new CrucibleRules(db, codexDb, seed: seed),
                 crafting:      new CraftingRules(db),
                 winter:        new WinterRules(db),
                 validator:     new ActionValidator());
@@ -675,6 +675,145 @@ namespace Kismeta.Core.Tests
             }
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, handIds));
             Assert.IsFalse(result.IsOk, "Hand cards should not be usable for activation.");
+        }
+
+        // ─── Major Arcana Zone Enforcement tests ──────────────────────────────────
+
+        [Test]
+        public void RouteDrawnCard_Fate_GoesToArcanum_NotHand()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            // Place a Fate card on top of the deck
+            var fateInst = new CardInstance("fate-test-01", "major.fate.16", CardZone.Deck, -1);
+            session.RegisterCard(fateInst);
+            session.Board.CommonDeck.Push(fateInst.InstanceId);
+
+            int handBefore    = player.Hand.Count;
+            int arcanumBefore = player.Arcanum.Count;
+
+            session.Rules!.Harvest.RouteDrawnCard(session, 0, fateInst.InstanceId);
+
+            Assert.AreEqual(handBefore,        player.Hand.Count,    "Fate must NOT go to Hand.");
+            Assert.AreEqual(arcanumBefore + 1, player.Arcanum.Count, "Fate must go to Arcanum.");
+            Assert.Contains(fateInst.InstanceId, player.Arcanum);
+        }
+
+        [Test]
+        public void RouteDrawnCard_Adept_Queued_NotHand()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            var adeptInst = new CardInstance("adept-test-01", "major.adept.3", CardZone.Deck, -1);
+            session.RegisterCard(adeptInst);
+            session.Board.CommonDeck.Push(adeptInst.InstanceId);
+
+            int handBefore    = player.Hand.Count;
+            int pendingBefore = session.Board.PendingAdeptDecisions.Count;
+
+            session.Rules!.Harvest.RouteDrawnCard(session, 0, adeptInst.InstanceId);
+
+            Assert.AreEqual(handBefore,          player.Hand.Count,                       "Adept must NOT go to Hand.");
+            Assert.AreEqual(pendingBefore + 1,   session.Board.PendingAdeptDecisions.Count, "Adept must be queued in PendingAdeptDecisions.");
+        }
+
+        [Test]
+        public void Commune_Rejects_MajorArcana_InSpread()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            // Place a Fate card directly into Hand (simulating a bug state)
+            var fateInst = new CardInstance("fate-commune-01", "major.fate.19", CardZone.Hand, 0);
+            session.RegisterCard(fateInst);
+            player.Hand.Add(fateInst.InstanceId);
+
+            // Try to commune, assigning the Fate card to Spread (all other Hand+Spread cards to Hand)
+            var spreadIds = new List<string> { fateInst.InstanceId };
+            var handIds   = new List<string>(player.Spread);
+            foreach (var id in player.Hand)
+                if (id != fateInst.InstanceId) handIds.Add(id);
+
+            var result = session.Apply(new CommuneCommand(0, spreadIds, handIds));
+            Assert.IsFalse(result.IsOk, "Commune must reject Major Arcana in Spread.");
+        }
+
+        [Test]
+        public void BuyAdept_Rejects_MajorArcana_Payment()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            // The Adept to buy (in limbo / Deck zone as usual)
+            var adeptBuy = new CardInstance("adept-buy-01", "major.adept.2", CardZone.Deck, -1);
+            session.RegisterCard(adeptBuy);
+            session.Board.PendingAdeptDecisions.Add((0, adeptBuy.InstanceId));
+
+            // Try to pay with a Fate card placed in Spread
+            var fateInst = new CardInstance("fate-pay-01", "major.fate.13", CardZone.Spread, 0);
+            session.RegisterCard(fateInst);
+            player.Spread.Add(fateInst.InstanceId);
+
+            // Top up with 2 minor cards
+            for (int i = 0; i < 2; i++)
+            {
+                var minor = new CardInstance($"minor-pay-0{i}", "minor.cups.seven.1", CardZone.Spread, 0);
+                session.RegisterCard(minor);
+                player.Spread.Add(minor.InstanceId);
+            }
+
+            var payment = new List<string> { fateInst.InstanceId,
+                player.Spread[player.Spread.Count - 2], player.Spread[player.Spread.Count - 1] };
+            var result = session.Apply(new BuyAdeptCommand(0, adeptBuy.InstanceId, payment));
+            Assert.IsFalse(result.IsOk, "BuyAdept must reject a Fate card as payment.");
+        }
+
+        [Test]
+        public void MoonDraw_MajorArcana_NotInMoonPool()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            // Clear deck and place 1 Fate then 3 minors so Moon's 4-draw has mixed types
+            session.Board.CommonDeck.Clear();
+
+            var fate = new CardInstance("fate-moon-01", "major.fate.11", CardZone.Deck, -1);
+            session.RegisterCard(fate);
+            session.Board.CommonDeck.Push(fate.InstanceId); // drawn last (stack: last-in first-out)
+
+            for (int i = 0; i < 3; i++)
+            {
+                var minor = new CardInstance($"minor-moon-0{i}", "minor.cups.seven.1", CardZone.Deck, -1);
+                session.RegisterCard(minor);
+                session.Board.CommonDeck.Push(minor.InstanceId);
+            }
+            // Deck top → minor-moon-02, minor-moon-01, minor-moon-00, fate-moon-01
+
+            session.Board.FateMoonDrawnCardIds.Clear();
+            var harvest = session.Rules!.Harvest;
+            // Simulate what GameLoop does for Moon: draw 4, collect minors into pool
+            for (int i = 0; i < 4 && session.Board.CommonDeck.Count > 0; i++)
+            {
+                var id = session.Board.CommonDeck.Pop();
+                harvest.RouteDrawnCard(session, 0, id, session.Board.FateMoonDrawnCardIds);
+            }
+
+            // The Fate must not be in the moon pool and must be in Arcanum
+            Assert.IsFalse(session.Board.FateMoonDrawnCardIds.Contains(fate.InstanceId),
+                "Fate card must NOT appear in the Moon draw pool.");
+            Assert.IsTrue(player.Arcanum.Contains(fate.InstanceId),
+                "Fate card must be routed to Arcanum during Moon draw.");
+
+            // All 3 minors should be in the pool
+            Assert.AreEqual(3, session.Board.FateMoonDrawnCardIds.Count,
+                "Only the 3 minor arcana should be in the Moon draw pool.");
         }
     }
 }

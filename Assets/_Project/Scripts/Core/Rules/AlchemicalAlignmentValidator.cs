@@ -27,12 +27,28 @@ namespace Kismeta.Core.Rules
 
         public enum SegmentKind { SuitGroup, PlanetGroup, StraightSuit, SuitPair, PlanetPair, TwoPairs }
 
-        public sealed record FormulaSegment(
-            SegmentKind Kind,
-            int         Count,
-            Suit        Suit    = Suit.None,
-            Planet      Planet  = Planet.None,
-            Suit        Suit2   = Suit.None); // used by TwoPairs
+        public readonly struct FormulaSegment
+        {
+            public SegmentKind Kind   { get; }
+            public int         Count  { get; }
+            public Suit        Suit   { get; }
+            public Planet      Planet { get; }
+            public Suit        Suit2  { get; } // used by TwoPairs
+
+            public FormulaSegment(
+                SegmentKind kind,
+                int count,
+                Suit suit = Suit.None,
+                Planet planet = Planet.None,
+                Suit suit2 = Suit.None)
+            {
+                Kind   = kind;
+                Count  = count;
+                Suit   = suit;
+                Planet = planet;
+                Suit2  = suit2;
+            }
+        }
 
         // ── Formula lookup ────────────────────────────────────────────────────────
 
@@ -45,9 +61,9 @@ namespace Kismeta.Core.Rules
 
             // ── Single-segment ──
             d["Pair of Swords with the same Rank"]           = new[] { new FormulaSegment(SegmentKind.SuitPair,   2, Suit.Swords) };
-            d["Pair of Mercury planets (5s + Princess)"]     = new[] { new FormulaSegment(SegmentKind.PlanetPair, 2, Planet: Planet.Mercury) };
-            d["Pair of Moon planets (2s + Queens)"]          = new[] { new FormulaSegment(SegmentKind.PlanetPair, 2, Planet: Planet.Moon) };
-            d["Pair of Venus planets (4s + 9s)"]             = new[] { new FormulaSegment(SegmentKind.PlanetPair, 2, Planet: Planet.Venus) };
+            d["Pair of Mercury planets (5s + Princess)"]     = new[] { new FormulaSegment(SegmentKind.PlanetPair, 2, planet: Planet.Mercury) };
+            d["Pair of Moon planets (2s + Queens)"]          = new[] { new FormulaSegment(SegmentKind.PlanetPair, 2, planet: Planet.Moon) };
+            d["Pair of Venus planets (4s + 9s)"]             = new[] { new FormulaSegment(SegmentKind.PlanetPair, 2, planet: Planet.Venus) };
             d["3-card Wands Straight (Any 3 consecutive ranks)"]    = new[] { new FormulaSegment(SegmentKind.StraightSuit, 3, Suit.Wands) };
             d["3-card Swords Straight (Any 3 consecutive ranks)"]   = new[] { new FormulaSegment(SegmentKind.StraightSuit, 3, Suit.Swords) };
             d["3-card Pentacles Straight (Any 3 consecutive ranks)"]= new[] { new FormulaSegment(SegmentKind.StraightSuit, 3, Suit.Pentacles) };
@@ -57,40 +73,40 @@ namespace Kismeta.Core.Rules
             d["3-card Swords Straight"]   = new[] { new FormulaSegment(SegmentKind.StraightSuit, 3, Suit.Swords) };
             d["3-card Pentacles Straight"]= new[] { new FormulaSegment(SegmentKind.StraightSuit, 3, Suit.Pentacles) };
             d["3-card Cups Straight"]     = new[] { new FormulaSegment(SegmentKind.StraightSuit, 3, Suit.Cups) };
-            d["3 Moons (2s & Queens)"]                       = new[] { new FormulaSegment(SegmentKind.PlanetGroup, 3, Planet: Planet.Moon) };
-            d["Two Pairs — Pentacles and Swords Suits only"] = new[] { new FormulaSegment(SegmentKind.TwoPairs,   4, Suit.Pentacles, Suit2: Suit.Swords) };
+            d["3 Moons (2s & Queens)"]                       = new[] { new FormulaSegment(SegmentKind.PlanetGroup, 3, planet: Planet.Moon) };
+            d["Two Pairs — Pentacles and Swords Suits only"] = new[] { new FormulaSegment(SegmentKind.TwoPairs,   4, Suit.Pentacles, suit2: Suit.Swords) };
 
             // ── Two-segment ──
-            d["One Venus + Pair of Pentacles (Same Rank)"]   = new[] { new FormulaSegment(SegmentKind.PlanetGroup, 1, Planet: Planet.Venus),
+            d["One Venus + Pair of Pentacles (Same Rank)"]   = new[] { new FormulaSegment(SegmentKind.PlanetGroup, 1, planet: Planet.Venus),
                                                                          new FormulaSegment(SegmentKind.SuitPair,   2, Suit.Pentacles) };
-            d["One Sun + Pair of Wands (Same Rank)"]         = new[] { new FormulaSegment(SegmentKind.PlanetGroup, 1, Planet: Planet.Sun),
+            d["One Sun + Pair of Wands (Same Rank)"]         = new[] { new FormulaSegment(SegmentKind.PlanetGroup, 1, planet: Planet.Sun),
                                                                          new FormulaSegment(SegmentKind.SuitPair,   2, Suit.Wands) };
             d["Three Cups (any ranks) + one Sun card (Ace)"] = new[] { new FormulaSegment(SegmentKind.SuitGroup,   3, Suit.Cups),
-                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 1, Planet: Planet.Sun) };
-            d["Three Mars planets (7s + Knights) + Two Cups"]= new[] { new FormulaSegment(SegmentKind.PlanetGroup, 3, Planet: Planet.Mars),
+                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 1, planet: Planet.Sun) };
+            d["Three Mars planets (7s + Knights) + Two Cups"]= new[] { new FormulaSegment(SegmentKind.PlanetGroup, 3, planet: Planet.Mars),
                                                                          new FormulaSegment(SegmentKind.SuitGroup,   2, Suit.Cups) };
-            d["Three Jupiter planets (3s + 8s) + Two Wands"] = new[] { new FormulaSegment(SegmentKind.PlanetGroup, 3, Planet: Planet.Jupiter),
+            d["Three Jupiter planets (3s + 8s) + Two Wands"] = new[] { new FormulaSegment(SegmentKind.PlanetGroup, 3, planet: Planet.Jupiter),
                                                                          new FormulaSegment(SegmentKind.SuitGroup,   2, Suit.Wands) };
             d["Three Saturn planets (6s, 10s, or Kings) + Two Pentacles"] = new[] {
-                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 3, Planet: Planet.Saturn),
+                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 3, planet: Planet.Saturn),
                                                                          new FormulaSegment(SegmentKind.SuitGroup,   2, Suit.Pentacles) };
             d["Two Mars planet (7 or Knight) + 3-card Wands straight"]  = new[] {
-                                                                         new FormulaSegment(SegmentKind.PlanetGroup,  2, Planet: Planet.Mars),
+                                                                         new FormulaSegment(SegmentKind.PlanetGroup,  2, planet: Planet.Mars),
                                                                          new FormulaSegment(SegmentKind.StraightSuit, 3, Suit.Wands) };
             d["3-card Swords straight + Two Venus cards (3 or 8)"]      = new[] {
                                                                          new FormulaSegment(SegmentKind.StraightSuit, 3, Suit.Swords),
-                                                                         new FormulaSegment(SegmentKind.PlanetGroup,  2, Planet: Planet.Venus) };
+                                                                         new FormulaSegment(SegmentKind.PlanetGroup,  2, planet: Planet.Venus) };
             d["Four Mercury planets (5s + Princesses) + Two Cups"]      = new[] {
-                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 4, Planet: Planet.Mercury),
+                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 4, planet: Planet.Mercury),
                                                                          new FormulaSegment(SegmentKind.SuitGroup,   2, Suit.Cups) };
             d["Four Wands + Two Sun cards (Aces)"]                      = new[] {
                                                                          new FormulaSegment(SegmentKind.SuitGroup,   4, Suit.Wands),
-                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 2, Planet: Planet.Sun) };
+                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 2, planet: Planet.Sun) };
             d["Four Swords + Two Venus planets (4s or 9s)"]             = new[] {
                                                                          new FormulaSegment(SegmentKind.SuitGroup,   4, Suit.Swords),
-                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 2, Planet: Planet.Venus) };
+                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 2, planet: Planet.Venus) };
             d["Four Saturn planets (6s/10s/Kings) + Two Pentacles"]     = new[] {
-                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 4, Planet: Planet.Saturn),
+                                                                         new FormulaSegment(SegmentKind.PlanetGroup, 4, planet: Planet.Saturn),
                                                                          new FormulaSegment(SegmentKind.SuitGroup,   2, Suit.Pentacles) };
 
             return d;
@@ -251,10 +267,10 @@ namespace Kismeta.Core.Rules
             IReadOnlyList<CardDefinition> cards, bool[] used)
         {
             var r1 = PickSuitPair(suit1, cards, used);
-            if (!r1.ok) return (false, $"Two-Pairs: first pair ({suit1}) — {r1.reason}");
+            if (!r1.Item1) return (false, $"Two-Pairs: first pair ({suit1}) — {r1.Item2}");
 
             var r2 = PickSuitPair(suit2, cards, used);
-            if (!r2.ok) return (false, $"Two-Pairs: second pair ({suit2}) — {r2.reason}");
+            if (!r2.Item1) return (false, $"Two-Pairs: second pair ({suit2}) — {r2.Item2}");
 
             return (true, "");
         }

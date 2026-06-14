@@ -102,60 +102,67 @@ namespace Kismeta.Core.Rules
 
         public void ExecuteHarvest(GameSession session, int playerId)
         {
-            int count  = CalculateHarvestCount(session, playerId);
-            var player = session.Players[playerId];
-            var drawn  = new List<string>(count);
+            int target       = CalculateHarvestCount(session, playerId);
+            int adeptsBefore = session.Board.PendingAdeptDecisions.Count;
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < target; i++)
             {
                 if (session.Board.CommonDeck.Count == 0)
                     ReshuffleDiscard(session);
                 if (session.Board.CommonDeck.Count == 0)
                     break;
 
-                var id   = session.Board.CommonDeck.Pop();
-                var inst = session.GetCard(id);
-                if (inst == null) continue;
+                var id = session.Board.CommonDeck.Pop();
+                RouteDrawnCard(session, playerId, id);
+            }
 
-                var def = _db.GetById(inst.DefinitionId);
+            // Drawn count = cards dealt minus Adepts held in limbo (Fate + Minor count for the event)
+            int adeptsQueued = session.Board.PendingAdeptDecisions.Count - adeptsBefore;
+            session.EmitEvent(new CardsDrawnEvent(playerId, target - adeptsQueued));
+        }
 
-                if (def?.MajorArcanaType == MajorArcanaType.Fate)
+        /// <inheritdoc/>
+        public bool RouteDrawnCard(GameSession session, int playerId, string cardId,
+            ICollection<string>? minorPool = null)
+        {
+            var player = session.Players[playerId];
+            var inst   = session.GetCard(cardId);
+            if (inst == null) return false;
+
+            var def = _db.GetById(inst.DefinitionId);
+
+            if (def?.MajorArcanaType == MajorArcanaType.Fate)
+            {
+                // Fate cards go directly to Arcanum, face-up; never enter Hand or Spread
+                inst.MoveTo(CardZone.Arcanum, playerId);
+                player.Arcanum.Add(cardId);
+
+                if (_fateResolver != null)
                 {
-                    // Fate cards go directly to Arcanum, face-up — resolve effect immediately or queue async
-                    inst.MoveTo(CardZone.Arcanum, playerId);
-                    player.Arcanum.Add(id);
-                    drawn.Add(id);
-
-                    if (_fateResolver != null)
-                    {
-                        // If auto-resolved, we're done; otherwise queue for GameLoop to handle
-                        bool resolved = _fateResolver.Resolve(session, playerId, id, def.ArcanaNumber);
-                        if (!resolved)
-                            session.Board.PendingFateDecisions.Add((playerId, id, def.ArcanaNumber));
-                    }
-                    else
-                    {
-                        // No resolver wired (e.g. tests): just queue
-                        session.Board.PendingFateDecisions.Add((playerId, id, def.ArcanaNumber));
-                    }
-                }
-                else if (def?.MajorArcanaType == MajorArcanaType.Adept)
-                {
-                    // Adept sits in a limbo zone until the player buys or declines
-                    // Keep it in the card registry (no zone yet — leave as Deck temporarily)
-                    inst.MoveTo(CardZone.Deck, -1); // neutral placeholder zone
-                    session.Board.PendingAdeptDecisions.Add((playerId, id));
+                    bool resolved = _fateResolver.Resolve(session, playerId, cardId, def.ArcanaNumber);
+                    if (!resolved)
+                        session.Board.PendingFateDecisions.Add((playerId, cardId, def.ArcanaNumber));
                 }
                 else
                 {
-                    // Minor Arcana → Hand as normal
-                    inst.MoveTo(CardZone.Hand, playerId);
-                    player.Hand.Add(id);
-                    drawn.Add(id);
+                    session.Board.PendingFateDecisions.Add((playerId, cardId, def.ArcanaNumber));
                 }
+                return false;
             }
 
-            session.EmitEvent(new CardsDrawnEvent(playerId, drawn.Count));
+            if (def?.MajorArcanaType == MajorArcanaType.Adept)
+            {
+                // Adept sits in limbo until the player buys or declines; never enters Hand or Spread
+                inst.MoveTo(CardZone.Deck, -1);
+                session.Board.PendingAdeptDecisions.Add((playerId, cardId));
+                return false;
+            }
+
+            // Minor Arcana → Hand
+            inst.MoveTo(CardZone.Hand, playerId);
+            player.Hand.Add(cardId);
+            minorPool?.Add(cardId);
+            return true;
         }
 
         // ─── Step 4 extension: Adept buy / decline ─────────────────────────────────
@@ -167,6 +174,16 @@ namespace Kismeta.Core.Rules
 
             if (paymentCardIds.Count != 3)
                 return CommandResult.Invalid("Purchasing an Adept costs exactly 3 cards.");
+
+            // Payment must be minor arcana only — Fate/Adept cards are not valid currency
+            foreach (var id in paymentCardIds)
+            {
+                var pinst = session.GetCard(id);
+                var pdef  = pinst != null ? _db.GetById(pinst.DefinitionId) : null;
+                if (pdef?.IsMajorArcana == true)
+                    return CommandResult.Invalid(
+                        $"Card {id} is a Major Arcana card and cannot be used as Adept payment.");
+            }
 
             // Ownership check
             var playerCards = BuildCardSet(player);
@@ -282,6 +299,24 @@ namespace Kismeta.Core.Rules
             foreach (var id in allProvided)
                 if (!playerCards.Contains(id))
                     return CommandResult.Invalid($"Card {id} does not belong to player {playerId}.");
+
+            // Major Arcana cards must never be assigned to Spread or Hand
+            foreach (var id in spreadCardIds)
+            {
+                var cinst = session.GetCard(id);
+                var cdef  = cinst != null ? _db.GetById(cinst.DefinitionId) : null;
+                if (cdef?.IsMajorArcana == true)
+                    return CommandResult.Invalid(
+                        $"Card {id} is a Major Arcana card and cannot be placed in the Spread.");
+            }
+            foreach (var id in handCardIds)
+            {
+                var cinst = session.GetCard(id);
+                var cdef  = cinst != null ? _db.GetById(cinst.DefinitionId) : null;
+                if (cdef?.IsMajorArcana == true)
+                    return CommandResult.Invalid(
+                        $"Card {id} is a Major Arcana card and cannot be placed in the Hand.");
+            }
 
             // Rebuild zones
             player.Spread.Clear();

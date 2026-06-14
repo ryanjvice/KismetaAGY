@@ -36,5 +36,15 @@ namespace Kismeta.Core.Rules
 
         /// <summary>Player declines an Adept card; it is discarded to the Common Discard.</summary>
         CommandResult HandleDeclineAdept(GameSession session, int playerId, string adeptCardId);
+
+        /// <summary>
+        /// Routes a single card popped from the Common Deck to the correct zone:
+        ///   Fate  → Arcanum immediately; resolves/queues fate effects.
+        ///   Adept → PendingAdeptDecisions limbo (Deck zone placeholder).
+        ///   Minor → Player's Hand; if <paramref name="minorPool"/> is non-null, appends the id to it.
+        /// Returns true only for minor arcana (card placed in Hand).
+        /// </summary>
+        bool RouteDrawnCard(GameSession session, int playerId, string cardId,
+            ICollection<string>? minorPool = null);
     }
 }

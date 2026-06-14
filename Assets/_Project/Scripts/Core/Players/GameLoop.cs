@@ -141,7 +141,7 @@ namespace Kismeta.Core.Players
                     case 18: // Moon: draw 4 cards, then player keeps 2
                         Log($"Spring — Fate: The Moon — P{playerId} draws 4, keeps 2");
                         _session.Board.FateMoonDrawnCardIds.Clear();
-                        DrawCards(_session, playerId, 4, _session.Board.FateMoonDrawnCardIds);
+                        DrawCards(playerId, 4, _session.Board.FateMoonDrawnCardIds);
                         var moonCmd = await RequestAsync(playerId, ActionHint.FateMoonDecision, ct, fateCardId);
                         Apply(moonCmd);
                         _session.Board.FateMoonDrawnCardIds.Clear();
@@ -149,7 +149,7 @@ namespace Kismeta.Core.Players
 
                     case 0: // Fool: drawer draws 2; each opponent picks 1 Reagent
                         Log($"Spring — Fate: The Fool — P{playerId} draws 2");
-                        DrawCards(_session, playerId, 2);
+                        DrawCards(playerId, 2);
                         foreach (var opp in _session.Players)
                         {
                             if (opp.PlayerId == playerId || ct.IsCancellationRequested) continue;
@@ -344,21 +344,31 @@ namespace Kismeta.Core.Players
             return 0;
         }
 
-        /// <summary>Draw <paramref name="count"/> cards from CommonDeck into the player's Hand.
-        /// Optionally collects the drawn card IDs into <paramref name="drawnIds"/>.</summary>
-        private static void DrawCards(GameSession session, int playerId, int count,
-            List<string>? drawnIds = null)
+        /// <summary>
+        /// Draw <paramref name="count"/> cards from CommonDeck, routing each through
+        /// <see cref="IHarvestService.RouteDrawnCard"/> so Major Arcana never land in Hand.
+        /// Minor Arcana card ids are appended to <paramref name="minorPool"/> when provided
+        /// (used by the Moon fate to build the player's "keep-2" pick list).
+        /// </summary>
+        private void DrawCards(int playerId, int count, List<string>? minorPool = null)
         {
-            var player = session.Players[playerId];
+            var harvest = _session.Rules?.Harvest;
             for (int i = 0; i < count; i++)
             {
-                if (session.Board.CommonDeck.Count == 0)
-                    SpringRules.ReshuffleDiscardStatic(session);
-                if (session.Board.CommonDeck.Count == 0) break;
-                var id = session.Board.CommonDeck.Pop();
-                session.GetCard(id)?.MoveTo(CardZone.Hand, playerId);
-                player.Hand.Add(id);
-                drawnIds?.Add(id);
+                if (_session.Board.CommonDeck.Count == 0)
+                    SpringRules.ReshuffleDiscardStatic(_session);
+                if (_session.Board.CommonDeck.Count == 0) break;
+
+                var id = _session.Board.CommonDeck.Pop();
+                if (harvest != null)
+                    harvest.RouteDrawnCard(_session, playerId, id, minorPool);
+                else
+                {
+                    // Fallback: plain hand add (tests without rules wired)
+                    _session.GetCard(id)?.MoveTo(CardZone.Hand, playerId);
+                    _session.Players[playerId].Hand.Add(id);
+                    minorPool?.Add(id);
+                }
             }
         }
 

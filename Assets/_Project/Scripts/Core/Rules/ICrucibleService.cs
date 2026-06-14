@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Kismeta.Core.Commands;
+using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 
 namespace Kismeta.Core.Rules

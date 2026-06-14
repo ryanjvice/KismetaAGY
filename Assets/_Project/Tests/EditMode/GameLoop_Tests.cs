@@ -46,7 +46,7 @@ namespace Kismeta.Core.Tests
                 codexDatabase: codexDb,
                 setup:         new GameSetupService(db, seed),
                 harvest:       new SpringRules(db, seed),
-                crucible:      new CrucibleRules(db, codexDb, seed),
+                crucible:      new CrucibleRules(db, codexDb, seed: seed),
                 crafting:      new CraftingRules(db),
                 winter:        new WinterRules(db),
                 validator:     new ActionValidator());

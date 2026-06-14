@@ -46,11 +46,12 @@ namespace Kismeta.Core.Players
 
         private IGameCommand DecideCommune(GameContext ctx)
         {
-            var pid = Slot.Index;
-            var spread  = ctx.PublicView.Players[pid].Spread;
+            var pid    = Slot.Index;
+            var spread = ctx.PublicView.Players[pid].Spread;
+            // Only minor arcana may be assigned to Spread or Hand
             var allCards = new List<string>(spread.Count + ctx.PrivateView.Hand.Count);
-            foreach (var id in spread)                allCards.Add(id);
-            foreach (var id in ctx.PrivateView.Hand)  allCards.Add(id);
+            foreach (var id in spread)               if (IsMinorArcana(ctx, id)) allCards.Add(id);
+            foreach (var id in ctx.PrivateView.Hand) if (IsMinorArcana(ctx, id)) allCards.Add(id);
             return CommuneCommand.AllToSpread(pid, allCards);
         }
 
@@ -181,14 +182,25 @@ namespace Kismeta.Core.Players
 
         // ─── Helpers ──────────────────────────────────────────────────────────────
 
+        /// <summary>All minor-arcana cards in Spread + Hand (Major Arcana excluded — cannot be payment).</summary>
         private static List<string> AllPlayerCards(GameContext ctx)
         {
-            int pid  = ctx.ActivePlayerId;
+            int pid    = ctx.ActivePlayerId;
             var spread = ctx.PublicView.Players[pid].Spread;
-            var list = new List<string>(spread.Count + ctx.PrivateView.Hand.Count);
-            foreach (var id in spread)                list.Add(id);
-            foreach (var id in ctx.PrivateView.Hand)  list.Add(id);
+            var list   = new List<string>(spread.Count + ctx.PrivateView.Hand.Count);
+            foreach (var id in spread)               if (IsMinorArcana(ctx, id)) list.Add(id);
+            foreach (var id in ctx.PrivateView.Hand) if (IsMinorArcana(ctx, id)) list.Add(id);
             return list;
+        }
+
+        /// <summary>Returns true when the card instance is minor arcana (safe for Hand/Spread/payment).</summary>
+        private static bool IsMinorArcana(GameContext ctx, string instanceId)
+        {
+            if (ctx.CardDatabase == null) return true; // assume safe when db not wired
+            if (!ctx.PublicView.CardInstanceToDefinition.TryGetValue(instanceId, out var defId))
+                return true;
+            var def = ctx.CardDatabase.GetById(defId);
+            return def != null && !def.IsMajorArcana;
         }
 
         /// <summary>
