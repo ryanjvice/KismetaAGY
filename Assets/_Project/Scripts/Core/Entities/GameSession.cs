@@ -191,6 +191,15 @@ namespace Kismeta.Core.Entities
                     ? _rules.Crucible.TryPlaceStoneWard(this, cmd.PlayerId, cmd.ReagentType)
                     : CommandResult.NotImplemented(nameof(PlaceStoneWardCommand)),
 
+                RefreshAdeptCommand   cmd => _rules is not null
+                    ? _rules.Crucible.TryRefreshAdept(this, cmd.PlayerId, cmd.AdeptCardId)
+                    : CommandResult.NotImplemented(nameof(RefreshAdeptCommand)),
+
+                DirectTradeCommand    cmd => _rules?.Trade is not null
+                    ? _rules.Trade.TryTrade(this, cmd.PlayerId, cmd.TargetId,
+                        cmd.OfferCardIds, cmd.RequestCardIds)
+                    : CommandResult.NotImplemented(nameof(DirectTradeCommand)),
+
                 // ── Combat ────────────────────────────────────────────────────────
                 InitiateDuelCommand   cmd => _rules?.Combat is not null
                     ? _rules.Combat.TryDuel(this, cmd.AttackerId, cmd.DefenderId, cmd.AnteCardId)

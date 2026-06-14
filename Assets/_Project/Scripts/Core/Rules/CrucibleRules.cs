@@ -351,6 +351,24 @@ namespace Kismeta.Core.Rules
             return CommandResult.Ok($"Forge Ward placed (total: {player.StoneWardCount}).");
         }
 
+        public CommandResult TryRefreshAdept(GameSession session, int playerId, string adeptCardId)
+        {
+            var player = session.Players[playerId];
+
+            if (!player.Arcanum.Contains(adeptCardId))
+                return CommandResult.Invalid($"Card {adeptCardId} is not in Player {playerId}'s Arcanum.");
+
+            if (!player.ArrestedAdepts.Contains(adeptCardId))
+                return CommandResult.Invalid($"Card {adeptCardId} is not arrested.");
+
+            if (!player.SpendReagent(ReagentType.Salt, 1))
+                return CommandResult.Invalid("Refreshing an arrested Adept costs 1 Salt.");
+
+            player.ArrestedAdepts.Remove(adeptCardId);
+            session.EmitEvent(new AdeptRefreshedEvent(playerId, adeptCardId));
+            return CommandResult.Ok("Adept refreshed.");
+        }
+
         // ─── Private helpers ──────────────────────────────────────────────────────
 
         private List<CardDefinition> ResolveCardDefs(GameSession session, IReadOnlyList<string>? ids)

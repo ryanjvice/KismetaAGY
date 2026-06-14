@@ -52,9 +52,10 @@ namespace Kismeta.Core.Rules
                 total += CardScore(def.Suit, def.Planet, referenceSign);
             }
 
-            // Adept cards in Arcanum
+            // Adept cards in Arcanum (arrested Adepts do not contribute until refreshed)
             foreach (var id in player.Arcanum)
             {
+                if (player.ArrestedAdepts.Contains(id)) continue;
                 var inst = session.GetCard(id);
                 var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
                 if (def?.MajorArcanaType == MajorArcanaType.Adept && def.Sign != ZodiacSign.None)

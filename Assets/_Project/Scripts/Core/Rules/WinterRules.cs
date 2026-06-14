@@ -251,12 +251,13 @@ namespace Kismeta.Core.Rules
             session.Board.CosmicEffect    = CosmicEffectFlags.Default;
             session.Board.BestOfThreeDuels = false;
 
-            // Clear per-round stone flags and wager state
+            // Clear per-round stone flags, wager state, and Tower arrest
             foreach (var player in session.Players)
             {
                 player.ReturnedFromStasisThisRound = false;
                 player.FatefulWagerSign = ZodiacSign.None;
                 player.FatefulWagerCards.Clear();
+                player.ArrestedAdepts.Clear();
             }
 
             int newAgekeeper = RotateAgekeeper(session);

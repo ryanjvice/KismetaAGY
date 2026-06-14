@@ -248,4 +248,30 @@ namespace Kismeta.Core.Commands
         public CardsDiscardedToLimitEvent(int playerId, int cardsDiscarded)
         { PlayerId = playerId; CardsDiscard = cardsDiscarded; }
     }
+
+    public sealed class TowerFateResolvedEvent : IGameEvent
+    {
+        public int DrawerId        { get; }
+        public int AdeptsArrested  { get; }
+        public TowerFateResolvedEvent(int drawerId, int adeptsArrested)
+        { DrawerId = drawerId; AdeptsArrested = adeptsArrested; }
+    }
+
+    public sealed class AdeptRefreshedEvent : IGameEvent
+    {
+        public int    PlayerId    { get; }
+        public string AdeptCardId { get; }
+        public AdeptRefreshedEvent(int playerId, string adeptCardId)
+        { PlayerId = playerId; AdeptCardId = adeptCardId; }
+    }
+
+    public sealed class TradeCompletedEvent : IGameEvent
+    {
+        public int InitiatorId   { get; }
+        public int TargetId      { get; }
+        public int OfferedCards  { get; }
+        public int ReceivedCards { get; }
+        public TradeCompletedEvent(int initiatorId, int targetId, int offeredCards, int receivedCards)
+        { InitiatorId = initiatorId; TargetId = targetId; OfferedCards = offeredCards; ReceivedCards = receivedCards; }
+    }
 }

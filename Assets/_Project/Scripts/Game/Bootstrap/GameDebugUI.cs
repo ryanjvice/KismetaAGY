@@ -37,6 +37,11 @@ namespace Kismeta.Game.Bootstrap
         private readonly List<string> _communeHand   = new();
         private bool _communeInit;
 
+        // Summer Trade state
+        private int _tradeTargetId = -1;
+        private readonly HashSet<string> _tradeOfferIds   = new();
+        private readonly HashSet<string> _tradeRequestIds = new();
+
         // Winter Fateful Wager state
         private ZodiacSign _wagerSign = ZodiacSign.None;
         private readonly HashSet<string> _wagerCards = new();
@@ -192,6 +197,9 @@ namespace Kismeta.Game.Bootstrap
                 _wagerCards.Clear();
                 _discardSpread.Clear();
                 _discardHand.Clear();
+                _tradeTargetId = -1;
+                _tradeOfferIds.Clear();
+                _tradeRequestIds.Clear();
                 _lastHint    = hint;
             }
 
@@ -336,7 +344,11 @@ namespace Kismeta.Game.Bootstrap
                 }
                 GUILayout.Label($"── ARCANUM — Adepts: {adeptCount}/{adeptLimit}  Fates: {fateCount} ──");
                 foreach (var id in player.Arcanum)
-                    GUILayout.Label($"  ★ {CardLabel(id)}");
+                {
+                    bool arrested = player.ArrestedAdepts.Contains(id);
+                    string arrestTag = arrested ? "  [ARRESTED]" : "";
+                    GUILayout.Label($"  ★ {CardLabel(id)}{arrestTag}");
+                }
                 GUILayout.Space(4f);
             }
 
@@ -829,6 +841,10 @@ namespace Kismeta.Game.Bootstrap
                 }
             }
 
+            // ── Trade ────────────────────────────────────────────────────────────
+            GUILayout.Space(4f);
+            DrawTradePanel(hs, pid, player);
+
             // ── Duel ─────────────────────────────────────────────────────────────
             GUILayout.Space(4f);
             GUILayout.Label("── Duel (ante 1 selected Spread card) ──");
@@ -890,9 +906,99 @@ namespace Kismeta.Game.Bootstrap
                 GUILayout.EndHorizontal();
             }
 
+            // ── Refresh Arrested Adept (Tower fate) ───────────────────────────────
+            if (player.ArrestedAdepts.Count > 0)
+            {
+                GUILayout.Space(4f);
+                GUILayout.Label($"── Refresh Arrested Adept  (costs 1 Salt, have {player.GetReagent(ReagentType.Salt)}) ──");
+                GUILayout.BeginHorizontal();
+                foreach (var adeptId in player.ArrestedAdepts.ToList())
+                {
+                    GUI.enabled = player.GetReagent(ReagentType.Salt) >= 1;
+                    if (GUILayout.Button($"Refresh {CardLabel(adeptId)}"))
+                        SubmitAction(hs, new RefreshAdeptCommand(pid, adeptId));
+                }
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
+            }
+
             GUILayout.Space(4f);
             if (GUILayout.Button("Pass"))
                 SubmitAction(hs, new PassCrucibleActionCommand(pid));
+        }
+
+        // ── Trade panel (Summer) ──────────────────────────────────────────────────
+
+        private void DrawTradePanel(HotSeatController hs, int pid, PlayerState player)
+        {
+            GUILayout.Label("── Trade (exchange Spread cards with an opponent) ──");
+
+            if (_session == null) return;
+
+            // Target player selector
+            GUILayout.Label($"Target: {(_tradeTargetId < 0 ? "none" : $"P{_tradeTargetId}")}");
+            GUILayout.BeginHorizontal();
+            foreach (var opp in _session.Players)
+            {
+                if (opp.PlayerId == pid) continue;
+                GUI.backgroundColor = _tradeTargetId == opp.PlayerId ? Color.yellow : Color.white;
+                if (GUILayout.Button($"P{opp.PlayerId}"))
+                {
+                    _tradeTargetId = opp.PlayerId;
+                    _tradeOfferIds.Clear();
+                    _tradeRequestIds.Clear();
+                }
+            }
+            GUI.backgroundColor = Color.white;
+            GUILayout.EndHorizontal();
+
+            if (_tradeTargetId < 0) return;
+
+            var target = _session.Players[_tradeTargetId];
+
+            // Offer: cards from own Spread
+            GUILayout.Label("Offer (your Spread — click to toggle):");
+            GUILayout.BeginHorizontal();
+            foreach (var id in player.Spread.ToList())
+            {
+                if (!IsMinorArcana(id)) continue;
+                bool sel = _tradeOfferIds.Contains(id);
+                GUI.backgroundColor = sel ? Color.green : Color.white;
+                if (GUILayout.Button(CardLabel(id)))
+                {
+                    if (sel) _tradeOfferIds.Remove(id); else _tradeOfferIds.Add(id);
+                }
+            }
+            GUI.backgroundColor = Color.white;
+            GUILayout.EndHorizontal();
+
+            // Request: cards from target's Spread
+            GUILayout.Label($"Request (P{_tradeTargetId}'s Spread — click to toggle):");
+            GUILayout.BeginHorizontal();
+            foreach (var id in target.Spread.ToList())
+            {
+                if (!IsMinorArcana(id)) continue;
+                bool sel = _tradeRequestIds.Contains(id);
+                GUI.backgroundColor = sel ? Color.cyan : Color.white;
+                if (GUILayout.Button(CardLabel(id)))
+                {
+                    if (sel) _tradeRequestIds.Remove(id); else _tradeRequestIds.Add(id);
+                }
+            }
+            GUI.backgroundColor = Color.white;
+            GUILayout.EndHorizontal();
+
+            bool validTrade = _tradeOfferIds.Count > 0 || _tradeRequestIds.Count > 0;
+            GUI.enabled = validTrade;
+            if (GUILayout.Button($"Execute Trade  (give {_tradeOfferIds.Count} / receive {_tradeRequestIds.Count})"))
+            {
+                SubmitAction(hs, new DirectTradeCommand(pid, _tradeTargetId,
+                    _tradeOfferIds.ToList(), _tradeRequestIds.ToList()));
+                _tradeTargetId = -1;
+                _tradeOfferIds.Clear();
+                _tradeRequestIds.Clear();
+            }
+            GUI.enabled = true;
         }
 
         private void DrawBuildHouseButton(HotSeatController hs, int pid, PlayerState player,

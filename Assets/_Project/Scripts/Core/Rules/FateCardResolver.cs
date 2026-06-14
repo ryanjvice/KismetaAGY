@@ -58,15 +58,27 @@ namespace Kismeta.Core.Rules
 
         // ── Auto-resolving fates ──────────────────────────────────────────────────
 
-        /// <summary>Tower (16): All Adept cards are "arrested" (turned face-down).
-        /// In code, we mark Adept cards with CardZone.Arcanum status — no new field needed for M3;
-        /// a "refreshed" flag would require more state. Log the effect instead.</summary>
-        private static void ResolveTower(GameSession session, int drawerId)
+        /// <summary>
+        /// Tower (16): All Adept cards in every player's Arcanum are arrested (turned face-down).
+        /// Arrested Adepts no longer contribute to alignment scoring until refreshed (1 Salt each).
+        /// </summary>
+        private void ResolveTower(GameSession session, int drawerId)
         {
-            // Emit a log-level event; full arrest (face-down state) requires a future
-            // IsArrested flag on PlayerCrucibleSlot-equivalent for Arcanum cards.
-            // For now, opponents must manually pay 1 Salt to "refresh" per the rules display.
-            session.EmitEvent(new FateResolvedEvent(drawerId, "tower", 16));
+            int totalArrested = 0;
+            foreach (var player in session.Players)
+            {
+                foreach (var id in player.Arcanum)
+                {
+                    var inst = session.GetCard(id);
+                    var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
+                    if (def?.MajorArcanaType == MajorArcanaType.Adept)
+                    {
+                        player.ArrestedAdepts.Add(id);
+                        totalArrested++;
+                    }
+                }
+            }
+            session.EmitEvent(new TowerFateResolvedEvent(drawerId, totalArrested));
         }
 
         /// <summary>Death (13): All players discard their entire Hand to the Common Deck.</summary>

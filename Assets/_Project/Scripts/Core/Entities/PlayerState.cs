@@ -48,6 +48,10 @@ namespace Kismeta.Core.Entities
         /// <summary>Cards held out of play as the wager stake (cleared at resolution).</summary>
         public List<string> FatefulWagerCards { get; } = new();
 
+        // Tower Fate: arrested Adept card IDs (must spend 1 Salt each to refresh)
+        /// <summary>Adept cards in Arcanum that are arrested by The Tower and cannot contribute to alignment.</summary>
+        public HashSet<string> ArrestedAdepts { get; } = new();
+
         // Astral Houses placed (ZodiacSign values the player has claimed)
         public HashSet<ZodiacSign> AstralHouses { get; } = new();
         public int UnplacedAstralHouses { get; set; } = 4;

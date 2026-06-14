@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Phases;
 using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 
@@ -80,10 +81,23 @@ namespace Kismeta.Core.Players
             await RunWinterAsync(ct);
         }
 
+        // ─── Phase helper ─────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Jumps the phase controller to the first step of the given season and fires
+        /// a <see cref="PhaseChangedEvent"/> so the UI left-column label stays in sync.
+        /// </summary>
+        private void SetPhase(Season season)
+        {
+            _session.Phase.SetSeason(season);
+            _session.EmitEvent(new PhaseChangedEvent(season, 0));
+        }
+
         // ─── Spring ───────────────────────────────────────────────────────────────
 
         private async Task RunSpringAsync(CancellationToken ct)
         {
+            SetPhase(Season.Spring);
             Log("Spring — Step 1: Cosmic Age roll");
             Apply(new RollCosmicAgeCommand(FindAgekeeperId()));
 
@@ -113,8 +127,6 @@ namespace Kismeta.Core.Players
 
             Log("Spring — Step 5: Card Lock");
             Apply(new SetCardLockCommand(true));
-
-            Apply(new AdvancePhaseCommand());
         }
 
         // ─── Fate card resolution ─────────────────────────────────────────────────
@@ -201,24 +213,25 @@ namespace Kismeta.Core.Players
 
         private async Task RunSummerAsync(CancellationToken ct)
         {
+            SetPhase(Season.Summer);
             Log("Summer — Free-Action Pool");
             await RunFreeActionPool(ActionHint.SummerAction, ct);
-            Apply(new AdvancePhaseCommand());
         }
 
         // ─── Autumn ───────────────────────────────────────────────────────────────
 
         private async Task RunAutumnAsync(CancellationToken ct)
         {
+            SetPhase(Season.Autumn);
             Log("Autumn — Free-Action Pool");
             await RunFreeActionPool(ActionHint.AutumnAction, ct);
-            Apply(new AdvancePhaseCommand());
         }
 
         // ─── Winter ───────────────────────────────────────────────────────────────
 
         private async Task RunWinterAsync(CancellationToken ct)
         {
+            SetPhase(Season.Winter);
             Log("Winter — Step 1: Card Unlock");
             Apply(new SetCardLockCommand(false));
 
@@ -230,8 +243,6 @@ namespace Kismeta.Core.Players
 
             Log("Winter — Step 4: Transit Age");
             Apply(new TransitAgeCommand());
-
-            Apply(new AdvancePhaseCommand());
         }
 
         /// <summary>

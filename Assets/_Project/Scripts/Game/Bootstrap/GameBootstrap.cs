@@ -112,7 +112,8 @@ namespace Kismeta.Game.Bootstrap
                 fateResolver:        fateResolver,
                 alchemicalValidator: alchemicalValidator,
                 alignment:           alignmentService,
-                combat:              new CombatRules());
+                combat:              new CombatRules(),
+                trade:               new TradeService(_db!));
 
             _session = new GameSession(
                 sessionId: Guid.NewGuid().ToString(),

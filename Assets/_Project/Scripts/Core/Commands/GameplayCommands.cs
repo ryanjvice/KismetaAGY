@@ -133,6 +133,46 @@ namespace Kismeta.Core.Commands
         }
     }
 
+    // ── Arcanum refresh ───────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Player spends 1 Salt to "refresh" an Adept card arrested by The Tower,
+    /// restoring its contribution to alignment scoring.
+    /// </summary>
+    public sealed class RefreshAdeptCommand : IGameCommand
+    {
+        public int    PlayerId    { get; }
+        public string AdeptCardId { get; }
+        public RefreshAdeptCommand(int playerId, string adeptCardId)
+        { PlayerId = playerId; AdeptCardId = adeptCardId; }
+    }
+
+    // ── Trade ─────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Direct hot-seat trade: both parties exchange Spread cards immediately.
+    /// Minor arcana only; major arcana cannot be traded.
+    /// </summary>
+    public sealed class DirectTradeCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public int TargetId { get; }
+        /// <summary>Cards the initiator offers from their own Spread.</summary>
+        public IReadOnlyList<string> OfferCardIds { get; }
+        /// <summary>Cards the initiator requests from the target's Spread.</summary>
+        public IReadOnlyList<string> RequestCardIds { get; }
+
+        public DirectTradeCommand(int playerId, int targetId,
+            IReadOnlyList<string> offerCardIds,
+            IReadOnlyList<string> requestCardIds)
+        {
+            PlayerId       = playerId;
+            TargetId       = targetId;
+            OfferCardIds   = offerCardIds;
+            RequestCardIds = requestCardIds;
+        }
+    }
+
     // ── Winter commands ───────────────────────────────────────────────────────
 
     /// <summary>
