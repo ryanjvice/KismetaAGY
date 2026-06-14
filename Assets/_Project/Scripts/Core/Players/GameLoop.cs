@@ -222,13 +222,35 @@ namespace Kismeta.Core.Players
             Log("Winter — Step 1: Card Unlock");
             Apply(new SetCardLockCommand(false));
 
+            Log("Winter — Step 2: Activities");
+            await RunFreeActionPool(ActionHint.WinterAction, ct);
+
             Log("Winter — Step 3: Enforce Card Limits");
-            Apply(new EnforceCardLimitsCommand());
+            await RunWinterDiscardAsync(ct);
 
             Log("Winter — Step 4: Transit Age");
             Apply(new TransitAgeCommand());
 
             Apply(new AdvancePhaseCommand());
+        }
+
+        /// <summary>
+        /// For each player: if over Hand or Spread limits, ask them to choose discards.
+        /// Always clear Fate cards from Arcanum (automated cleanup for every player).
+        /// </summary>
+        private async Task RunWinterDiscardAsync(CancellationToken ct)
+        {
+            _session.Rules?.Winter?.ClearFateCardsFromArcanum(_session);
+
+            foreach (var player in _session.Players)
+            {
+                bool overSpread = player.Spread.Count > WinterRules.SpreadLimit;
+                bool overHand   = player.Hand.Count   > WinterRules.HandLimit;
+                if (!overSpread && !overHand) continue;
+
+                var cmd = await RequestAsync(player.PlayerId, ActionHint.DiscardToLimit, ct);
+                Apply(cmd);
+            }
         }
 
         // ─── Free-action pool (shared by Summer + Autumn) ────────────────────────
@@ -390,5 +412,9 @@ namespace Kismeta.Core.Players
         FateReagentChoice,
         /// <summary>The Lovers Fate: target player chooses the drawer's reward.</summary>
         FateLoversChoice,
+        /// <summary>Winter Activities free-action pool: move cards Hand↔Spread, craft, or place Fateful Wager.</summary>
+        WinterAction,
+        /// <summary>Player must choose which cards to discard because they are over the zone limit.</summary>
+        DiscardToLimit,
     }
 }

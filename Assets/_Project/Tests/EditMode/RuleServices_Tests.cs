@@ -815,5 +815,156 @@ namespace Kismeta.Core.Tests
             Assert.AreEqual(3, session.Board.FateMoonDrawnCardIds.Count,
                 "Only the 3 minor arcana should be in the Moon draw pool.");
         }
+
+        // ─── Winter Phase tests ───────────────────────────────────────────────────
+
+        [Test]
+        public void WinterMoveCard_HandToSpread_Works()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            var card = new CardInstance("wmc-hand-01", "minor.cups.seven.1", CardZone.Hand, 0);
+            session.RegisterCard(card);
+            player.Hand.Add(card.InstanceId);
+
+            var result = session.Apply(new WinterMoveCardCommand(0, card.InstanceId, toSpread: true));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(player.Spread.Contains(card.InstanceId), "Card should be in Spread.");
+            Assert.IsFalse(player.Hand.Contains(card.InstanceId), "Card should no longer be in Hand.");
+        }
+
+        [Test]
+        public void WinterMoveCard_Rejects_NonOwned()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+
+            // card belongs to no one's hand
+            var card = new CardInstance("wmc-none-01", "minor.cups.seven.1", CardZone.Deck, -1);
+            session.RegisterCard(card);
+
+            var result = session.Apply(new WinterMoveCardCommand(0, card.InstanceId, toSpread: true));
+            Assert.IsFalse(result.IsOk, "Should reject moving a card not in player's Hand.");
+        }
+
+        [Test]
+        public void FatefulWager_Placed_CardsRemovedFromSpread()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            var c1 = new CardInstance("fw-sp-01", "minor.cups.seven.1", CardZone.Spread, 0);
+            var c2 = new CardInstance("fw-sp-02", "minor.cups.eight.1", CardZone.Spread, 0);
+            session.RegisterCard(c1); session.RegisterCard(c2);
+            player.Spread.Add(c1.InstanceId); player.Spread.Add(c2.InstanceId);
+
+            var result = session.Apply(new PlaceFatefulWagerCommand(0, ZodiacSign.Aries,
+                new List<string> { c1.InstanceId, c2.InstanceId }));
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsFalse(player.Spread.Contains(c1.InstanceId), "Wagered card removed from Spread.");
+            Assert.AreEqual(ZodiacSign.Aries, player.FatefulWagerSign);
+            Assert.AreEqual(2, player.FatefulWagerCards.Count);
+        }
+
+        [Test]
+        public void FatefulWager_CorrectSign_DoublesCards()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            // Place 1 card wager on Aries
+            var waged = new CardInstance("fw-win-01", "minor.cups.seven.1", CardZone.Spread, 0);
+            session.RegisterCard(waged);
+            player.Spread.Add(waged.InstanceId);
+            session.Apply(new PlaceFatefulWagerCommand(0, ZodiacSign.Aries,
+                new List<string> { waged.InstanceId }));
+
+            // Put 1 card in the common deck as the bonus prize
+            var prize = new CardInstance("fw-prize-01", "minor.cups.nine.1", CardZone.Deck, -1);
+            session.RegisterCard(prize);
+            session.Board.CommonDeck.Push(prize.InstanceId);
+
+            // Resolve with matching sign — should return wagered + draw 1 bonus
+            session.Rules!.Winter.ResolveWagers(session, ZodiacSign.Aries);
+
+            Assert.IsTrue(player.Hand.Contains(waged.InstanceId), "Wagered card returned to Hand.");
+            Assert.IsTrue(player.Hand.Contains(prize.InstanceId), "Bonus card drawn to Hand.");
+            Assert.AreEqual(ZodiacSign.None, player.FatefulWagerSign, "Wager sign cleared after resolution.");
+        }
+
+        [Test]
+        public void FatefulWager_WrongSign_DiscardedCards()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            var waged = new CardInstance("fw-lose-01", "minor.cups.seven.1", CardZone.Spread, 0);
+            session.RegisterCard(waged);
+            player.Spread.Add(waged.InstanceId);
+            session.Apply(new PlaceFatefulWagerCommand(0, ZodiacSign.Aries,
+                new List<string> { waged.InstanceId }));
+
+            // Resolve with different sign — wagered card goes to discard
+            session.Rules!.Winter.ResolveWagers(session, ZodiacSign.Taurus);
+
+            Assert.IsFalse(player.Hand.Contains(waged.InstanceId), "Lost wager card not in Hand.");
+            Assert.IsTrue(session.Board.CommonDiscard.Contains(waged.InstanceId), "Lost wager card in discard.");
+            Assert.AreEqual(ZodiacSign.None, player.FatefulWagerSign, "Wager sign cleared.");
+        }
+
+        [Test]
+        public void DiscardToLimit_Over5_PlayerChooses()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            // Give player 7 cards in Spread
+            for (int i = 0; i < 7; i++)
+            {
+                var c = new CardInstance($"dtl-sp-0{i}", "minor.cups.seven.1", CardZone.Spread, 0);
+                session.RegisterCard(c);
+                player.Spread.Add(c.InstanceId);
+            }
+
+            // Player discards 2 specific cards
+            var toDiscard = new List<string> { player.Spread[0], player.Spread[1] };
+            var result = session.Apply(new DiscardToLimitCommand(0, toDiscard,
+                new List<string>()));
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(5, player.Spread.Count, "Spread should be trimmed to 5.");
+            foreach (var id in toDiscard)
+                Assert.IsTrue(session.Board.CommonDiscard.Contains(id), "Discarded card should be in discard pile.");
+        }
+
+        [Test]
+        public void DiscardToLimit_Under5_AutoPasses()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            // Give player exactly 3 cards — within limit
+            for (int i = 0; i < 3; i++)
+            {
+                var c = new CardInstance($"dtl-ok-0{i}", "minor.cups.seven.1", CardZone.Spread, 0);
+                session.RegisterCard(c);
+                player.Spread.Add(c.InstanceId);
+            }
+
+            // Submit empty discard — should succeed because result is within limits
+            var result = session.Apply(new DiscardToLimitCommand(0,
+                new List<string>(), new List<string>()));
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(3, player.Spread.Count, "Spread count unchanged when already within limit.");
+        }
     }
 }

@@ -7,8 +7,10 @@ namespace Kismeta.Core.Rules
 {
     /// <summary>
     /// Winter phase rule implementations.
-    /// Card Unlock, Enforce Limits (Spread 5 / Hand 5), Shuffle Deck, Transit Age (rotate Agekeeper).
-    /// These are all system-driven steps with no real player decision; the GameLoop calls them directly.
+    /// Step 1 – Card Unlock (automated via SetCardLockCommand).
+    /// Step 2 – Winter Activities free-action pool: card movement, crafting, Fateful Wager.
+    /// Step 3 – Enforce card limits; player chooses which cards to discard when over limit.
+    /// Step 4 – Transit Age (shuffle deck, rotate Agekeeper).
     /// </summary>
     public sealed class WinterRules
     {
@@ -18,6 +20,185 @@ namespace Kismeta.Core.Rules
 
         public const int SpreadLimit = 5;
         public const int HandLimit   = 5;
+
+        // ─── Step 2a: Move card between Hand and Spread ───────────────────────────
+
+        /// <summary>
+        /// Moves one card from Hand → Spread (toSpread=true) or Spread → Hand (toSpread=false).
+        /// Only valid during the Winter Activities window (card lock already lifted).
+        /// </summary>
+        public CommandResult TryMoveCard(GameSession session, int playerId, string cardId, bool toSpread)
+        {
+            var player = session.Players[playerId];
+            if (toSpread)
+            {
+                if (!player.Hand.Remove(cardId))
+                    return CommandResult.Invalid($"Card {cardId} is not in Player {playerId}'s Hand.");
+                player.Spread.Add(cardId);
+                session.GetCard(cardId)?.MoveTo(CardZone.Spread, playerId);
+            }
+            else
+            {
+                if (!player.Spread.Remove(cardId))
+                    return CommandResult.Invalid($"Card {cardId} is not in Player {playerId}'s Spread.");
+                player.Hand.Add(cardId);
+                session.GetCard(cardId)?.MoveTo(CardZone.Hand, playerId);
+            }
+            session.EmitEvent(new CardMovedToZoneEvent(playerId, cardId, toSpread));
+            return CommandResult.Ok();
+        }
+
+        // ─── Step 2b: Fateful Wager ───────────────────────────────────────────────
+
+        /// <summary>
+        /// Places a Fateful Wager: wagers cards from Spread/Hand on a predicted Cosmic Age sign.
+        /// Wagered cards are removed from play until the next Spring Cosmic Age roll.
+        /// Only one wager per player per round.
+        /// </summary>
+        public CommandResult TryPlaceWager(GameSession session, int playerId,
+            ZodiacSign predictedSign, IReadOnlyList<string> cardIds)
+        {
+            if (predictedSign == ZodiacSign.None)
+                return CommandResult.Invalid("Must predict a valid Zodiac Sign.");
+
+            var player = session.Players[playerId];
+
+            if (player.FatefulWagerSign != ZodiacSign.None)
+                return CommandResult.Invalid("You have already placed a Fateful Wager this round.");
+
+            if (cardIds.Count == 0)
+                return CommandResult.Invalid("Must wager at least 1 card.");
+
+            foreach (var id in cardIds)
+            {
+                // Must be in Spread or Hand, and must be minor arcana
+                bool inSpread = player.Spread.Contains(id);
+                bool inHand   = player.Hand.Contains(id);
+                if (!inSpread && !inHand)
+                    return CommandResult.Invalid($"Card {id} is not in Player {playerId}'s Spread or Hand.");
+
+                var inst = session.GetCard(id);
+                var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
+                if (def?.IsMajorArcana == true)
+                    return CommandResult.Invalid($"Card {id} is a Major Arcana card and cannot be wagered.");
+            }
+
+            // Remove cards from zones and hold them in wager limbo
+            foreach (var id in cardIds)
+            {
+                player.Spread.Remove(id);
+                player.Hand.Remove(id);
+                session.GetCard(id)?.MoveTo(CardZone.Deck, -1); // neutral placeholder
+                player.FatefulWagerCards.Add(id);
+            }
+
+            player.FatefulWagerSign = predictedSign;
+            session.EmitEvent(new FatefulWagerPlacedEvent(playerId, predictedSign, cardIds.Count));
+            return CommandResult.Ok($"Fateful Wager placed on {predictedSign} with {cardIds.Count} card(s).");
+        }
+
+        /// <summary>
+        /// Resolves all pending Fateful Wagers against the revealed Cosmic Age sign.
+        /// Called from SpringRules.RollCosmicAge after setting CosmicAgeSign.
+        /// </summary>
+        public void ResolveWagers(GameSession session, ZodiacSign cosmicSign)
+        {
+            foreach (var player in session.Players)
+            {
+                if (player.FatefulWagerSign == ZodiacSign.None || player.FatefulWagerCards.Count == 0)
+                    continue;
+
+                bool won  = player.FatefulWagerSign == cosmicSign;
+                int count = player.FatefulWagerCards.Count;
+
+                if (won)
+                {
+                    // Return wagered cards to Hand plus draw an equal number of bonus cards
+                    foreach (var id in player.FatefulWagerCards)
+                    {
+                        session.GetCard(id)?.MoveTo(CardZone.Hand, player.PlayerId);
+                        player.Hand.Add(id);
+                    }
+                    // Draw equal count from Common Deck as bonus
+                    int bonus = count;
+                    for (int i = 0; i < bonus && session.Board.CommonDeck.Count > 0; i++)
+                    {
+                        var deckId = session.Board.CommonDeck.Pop();
+                        session.GetCard(deckId)?.MoveTo(CardZone.Hand, player.PlayerId);
+                        player.Hand.Add(deckId);
+                    }
+                }
+                else
+                {
+                    // Wagered cards are lost to the discard pile
+                    foreach (var id in player.FatefulWagerCards)
+                    {
+                        session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
+                        session.Board.CommonDiscard.Add(id);
+                    }
+                }
+
+                session.EmitEvent(new FatefulWagerResolvedEvent(player.PlayerId, cosmicSign, won, count));
+                player.FatefulWagerCards.Clear();
+                player.FatefulWagerSign = ZodiacSign.None;
+            }
+        }
+
+        // ─── Step 3: Player-chosen discard to limit ───────────────────────────────
+
+        /// <summary>
+        /// Player discards specific cards to bring Spread ≤ 5 and Hand ≤ 5.
+        /// Called per-player when they are over the limit.
+        /// </summary>
+        public CommandResult TryDiscardToLimit(GameSession session, int playerId,
+            IReadOnlyList<string> discardSpreadIds, IReadOnlyList<string> discardHandIds)
+        {
+            var player = session.Players[playerId];
+
+            // Validate ownership
+            foreach (var id in discardSpreadIds)
+                if (!player.Spread.Contains(id))
+                    return CommandResult.Invalid($"Card {id} is not in Player {playerId}'s Spread.");
+            foreach (var id in discardHandIds)
+                if (!player.Hand.Contains(id))
+                    return CommandResult.Invalid($"Card {id} is not in Player {playerId}'s Hand.");
+
+            // Validate result is within limits
+            int newSpreadCount = player.Spread.Count - discardSpreadIds.Count;
+            int newHandCount   = player.Hand.Count   - discardHandIds.Count;
+            if (newSpreadCount > SpreadLimit)
+                return CommandResult.Invalid(
+                    $"After discarding, Spread would still be {newSpreadCount} (limit {SpreadLimit}).");
+            if (newHandCount > HandLimit)
+                return CommandResult.Invalid(
+                    $"After discarding, Hand would still be {newHandCount} (limit {HandLimit}).");
+
+            int total = discardSpreadIds.Count + discardHandIds.Count;
+            foreach (var id in discardSpreadIds)
+            {
+                player.Spread.Remove(id);
+                session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
+                session.Board.CommonDiscard.Add(id);
+            }
+            foreach (var id in discardHandIds)
+            {
+                player.Hand.Remove(id);
+                session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
+                session.Board.CommonDiscard.Add(id);
+            }
+
+            session.EmitEvent(new CardsDiscardedToLimitEvent(playerId, total));
+            return CommandResult.Ok($"Discarded {total} card(s) to meet card limits.");
+        }
+
+        /// <summary>
+        /// Clears Fate cards from every player's Arcanum (they don't carry between rounds).
+        /// Call this even when the player is within card limits.
+        /// </summary>
+        public void ClearFateCardsFromArcanum(GameSession session)
+        {
+            ClearFateCards(session);
+        }
 
         /// <summary>Winter Step 3: discard Fate cards from Arcanum, then trim Spread and Hand.</summary>
         public void EnforceLimits(GameSession session)
@@ -70,9 +251,13 @@ namespace Kismeta.Core.Rules
             session.Board.CosmicEffect    = CosmicEffectFlags.Default;
             session.Board.BestOfThreeDuels = false;
 
-            // Clear per-round stone flags
+            // Clear per-round stone flags and wager state
             foreach (var player in session.Players)
+            {
                 player.ReturnedFromStasisThisRound = false;
+                player.FatefulWagerSign = ZodiacSign.None;
+                player.FatefulWagerCards.Clear();
+            }
 
             int newAgekeeper = RotateAgekeeper(session);
             session.EmitEvent(new AgeTransitedEvent(session.Board.RoundNumber, newAgekeeper));

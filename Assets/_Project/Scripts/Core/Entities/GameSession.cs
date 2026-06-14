@@ -89,7 +89,11 @@ namespace Kismeta.Core.Entities
 
                 // ── Spring ────────────────────────────────────────────────────────
                 RollCosmicAgeCommand cmd => _rules is not null
-                    ? RunVoid(() => _rules.Harvest.RollCosmicAge(this))
+                    ? RunVoid(() =>
+                    {
+                        _rules.Harvest.RollCosmicAge(this);
+                        _rules.Winter.ResolveWagers(this, Board.CosmicAgeSign);
+                    })
                     : CommandResult.NotImplemented(nameof(RollCosmicAgeCommand)),
 
                 RollZodiacCommand    cmd => _rules is not null
@@ -145,6 +149,18 @@ namespace Kismeta.Core.Entities
                     : CommandResult.NotImplemented(nameof(LeaveStasisCommand)),
 
                 // ── Winter ────────────────────────────────────────────────────────
+                WinterMoveCardCommand    cmd => _rules is not null
+                    ? _rules.Winter.TryMoveCard(this, cmd.PlayerId, cmd.CardId, cmd.ToSpread)
+                    : CommandResult.NotImplemented(nameof(WinterMoveCardCommand)),
+
+                PlaceFatefulWagerCommand cmd => _rules is not null
+                    ? _rules.Winter.TryPlaceWager(this, cmd.PlayerId, cmd.PredictedSign, cmd.CardIds)
+                    : CommandResult.NotImplemented(nameof(PlaceFatefulWagerCommand)),
+
+                DiscardToLimitCommand    cmd => _rules is not null
+                    ? _rules.Winter.TryDiscardToLimit(this, cmd.PlayerId, cmd.DiscardSpreadIds, cmd.DiscardHandIds)
+                    : CommandResult.NotImplemented(nameof(DiscardToLimitCommand)),
+
                 EnforceCardLimitsCommand _ => _rules is not null
                     ? RunVoid(() => _rules.Winter.EnforceLimits(this))
                     : CommandResult.NotImplemented(nameof(EnforceCardLimitsCommand)),

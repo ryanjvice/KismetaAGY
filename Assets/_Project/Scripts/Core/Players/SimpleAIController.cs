@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 
 namespace Kismeta.Core.Players
@@ -29,13 +30,15 @@ namespace Kismeta.Core.Players
         {
             IGameCommand action = context.Hint switch
             {
-                ActionHint.Commune        => DecideCommune(context),
-                ActionHint.SummerAction   => DecideSummer(context),
-                ActionHint.AutumnAction   => DecideAutumn(context),
-                ActionHint.AdeptDecision  => DecideAdept(context),
+                ActionHint.Commune           => DecideCommune(context),
+                ActionHint.SummerAction      => DecideSummer(context),
+                ActionHint.AutumnAction      => DecideAutumn(context),
+                ActionHint.AdeptDecision     => DecideAdept(context),
                 ActionHint.FateReagentChoice => new FateReagentChoiceCommand(Slot.Index, ReagentType.Salt),
-                ActionHint.FateLoversChoice  => new FateLoversChoiceCommand(Slot.Index, false), // choose Reagent
+                ActionHint.FateLoversChoice  => new FateLoversChoiceCommand(Slot.Index, false),
                 ActionHint.FateMoonDecision  => DecideFateMoon(context),
+                ActionHint.WinterAction      => DecideWinter(context),
+                ActionHint.DiscardToLimit    => DecideDiscardToLimit(context),
                 _                            => new PassActionCommand(Slot.Index)
             };
 
@@ -143,6 +146,42 @@ namespace Kismeta.Core.Players
             }
 
             return new PassCrucibleActionCommand(pid);
+        }
+
+        // ─── Winter: free-action pool ─────────────────────────────────────────────
+
+        private IGameCommand DecideWinter(GameContext ctx)
+        {
+            var pid    = Slot.Index;
+            var player = ctx.PublicView.Players[pid];
+
+            // Move any Hand cards to Spread (AI keeps everything visible in Spread)
+            foreach (var id in ctx.PrivateView.Hand)
+            {
+                if (IsMinorArcana(ctx, id))
+                    return new WinterMoveCardCommand(pid, id, toSpread: true);
+            }
+
+            // Nothing to move — pass
+            return new PassActionCommand(pid);
+        }
+
+        private IGameCommand DecideDiscardToLimit(GameContext ctx)
+        {
+            var pid    = Slot.Index;
+            var player = ctx.PublicView.Players[pid];
+
+            // Build lists of cards to discard from each zone (lowest-rank cards go first)
+            var spreadIds  = new List<string>(player.Spread);
+            var handIds    = new List<string>(ctx.PrivateView.Hand);
+
+            int spreadExcess = spreadIds.Count - WinterRules.SpreadLimit;
+            int handExcess   = handIds.Count   - WinterRules.HandLimit;
+
+            var discardSpread = spreadExcess > 0 ? spreadIds.GetRange(0, spreadExcess) : new List<string>();
+            var discardHand   = handExcess   > 0 ? handIds.GetRange(0,   handExcess)   : new List<string>();
+
+            return new DiscardToLimitCommand(pid, discardSpread, discardHand);
         }
 
         // ─── Adept + Fate decisions ───────────────────────────────────────────────

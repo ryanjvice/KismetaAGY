@@ -37,6 +37,14 @@ namespace Kismeta.Game.Bootstrap
         private readonly List<string> _communeHand   = new();
         private bool _communeInit;
 
+        // Winter Fateful Wager state
+        private ZodiacSign _wagerSign = ZodiacSign.None;
+        private readonly HashSet<string> _wagerCards = new();
+
+        // Winter discard-to-limit selection
+        private readonly HashSet<string> _discardSpread = new();
+        private readonly HashSet<string> _discardHand   = new();
+
         // ─── Log ──────────────────────────────────────────────────────────────────
 
         private readonly List<string> _log = new(200);
@@ -180,6 +188,10 @@ namespace Kismeta.Game.Bootstrap
             {
                 _selectedCards.Clear();
                 _communeInit = false;
+                _wagerSign   = ZodiacSign.None;
+                _wagerCards.Clear();
+                _discardSpread.Clear();
+                _discardHand.Clear();
                 _lastHint    = hint;
             }
 
@@ -726,6 +738,10 @@ namespace Kismeta.Game.Bootstrap
                 DrawSummerActions(hs, pid, player);
             else if (hint == ActionHint.AutumnAction)
                 DrawAutumnActions(hs, pid, player);
+            else if (hint == ActionHint.WinterAction)
+                DrawWinterActions(hs, pid, player);
+            else if (hint == ActionHint.DiscardToLimit)
+                DrawDiscardToLimitPanel(hs, pid, player);
             else
             {
                 GUILayout.Label("Waiting…");
@@ -1021,6 +1037,167 @@ namespace Kismeta.Game.Bootstrap
             GUILayout.Space(4f);
             if (GUILayout.Button("Pass"))
                 SubmitAction(hs, new PassCrucibleActionCommand(pid));
+        }
+
+        // ── Winter Activities (free-action pool) ─────────────────────────────────
+
+        private void DrawWinterActions(HotSeatController hs, int pid, PlayerState player)
+        {
+            GUILayout.Label("── Winter Activities ──");
+
+            // ── Card movement: Hand → Spread ──────────────────────────────────────
+            GUILayout.Label("Move card to Spread:");
+            GUILayout.BeginHorizontal();
+            if (_session != null)
+            {
+                foreach (var id in player.Hand.ToList())
+                {
+                    if (!IsMinorArcana(id)) continue;
+                    string label = CardLabel(id);
+                    if (GUILayout.Button($"→ Spread  {label}"))
+                        SubmitAction(hs, new WinterMoveCardCommand(pid, id, toSpread: true));
+                }
+            }
+            GUILayout.EndHorizontal();
+
+            // ── Card movement: Spread → Hand ──────────────────────────────────────
+            GUILayout.Label("Move card to Hand:");
+            GUILayout.BeginHorizontal();
+            if (_session != null)
+            {
+                foreach (var id in player.Spread.ToList())
+                {
+                    if (!IsMinorArcana(id)) continue;
+                    string label = CardLabel(id);
+                    if (GUILayout.Button($"→ Hand  {label}"))
+                        SubmitAction(hs, new WinterMoveCardCommand(pid, id, toSpread: false));
+                }
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(4f);
+
+            // ── Craft Salt ────────────────────────────────────────────────────────
+            var selList  = _selectedCards.ToList();
+            int selCount = selList.Count;
+            GUI.enabled = selCount >= 3;
+            if (GUILayout.Button($"Craft Salt  ({selCount}/3 sel)"))
+                SubmitAction(hs, new CraftReagentCommand(pid, ReagentType.Salt, selList));
+            GUI.enabled = true;
+
+            GUILayout.Space(4f);
+
+            // ── Fateful Wager sub-panel ───────────────────────────────────────────
+            bool alreadyWagered = player.FatefulWagerSign != ZodiacSign.None;
+            GUILayout.Label($"── Fateful Wager {(alreadyWagered ? $"[PLACED on {player.FatefulWagerSign}]" : "")} ──");
+
+            if (alreadyWagered)
+            {
+                GUILayout.Label($"  Wagered {player.FatefulWagerCards.Count} card(s) on {player.FatefulWagerSign}. Resolved next Spring.");
+            }
+            else
+            {
+                // Sign picker
+                GUILayout.Label($"Predict sign: [{_wagerSign}]");
+                GUILayout.BeginHorizontal();
+                foreach (ZodiacSign sign in Enum.GetValues(typeof(ZodiacSign)))
+                {
+                    if (sign == ZodiacSign.None) continue;
+                    GUI.backgroundColor = _wagerSign == sign ? Color.yellow : Color.white;
+                    if (GUILayout.Button(sign.ToString().Substring(0, 3), GUILayout.Width(36)))
+                        _wagerSign = sign;
+                }
+                GUI.backgroundColor = Color.white;
+                GUILayout.EndHorizontal();
+
+                // Card multi-selector (minor arcana from Hand + Spread)
+                GUILayout.Label("Toggle cards to wager:");
+                GUILayout.BeginHorizontal();
+                foreach (var id in player.Spread.Concat(player.Hand).ToList())
+                {
+                    if (!IsMinorArcana(id)) continue;
+                    bool toggled = _wagerCards.Contains(id);
+                    GUI.backgroundColor = toggled ? Color.cyan : Color.white;
+                    string label = CardLabel(id);
+                    if (GUILayout.Button(label))
+                    {
+                        if (toggled) _wagerCards.Remove(id); else _wagerCards.Add(id);
+                    }
+                }
+                GUI.backgroundColor = Color.white;
+                GUILayout.EndHorizontal();
+
+                GUI.enabled = _wagerSign != ZodiacSign.None && _wagerCards.Count > 0;
+                if (GUILayout.Button($"Place Wager on {_wagerSign}  ({_wagerCards.Count} cards)"))
+                {
+                    SubmitAction(hs, new PlaceFatefulWagerCommand(pid, _wagerSign,
+                        _wagerCards.ToList()));
+                    _wagerSign = ZodiacSign.None;
+                    _wagerCards.Clear();
+                }
+                GUI.enabled = true;
+            }
+
+            GUILayout.Space(4f);
+            if (GUILayout.Button("Pass Turn"))
+                SubmitAction(hs, new PassActionCommand(pid));
+        }
+
+        // ── Winter Discard-to-Limit ──────────────────────────────────────────────
+
+        private void DrawDiscardToLimitPanel(HotSeatController hs, int pid, PlayerState player)
+        {
+            GUILayout.Label("── Discard to Limit ──");
+            GUILayout.Label($"Spread: {player.Spread.Count}/5  Hand: {player.Hand.Count}/5");
+            GUILayout.Label("Select cards to DISCARD (click to toggle), then confirm.");
+
+            // Spread cards
+            GUILayout.Label("Spread:");
+            GUILayout.BeginHorizontal();
+            foreach (var id in player.Spread.ToList())
+            {
+                if (!IsMinorArcana(id)) continue;
+                bool sel = _discardSpread.Contains(id);
+                GUI.backgroundColor = sel ? new Color(1f, 0.4f, 0.4f) : Color.white;
+                if (GUILayout.Button(CardLabel(id)))
+                {
+                    if (sel) _discardSpread.Remove(id); else _discardSpread.Add(id);
+                }
+            }
+            GUI.backgroundColor = Color.white;
+            GUILayout.EndHorizontal();
+
+            // Hand cards
+            GUILayout.Label("Hand:");
+            GUILayout.BeginHorizontal();
+            foreach (var id in player.Hand.ToList())
+            {
+                if (!IsMinorArcana(id)) continue;
+                bool sel = _discardHand.Contains(id);
+                GUI.backgroundColor = sel ? new Color(1f, 0.4f, 0.4f) : Color.white;
+                if (GUILayout.Button(CardLabel(id)))
+                {
+                    if (sel) _discardHand.Remove(id); else _discardHand.Add(id);
+                }
+            }
+            GUI.backgroundColor = Color.white;
+            GUILayout.EndHorizontal();
+
+            int newSpread = player.Spread.Count - _discardSpread.Count;
+            int newHand   = player.Hand.Count   - _discardHand.Count;
+            bool valid    = newSpread <= WinterRules.SpreadLimit && newHand <= WinterRules.HandLimit;
+
+            GUILayout.Label($"After discard → Spread: {newSpread}/5  Hand: {newHand}/5");
+
+            GUI.enabled = valid;
+            if (GUILayout.Button("Confirm Discard"))
+            {
+                SubmitAction(hs, new DiscardToLimitCommand(pid,
+                    _discardSpread.ToList(), _discardHand.ToList()));
+                _discardSpread.Clear();
+                _discardHand.Clear();
+            }
+            GUI.enabled = true;
         }
 
         // ─── Right column (event log) ─────────────────────────────────────────────

@@ -132,4 +132,65 @@ namespace Kismeta.Core.Commands
             ReagentType = reagentType;
         }
     }
+
+    // ── Winter commands ───────────────────────────────────────────────────────
+
+    /// <summary>
+    /// During the Winter Activities free-action pool, a player moves one card
+    /// between Hand and Spread (cards are unlocked at this point).
+    /// </summary>
+    public sealed class WinterMoveCardCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public string CardId { get; }
+        /// <summary>True = move to Spread; false = move to Hand.</summary>
+        public bool ToSpread { get; }
+
+        public WinterMoveCardCommand(int playerId, string cardId, bool toSpread)
+        {
+            PlayerId = playerId;
+            CardId   = cardId;
+            ToSpread = toSpread;
+        }
+    }
+
+    /// <summary>
+    /// Player wagers cards on a Zodiac Sign prediction. Resolved at next Spring Cosmic Age roll.
+    /// Wagered cards are removed from Hand/Spread and held until resolution.
+    /// </summary>
+    public sealed class PlaceFatefulWagerCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public ZodiacSign PredictedSign { get; }
+        /// <summary>Card instance IDs from Spread or Hand (minor arcana only).</summary>
+        public IReadOnlyList<string> CardIds { get; }
+
+        public PlaceFatefulWagerCommand(int playerId, ZodiacSign predictedSign,
+            IReadOnlyList<string> cardIds)
+        {
+            PlayerId      = playerId;
+            PredictedSign = predictedSign;
+            CardIds       = cardIds;
+        }
+    }
+
+    /// <summary>
+    /// Player selects which cards to discard when over the Winter card limits
+    /// (Spread max 5, Hand max 5).
+    /// </summary>
+    public sealed class DiscardToLimitCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public IReadOnlyList<string> DiscardSpreadIds { get; }
+        public IReadOnlyList<string> DiscardHandIds   { get; }
+
+        public DiscardToLimitCommand(int playerId,
+            IReadOnlyList<string> discardSpreadIds,
+            IReadOnlyList<string> discardHandIds)
+        {
+            PlayerId         = playerId;
+            DiscardSpreadIds = discardSpreadIds;
+            DiscardHandIds   = discardHandIds;
+        }
+    }
 }

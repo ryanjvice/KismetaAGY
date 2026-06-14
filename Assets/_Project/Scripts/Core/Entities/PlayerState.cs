@@ -42,6 +42,12 @@ namespace Kismeta.Core.Entities
         // Remaining unplaced Coals (start = 4; 1 per active Crucible Card)
         public int UnplacedCoals { get; set; } = 4;
 
+        // Fateful Wager (reset each Transit)
+        /// <summary>The predicted sign for the current Fateful Wager, or None if no wager was placed.</summary>
+        public ZodiacSign FatefulWagerSign { get; set; } = ZodiacSign.None;
+        /// <summary>Cards held out of play as the wager stake (cleared at resolution).</summary>
+        public List<string> FatefulWagerCards { get; } = new();
+
         // Astral Houses placed (ZodiacSign values the player has claimed)
         public HashSet<ZodiacSign> AstralHouses { get; } = new();
         public int UnplacedAstralHouses { get; set; } = 4;

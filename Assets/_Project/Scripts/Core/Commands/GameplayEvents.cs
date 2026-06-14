@@ -212,4 +212,40 @@ namespace Kismeta.Core.Commands
             WinnerId      = winnerId;   OfferedCardId = offeredCardId;
         }
     }
+
+    public sealed class CardMovedToZoneEvent : IGameEvent
+    {
+        public int    PlayerId { get; }
+        public string CardId  { get; }
+        public bool   ToSpread { get; }
+        public CardMovedToZoneEvent(int playerId, string cardId, bool toSpread)
+        { PlayerId = playerId; CardId = cardId; ToSpread = toSpread; }
+    }
+
+    public sealed class FatefulWagerPlacedEvent : IGameEvent
+    {
+        public int       PlayerId      { get; }
+        public ZodiacSign PredictedSign { get; }
+        public int       CardCount     { get; }
+        public FatefulWagerPlacedEvent(int playerId, ZodiacSign sign, int cardCount)
+        { PlayerId = playerId; PredictedSign = sign; CardCount = cardCount; }
+    }
+
+    public sealed class FatefulWagerResolvedEvent : IGameEvent
+    {
+        public int        PlayerId  { get; }
+        public ZodiacSign Sign      { get; }
+        public bool       Won       { get; }
+        public int        CardCount { get; }
+        public FatefulWagerResolvedEvent(int playerId, ZodiacSign sign, bool won, int cardCount)
+        { PlayerId = playerId; Sign = sign; Won = won; CardCount = cardCount; }
+    }
+
+    public sealed class CardsDiscardedToLimitEvent : IGameEvent
+    {
+        public int PlayerId      { get; }
+        public int CardsDiscard  { get; }
+        public CardsDiscardedToLimitEvent(int playerId, int cardsDiscarded)
+        { PlayerId = playerId; CardsDiscard = cardsDiscarded; }
+    }
 }
