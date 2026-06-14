@@ -121,7 +121,16 @@ namespace Kismeta.Game.Bootstrap
                 players:   players,
                 rules:     rules);
 
-            _session.OnEvent += evt => Debug.Log($"[Event] {evt.GetType().Name}");
+            _session.OnEvent += evt =>
+            {
+                string detail = evt switch
+                {
+                    FatefulWagerPlacedEvent e   => $"[Wager] P{e.PlayerId} placed {e.CardCount} card(s) on {e.PredictedSign}",
+                    FatefulWagerResolvedEvent e => $"[Wager] P{e.PlayerId} {(e.Won ? "WON" : "LOST")} vs CosmicAge={e.Sign} ({e.CardCount} cards)",
+                    _                           => $"[Event] {evt.GetType().Name}"
+                };
+                Debug.Log(detail);
+            };
 
             _loop = new GameLoop(_session, _controllers);
             _loop.OnLog += msg => Debug.Log($"[GameLoop] {msg}");

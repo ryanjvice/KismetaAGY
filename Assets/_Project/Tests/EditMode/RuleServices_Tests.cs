@@ -960,6 +960,86 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
+        public void FatefulWager_SurvivesTransit_AndResolvesOnCosmicAgeRoll_Win()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            // Place a wager on Aries
+            var waged = new CardInstance("fw-lc-win-01", "minor.cups.seven.1", CardZone.Spread, 0);
+            session.RegisterCard(waged);
+            player.Spread.Add(waged.InstanceId);
+            session.Apply(new PlaceFatefulWagerCommand(0, ZodiacSign.Aries,
+                new List<string> { waged.InstanceId }));
+
+            Assert.AreEqual(ZodiacSign.Aries, player.FatefulWagerSign, "Wager sign set.");
+
+            // Transit the age — wager state must survive
+            session.Rules!.Winter.Transit(session);
+
+            Assert.AreEqual(ZodiacSign.Aries, player.FatefulWagerSign,
+                "Wager sign must survive Transit.");
+            Assert.AreEqual(1, player.FatefulWagerCards.Count,
+                "Wager cards must survive Transit.");
+
+            // Seed the deck with a prize card for the win-path bonus draw
+            var prize = new CardInstance("fw-lc-prize-01", "minor.cups.nine.1", CardZone.Deck, -1);
+            session.RegisterCard(prize);
+            session.Board.CommonDeck.Push(prize.InstanceId);
+
+            // Force the Cosmic Age sign so we can assert deterministically
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+
+            // Capture the resolved event
+            FatefulWagerResolvedEvent? resolved = null;
+            session.OnEvent += e => { if (e is FatefulWagerResolvedEvent r) resolved = r; };
+
+            session.Rules.Winter.ResolveWagers(session, session.Board.CosmicAgeSign);
+
+            Assert.IsNotNull(resolved, "FatefulWagerResolvedEvent must be emitted.");
+            Assert.IsTrue(resolved!.Won, "Should be a win when predicted sign matches Cosmic Age.");
+            Assert.IsTrue(player.Hand.Contains(waged.InstanceId), "Wagered card returned to Hand.");
+            Assert.IsTrue(player.Hand.Contains(prize.InstanceId), "Bonus card drawn to Hand.");
+            Assert.AreEqual(ZodiacSign.None, player.FatefulWagerSign, "Wager sign cleared after resolution.");
+        }
+
+        [Test]
+        public void FatefulWager_SurvivesTransit_AndResolvesOnCosmicAgeRoll_Loss()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+
+            // Place a wager on Aries
+            var waged = new CardInstance("fw-lc-lose-01", "minor.cups.seven.1", CardZone.Spread, 0);
+            session.RegisterCard(waged);
+            player.Spread.Add(waged.InstanceId);
+            session.Apply(new PlaceFatefulWagerCommand(0, ZodiacSign.Aries,
+                new List<string> { waged.InstanceId }));
+
+            // Transit — wager must survive
+            session.Rules!.Winter.Transit(session);
+
+            Assert.AreEqual(ZodiacSign.Aries, player.FatefulWagerSign,
+                "Wager sign must survive Transit.");
+
+            // Cosmic Age rolls a different sign — wager is lost
+            session.Board.CosmicAgeSign = ZodiacSign.Taurus;
+
+            FatefulWagerResolvedEvent? resolved = null;
+            session.OnEvent += e => { if (e is FatefulWagerResolvedEvent r) resolved = r; };
+
+            session.Rules.Winter.ResolveWagers(session, session.Board.CosmicAgeSign);
+
+            Assert.IsNotNull(resolved, "FatefulWagerResolvedEvent must be emitted.");
+            Assert.IsFalse(resolved!.Won, "Should be a loss when predicted sign does not match.");
+            Assert.IsFalse(player.Hand.Contains(waged.InstanceId), "Lost wager card not returned to Hand.");
+            Assert.IsTrue(session.Board.CommonDiscard.Contains(waged.InstanceId), "Lost wager card in discard.");
+            Assert.AreEqual(ZodiacSign.None, player.FatefulWagerSign, "Wager sign cleared after resolution.");
+        }
+
+        [Test]
         public void DiscardToLimit_Over5_PlayerChooses()
         {
             var db      = LoadDb();  var codexDb = LoadCodexDb();

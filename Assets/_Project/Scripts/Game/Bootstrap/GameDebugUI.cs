@@ -1450,6 +1450,8 @@ namespace Kismeta.Game.Bootstrap
             AdeptPurchasedEvent e       => $"[Adept] P{e.PlayerId} bought {e.AdeptCardId}",
             AdeptDeclinedEvent e        => $"[Adept] P{e.PlayerId} declined {e.AdeptCardId}",
             AstralHouseBuiltEvent e     => $"[House] P{e.PlayerId} built on {e.Sign}",
+            FatefulWagerPlacedEvent e   => $"[Wager] P{e.PlayerId} placed {e.CardCount} card(s) on {e.PredictedSign}",
+            FatefulWagerResolvedEvent e => $"[Wager] P{e.PlayerId} {(e.Won ? "WON" : "LOST")} vs CosmicAge={e.Sign} ({e.CardCount} cards)",
             FateResolvedEvent e         => $"[Fate] P{e.PlayerId} drew ★{e.ArcanaNum}",
             StoneFiredEvent e           => $"[Fire] P{e.PlayerId} → pos {e.NewPosition}",
             StoneTemperedEvent e        => $"[Temper] P{e.PlayerId} → pos {e.NewPosition}",
