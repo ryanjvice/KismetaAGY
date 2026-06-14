@@ -114,8 +114,14 @@ namespace Kismeta.Core.Rules
             {
                 if (session.Board.CommonDeck.Count == 0)
                     ReshuffleDiscard(session);
+
                 if (session.Board.CommonDeck.Count == 0)
-                    break;
+                {
+                    // Fates Intervene: all players discard their Hands into the Common Deck and reshuffle
+                    FatesIntervene(session);
+                    if (session.Board.CommonDeck.Count == 0)
+                        break; // truly exhausted — stop harvest
+                }
 
                 var id = session.Board.CommonDeck.Pop();
                 RouteDrawnCard(session, playerId, id);
@@ -350,6 +356,30 @@ namespace Kismeta.Core.Rules
         }
 
         // ─── Helpers ──────────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Triggered when the Common Deck is exhausted mid-Harvest after a reshuffle attempt.
+        /// All players discard their entire Hands back into the Common Deck, which is then reshuffled.
+        /// This is the "Fates intervene" rule — a rare catastrophe when the deck runs completely dry.
+        /// </summary>
+        private static void FatesIntervene(GameSession session)
+        {
+            int returned = 0;
+            foreach (var player in session.Players)
+            {
+                for (int j = player.Hand.Count - 1; j >= 0; j--)
+                {
+                    var cardId = player.Hand[j];
+                    player.Hand.RemoveAt(j);
+                    session.Board.CommonDiscard.Add(cardId);
+                    session.GetCard(cardId)?.MoveTo(CardZone.Discard, -1);
+                    returned++;
+                }
+            }
+
+            session.EmitEvent(new HarvestCatastropheEvent(returned));
+            ReshuffleDiscard(session);
+        }
 
         private ZodiacSign RollSign() => (ZodiacSign)(_rng.Next(1, 13)); // 1–12
 

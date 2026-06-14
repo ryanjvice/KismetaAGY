@@ -36,6 +36,13 @@ namespace Kismeta.Core.Entities
         /// </summary>
         public bool ReturnedFromStasisThisRound { get; set; }
 
+        /// <summary>
+        /// Cumulative count of successful Opposition defenses this Autumn.
+        /// Each successful defense grants +1 to this player's alignment score for subsequent
+        /// Opposition rolls this round. Cleared by WinterRules.Transit.
+        /// </summary>
+        public int BesiegedBonusCount { get; set; }
+
         // Cauldrons lit by Coal (indexed by Suit — Wands/Cups/Pentacles/Swords)
         private readonly bool[] _cauldronLit = new bool[4];
 

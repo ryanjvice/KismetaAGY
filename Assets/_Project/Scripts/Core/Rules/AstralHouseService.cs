@@ -8,12 +8,12 @@ namespace Kismeta.Core.Rules
     /// <summary>
     /// Validates and executes the "Build Astral House" Summer action.
     ///
-    /// Rules:
+    /// Quickplay rules:
     ///  - Player must have at least one unplaced Astral House token.
     ///  - The target Sign must be the player's current rolled Sign this round.
     ///  - No other player may already have a House on that Sign.
-    ///  - Payment is exactly 2 cards whose Planet matches the Sign's ruling Planet.
-    ///    Cards may come from Spread or Hand.
+    ///  - Payment is exactly 1 card whose Planet matches the Sign's ruling Planet.
+    ///    The card may come from Spread or Hand.
     ///  - Once built, the House earns Alignment bonuses each Harvest and grants
     ///    that Sign's Cosmic Effect permanently.
     /// </summary>
@@ -45,8 +45,8 @@ namespace Kismeta.Core.Rules
                 if (p.PlayerId != playerId && p.AstralHouses.Contains(sign))
                     return CommandResult.Invalid($"{sign} is already claimed by P{p.PlayerId}.");
 
-            if (paymentCardIds.Count != 2)
-                return CommandResult.Invalid("Building an Astral House costs exactly 2 cards.");
+            if (paymentCardIds.Count != 1)
+                return CommandResult.Invalid("Building an Astral House costs exactly 1 card (Quickplay).");
 
             // Build player card set (Spread + Hand)
             var playerCards = new HashSet<string>(player.Spread.Count + player.Hand.Count);

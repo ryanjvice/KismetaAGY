@@ -94,17 +94,15 @@ namespace Kismeta.Core.Players
                 {
                     var planet   = Correspondence.PlanetFor(sign);
                     var cardMap  = ctx.PublicView.CardInstanceToDefinition;
-                    var payment  = new List<string>();
+                    string? payCard = null;
                     foreach (var id in spreadIds)
                     {
                         if (!cardMap.TryGetValue(id, out var defId)) continue;
                         var def = ctx.CardDatabase.GetById(defId);
-                        if (def != null && def.Planet == planet)
-                            payment.Add(id);
-                        if (payment.Count == 2) break;
+                        if (def != null && def.Planet == planet) { payCard = id; break; }
                     }
-                    if (payment.Count == 2)
-                        return new BuildAstralHouseCommand(pid, sign, payment);
+                    if (payCard != null)
+                        return new BuildAstralHouseCommand(pid, sign, new List<string> { payCard });
                 }
             }
 
@@ -114,6 +112,19 @@ namespace Kismeta.Core.Players
                 var payment = spreadIds.GetRange(0, 3);
                 return new CraftReagentCommand(pid, ReagentType.Salt, payment);
             }
+
+            // Duel an opponent if we have at least 2 Spread cards (ante 1, keep 1)
+            if (spreadIds.Count >= 2)
+            {
+                var target = FindDuelTarget(ctx, pid);
+                if (target >= 0)
+                    return new InitiateDuelCommand(pid, target, spreadIds[0]);
+            }
+
+            // Gambit if we have an Active Crucible slot — stakes an arrested outcome
+            var gambitTarget = FindGambitTarget(ctx, pid);
+            if (gambitTarget.TargetId >= 0 && gambitTarget.OfferedCardId != null)
+                return new InitiateGambitCommand(pid, gambitTarget.TargetId, gambitTarget.OfferedCardId);
 
             return new PassCrucibleActionCommand(pid);
         }
@@ -157,6 +168,15 @@ namespace Kismeta.Core.Players
                         return new FireStoneCommand(pid, i, alignCards);
                     }
                 }
+            }
+
+            // Opposition: target the opponent who is Forging and furthest ahead
+            // but only if our stone is not in Stasis and not fresh out of Stasis
+            if (player.StoneState != StoneState.Stasis && !player.ReturnedFromStasisThisRound)
+            {
+                var oppTarget = FindOppositionTarget(ctx, pid);
+                if (oppTarget >= 0)
+                    return new InitiateOppositionCommand(pid, oppTarget);
             }
 
             return new PassCrucibleActionCommand(pid);
@@ -242,6 +262,89 @@ namespace Kismeta.Core.Players
         }
 
         // ─── Helpers ──────────────────────────────────────────────────────────────
+
+        // ─── Combat target finders ────────────────────────────────────────────────
+
+        /// <summary>
+        /// Returns the player ID of the best Opposition target, or -1 if none is eligible.
+        /// Targets must be Forging (not newly Fired this round) and we must have enough reagents
+        /// to cover their Forge Ward cost.
+        /// Prefers the target whose stone is furthest ahead on the track.
+        /// </summary>
+        private static int FindOppositionTarget(GameContext ctx, int ownPid)
+        {
+            int bestId   = -1;
+            int bestPos  = -1;
+            var self     = ctx.PublicView.Players[ownPid];
+
+            int totalSelfReagents = 0;
+            foreach (var kv in self.Reagents) totalSelfReagents += kv.Value;
+
+            foreach (var opp in ctx.PublicView.Players)
+            {
+                if (opp.PlayerId == ownPid) continue;
+                if (opp.StoneState != StoneState.Forging) continue;
+                if (totalSelfReagents < opp.StoneWardCount) continue; // can't afford ward fee
+
+                // Don't target a stone that was Fired this round (immune rule; server enforces,
+                // but we can check heuristically by FiredAtRound — not in public view, so just try)
+                if (opp.StonePosition.Value > bestPos)
+                {
+                    bestPos = opp.StonePosition.Value;
+                    bestId  = opp.PlayerId;
+                }
+            }
+
+            return bestId;
+        }
+
+        /// <summary>
+        /// Returns the ID of a Duel target (first opponent), or -1 if no valid target.
+        /// Only initiates if the opponent has a Spread card to win.
+        /// </summary>
+        private static int FindDuelTarget(GameContext ctx, int ownPid)
+        {
+            foreach (var opp in ctx.PublicView.Players)
+            {
+                if (opp.PlayerId == ownPid) continue;
+                if (opp.Spread.Count > 0)
+                    return opp.PlayerId;
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// Returns the best Gambit target and the offered card ID.
+        /// Uses the first Active Crucible slot as the offered card.
+        /// Returns (-1, null) if no viable gambit.
+        /// </summary>
+        private static (int TargetId, string? OfferedCardId) FindGambitTarget(GameContext ctx, int ownPid)
+        {
+            var self = ctx.PublicView.Players[ownPid];
+
+            // Find an Active slot to offer
+            string? offeredId = null;
+            foreach (var slot in self.CrucibleSlots)
+            {
+                if (slot.State == CrucibleCardState.Active)
+                { offeredId = slot.CardInstanceId; break; }
+            }
+
+            if (offeredId == null) return (-1, null);
+
+            // Pick first opponent who has an Active slot (worth arresting)
+            foreach (var opp in ctx.PublicView.Players)
+            {
+                if (opp.PlayerId == ownPid) continue;
+                bool hasActive = false;
+                foreach (var slot in opp.CrucibleSlots)
+                    if (slot.State == CrucibleCardState.Active) { hasActive = true; break; }
+                if (hasActive)
+                    return (opp.PlayerId, offeredId);
+            }
+
+            return (-1, null);
+        }
 
         /// <summary>All minor-arcana cards in Spread + Hand (Major Arcana excluded — cannot be payment).</summary>
         private static List<string> AllPlayerCards(GameContext ctx)

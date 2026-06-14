@@ -274,4 +274,34 @@ namespace Kismeta.Core.Commands
         public TradeCompletedEvent(int initiatorId, int targetId, int offeredCards, int receivedCards)
         { InitiatorId = initiatorId; TargetId = targetId; OfferedCards = offeredCards; ReceivedCards = receivedCards; }
     }
+
+    /// <summary>
+    /// Emitted when a stone leaving Stasis clashes with an occupying stone at the same Forge position.
+    /// The loser is sent back to Stasis; the winner remains Forging.
+    /// </summary>
+    public sealed class StasisOppositionEvent : IGameEvent
+    {
+        public int ReturnerId { get; }
+        public int OccupierId { get; }
+        public int ReturnerRoll { get; }
+        public int OccupierRoll { get; }
+        public int LoserId { get; }
+
+        public StasisOppositionEvent(int returnerId, int occupierId,
+            int returnerRoll, int occupierRoll, int loserId)
+        {
+            ReturnerId   = returnerId;
+            OccupierId   = occupierId;
+            ReturnerRoll = returnerRoll;
+            OccupierRoll = occupierRoll;
+            LoserId      = loserId;
+        }
+    }
+
+    /// <summary>Emitted when the Common Deck is exhausted mid-Harvest and Fates intervene.</summary>
+    public sealed class HarvestCatastropheEvent : IGameEvent
+    {
+        public int CardsReturnedToDecks { get; }
+        public HarvestCatastropheEvent(int count) => CardsReturnedToDecks = count;
+    }
 }

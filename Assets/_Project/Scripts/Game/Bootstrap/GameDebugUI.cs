@@ -1054,7 +1054,7 @@ namespace Kismeta.Game.Bootstrap
                     { signFree = false; break; }
 
             bool alreadyBuilt = player.AstralHouses.Contains(sign);
-            bool canBuild     = hasHouses && signFree && !alreadyBuilt && selList.Count == 2;
+            bool canBuild     = hasHouses && signFree && !alreadyBuilt && selList.Count == 1;
 
             string houseLabel = !hasHouses
                 ? "Build House  (no tokens left)"
@@ -1062,11 +1062,12 @@ namespace Kismeta.Game.Bootstrap
                     ? $"Build House on {sign}  (sign taken)"
                     : alreadyBuilt
                         ? $"Build House on {sign}  (already built)"
-                        : $"Build House on {sign}  (select 2 planet-matching cards)";
+                        : $"Build House on {sign}  (select 1 planet-matching card)";
 
             GUI.enabled = canBuild;
             if (GUILayout.Button(houseLabel))
-                SubmitAction(hs, new BuildAstralHouseCommand(pid, sign, selList));
+                SubmitAction(hs, new BuildAstralHouseCommand(pid, sign,
+                    selList.Count >= 1 ? new List<string> { selList[0] } : selList));
             GUI.enabled = true;
         }
 

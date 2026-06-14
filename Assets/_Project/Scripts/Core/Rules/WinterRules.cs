@@ -257,6 +257,7 @@ namespace Kismeta.Core.Rules
             foreach (var player in session.Players)
             {
                 player.ReturnedFromStasisThisRound = false;
+                player.BesiegedBonusCount          = 0;
                 player.ArrestedAdepts.Clear();
             }
 

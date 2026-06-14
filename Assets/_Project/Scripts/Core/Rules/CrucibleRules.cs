@@ -245,11 +245,39 @@ namespace Kismeta.Core.Rules
             if (!player.SpendReagent(ReagentType.Salt, StasisSaltCost))
                 return CommandResult.Invalid($"Leaving Stasis requires {StasisSaltCost} Salt.");
 
-            // StonePosition was preserved when the stone entered Stasis; return to that Forge.
-            // StoneState returns to Forging (card is still Fired; must complete a full round before Tempering).
+            // Return stone to its preserved Forge position.
             player.StoneState = StoneState.Forging;
             player.ReturnedFromStasisThisRound = true;
             session.Board.StasisOccupancy[playerId] = false;
+
+            // Stasis Opposition: if another stone is already Forging at the same position, tiebreak by dice.
+            foreach (var occupier in session.Players)
+            {
+                if (occupier.PlayerId == playerId) continue;
+                if (occupier.StoneState != StoneState.Forging) continue;
+                if (occupier.StonePosition.Value != player.StonePosition.Value) continue;
+
+                // Position clash — roll until no tie
+                int returnerRoll, occupierRoll;
+                do
+                {
+                    returnerRoll = _rng.Next(1, 13);
+                    occupierRoll = _rng.Next(1, 13);
+                } while (returnerRoll == occupierRoll);
+
+                bool returnerWins = returnerRoll > occupierRoll;
+                int  loserId      = returnerWins ? occupier.PlayerId : playerId;
+                var  loser        = session.Players[loserId];
+
+                loser.StoneState = StoneState.Stasis;
+                loser.StoneWardCount = 0;
+                session.Board.StasisOccupancy[loserId] = true;
+
+                session.EmitEvent(new StasisOppositionEvent(
+                    playerId, occupier.PlayerId, returnerRoll, occupierRoll, loserId));
+                break; // at most one clash per Leave Stasis
+            }
+
             return CommandResult.Ok($"Left Stasis. Stone returns to {player.StonePosition}.");
         }
 
@@ -313,29 +341,39 @@ namespace Kismeta.Core.Rules
                 defendScore = 0;
             }
 
-            int attackRoll = _rng.Next(1, 13);
-            int defendRoll = _rng.Next(1, 13);
+            // Defender gains Besieged Bonus from prior successful defenses this Autumn
+            defendScore += defender.BesiegedBonusCount;
 
-            // Best-of-3 if Justice fate is active
+            int attackRoll, defendRoll;
+
+            // Best-of-3 if Justice fate is active (ties rerolled within each sub-round)
             if (session.Board.BestOfThreeDuels)
             {
                 int aWins = 0, dWins = 0;
                 while (aWins < 2 && dWins < 2)
                 {
-                    int a = _rng.Next(1, 13);
-                    int d = _rng.Next(1, 13);
-                    if (a >= d) aWins++; else dWins++;
+                    int a, d;
+                    do { a = _rng.Next(1, 13); d = _rng.Next(1, 13); } while (a == d);
+                    if (a > d) aWins++; else dWins++;
                 }
                 attackRoll = aWins >= 2 ? 12 : 1;
                 defendRoll = dWins >= 2 ? 12 : 1;
             }
+            else
+            {
+                // Reroll dice until totals differ — no attacker-wins-ties bias
+                do
+                {
+                    attackRoll = _rng.Next(1, 13);
+                    defendRoll = _rng.Next(1, 13);
+                } while (attackScore + attackRoll == defendScore + defendRoll);
+            }
 
-            // Final score = alignment score + dice roll; attacker wins ties
+            // Final score = alignment score (+ besieged bonus for defender) + dice roll
             int attackTotal = attackScore + attackRoll;
             int defendTotal = defendScore + defendRoll;
 
-            // Attacker wins ties; loser's Forge Wards discarded, stone enters Stasis
-            bool attackerWins = attackTotal >= defendTotal;
+            bool attackerWins = attackTotal > defendTotal;
             int  loserId      = attackerWins ? defenderId : attackerId;
             int  winnerId     = attackerWins ? attackerId : defenderId;
 
@@ -346,6 +384,10 @@ namespace Kismeta.Core.Rules
             loser.StoneWardCount   = 0; // Wards discarded on loss
             session.Board.StasisOccupancy[loserId] = true;
             // winner.StoneWardCount remains (wards stay on successful defence)
+
+            // Besieged Bonus: successful defender earns +1 alignment for the rest of the Autumn
+            if (winnerId == defenderId)
+                winner.BesiegedBonusCount++;
 
             session.EmitEvent(new OppositionResolvedEvent(
                 attackerId, defenderId, attackRoll, defendRoll, loserId,
