@@ -18,17 +18,24 @@ namespace Kismeta.Core.Rules
     {
         private const int StasisSaltCost = 2;
 
-        private readonly ICardDatabase          _db;
-        private readonly ICrucibleCodexDatabase _codexDb;
-        private readonly CodexFormulaValidator  _validator;
-        private readonly Random                 _rng;
+        private readonly ICardDatabase                _db;
+        private readonly ICrucibleCodexDatabase       _codexDb;
+        private readonly CodexFormulaValidator        _validator;
+        private readonly AlchemicalAlignmentValidator? _alignmentValidator;
+        private readonly IAlignmentService?           _alignmentService;
+        private readonly Random                       _rng;
 
-        public CrucibleRules(ICardDatabase db, ICrucibleCodexDatabase codexDb, int? seed = null)
+        public CrucibleRules(ICardDatabase db, ICrucibleCodexDatabase codexDb,
+            AlchemicalAlignmentValidator? alignmentValidator = null,
+            IAlignmentService?            alignmentService   = null,
+            int? seed = null)
         {
-            _db        = db;
-            _codexDb   = codexDb;
-            _validator = new CodexFormulaValidator(db);
-            _rng       = seed.HasValue ? new Random(seed.Value) : new Random();
+            _db                 = db;
+            _codexDb            = codexDb;
+            _validator          = new CodexFormulaValidator(db);
+            _alignmentValidator = alignmentValidator;
+            _alignmentService   = alignmentService;
+            _rng                = seed.HasValue ? new Random(seed.Value) : new Random();
         }
 
         // ─── Activate ─────────────────────────────────────────────────────────────
@@ -101,7 +108,8 @@ namespace Kismeta.Core.Rules
 
         // ─── Fire ─────────────────────────────────────────────────────────────────
 
-        public CommandResult TryFire(GameSession session, int playerId, int slotIndex)
+        public CommandResult TryFire(GameSession session, int playerId, int slotIndex,
+            IReadOnlyList<string>? alignmentCardIds = null)
         {
             var player = session.Players[playerId];
 
@@ -112,22 +120,45 @@ namespace Kismeta.Core.Rules
             if (slot.State != CrucibleCardState.Active)
                 return CommandResult.Invalid("Slot must be Active to Fire.");
 
-            if (player.StoneState == StoneState.Stasis)
-                return CommandResult.Invalid("Stone is in Stasis; leave Stasis before Firing.");
+            // Fire requires stone at a Mantle position (0, 2, 4, 6)
+            if (!player.StonePosition.IsMantle)
+                return CommandResult.Invalid(
+                    $"Stone must be at a Mantle position to Fire (currently {player.StonePosition}).");
 
-            // Pay alchemical cost from the Crucible card definition
+            // Look up the Crucible card for reagent cost
             var crucibleInst = session.GetCard(slot.CardInstanceId);
-            if (crucibleInst != null)
+            var crucibleDef  = crucibleInst != null ? _db.GetById(crucibleInst.DefinitionId) : null;
+
+            // Validate and pay alchemical alignment cards (Stage 2 — handled here when validator present)
+            if (_alignmentValidator != null && crucibleDef != null)
             {
-                var def = _db.GetById(crucibleInst.DefinitionId);
-                if (def != null && !CanPayCost(player, def.AlchemicalCost))
-                    return CommandResult.Invalid("Insufficient reagents to Fire.");
-                if (def != null)
-                    PayCost(player, def.AlchemicalCost);
+                var cards = ResolveCardDefs(session, alignmentCardIds);
+                var (ok, reason) = _alignmentValidator.Validate(crucibleDef.AlchemicalFormula, cards);
+                if (!ok) return CommandResult.Invalid($"Alignment not satisfied: {reason}");
+
+                // Discard the alignment cards from Spread
+                if (alignmentCardIds != null)
+                {
+                    foreach (var id in alignmentCardIds)
+                    {
+                        player.Spread.Remove(id);
+                        session.Board.CommonDiscard.Add(id);
+                        session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
+                    }
+                }
             }
 
-            // Stone enters Forging state
-            player.StoneState = StoneState.Forging;
+            // Pay alchemical reagent cost
+            if (crucibleDef != null)
+            {
+                if (!CanPayCost(player, crucibleDef.AlchemicalCost))
+                    return CommandResult.Invalid("Insufficient reagents to Fire.");
+                PayCost(player, crucibleDef.AlchemicalCost);
+            }
+
+            // Move stone from Mantle to the next Forge position and enter Forging state
+            player.StonePosition = player.StonePosition.Advance();
+            player.StoneState    = StoneState.Forging;
             slot.Fire(session.Board.RoundNumber);
 
             session.EmitEvent(new StoneFiredEvent(playerId, slotIndex, player.StonePosition));
@@ -142,6 +173,16 @@ namespace Kismeta.Core.Rules
 
             if (player.StoneState != StoneState.Forging)
                 return CommandResult.Invalid("Stone must be Forging to Temper.");
+
+            // Temper requires stone at a Forge position (1, 3, 5, 7)
+            if (!player.StonePosition.IsForge)
+                return CommandResult.Invalid(
+                    $"Stone must be at a Forge position to Temper (currently {player.StonePosition}).");
+
+            // A stone that returned from Stasis this round must forge a full round first
+            if (player.ReturnedFromStasisThisRound)
+                return CommandResult.Invalid(
+                    "Stone returned from Stasis this round; it must complete a full round of Forging before Tempering.");
 
             // The Fired slot that was fired in a prior round is eligible
             PlayerCrucibleSlot? eligibleSlot = null;
@@ -160,7 +201,10 @@ namespace Kismeta.Core.Rules
             if (eligibleSlot == null)
                 return CommandResult.Invalid("No Fired slot eligible for Temper (must have been Fired a previous round).");
 
-            // Advance stone one step
+            // Burn any remaining Forge Ward Reagents
+            player.StoneWardCount = 0;
+
+            // Advance stone from Forge to next Mantle (or Altar)
             var newPos = player.StonePosition.Advance();
             player.StonePosition = newPos;
             player.StoneState    = StoneState.Tempering;
@@ -190,9 +234,12 @@ namespace Kismeta.Core.Rules
             if (!player.SpendReagent(ReagentType.Salt, StasisSaltCost))
                 return CommandResult.Invalid($"Leaving Stasis requires {StasisSaltCost} Salt.");
 
-            player.StoneState = StoneState.Tempering;
+            // StonePosition was preserved when the stone entered Stasis; return to that Forge.
+            // StoneState returns to Forging (card is still Fired; must complete a full round before Tempering).
+            player.StoneState = StoneState.Forging;
+            player.ReturnedFromStasisThisRound = true;
             session.Board.StasisOccupancy[playerId] = false;
-            return CommandResult.Ok("Left Stasis.");
+            return CommandResult.Ok($"Left Stasis. Stone returns to {player.StonePosition}.");
         }
 
         // ─── Opposition ───────────────────────────────────────────────────────────
@@ -206,19 +253,119 @@ namespace Kismeta.Core.Rules
             if (defender.StoneState != StoneState.Forging)
                 return CommandResult.Invalid("Target stone must be Forging to initiate Opposition.");
 
-            // M2 dice-only: each side rolls 1–12; attacker wins ties
+            // Stones Fired this Autumn are immune to Opposition
+            var defenderFiredSlot = defender.CrucibleSlots.Find(
+                s => s.State == CrucibleCardState.Fired && s.FiredAtRound == session.Board.RoundNumber);
+            if (defenderFiredSlot != null)
+                return CommandResult.Invalid("This stone was Fired this Autumn and cannot be targeted yet.");
+
+            // Score each side using alignment points (if the service is wired) + a dice roll for tiebreaking
+            int attackScore, defendScore;
+            if (_alignmentService != null)
+            {
+                var cosmicSign = session.Board.CosmicAgeSign;
+                attackScore = _alignmentService.CalculateAlignmentPoints(session, attackerId, cosmicSign);
+                defendScore = _alignmentService.CalculateAlignmentPoints(session, defenderId, cosmicSign);
+            }
+            else
+            {
+                attackScore = 0;
+                defendScore = 0;
+            }
+
             int attackRoll = _rng.Next(1, 13);
             int defendRoll = _rng.Next(1, 13);
-            int loserId    = attackRoll >= defendRoll ? defenderId : attackerId;
 
-            session.Players[loserId].StoneState = StoneState.Stasis;
+            // Best-of-3 if Justice fate is active
+            if (session.Board.BestOfThreeDuels)
+            {
+                int aWins = 0, dWins = 0;
+                while (aWins < 2 && dWins < 2)
+                {
+                    int a = _rng.Next(1, 13);
+                    int d = _rng.Next(1, 13);
+                    if (a >= d) aWins++; else dWins++;
+                }
+                attackRoll = aWins >= 2 ? 12 : 1;
+                defendRoll = dWins >= 2 ? 12 : 1;
+            }
+
+            // Final score = alignment score + dice roll; attacker wins ties
+            int attackTotal = attackScore + attackRoll;
+            int defendTotal = defendScore + defendRoll;
+
+            // Attacker wins ties; loser's Forge Wards discarded, stone enters Stasis
+            bool attackerWins = attackTotal >= defendTotal;
+            int  loserId      = attackerWins ? defenderId : attackerId;
+            int  winnerId     = attackerWins ? attackerId : defenderId;
+
+            var loser  = session.Players[loserId];
+            var winner = session.Players[winnerId];
+
+            loser.StoneState       = StoneState.Stasis;
+            loser.StoneWardCount   = 0; // Wards discarded on loss
             session.Board.StasisOccupancy[loserId] = true;
+            // winner.StoneWardCount remains (wards stay on successful defence)
 
-            session.EmitEvent(new OppositionResolvedEvent(attackerId, defenderId, attackRoll, defendRoll, loserId));
-            return CommandResult.Ok($"Opposition resolved. Player {loserId} enters Stasis.");
+            session.EmitEvent(new OppositionResolvedEvent(
+                attackerId, defenderId, attackRoll, defendRoll, loserId,
+                attackScore, defendScore));
+            return CommandResult.Ok(
+                $"Opposition: Att {attackScore}+{attackRoll}={attackTotal} vs Def {defendScore}+{defendRoll}={defendTotal}. P{loserId} → Stasis.");
+        }
+
+        // ─── Place Ward (Card) ────────────────────────────────────────────────────
+
+        public CommandResult TryPlaceCardWard(GameSession session, int playerId, int slotIndex,
+            ReagentType reagentType)
+        {
+            var player = session.Players[playerId];
+
+            if (slotIndex < 0 || slotIndex >= player.CrucibleSlots.Count)
+                return CommandResult.Invalid($"No Crucible slot at index {slotIndex}.");
+
+            var slot = player.CrucibleSlots[slotIndex];
+            if (slot.State != CrucibleCardState.Active && slot.State != CrucibleCardState.Fired)
+                return CommandResult.Invalid("Slot must be Active or Fired to place a Ward.");
+
+            if (!player.SpendReagent(reagentType, 1))
+                return CommandResult.Invalid($"Not enough {reagentType} to place a Ward.");
+
+            slot.AddWard();
+            return CommandResult.Ok($"Ward placed on Crucible slot {slotIndex}.");
+        }
+
+        // ─── Place Ward (Stone/Forge) ──────────────────────────────────────────────
+
+        public CommandResult TryPlaceStoneWard(GameSession session, int playerId, ReagentType reagentType)
+        {
+            var player = session.Players[playerId];
+
+            if (player.StoneState != StoneState.Forging)
+                return CommandResult.Invalid("Stone must be Forging to place a Forge Ward.");
+
+            if (!player.SpendReagent(reagentType, 1))
+                return CommandResult.Invalid($"Not enough {reagentType} to place a Forge Ward.");
+
+            player.StoneWardCount++;
+            return CommandResult.Ok($"Forge Ward placed (total: {player.StoneWardCount}).");
         }
 
         // ─── Private helpers ──────────────────────────────────────────────────────
+
+        private List<CardDefinition> ResolveCardDefs(GameSession session, IReadOnlyList<string>? ids)
+        {
+            var defs = new List<CardDefinition>();
+            if (ids == null) return defs;
+            foreach (var id in ids)
+            {
+                var inst = session.GetCard(id);
+                if (inst == null) continue;
+                var def = _db.GetById(inst.DefinitionId);
+                if (def != null) defs.Add(def);
+            }
+            return defs;
+        }
 
         private static bool CanPayCost(PlayerState player, ReagentCost cost) =>
             player.GetReagent(ReagentType.Sulphur)     >= cost.Sulphur     &&

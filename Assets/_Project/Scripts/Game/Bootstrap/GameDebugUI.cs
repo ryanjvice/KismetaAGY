@@ -125,7 +125,9 @@ namespace Kismeta.Game.Bootstrap
             string ak     = p.IsAgekeeper ? " [AK]" : "";
             GUILayout.Label($"{prefix}P{p.PlayerId} ({p.Color}){ak}");
             GUILayout.Label($"   Sign: {p.CurrentSign}");
-            GUILayout.Label($"   Stone: {p.StonePosition} [{p.StoneState}]");
+            GUILayout.Label($"   Stone: {p.StonePosition}  [{p.StoneState}]" +
+                (p.StoneWardCount > 0 ? $"  🛡️×{p.StoneWardCount}" : "") +
+                (p.ReturnedFromStasisThisRound ? "  (stasis return)" : ""));
             GUILayout.Label($"   Hand:{p.Hand.Count} Spr:{p.Spread.Count} Arc:{p.Arcanum.Count}");
             GUILayout.Label(
                 $"   Sa:{p.GetReagent(ReagentType.Salt)} " +
@@ -785,6 +787,93 @@ namespace Kismeta.Game.Bootstrap
             // Build Astral House — only on current sign, needs 2 planet-matching cards, unplaced houses remaining
             DrawBuildHouseButton(hs, pid, player, selList);
 
+            // Place Card Ward — for Active slots (no selection needed; choose reagent per slot)
+            bool hasActiveSlots = player.CrucibleSlots.Exists(s =>
+                s.State == CrucibleCardState.Active || s.State == CrucibleCardState.Fired);
+            if (hasActiveSlots)
+            {
+                GUILayout.Space(4f);
+                GUILayout.Label("── Place Card Ward (spend 1 Reagent on slot) ──");
+                for (int i = 0; i < player.CrucibleSlots.Count; i++)
+                {
+                    var slot = player.CrucibleSlots[i];
+                    if (slot.State != CrucibleCardState.Active && slot.State != CrucibleCardState.Fired) continue;
+                    int captured = i;
+                    GUILayout.Label($"  Slot {captured} [{slot.State}]  Wards: {slot.WardCount}");
+                    GUILayout.BeginHorizontal();
+                    foreach (ReagentType rt in System.Enum.GetValues(typeof(ReagentType)))
+                    {
+                        int have = player.GetReagent(rt);
+                        GUI.enabled = have > 0;
+                        if (GUILayout.Button($"{rt}({have})"))
+                            SubmitAction(hs, new PlaceCardWardCommand(pid, captured, rt));
+                    }
+                    GUI.enabled = true;
+                    GUILayout.EndHorizontal();
+                }
+            }
+
+            // ── Duel ─────────────────────────────────────────────────────────────
+            GUILayout.Space(4f);
+            GUILayout.Label("── Duel (ante 1 selected Spread card) ──");
+            bool canDuel = selCount == 1 && _session != null;
+            GUILayout.BeginHorizontal();
+            if (_session != null)
+            {
+                foreach (var opp in _session.Players)
+                {
+                    if (opp.PlayerId == pid) continue;
+                    GUI.enabled = canDuel;
+                    if (GUILayout.Button($"Duel P{opp.PlayerId}"))
+                    {
+                        var anteId = selList[0];
+                        SubmitAction(hs, new InitiateDuelCommand(pid, opp.PlayerId, anteId));
+                    }
+                }
+            }
+            GUI.enabled = true;
+            GUILayout.EndHorizontal();
+
+            // ── Gambit ───────────────────────────────────────────────────────────
+            GUILayout.Space(2f);
+            GUILayout.Label("── Gambit (offer 1 selected Active/Arcanum card) ──");
+            bool selIsOfferable = selCount == 1 && (
+                player.CrucibleSlots.Exists(s => s.CardInstanceId == (selCount > 0 ? selList[0] : "") && s.State == CrucibleCardState.Active)
+                || (selCount > 0 && player.Arcanum.Contains(selList[0])));
+            GUILayout.BeginHorizontal();
+            if (_session != null)
+            {
+                foreach (var opp in _session.Players)
+                {
+                    if (opp.PlayerId == pid) continue;
+                    GUI.enabled = selIsOfferable;
+                    if (GUILayout.Button($"Gambit P{opp.PlayerId}"))
+                        SubmitAction(hs, new InitiateGambitCommand(pid, opp.PlayerId, selList[0]));
+                }
+            }
+            GUI.enabled = true;
+            GUILayout.EndHorizontal();
+
+            // ── Free Arrested ─────────────────────────────────────────────────────
+            bool hasArrested = player.CrucibleSlots.Exists(s => s.State == CrucibleCardState.Arrested);
+            if (hasArrested)
+            {
+                GUILayout.Space(2f);
+                GUILayout.Label($"── Free Arrested Slot (costs 1 Salt, have {player.GetReagent(ReagentType.Salt)}) ──");
+                GUILayout.BeginHorizontal();
+                for (int i = 0; i < player.CrucibleSlots.Count; i++)
+                {
+                    var slot = player.CrucibleSlots[i];
+                    if (slot.State != CrucibleCardState.Arrested) continue;
+                    int captured = i;
+                    GUI.enabled = player.GetReagent(ReagentType.Salt) >= 1;
+                    if (GUILayout.Button($"Free Slot {captured}"))
+                        SubmitAction(hs, new FreeArrestedCommand(pid, captured));
+                }
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
+            }
+
             GUILayout.Space(4f);
             if (GUILayout.Button("Pass"))
                 SubmitAction(hs, new PassCrucibleActionCommand(pid));
@@ -826,37 +915,75 @@ namespace Kismeta.Game.Bootstrap
             int selCount = _selectedCards.Count;
             var selList  = _selectedCards.ToList();
 
-            // Fire Stone — one button per Active slot
-            GUILayout.Label("Fire Stone (select Active slot):");
+            // ── Stone status ──────────────────────────────────────────────────────
+            GUILayout.Label($"Stone: {player.StonePosition}  [{player.StoneState}]" +
+                (player.StoneWardCount > 0 ? $"  🛡️ {player.StoneWardCount}" : "") +
+                (player.ReturnedFromStasisThisRound ? "  (Returned from Stasis — cannot Temper)" : ""));
+            GUILayout.Space(4f);
+
+            // ── Fire Stone ────────────────────────────────────────────────────────
+            // Fire requires: stone at Mantle, slot Active, selection = alignment cards
+            bool canFire = player.StonePosition.IsMantle;
+            GUILayout.Label($"Fire Stone  [{selCount} alignment cards selected from Spread]:");
             GUILayout.BeginHorizontal();
             for (int i = 0; i < player.CrucibleSlots.Count; i++)
             {
                 var slot = player.CrucibleSlots[i];
-                GUI.enabled = slot.State == CrucibleCardState.Active;
+                GUI.enabled = slot.State == CrucibleCardState.Active && canFire;
                 int captured = i;
-                if (GUILayout.Button($"Fire Slot {captured}"))
-                    SubmitAction(hs, new FireStoneCommand(pid, captured));
+
+                // Show the formula string for this slot if available
+                string formulaHint = "";
+                if (_db != null && _session != null)
+                {
+                    var ci  = _session.GetCard(slot.CardInstanceId);
+                    var def = ci != null ? _db.GetById(ci.DefinitionId) : null;
+                    if (def != null) formulaHint = $" ({def.AlchemicalFormula})";
+                }
+
+                if (GUILayout.Button($"Fire Slot {captured}{formulaHint}"))
+                    SubmitAction(hs, new FireStoneCommand(pid, captured, selList));
             }
             GUI.enabled = true;
             GUILayout.EndHorizontal();
 
             GUILayout.Space(2f);
 
-            // Temper — enabled when stone is Forging
-            GUI.enabled = player.StoneState == StoneState.Forging;
-            if (GUILayout.Button($"Temper Stone  [{player.StoneState}]"))
+            // ── Temper ────────────────────────────────────────────────────────────
+            bool canTemper = player.StoneState == StoneState.Forging
+                          && player.StonePosition.IsForge
+                          && !player.ReturnedFromStasisThisRound;
+            GUI.enabled = canTemper;
+            if (GUILayout.Button($"Temper Stone  → {player.StonePosition.Advance()}"))
                 SubmitAction(hs, new TemperCommand(pid));
             GUI.enabled = true;
 
-            // Leave Stasis — enabled when stone is in Stasis
+            // ── Leave Stasis ──────────────────────────────────────────────────────
             GUI.enabled = player.StoneState == StoneState.Stasis;
-            if (GUILayout.Button($"Leave Stasis  (costs 2 Salt, have {player.GetReagent(ReagentType.Salt)})"))
+            if (GUILayout.Button($"Leave Stasis  (costs 2 Salt, have {player.GetReagent(ReagentType.Salt)})  → {player.StonePosition}"))
                 SubmitAction(hs, new LeaveStasisCommand(pid));
             GUI.enabled = true;
 
             GUILayout.Space(2f);
 
-            // Oppose — one button per opponent who is Forging
+            // ── Place Forge Ward ──────────────────────────────────────────────────
+            GUILayout.Space(2f);
+            bool canPlaceForgeWard = player.StoneState == StoneState.Forging;
+            GUI.enabled = canPlaceForgeWard;
+            GUILayout.Label($"Place Forge Ward (current: {player.StoneWardCount}) — spend 1 Reagent:");
+            GUILayout.BeginHorizontal();
+            foreach (ReagentType rt in System.Enum.GetValues(typeof(ReagentType)))
+            {
+                int have = player.GetReagent(rt);
+                GUI.enabled = canPlaceForgeWard && have > 0;
+                if (GUILayout.Button($"{rt}({have})"))
+                    SubmitAction(hs, new PlaceStoneWardCommand(pid, rt));
+            }
+            GUI.enabled = true;
+            GUILayout.EndHorizontal();
+
+            // ── Oppose — one button per opponent who is Forging ───────────────────
+            GUILayout.Space(2f);
             GUILayout.Label("Oppose (select Forging opponent):");
             GUILayout.BeginHorizontal();
             foreach (var opp in _session!.Players)
@@ -999,7 +1126,9 @@ namespace Kismeta.Game.Bootstrap
             FateResolvedEvent e         => $"[Fate] P{e.PlayerId} drew ★{e.ArcanaNum}",
             StoneFiredEvent e           => $"[Fire] P{e.PlayerId} → pos {e.NewPosition}",
             StoneTemperedEvent e        => $"[Temper] P{e.PlayerId} → pos {e.NewPosition}",
-            OppositionResolvedEvent e   => $"[Oppose] Att:{e.AttackerId} Def:{e.DefenderId} Loser:{e.LoserId} ({e.AttackRoll}v{e.DefendRoll})",
+            OppositionResolvedEvent e   => $"[Oppose] Att:P{e.AttackerId}({e.AttackAlign}+{e.AttackRoll}) Def:P{e.DefenderId}({e.DefendAlign}+{e.DefendRoll}) → Loser:P{e.LoserId}",
+            DuelResolvedEvent e         => $"[Duel] P{e.AttackerId}({e.AttackRoll}) vs P{e.DefenderId}({e.DefendRoll}) → Winner:P{e.WinnerId}",
+            GambitResolvedEvent e       => $"[Gambit] P{e.AttackerId}({e.AttackRoll}) vs P{e.DefenderId}({e.DefendRoll}) → Winner:P{e.WinnerId}",
             CodexAssignedEvent e        => $"[Codex] P{e.PlayerId} assigned Codex {e.Codex}",
             GameSetupCompleteEvent e    => $"[Setup] {e.PlayerCount}p ready",
             AgeTransitedEvent e         => $"[Transit] Round {e.NewRoundNumber} AK→P{e.NewAgekeeperId}",

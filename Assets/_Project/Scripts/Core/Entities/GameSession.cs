@@ -129,7 +129,7 @@ namespace Kismeta.Core.Entities
 
                 // ── Autumn ────────────────────────────────────────────────────────
                 FireStoneCommand     cmd => _rules is not null
-                    ? _rules.Crucible.TryFire(this, cmd.PlayerId, cmd.SlotIndex)
+                    ? _rules.Crucible.TryFire(this, cmd.PlayerId, cmd.SlotIndex, cmd.AlignmentCardIds)
                     : CommandResult.NotImplemented(nameof(FireStoneCommand)),
 
                 TemperCommand        cmd => _rules is not null
@@ -165,6 +165,28 @@ namespace Kismeta.Core.Entities
                 FateLoversChoiceCommand   cmd => _rules?.FateResolver is not null
                     ? _rules.FateResolver.HandleLoversChoice(this, cmd.PlayerId, cmd.DrawCards, cmd.ChosenReagent)
                     : CommandResult.NotImplemented(nameof(FateLoversChoiceCommand)),
+
+                // ── Ward placement ────────────────────────────────────────────────
+                PlaceCardWardCommand  cmd => _rules is not null
+                    ? _rules.Crucible.TryPlaceCardWard(this, cmd.PlayerId, cmd.SlotIndex, cmd.ReagentType)
+                    : CommandResult.NotImplemented(nameof(PlaceCardWardCommand)),
+
+                PlaceStoneWardCommand cmd => _rules is not null
+                    ? _rules.Crucible.TryPlaceStoneWard(this, cmd.PlayerId, cmd.ReagentType)
+                    : CommandResult.NotImplemented(nameof(PlaceStoneWardCommand)),
+
+                // ── Combat ────────────────────────────────────────────────────────
+                InitiateDuelCommand   cmd => _rules?.Combat is not null
+                    ? _rules.Combat.TryDuel(this, cmd.AttackerId, cmd.DefenderId, cmd.AnteCardId)
+                    : CommandResult.NotImplemented(nameof(InitiateDuelCommand)),
+
+                InitiateGambitCommand cmd => _rules?.Combat is not null
+                    ? _rules.Combat.TryGambit(this, cmd.AttackerId, cmd.DefenderId, cmd.OfferedCardId)
+                    : CommandResult.NotImplemented(nameof(InitiateGambitCommand)),
+
+                FreeArrestedCommand   cmd => _rules?.Combat is not null
+                    ? _rules.Combat.TryFreeArrested(this, cmd.PlayerId, cmd.SlotIndex)
+                    : CommandResult.NotImplemented(nameof(FreeArrestedCommand)),
 
                 // ── Pass actions ──────────────────────────────────────────────────
                 PassActionCommand        _ => CommandResult.Ok("Action passed."),

@@ -109,26 +109,35 @@ namespace Kismeta.Core.Players
             var pid    = Slot.Index;
             var player = ctx.PublicView.Players[pid];
 
-            // Temper if stone is currently Forging (completed a full round in the Forge)
-            if (player.StoneState == StoneState.Forging)
+            // Temper: stone must be Forging AND at a Forge position AND not returned from Stasis this round
+            if (player.StoneState == StoneState.Forging
+                && player.StonePosition.IsForge
+                && !player.ReturnedFromStasisThisRound)
                 return new TemperCommand(pid);
 
-            // Fire the first Active slot — only if we have at least one non-Salt reagent
-            // to cover the Alchemical Formula cost (exact cost unknown without the DB,
-            // but zero non-Salt reagents guarantees failure, so skip it).
-            if (player.StoneState == StoneState.Tempering)
+            // Leave Stasis
+            if (player.StoneState == StoneState.Stasis
+                && player.Reagents.TryGetValue(ReagentType.Salt, out int salt) && salt >= 2)
+                return new LeaveStasisCommand(pid);
+
+            // Fire: stone must be at Mantle and we need reagents + an Active slot.
+            // AI passes empty alignment cards — the validator allows it when no validator is wired in tests;
+            // in full game the Fire will fail gracefully if cards are insufficient, and AI will Pass.
+            if (player.StoneState == StoneState.Tempering && player.StonePosition.IsMantle)
             {
                 bool hasFireReagents =
-                    player.Reagents.TryGetValue(ReagentType.Sulphur,    out int su) && su > 0 ||
-                    player.Reagents.TryGetValue(ReagentType.AquaRegia,  out int ar) && ar > 0 ||
-                    player.Reagents.TryGetValue(ReagentType.Vitriol,    out int vi) && vi > 0 ||
-                    player.Reagents.TryGetValue(ReagentType.Quicksilver,out int qk) && qk > 0;
+                    player.Reagents.TryGetValue(ReagentType.Sulphur,     out int su) && su > 0 ||
+                    player.Reagents.TryGetValue(ReagentType.AquaRegia,   out int ar) && ar > 0 ||
+                    player.Reagents.TryGetValue(ReagentType.Vitriol,     out int vi) && vi > 0 ||
+                    player.Reagents.TryGetValue(ReagentType.Quicksilver, out int qk) && qk > 0;
 
                 if (hasFireReagents)
                 {
+                    // Build a best-effort alignment card list from Spread
+                    var spreadCards = new System.Collections.Generic.List<string>(player.Spread);
                     for (int i = 0; i < player.CrucibleSlots.Count; i++)
                         if (player.CrucibleSlots[i].State == CrucibleCardState.Active)
-                            return new FireStoneCommand(pid, i);
+                            return new FireStoneCommand(pid, i, spreadCards);
                 }
             }
 

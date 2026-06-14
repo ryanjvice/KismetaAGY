@@ -84,16 +84,25 @@ namespace Kismeta.Core.Commands
     /// </summary>
     public sealed class OppositionResolvedEvent : IGameEvent
     {
-        public int AttackerId  { get; }
-        public int DefenderId  { get; }
-        public int AttackRoll  { get; }
-        public int DefendRoll  { get; }
-        public int LoserId     { get; }
-        public OppositionResolvedEvent(int attackerId, int defenderId, int attackRoll, int defendRoll, int loserId)
+        public int AttackerId     { get; }
+        public int DefenderId     { get; }
+        public int AttackRoll     { get; }
+        public int DefendRoll     { get; }
+        public int AttackAlign    { get; }
+        public int DefendAlign    { get; }
+        public int LoserId        { get; }
+
+        public OppositionResolvedEvent(int attackerId, int defenderId,
+            int attackRoll, int defendRoll, int loserId,
+            int attackAlign = 0, int defendAlign = 0)
         {
-            AttackerId = attackerId; DefenderId = defenderId;
-            AttackRoll = attackRoll; DefendRoll = defendRoll;
-            LoserId    = loserId;
+            AttackerId  = attackerId;
+            DefenderId  = defenderId;
+            AttackRoll  = attackRoll;
+            DefendRoll  = defendRoll;
+            LoserId     = loserId;
+            AttackAlign = attackAlign;
+            DefendAlign = defendAlign;
         }
     }
 
@@ -165,6 +174,42 @@ namespace Kismeta.Core.Commands
         public CosmicEffectAppliedEvent(ZodiacSign sign, string effectSummary)
         {
             Sign = sign; EffectSummary = effectSummary;
+        }
+    }
+
+    public sealed class DuelResolvedEvent : IGameEvent
+    {
+        public int AttackerId  { get; }
+        public int DefenderId  { get; }
+        public int AttackRoll  { get; }
+        public int DefendRoll  { get; }
+        public int WinnerId    { get; }
+        public string AnteCardId { get; }
+
+        public DuelResolvedEvent(int attackerId, int defenderId,
+            int attackRoll, int defendRoll, int winnerId, string anteCardId)
+        {
+            AttackerId = attackerId; DefenderId = defenderId;
+            AttackRoll = attackRoll; DefendRoll = defendRoll;
+            WinnerId   = winnerId;   AnteCardId = anteCardId;
+        }
+    }
+
+    public sealed class GambitResolvedEvent : IGameEvent
+    {
+        public int AttackerId     { get; }
+        public int DefenderId     { get; }
+        public int AttackRoll     { get; }
+        public int DefendRoll     { get; }
+        public int WinnerId       { get; }
+        public string OfferedCardId { get; }
+
+        public GambitResolvedEvent(int attackerId, int defenderId,
+            int attackRoll, int defendRoll, int winnerId, string offeredCardId)
+        {
+            AttackerId    = attackerId; DefenderId  = defenderId;
+            AttackRoll    = attackRoll; DefendRoll  = defendRoll;
+            WinnerId      = winnerId;   OfferedCardId = offeredCardId;
         }
     }
 }

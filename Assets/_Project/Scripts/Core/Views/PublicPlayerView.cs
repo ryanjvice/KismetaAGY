@@ -24,9 +24,10 @@ namespace Kismeta.Core.Views
 
         public int HandCardCount { get; }
 
-        public StonePosition StonePosition { get; }
-        public StoneState StoneState { get; }
-        public int StoneWardCount { get; }
+        public StonePosition StonePosition              { get; }
+        public StoneState StoneState                    { get; }
+        public int StoneWardCount                       { get; }
+        public bool ReturnedFromStasisThisRound         { get; }
 
         public IReadOnlyDictionary<ReagentType, int> Reagents { get; }
         public IReadOnlyCollection<ZodiacSign> AstralHouses { get; }
@@ -46,9 +47,10 @@ namespace Kismeta.Core.Views
             Spread = p.Spread.AsReadOnly();
             Arcanum = p.Arcanum.AsReadOnly();
             HandCardCount = p.Hand.Count;
-            StonePosition = p.StonePosition;
-            StoneState = p.StoneState;
-            StoneWardCount = p.StoneWardCount;
+            StonePosition               = p.StonePosition;
+            StoneState                  = p.StoneState;
+            StoneWardCount              = p.StoneWardCount;
+            ReturnedFromStasisThisRound = p.ReturnedFromStasisThisRound;
 
             var reagents = new Dictionary<ReagentType, int>();
             foreach (ReagentType t in System.Enum.GetValues(typeof(ReagentType)))

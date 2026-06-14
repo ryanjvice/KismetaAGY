@@ -29,6 +29,12 @@ namespace Kismeta.Core.Entities
         public StonePosition StonePosition { get; set; } = StonePosition.Start;
         public StoneState StoneState       { get; set; } = StoneState.Tempering;
         public int StoneWardCount          { get; set; }
+        /// <summary>
+        /// True if the stone left Stasis this Autumn. Blocks Temper for the round —
+        /// the stone must complete a full round of Forging before it may advance.
+        /// Cleared by WinterRules.Transit at round end.
+        /// </summary>
+        public bool ReturnedFromStasisThisRound { get; set; }
 
         // Cauldrons lit by Coal (indexed by Suit — Wands/Cups/Pentacles/Swords)
         private readonly bool[] _cauldronLit = new bool[4];

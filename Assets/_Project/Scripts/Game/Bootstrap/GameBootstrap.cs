@@ -94,20 +94,25 @@ namespace Kismeta.Game.Bootstrap
                 _controllers.Add(ctrl);
             }
 
-            var cosmicSvc  = new CosmicEffectService();
-            var fateResolver = new FateCardResolver(_db!);
+            var cosmicSvc           = new CosmicEffectService();
+            var fateResolver        = new FateCardResolver(_db!);
+            var alchemicalValidator = new AlchemicalAlignmentValidator();
+            var alignmentService    = new AlignmentService(_db!);
             var rules = new GameRuleSet(
-                cardDatabase:  _db!,
-                codexDatabase: _codexDb!,
-                setup:         new GameSetupService(_db!),
-                harvest:       new SpringRules(_db!, cosmicEffect: cosmicSvc, fateResolver: fateResolver),
-                crucible:      new CrucibleRules(_db!, _codexDb!),
-                crafting:      new CraftingRules(_db!),
-                winter:        new WinterRules(_db!),
-                validator:     new ActionValidator(),
-                astralHouse:   new AstralHouseService(_db!),
-                cosmicEffect:  cosmicSvc,
-                fateResolver:  fateResolver);
+                cardDatabase:        _db!,
+                codexDatabase:       _codexDb!,
+                setup:               new GameSetupService(_db!),
+                harvest:             new SpringRules(_db!, cosmicEffect: cosmicSvc, fateResolver: fateResolver),
+                crucible:            new CrucibleRules(_db!, _codexDb!, alchemicalValidator, alignmentService),
+                crafting:            new CraftingRules(_db!),
+                winter:              new WinterRules(_db!),
+                validator:           new ActionValidator(),
+                astralHouse:         new AstralHouseService(_db!),
+                cosmicEffect:        cosmicSvc,
+                fateResolver:        fateResolver,
+                alchemicalValidator: alchemicalValidator,
+                alignment:           alignmentService,
+                combat:              new CombatRules());
 
             _session = new GameSession(
                 sessionId: Guid.NewGuid().ToString(),

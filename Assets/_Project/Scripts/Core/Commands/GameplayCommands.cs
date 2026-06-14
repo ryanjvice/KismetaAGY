@@ -37,14 +37,27 @@ namespace Kismeta.Core.Commands
     }
 
     /// <summary>
-    /// Player fires the stone: pays alchemical reagent cost, moves stone from Mantle to Forge.
+    /// Player fires the stone: satisfies alchemical alignment (discards cards from Spread),
+    /// pays reagent cost, and moves stone from Mantle to the next Forge position.
     /// The slot at SlotIndex must be Active.
     /// </summary>
     public sealed class FireStoneCommand : IGameCommand
     {
         public int PlayerId { get; }
         public int SlotIndex { get; }
-        public FireStoneCommand(int playerId, int slotIndex) { PlayerId = playerId; SlotIndex = slotIndex; }
+        /// <summary>
+        /// Instance IDs of Spread cards that satisfy the Crucible card's Alchemical Alignment.
+        /// May be empty if no AlchemicalAlignmentValidator is wired (tests / early dev).
+        /// </summary>
+        public IReadOnlyList<string> AlignmentCardIds { get; }
+
+        public FireStoneCommand(int playerId, int slotIndex,
+            IReadOnlyList<string>? alignmentCardIds = null)
+        {
+            PlayerId         = playerId;
+            SlotIndex        = slotIndex;
+            AlignmentCardIds = alignmentCardIds ?? System.Array.Empty<string>();
+        }
     }
 
     /// <summary>
@@ -84,5 +97,39 @@ namespace Kismeta.Core.Commands
     {
         public int PlayerId { get; }
         public PassCrucibleActionCommand(int playerId) => PlayerId = playerId;
+    }
+
+    /// <summary>
+    /// Player places a Ward Reagent on an Active Crucible Card slot.
+    /// The reagent is spent immediately; the ward count on the slot increases by 1.
+    /// </summary>
+    public sealed class PlaceCardWardCommand : IGameCommand
+    {
+        public int PlayerId   { get; }
+        public int SlotIndex  { get; }
+        public ReagentType ReagentType { get; }
+
+        public PlaceCardWardCommand(int playerId, int slotIndex, ReagentType reagentType)
+        {
+            PlayerId   = playerId;
+            SlotIndex  = slotIndex;
+            ReagentType = reagentType;
+        }
+    }
+
+    /// <summary>
+    /// Player places a Ward Reagent on their stone's Forge position.
+    /// Used before or immediately after Firing; the reagent is spent and sets the entry fee for Opposition.
+    /// </summary>
+    public sealed class PlaceStoneWardCommand : IGameCommand
+    {
+        public int PlayerId    { get; }
+        public ReagentType ReagentType { get; }
+
+        public PlaceStoneWardCommand(int playerId, ReagentType reagentType)
+        {
+            PlayerId    = playerId;
+            ReagentType = reagentType;
+        }
     }
 }

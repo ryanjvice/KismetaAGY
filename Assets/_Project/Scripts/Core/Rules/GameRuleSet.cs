@@ -14,34 +14,43 @@ namespace Kismeta.Core.Rules
         public ICraftingService        Crafting      { get; }
         public WinterRules             Winter        { get; }
         public IActionValidator        Validator     { get; }
-        public AstralHouseService?     AstralHouse   { get; }
-        public CosmicEffectService?    CosmicEffect  { get; }
-        public FateCardResolver?       FateResolver  { get; }
+        public AstralHouseService?           AstralHouse         { get; }
+        public CosmicEffectService?          CosmicEffect        { get; }
+        public FateCardResolver?             FateResolver        { get; }
+        public AlchemicalAlignmentValidator? AlchemicalValidator { get; }
+        public IAlignmentService?            Alignment           { get; }
+        public CombatRules?                  Combat              { get; }
 
         public GameRuleSet(
-            ICardDatabase           cardDatabase,
-            ICrucibleCodexDatabase  codexDatabase,
-            GameSetupService        setup,
-            IHarvestService         harvest,
-            ICrucibleService        crucible,
-            ICraftingService        crafting,
-            WinterRules             winter,
-            IActionValidator        validator,
-            AstralHouseService?     astralHouse  = null,
-            CosmicEffectService?    cosmicEffect = null,
-            FateCardResolver?       fateResolver = null)
+            ICardDatabase                cardDatabase,
+            ICrucibleCodexDatabase       codexDatabase,
+            GameSetupService             setup,
+            IHarvestService              harvest,
+            ICrucibleService             crucible,
+            ICraftingService             crafting,
+            WinterRules                  winter,
+            IActionValidator             validator,
+            AstralHouseService?          astralHouse         = null,
+            CosmicEffectService?         cosmicEffect        = null,
+            FateCardResolver?            fateResolver        = null,
+            AlchemicalAlignmentValidator? alchemicalValidator = null,
+            IAlignmentService?           alignment           = null,
+            CombatRules?                 combat              = null)
         {
-            CardDatabase  = cardDatabase;
-            CodexDatabase = codexDatabase;
-            Setup         = setup;
-            Harvest       = harvest;
-            Crucible      = crucible;
-            Crafting      = crafting;
-            Winter        = winter;
-            Validator     = validator;
-            AstralHouse   = astralHouse;
-            CosmicEffect  = cosmicEffect;
-            FateResolver  = fateResolver;
+            CardDatabase        = cardDatabase;
+            CodexDatabase       = codexDatabase;
+            Setup               = setup;
+            Harvest             = harvest;
+            Crucible            = crucible;
+            Crafting            = crafting;
+            Winter              = winter;
+            Validator           = validator;
+            AstralHouse         = astralHouse;
+            CosmicEffect        = cosmicEffect;
+            FateResolver        = fateResolver;
+            AlchemicalValidator = alchemicalValidator;
+            Alignment           = alignment;
+            Combat              = combat;
         }
     }
 }

@@ -70,6 +70,10 @@ namespace Kismeta.Core.Rules
             session.Board.CosmicEffect    = CosmicEffectFlags.Default;
             session.Board.BestOfThreeDuels = false;
 
+            // Clear per-round stone flags
+            foreach (var player in session.Players)
+                player.ReturnedFromStasisThisRound = false;
+
             int newAgekeeper = RotateAgekeeper(session);
             session.EmitEvent(new AgeTransitedEvent(session.Board.RoundNumber, newAgekeeper));
         }
