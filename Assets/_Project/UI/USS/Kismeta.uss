@@ -1,6 +1,6 @@
 ﻿/* ============================================================
    Kismeta — shared stylesheet for Unity UI Toolkit (USS)
-   Production layout: full viewport, responsive tokens from ViewportLayout.
+   Production canonical copy (sync Docs/wireframes/Kismeta.uss on token/shell changes).
    Design baseline artboard: 380×844 (proportions only, not a width cap).
    ============================================================ */
 
@@ -50,7 +50,7 @@
     --radius-md: 9px;
     --radius-lg: 14px;
     --radius-xl: 18px;
-    /* Responsive defaults — ViewportLayout overwrites at runtime */
+    /* Responsive defaults — static; scaled by PanelSettings */
     --ui-scale: 1;
     --space-xs: 4px;
     --space-sm: 8px;

@@ -31,20 +31,29 @@ Join shell with a list instead of a code field.
 controllers may share one file (e.g. `ShellControllers.cs`).
 
 **Every controller** derives from `ScreenController`, overrides `Wire()` to hook
-buttons, and optionally `Bind()` to push game state. Attach it to the same GameObject
-as the screen's `UIDocument`.
+buttons, and optionally `Bind()` to push game state. In **production**, controllers
+attach to the **`GameBootstrap` UI host** (same GameObject as `ScreenRouter` and
+`ViewportLayout`) — not to a per-screen `UIDocument`. The router calls
+`AttachTo(screenRoot)` when a screen UXML is loaded into `content-layer`.
+
+The wireframe prototype in `Docs/wireframes/batch1/ScreenController.cs` assumed one
+UIDocument per screen; the shipped base class is
+`Assets/_Project/UI/Scripts/Framework/ScreenController.cs`.
 
 **Naming hooks.** Every interactive element in UXML has a `name`. Controllers query by
 that name (`Btn("new-game-btn")`). Keep names stable — they are the contract between
 UXML and C#.
 
 **Navigation** is exposed as `System.Action` fields on each controller (e.g.
-`OnNewGame`, `OnBegin`). Wire these from a higher-level screen router / state machine;
-the controllers don't assume how navigation works.
+`OnNewGame`, `OnBegin`). Wire these from **`GamePresenter`** (or `ScreenRouter`);
+controllers don't assume how navigation works.
 
-**Styling.** Shared classes live in `USS/Kismeta.uss` (imported by every UXML). A
-screen gets its own `.uss` only when it has genuinely unique styling — so far only
-`TitleScreen.uss` (the ceremonial hero treatment).
+**Setup enums.** Wireframe docs use "Magnus"; Core uses `GameMode.MagnusAlchemist`.
+Map via `UiSetupConfig` / `UiSetupConfigMapper` in `Assets/_Project/UI/Scripts/Setup/`.
+
+**Styling.** Shared classes live in `Assets/_Project/UI/USS/Kismeta.uss` (imported by
+every UXML). A screen gets its own `.uss` only when it has genuinely unique styling —
+so far only `TitleScreen.uss` (the ceremonial hero treatment).
 
 ## NATIVE NOTES in this batch
 
@@ -56,17 +65,22 @@ screen gets its own `.uss` only when it has genuinely unique styling — so far 
 - **Codex** — content is data-driven; bind `#codex-search` and populate `#codex-list`
   from a ScriptableObject/JSON of cards, ages, states, glossary. Rows shown are samples.
 
-## Wiring example
+## Wiring example (production)
 
 ```csharp
-// On the Title screen GameObject (has UIDocument + TitleScreen.uxml):
-var title = GetComponent<TitleScreenController>();
-title.OnNewGame   = () => router.Push("SetupSheet");
-title.OnResume    = () => router.Push("Resume");
-title.OnJoin      = () => router.Push("Join");
-title.OnHowToPlay = () => router.Push("HowToPlay");
-title.OnCodex     = () => router.Push("Codex");
+// On GameBootstrap (UIDocument + ScreenRouter + GamePresenter + controllers):
+// GamePresenter.InitializeForTitle() wires title menu at startup:
+
+var title = router.GetController<TitleScreenController>(ScreenIds.Title);
+title.OnNewGame   = () => router.ShowSetupSheet(onBegin: () => presenter.NotifySetupBegin(config));
+title.OnResume    = () => Debug.Log("[UI] Resume not implemented.");
+title.OnJoin      = () => router.GoTo(ScreenIds.Join);  // Phase 2
+title.OnHowToPlay = () => Debug.Log("[UI] How to play not implemented.");
+title.OnCodex     = () => router.GoTo(ScreenIds.Codex); // Phase 2
 ```
+
+See [`Assets/_Project/UI/README.md`](../../../Assets/_Project/UI/README.md) for bootstrap
+setup and troubleshooting.
 
 ## Status
 

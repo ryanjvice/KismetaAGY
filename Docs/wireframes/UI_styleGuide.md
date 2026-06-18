@@ -152,22 +152,53 @@ does not write USS variables at runtime (Unity API is read-only for custom prope
 ### 4.1 Responsive layout
 
 Production layout is implemented in Unity UI Toolkit via `ViewportLayout`
-(`Assets/_Project/UI/Scripts/Framework/ViewportLayout.cs`) and `Kismeta.uss`.
+(`Assets/_Project/UI/Scripts/Framework/ViewportLayout.cs`) and
+`Assets/_Project/UI/USS/Kismeta.uss` (canonical; `Docs/wireframes/Kismeta.uss` is a
+design reference copy).
 
 | Concern | Rule |
 |---|---|
 | **Full bleed** | `.screen`, `.kismeta-root` are 100% viewport; flex column layout |
+| **Screen host** | `.screen-host` on the UXML `Instantiate()` wrapper — without it, screens shrink to content height and letterbox |
+| **Root fallback** | `.kismeta-root` uses `background-color: var(--panel-dark)` so gaps never show the camera clear color |
 | **Safe area** | `Screen.safeArea` applied as root padding on resize |
-| **Spacing / type / touch** | Static USS token defaults; scaled by PanelSettings |
+| **Spacing / type / touch** | Static USS token defaults; scaled by PanelSettings (not written at runtime) |
 | **Touch targets** | `--touch-min` ≥ 44px on buttons, action bar, setup pips |
 | **Flex frame** | status bar + rivals + **stage** (`flex-grow: 1`) + action bar + dock |
 | **Modals** | full-screen scrim; centered card at 92% width, max 520px, max-height 88%, scrollable body |
 | **Bottom sheets** | full width, anchored to bottom safe area, max-height 90% |
 | **Viewport classes** | `.viewport--compact` (w &lt; 360), `.viewport--regular`, `.viewport--tablet` (shortest side ≥ 600dp) |
-| **PanelSettings** | Scale With Screen Size; reference 380×844; match width/height ≈ 0.5 |
+| **PanelSettings** | Scale With Screen Size; reference 380×844; match width/height ≈ 0.5; opaque clear color matching `--panel-dark` |
+
+**Flex chain for every routed screen:**
+
+```
+panel root → .kismeta-root → .app-shell → .content-layer → .screen-host → .screen
+```
+
+`ViewportLayout.SetScreen()` applies `.screen-host` and inline stretch styles because
+`height: 100%` on `.screen` alone is insufficient when the parent wrapper has no height.
 
 **Test resolutions** in Unity Game view before shipping a screen: 390×844, 428×926,
 768×1024 (portrait phone and tablet).
+
+### 4.2 Production UI host
+
+Shipped UI uses a **single-host** pattern — not one UIDocument per screen.
+
+| Piece | Rule |
+|---|---|
+| **UIDocument** | One instance on `GameBootstrap`; Source Asset is always `AppShell.uxml` |
+| **AppShell** | Fixed root with `content-layer` (screens) and `overlay-layer` (sheets/modals) |
+| **ScreenRouter** | Swaps UXML children inside `content-layer` via `ViewportLayout.SetScreen()` |
+| **Controllers** | On the same GameObject as `ScreenRouter`; attached by router, not per-screen UIDocument |
+| **Navigation** | `GamePresenter` wires `System.Action` hooks on controllers; `InitializeForTitle()` at startup |
+
+Do **not** assign `TitleScreen.uxml` or ad-hoc layouts as the UIDocument Source Asset —
+Unity reloads that tree and wipes programmatically loaded screens.
+
+Bootstrap steps, troubleshooting, and pitfalls:
+[`Assets/_Project/UI/README.md`](../../Assets/_Project/UI/README.md).
 
 ---
 

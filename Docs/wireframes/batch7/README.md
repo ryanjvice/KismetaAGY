@@ -23,17 +23,26 @@ kismeta-uitoolkit/
     └── WinterHub.uxml          ← closing-rites step hub
 ```
 
-## Setup in Unity
+## Setup in Unity (production)
 
-1. Create a **UI Document** GameObject (`Component → UI Toolkit → UI Document`),
-   or load a UXML via `VisualTreeAsset.CloneTree()`.
-2. Put `Kismeta.uss` in your project; each UXML references it with
-   `<engine:Style src="../USS/Kismeta.uss" />`. Adjust the `src` path to match your
-   `Assets/` layout, or assign the stylesheet on the PanelSettings / UIDocument instead.
-3. The screens are authored at **380px wide** (the mockup width). For a real device,
-   wrap each in a container that scales — set the `PanelSettings` scale mode to
-   `Scale With Screen Size` with a 380-px reference width, or anchor the `.screen`
-   element centered and let it size to content.
+Wireframe sources live under `Docs/wireframes/`; shipped assets are under
+`Assets/_Project/UI/`. Production UI uses a **single-host** architecture:
+
+1. **`AppShell.uxml`** is the only UIDocument Source Asset on `GameBootstrap` (fixed
+   shell with `content-layer` + `overlay-layer`).
+2. **`ScreenRouter`** loads batch UXML into `content-layer` at runtime — do not assign
+   individual screens as the UIDocument Source Asset.
+3. **`Kismeta.uss`** canonical copy: `Assets/_Project/UI/USS/Kismeta.uss`. Each UXML
+   imports it via `<engine:Style src="../../USS/Kismeta.uss" />` (adjust depth per folder).
+4. **PanelSettings:** Scale With Screen Size, reference 380×844, match ≈ 0.5. Screens
+   are full-bleed via `.screen-host` + flex stretch (not a centered 380px card).
+
+**Editor menus:** Kismeta → UI → Configure Panel Settings / Wire Bootstrap UI References /
+Setup Bootstrap Scene.
+
+Full bootstrap steps, architecture, and troubleshooting:
+[`Assets/_Project/UI/README.md`](../../../Assets/_Project/UI/README.md).
+Design tokens and layout rules: [`UI_styleGuide.md`](../UI_styleGuide.md) §4.
 
 ## What translated cleanly (USS is a CSS subset)
 
