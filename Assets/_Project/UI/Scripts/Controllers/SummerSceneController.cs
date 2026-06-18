@@ -1,7 +1,7 @@
-using System;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
+using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
@@ -14,29 +14,22 @@ namespace Kismeta.UI.Controllers
     {
         public override string ScreenId => ScreenIds.SummerMain;
 
-        public Action? OnCraftBuild;
-        public Action? OnConsort;
-        public Action? OnActivate;
-        public Action? OnPass;
-
         CommandBridge? _bridge;
         int _localPlayerId;
 
         protected override void Wire()
         {
-            Btn("craftbuild-btn")!.clicked += () => OnCraftBuild?.Invoke();
-            Btn("consort-btn")!.clicked += () => OnConsort?.Invoke();
-            Btn("activate-btn")!.clicked += () => OnActivate?.Invoke();
-            Btn("menu-btn")!.clicked += () => Debug.Log("[UI] Card table — future work");
-            Btn("pass-btn")!.clicked += () => OnPass?.Invoke();
+            Btn("craftbuild-btn")!.clicked += () => Debug.Log("[UI] Craft & build — Phase 4");
+            Btn("consort-btn")!.clicked += () => Debug.Log("[UI] Consort — Phase 4");
+            Btn("activate-btn")!.clicked += () => Debug.Log("[UI] Activate — Phase 4");
+            Btn("menu-btn")!.clicked += () => Debug.Log("[UI] Card table — Phase 4");
+            Btn("pass-btn")!.clicked += OnPass;
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
         {
             _bridge = bridge;
-            _localPlayerId = SummerActionHelpers.ResolvePlayerId(session, bridge);
-            if (_localPlayerId < 0)
-                _localPlayerId = bridge.ActivePlayerId;
+            _localPlayerId = bridge.ActivePlayerId;
             if (Root == null) return;
 
             var view = GamePublicView.From(session);
@@ -93,5 +86,7 @@ namespace Kismeta.UI.Controllers
                 strip.Add(CardChipFactory.CreateFromDefinition(def.Rank.ToString(), def.Id, db));
             }
         }
+
+        void OnPass() => _bridge?.SubmitPass();
     }
 }

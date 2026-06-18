@@ -39,8 +39,8 @@ namespace Kismeta.UI
             var hint = PendingHint;
             IGameCommand cmd = hint switch
             {
-                ActionHint.SummerAction or ActionHint.AutumnAction => new PassCrucibleActionCommand(pid),
-                ActionHint.WinterAction => new PassActionCommand(pid),
+                ActionHint.SummerAction or ActionHint.WinterAction => new PassActionCommand(pid),
+                ActionHint.AutumnAction => new PassCrucibleActionCommand(pid),
                 _ => new PassActionCommand(pid)
             };
             hs.SubmitCommand(cmd);

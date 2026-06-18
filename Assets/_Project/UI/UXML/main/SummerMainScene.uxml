@@ -42,12 +42,12 @@
             <engine:VisualElement name="spread-strip" class="dock__strip" />
         </engine:VisualElement>
 
-        <engine:VisualElement class="actionbar">
-            <engine:Button name="craftbuild-btn" text="Craft &amp; build" class="actionbtn btn btn--secondary" />
+        <engine:VisualElement class="actionbar actionbar--multi">
+            <engine:Button name="craftbuild-btn" text="Craft" class="actionbtn btn btn--secondary" />
             <engine:Button name="consort-btn" text="Consort" class="actionbtn btn btn--secondary" />
             <engine:Button name="activate-btn" text="Activate" class="actionbtn btn btn--primary" />
-            <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
-            <engine:Button name="menu-btn" text="Table" class="actionbtn btn btn--secondary" />
+            <engine:Button name="pass-btn" text="Pass" class="actionbtn actionbtn--tight btn btn--secondary" />
+            <engine:Button name="menu-btn" text="Table" class="actionbtn actionbtn--tight btn btn--secondary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

@@ -159,7 +159,14 @@
     border-bottom-color: var(--border-subtle);
 }
 
-.statusbar__left { flex-direction: row; align-items: center; }
+.statusbar__left {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    margin-right: var(--space-sm);
+}
 .statusbar__sigil {
     width: 26px;
     height: 26px;
@@ -171,8 +178,13 @@
     margin-right: var(--space-sm);
 }
 
-.statusbar__title { font-size: var(--font-title); color: var(--gold); }
-.statusbar__sub { font-size: var(--font-label); color: var(--muted); }
+.statusbar__title {
+    font-size: var(--font-title);
+    color: var(--gold);
+    flex-shrink: 1;
+    overflow: hidden;
+}
+.statusbar__sub { font-size: var(--font-label); color: var(--muted); flex-shrink: 0; }
 
 .rivals {
     flex-direction: row;
@@ -239,29 +251,64 @@
 
 .actionbar {
     flex-direction: row;
-    flex-wrap: wrap;
     flex-shrink: 0;
+    flex-wrap: nowrap;
     align-items: stretch;
-    justify-content: flex-start;
     padding: 0 var(--space-md) var(--space-sm);
 }
 
 .actionbtn {
     flex-grow: 1;
     flex-shrink: 1;
-    flex-basis: 0;
+    min-width: 0;
     min-height: var(--touch-min);
     border-radius: var(--radius-md);
-    padding: 9px 4px;
-    margin: 0 3px 6px 3px;
+    padding: 8px 3px;
+    margin-right: 4px;
     align-items: center;
     justify-content: center;
     border-width: 1px;
-    -unity-text-align: middle-center;
     font-size: 11px;
+    -unity-text-align: middle-center;
     white-space: normal;
 }
 
+.actionbar .btn.actionbtn {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-size: 11px;
+}
+
+.actionbtn--tight {
+    flex-grow: 0;
+    flex-shrink: 0;
+    min-width: 44px;
+    max-width: 56px;
+}
+
+.actionbar--multi {
+    flex-wrap: wrap;
+    row-gap: 6px;
+    justify-content: space-between;
+}
+
+.actionbar--multi > .actionbtn {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 31%;
+    max-width: 32%;
+    margin-right: 0;
+    min-width: 0;
+}
+
+.actionbar--multi > .actionbtn--tight {
+    flex-basis: 47%;
+    max-width: 48%;
+}
+
+.actionbtn:last-child { margin-right: 0; }
 .actionbtn__label { font-size: var(--font-body); -unity-font-style: normal; }
 
 .dock {
@@ -536,27 +583,27 @@
 
 /* ---------- Viewport classes (toggled by ViewportLayout) ---------- */
 .viewport--tablet .stage { margin-left: var(--space-xl); margin-right: var(--space-xl); }
-.viewport--tablet .actionbtn {
+.viewport--compact .title-flavor { max-width: 90%; }
+
+/* Multi-button action bars: wrap on phone, single row on tablet */
+.viewport--tablet .actionbar--multi {
+    flex-wrap: nowrap;
+    row-gap: 0;
+    justify-content: flex-start;
+}
+
+.viewport--tablet .actionbar--multi > .actionbtn {
     flex-grow: 1;
     flex-shrink: 1;
-    flex-basis: 0;
-    margin-bottom: 0;
+    flex-basis: auto;
+    max-width: none;
+    margin-right: 4px;
 }
 
-.viewport--regular .actionbtn,
-.viewport--compact .actionbtn {
+.viewport--tablet .actionbar--multi > .actionbtn--tight {
     flex-grow: 0;
     flex-shrink: 0;
-    flex-basis: 31%;
-    width: 31%;
-    padding-left: 2px;
-    padding-right: 2px;
-    font-size: 10px;
+    flex-basis: auto;
+    max-width: 56px;
+    min-width: 44px;
 }
-
-.viewport--compact .actionbtn {
-    flex-basis: 48%;
-    width: 48%;
-}
-
-.viewport--compact .title-flavor { max-width: 90%; }

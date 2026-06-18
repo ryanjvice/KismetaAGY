@@ -41,9 +41,6 @@ namespace Kismeta.UI
         }
         public bool IsOverlayVisible => _overlayLayer != null && _overlayLayer.style.display == DisplayStyle.Flex;
 
-        /// <summary>Screen root inside the active overlay host (after ShowModal / ShowBottomSheet).</summary>
-        public VisualElement? OverlayContentRoot { get; private set; }
-
         /// <summary>Last computed scale factor (informational; PanelSettings also scales the panel).</summary>
         public float UiScale { get; private set; } = 1f;
 
@@ -117,7 +114,7 @@ namespace Kismeta.UI
             overlay.Clear();
             overlay.RemoveFromClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
-            OverlayContentRoot = InstantiateOverlay(overlay, asset, _tokenStylesheet);
+            InstantiateOverlay(overlay, asset, _tokenStylesheet);
         }
 
         public void ShowBottomSheet(VisualTreeAsset asset)
@@ -129,7 +126,7 @@ namespace Kismeta.UI
             overlay.Clear();
             overlay.AddToClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
-            OverlayContentRoot = InstantiateOverlay(overlay, asset, _tokenStylesheet);
+            InstantiateOverlay(overlay, asset, _tokenStylesheet);
         }
 
         /// <summary>
@@ -149,7 +146,7 @@ namespace Kismeta.UI
             var screenRoot = host.Q(className: "screen") ?? (host.childCount > 0 ? host[0] : null);
             if (screenRoot != null)
                 ApplyAssetStylesheets(screenRoot, asset);
-            return screenRoot ?? host;
+            return host;
         }
 
         private static void ApplyAssetStylesheets(VisualElement target, VisualTreeAsset asset)
@@ -203,7 +200,6 @@ namespace Kismeta.UI
             _overlayLayer.Clear();
             _overlayLayer.style.display = DisplayStyle.None;
             _overlayLayer.RemoveFromClassList("overlay-layer--sheet");
-            OverlayContentRoot = null;
         }
 
         /// <summary>Runs after the panel has non-zero layout (avoids startup races).</summary>
