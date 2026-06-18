@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/SummerActions.uss" />
+
+    <!-- ============================================================
+         END SUMMER CTA (#27)
+         NATIVE NOTE: the recap and "still available" flags are built from
+         game state in C# — what the player did this season, and what
+         productive moves / exposures remain. Lists below are samples.
+         ============================================================ -->
+    <engine:VisualElement name="end-summer" class="screen screen--summer">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:VisualElement class="statusbar__sigil" style="background-color: rgb(46,28,10); border-color: var(--summer-accent);">
+                    <engine:Label text="&#xed5a;" class="ti-icon" style="color: var(--summer-accent);" />
+                </engine:VisualElement>
+                <engine:VisualElement>
+                    <engine:Label text="End your Summer?" class="statusbar__title" style="color: var(--summer-accent);" />
+                    <engine:Label text="pass the workshop and move to the forge" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Button name="close-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 13px 14px 4px;">
+            <engine:Label text="your summer's work" class="eyebrow" />
+            <engine:VisualElement name="recap-list">
+                <engine:VisualElement class="benefit-row">
+                    <engine:Label text="&#xea2c;" class="ti-icon" style="color: var(--gold); margin-right: 9px;" />
+                    <engine:Label text="Activated Crucible A — lit the Red cauldron" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
+                </engine:VisualElement>
+                <engine:VisualElement class="benefit-row">
+                    <engine:Label text="&#xebd9;" class="ti-icon" style="color: var(--ok-text); margin-right: 9px;" />
+                    <engine:Label text="Crafted 3 reagents (1 Sulphur, 2 Salt)" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
+                </engine:VisualElement>
+                <engine:VisualElement class="benefit-row">
+                    <engine:Label text="&#xeb4c;" class="ti-icon" style="color: rgb(240,176,160); margin-right: 9px;" />
+                    <engine:Label text="Won a Duel against Severin" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 14px 4px;">
+            <engine:Label text="still available this summer" class="eyebrow" />
+            <engine:VisualElement class="tip tip--caution" style="margin: 0; flex-direction: column; align-items: stretch;">
+                <engine:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 7px;">
+                    <engine:Label text="&#xebd9;" class="ti-icon" style="color: var(--ok-text); margin-right: 9px;" />
+                    <engine:Label text="You can still craft — 3 Wands in hand" style="font-size: 11px; color: rgb(243,233,210); white-space: normal;" />
+                </engine:VisualElement>
+                <engine:VisualElement style="flex-direction: row; align-items: center;">
+                    <engine:Label text="&#xec8b;" class="ti-icon" style="color: var(--arcanum-text); margin-right: 9px;" />
+                    <engine:Label text="Crucible A is unwarded — rivals can gambit it free" style="font-size: 11px; color: rgb(243,233,210); white-space: normal;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Label text="passing forfeits any remaining Summer actions"
+                          style="font-size: 9px; color: rgb(122,106,74); -unity-text-align: middle-center; margin-top: 7px;" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 14px 16px; flex-direction: row;">
+            <engine:Button name="keep-btn" text="Keep working" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
+            <engine:Button name="end-btn" text="End Summer · to the forge" class="btn btn--primary" style="flex-grow: 1.3; color: var(--autumn-accent);" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

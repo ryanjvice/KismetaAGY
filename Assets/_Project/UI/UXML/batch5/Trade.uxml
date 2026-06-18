@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/Contests.uss" />
+
+    <!-- ============================================================
+         TRADE (#26) — two stacked trays. Request only from the rival's PUBLIC
+         cards (Spread + active Arcanum); their hidden Hand is unreachable.
+         Alignment-driven ratio hint (Magnus charges 2:1). This PROPOSES a
+         trade — it needs the rival's consent (not instant).
+         NATIVE NOTE: build both trays' tappable card pools in C#; the ratio
+         line + "cannot trade" list come from game rules + active GameMode.
+         ============================================================ -->
+    <engine:VisualElement name="trade" class="screen" style="background-color: rgb(12,18,26);">
+
+        <engine:VisualElement class="statusbar" style="border-bottom-color: rgb(43,58,74);">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:Label text="Trade · Severin" class="statusbar__title" style="color: rgb(168,205,240); margin-left: 4px;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- you give -->
+        <engine:VisualElement style="padding: 12px 14px 0;">
+            <engine:VisualElement class="tray tray--give">
+                <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <engine:Label text="you give" style="font-size: 12px; color: var(--gold);" />
+                    <engine:Label name="give-count" text="1 card" style="font-size: 10px; color: var(--muted);" />
+                </engine:VisualElement>
+                <engine:VisualElement name="give-cards" class="tray__cards">
+                    <engine:VisualElement class="card-chip card-chip--pentacles card-chip--selected"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="align-items: center; padding: 2px;">
+            <engine:Label text="&#8645;" style="font-size: 18px; color: var(--muted);" />
+        </engine:VisualElement>
+
+        <!-- they give -->
+        <engine:VisualElement style="padding: 0 14px;">
+            <engine:VisualElement class="tray tray--get">
+                <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <engine:Label text="Severin gives (public cards)" style="font-size: 12px; color: var(--ok-text);" />
+                    <engine:Label name="get-count" text="1 card" style="font-size: 10px; color: var(--muted);" />
+                </engine:VisualElement>
+                <engine:VisualElement name="get-cards" class="tray__cards">
+                    <engine:VisualElement class="card-chip card-chip--cups card-chip--selected"><engine:Label text="Q" class="card-chip__rank" /></engine:VisualElement>
+                </engine:VisualElement>
+                <engine:Label text="hidden Hand cannot be requested" style="font-size: 9px; color: rgb(106,122,138); margin-top: 6px;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="tip tip--caution">
+            <engine:Label name="ratio-line" text="Fair trade (1:1). Misaligned trades in Magnus would cost you 2:1."
+                          class="tip__text" style="color: rgb(224,200,120);" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 2px 14px 16px;">
+            <engine:Button name="propose-btn" text="Propose the trade" class="btn btn--primary" />
+            <engine:Label text="Severin must accept before it resolves"
+                          style="font-size: 9px; color: rgb(106,122,138); -unity-text-align: middle-center; margin-top: 7px;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

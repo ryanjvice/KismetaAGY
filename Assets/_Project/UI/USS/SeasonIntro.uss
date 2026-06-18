@@ -1,0 +1,95 @@
+/* Kismeta — SeasonIntro.uss
+   Shared styling for the 4 season-intro screens. The season's hue is applied
+   by adding a modifier class to the root: .intro--spring/summer/autumn/winter.
+   NATIVE NOTE: the radial header glow + drifting motes (seeds/sun/leaves/snow)
+   were SVG. In Unity use a background sprite per season on .intro-hero, and an
+   optional particle overlay for the motes. */
+
+.intro-hero {
+    padding: 24px 18px 16px;
+    align-items: center;
+    background-color: rgb(19,37,26); /* overridden per season below */
+}
+.intro--spring .intro-hero { background-color: rgb(26,58,36); }
+.intro--summer .intro-hero { background-color: rgb(74,46,10); }
+.intro--autumn .intro-hero { background-color: rgb(74,22,10); }
+.intro--winter .intro-hero { background-color: rgb(26,48,72); }
+
+.intro-sigil {
+    width: 60px; height: 60px; border-radius: 30px;
+    border-width: 2px;
+    align-items: center; justify-content: center;
+    margin-bottom: 12px;
+}
+.intro--spring .intro-sigil { background-color: rgb(19,37,26); border-color: var(--spring-accent); }
+.intro--summer .intro-sigil { background-color: rgb(46,28,10); border-color: var(--summer-accent); }
+.intro--autumn .intro-sigil { background-color: rgb(46,14,10); border-color: var(--autumn-accent); }
+.intro--winter .intro-sigil { background-color: rgb(17,32,46); border-color: rgb(111,168,212); }
+
+.intro-name {
+    font-size: 26px;
+    letter-spacing: 4px;
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
+}
+.intro--spring .intro-name { color: var(--spring-accent); }
+.intro--summer .intro-name { color: var(--summer-accent); }
+.intro--autumn .intro-name { color: var(--autumn-accent); }
+.intro--winter .intro-name { color: var(--winter-accent); }
+
+.intro-tagline {
+    font-size: 10px; letter-spacing: 3px;
+    margin-top: 7px;
+}
+.intro--spring .intro-tagline { color: rgb(90,154,111); }
+.intro--summer .intro-tagline { color: rgb(184,122,58); }
+.intro--autumn .intro-tagline { color: rgb(176,90,42); }
+.intro--winter .intro-tagline { color: rgb(111,154,196); }
+
+.intro-couplet {
+    font-size: 10px;
+    -unity-font-style: italic;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    max-width: 250px;
+    margin-top: 13px;
+    color: rgb(138,172,146);
+}
+
+/* the shared age strip under the hero */
+.intro-agestrip {
+    flex-direction: row; align-items: center;
+    padding: 13px 16px 4px;
+}
+.intro-agestrip__sigil {
+    width: 28px; height: 28px; border-radius: 14px;
+    background-color: rgb(58,26,14);
+    border-width: 1px; border-color: var(--gold-deep);
+    align-items: center; justify-content: center;
+    margin-right: 9px;
+}
+
+/* preview step / action rows */
+.intro-row {
+    flex-direction: row; align-items: center;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 8px 11px;
+    margin-bottom: 6px;
+}
+.intro-row__num {
+    width: 20px; height: 20px; border-radius: 10px;
+    border-width: 1px;
+    align-items: center; justify-content: center;
+    margin-right: 10px;
+}
+
+.intro-tip {
+    flex-direction: row;
+    border-radius: var(--radius-md);
+    padding: 9px 11px;
+    margin: 11px 16px;
+}
+.intro-cta {
+    margin: 4px 16px 16px;
+}

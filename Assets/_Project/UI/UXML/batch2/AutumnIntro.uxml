@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/SeasonIntro.uss" />
+
+    <engine:VisualElement name="autumn-intro" class="screen intro--autumn" style="background-color: rgb(22,10,10);">
+
+        <engine:VisualElement class="intro-hero">
+            <engine:VisualElement class="intro-sigil">
+                <engine:Label text="&#xec3a;" class="ti-icon" style="font-size: 26px; color: var(--autumn-accent);" />
+            </engine:VisualElement>
+            <engine:Label text="AUTUMN" class="intro-name" />
+            <engine:Label text="THE FORGE SEASON · TRANSMUTE &amp; CLASH" class="intro-tagline" />
+            <engine:Label text="The crucible runs hot. Drive your stone toward gold — but a forging stone is a stone exposed."
+                          class="intro-couplet" style="color: rgb(196,136,98);" />
+        </engine:VisualElement>
+
+        <engine:VisualElement class="intro-agestrip">
+            <engine:VisualElement class="intro-agestrip__sigil">
+                <engine:Label text="&#xea6c;" class="ti-icon" style="color: var(--gold);" />
+            </engine:VisualElement>
+            <engine:VisualElement>
+                <engine:Label text="the crucible step" class="eyebrow" style="margin-bottom: 0;" />
+                <engine:Label text="advance your stone — and oppose any that dare to forge" style="font-size: 12px; color: rgb(196,136,98);" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 16px 4px;">
+            <engine:Label text="at the forge" class="eyebrow" style="color: rgb(154,90,58);" />
+            <engine:VisualElement name="intro-actions">
+                <engine:VisualElement class="intro-row" style="background-color: rgb(28,14,10); border-color: rgb(74,32,24);">
+                    <engine:VisualElement style="width: 26px; height: 26px; border-radius: var(--radius-sm); background-color: rgb(58,26,14); border-width: 1px; border-color: var(--gold-deep); align-items: center; justify-content: center; margin-right: 10px;">
+                        <engine:Label text="&#xec3a;" class="ti-icon" style="color: var(--gold);" />
+                    </engine:VisualElement>
+                    <engine:VisualElement style="flex-grow: 1;">
+                        <engine:Label text="Fire" style="font-size: 12px; color: var(--ink);" />
+                        <engine:Label text="spend reagents to push your stone forward" style="font-size: 10px; color: rgb(188,132,98); white-space: normal;" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:VisualElement class="intro-row" style="background-color: rgb(28,14,10); border-color: rgb(74,32,24);">
+                    <engine:VisualElement style="width: 26px; height: 26px; border-radius: var(--radius-sm); background-color: var(--arcanum-bg); border-width: 1px; border-color: var(--arcanum-border); align-items: center; justify-content: center; margin-right: 10px;">
+                        <engine:Label text="&#xea1b;" class="ti-icon" style="color: var(--arcanum-text);" />
+                    </engine:VisualElement>
+                    <engine:VisualElement style="flex-grow: 1;">
+                        <engine:Label text="Temper" style="font-size: 12px; color: var(--ink);" />
+                        <engine:Label text="advance a stage when a crucible card is ready" style="font-size: 10px; color: rgb(188,132,98); white-space: normal;" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:VisualElement class="intro-row" style="background-color: rgb(28,14,10); border-color: rgb(74,32,24);">
+                    <engine:VisualElement style="width: 26px; height: 26px; border-radius: var(--radius-sm); background-color: rgb(58,26,26); border-width: 1px; border-color: rgb(106,48,48); align-items: center; justify-content: center; margin-right: 10px;">
+                        <engine:Label text="&#xeb4c;" class="ti-icon" style="color: rgb(240,176,160);" />
+                    </engine:VisualElement>
+                    <engine:VisualElement style="flex-grow: 1;">
+                        <engine:Label text="Oppose" style="font-size: 12px; color: var(--ink);" />
+                        <engine:Label text="alignment contest to send a rival to stasis" style="font-size: 10px; color: rgb(188,132,98); white-space: normal;" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="intro-tip tip--danger">
+            <engine:Label text="The moment your stone enters the forge it can be Opposed. Ward it first, and weigh whether to advance now or wait for a safer age."
+                          class="tip__text" style="color: rgb(212,160,122);" />
+        </engine:VisualElement>
+
+        <engine:VisualElement class="intro-cta">
+            <engine:Button name="begin-btn" text="Begin Autumn" class="btn btn--primary" style="color: var(--autumn-accent);" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

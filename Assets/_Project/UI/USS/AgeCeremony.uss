@@ -1,0 +1,84 @@
+/* Kismeta — AgeCeremony.uss
+   Shared styling for AgeOpening and AgeClosing (cosmic, frame-broken).
+   NATIVE NOTE: starfield + constellation + sigil glow were SVG; in Unity
+   use background sprites on .ceremony-hero and the sigil; glow via 9-slice. */
+
+.ceremony-hero {
+    padding: 26px 18px 16px;
+    align-items: center;
+    background-color: rgb(22,16,40); /* open: rising; close: setting (overridden) */
+}
+.ceremony-hero--open { background-color: rgb(36,26,58); }
+.ceremony-hero--close { background-color: rgb(26,20,46); }
+
+.ceremony-eyebrow {
+    font-size: 10px; letter-spacing: 4px;
+    color: rgb(154,122,186);
+    margin-bottom: 16px;
+}
+
+.ceremony-sigil {
+    align-items: center; justify-content: center;
+}
+.ceremony-sigil--open {
+    width: 96px; height: 96px; border-radius: 48px;
+    background-color: rgb(74,20,16);
+    border-width: 2px; border-color: var(--gold-deep);
+    margin-bottom: 16px;
+}
+.ceremony-sigil--close {
+    width: 78px; height: 78px; border-radius: 39px;
+    background-color: rgb(36,16,16);
+    border-width: 2px; border-color: rgb(138,106,74);
+    margin-bottom: 14px;
+    opacity: 0.85;
+}
+.ceremony-sigil__glyph {
+    font-size: 48px; color: rgb(240,192,176);
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
+}
+.ceremony-sigil--close .ceremony-sigil__glyph { font-size: 38px; }
+
+.ceremony-prelabel {
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 2px;
+}
+.ceremony-agename {
+    font-size: 36px; color: var(--gold);
+    letter-spacing: 2px;
+    margin-top: 2px;
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
+}
+.ceremony-hero--close .ceremony-agename { font-size: 30px; }
+
+.ceremony-couplet {
+    font-size: 10px;
+    -unity-font-style: italic;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    max-width: 260px;
+    margin-top: 14px;
+    color: rgb(154,138,172);
+}
+
+.ceremony-aspects {
+    flex-direction: row; align-items: center;
+    margin-top: 13px;
+}
+.ceremony-aspect {
+    font-size: 11px;
+    border-width: 1px; border-radius: var(--radius-sm);
+    padding: 3px 10px;
+    margin-right: 8px;
+}
+.ceremony-aspect:last-child { margin-right: 0; }
+.ceremony-aspect--planet {
+    color: rgb(240,153,123);
+    background-color: rgb(42,21,16);
+    border-color: rgb(90,43,26);
+}
+.ceremony-aspect--element {
+    color: var(--ok-text);
+    background-color: var(--ok-bg);
+    border-color: var(--ok-border);
+}

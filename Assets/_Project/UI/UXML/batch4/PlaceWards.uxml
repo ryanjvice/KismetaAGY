@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/SummerActions.uss" />
+
+    <!-- ============================================================
+         PLACE WARDS (#24)
+         NATIVE NOTE: a supply tray that decrements as you assign wards via
+         +/- steppers per card. Existing wards vs new wards in different
+         colors. Seal the batch on confirm.
+         ============================================================ -->
+    <engine:VisualElement name="place-wards" class="screen screen--summer">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:VisualElement style="margin-left: 4px;">
+                    <engine:Label text="Place wards" class="statusbar__title" style="color: var(--arcanum-text);" />
+                    <engine:Label text="defend cards against gambits" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 12px 14px 4px;">
+            <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between;">
+                <engine:Label text="ward supply" class="eyebrow" style="margin-bottom: 0;" />
+                <engine:VisualElement style="flex-direction: row; align-items: center;">
+                    <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 5px;" />
+                    <engine:Label name="ward-supply" text="4 left" style="font-size: 11px; color: var(--ink);" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 8px 14px 4px;">
+            <engine:Label text="your active cards" class="eyebrow" />
+
+            <engine:VisualElement class="stepper-row">
+                <engine:VisualElement style="width: 30px; height: 42px; border-radius: var(--radius-sm); background-color: rgb(58,26,14); border-width: 1px; border-color: var(--gold-deep); align-items: center; justify-content: center; margin-right: 10px;">
+                    <engine:Label text="A" style="font-size: 12px; color: var(--gold); -unity-font-style: bold;" />
+                </engine:VisualElement>
+                <engine:VisualElement style="flex-grow: 1;">
+                    <engine:Label text="Crucible A" style="font-size: 12px; color: var(--ink);" />
+                    <engine:Label name="ward-a-state" text="unwarded — free to gambit" style="font-size: 9px; color: var(--danger-text);" />
+                </engine:VisualElement>
+                <engine:Button name="ward-a-minus" class="stepper-btn stepper-btn--minus"><engine:Label text="&#8722;" style="color: rgb(212,160,122);" /></engine:Button>
+                <engine:Label name="ward-a-val" text="0" class="stepper-value" style="color: var(--muted);" />
+                <engine:Button name="ward-a-plus" class="stepper-btn stepper-btn--plus"><engine:Label text="+" style="color: var(--gold);" /></engine:Button>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="stepper-row">
+                <engine:VisualElement style="width: 30px; height: 42px; border-radius: var(--radius-sm); background-color: var(--arcanum-bg); border-width: 1px; border-color: var(--arcanum-border); align-items: center; justify-content: center; margin-right: 10px;">
+                    <engine:Label text="&#xea8a;" class="ti-icon" style="color: var(--arcanum-text);" />
+                </engine:VisualElement>
+                <engine:VisualElement style="flex-grow: 1;">
+                    <engine:Label text="The Hierophant (Adept)" style="font-size: 12px; color: var(--ink);" />
+                    <engine:Label name="ward-h-state" text="1 ward placed" style="font-size: 9px; color: var(--ok-text);" />
+                </engine:VisualElement>
+                <engine:Button name="ward-h-minus" class="stepper-btn stepper-btn--minus"><engine:Label text="&#8722;" style="color: rgb(212,160,122);" /></engine:Button>
+                <engine:Label name="ward-h-val" text="1" class="stepper-value" style="color: var(--ok-text);" />
+                <engine:Button name="ward-h-plus" class="stepper-btn stepper-btn--plus"><engine:Label text="+" style="color: var(--gold);" /></engine:Button>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="tip tip--arcanum">
+            <engine:Label text="Crucible wards are permanent; Adept wards return to supply if the Adept leaves play. An unwarded active card can be gambited for free."
+                          class="tip__text" style="color: rgb(184,154,192);" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 2px 14px 16px;">
+            <engine:Button name="seal-btn" text="Seal the wards" class="btn btn--primary" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/EndAndOverlays.uss" />
+
+    <!-- ============================================================
+         CHRONICLE (#51) — post-game ledger.
+         NATIVE NOTE: the race-to-the-Altar LINE CHART has no USS equivalent.
+         Render #chart-host via one of:
+           (a) VisualElement.generateVisualContent + Painter2D (plot lines);
+           (b) a UI Toolkit charting package;
+           (c) Vector Graphics (com.unity.vectorgraphics).
+         Y-axis labels are stage names (Lead..Altar), X is ages. Use distinct
+         point shapes per series for colorblind safety (per style guide).
+         ============================================================ -->
+    <engine:VisualElement name="chronicle" class="screen" style="background-color: rgb(20,12,18);">
+
+        <engine:VisualElement class="statusbar" style="background-color: rgb(36,17,8);">
+            <engine:VisualElement class="statusbar__left">
+                <engine:VisualElement class="statusbar__sigil" style="background-color: rgb(28,18,8); border-color: var(--gold-deep);">
+                    <engine:Label text="&#xed4d;" class="ti-icon" style="color: var(--gold);" />
+                </engine:VisualElement>
+                <engine:VisualElement>
+                    <engine:Label text="Chronicle of the Great Year" class="statusbar__title" style="color: var(--gold);" />
+                    <engine:Label text="4 ages · Aurelia claims the Altar" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- stat row -->
+        <engine:VisualElement style="padding: 11px 14px 6px; flex-direction: row;">
+            <engine:VisualElement class="stat-cell">
+                <engine:Label text="4" class="stat-cell__value" style="color: var(--gold);" />
+                <engine:Label text="ages played" style="font-size: 8px; color: var(--muted);" />
+            </engine:VisualElement>
+            <engine:VisualElement class="stat-cell">
+                <engine:Label text="11" class="stat-cell__value" style="color: rgb(240,176,160);" />
+                <engine:Label text="contests" style="font-size: 8px; color: var(--muted);" />
+            </engine:VisualElement>
+            <engine:VisualElement class="stat-cell">
+                <engine:Label text="9" class="stat-cell__value" style="color: var(--ok-text);" />
+                <engine:Label text="reagents forged" style="font-size: 8px; color: var(--muted);" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- race chart -->
+        <engine:VisualElement style="padding: 6px 14px 4px;">
+            <engine:Label text="the race to the altar" class="eyebrow" />
+            <engine:VisualElement name="chart-host" class="chart-host">
+                <engine:Label text="[ race line chart — render in C# (Painter2D / VectorGraphics) ]"
+                              style="font-size: 10px; color: var(--muted); white-space: normal; -unity-text-align: middle-center;" />
+            </engine:VisualElement>
+            <engine:VisualElement style="flex-direction: row; justify-content: center;">
+                <engine:Label text="● Aurelia" style="font-size: 10px; color: rgb(240,144,138); margin-right: 12px;" />
+                <engine:Label text="■ Iolanthe" style="font-size: 10px; color: rgb(168,205,240); margin-right: 12px;" />
+                <engine:Label text="▲ Severin" style="font-size: 10px; color: rgb(159,225,203);" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- contest record -->
+        <engine:VisualElement style="padding: 10px 14px 16px;">
+            <engine:Label text="contest record" class="eyebrow" />
+            <engine:VisualElement style="flex-direction: row; padding: 0 4px 4px;">
+                <engine:Label text="alchemist" style="flex-grow: 1.4; font-size: 8px; color: var(--muted-dim);" />
+                <engine:Label text="duel" style="flex-grow: 1; font-size: 8px; color: var(--muted-dim); -unity-text-align: middle-center;" />
+                <engine:Label text="gambit" style="flex-grow: 1; font-size: 8px; color: var(--muted-dim); -unity-text-align: middle-center;" />
+                <engine:Label text="opp." style="flex-grow: 1; font-size: 8px; color: var(--muted-dim); -unity-text-align: middle-center;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="record-rows">
+                <engine:VisualElement class="standing">
+                    <engine:Label text="Aurelia" style="flex-grow: 1.4; font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="2-0" style="flex-grow: 1; font-size: 11px; color: rgb(207,196,168); -unity-text-align: middle-center;" />
+                    <engine:Label text="1-1" style="flex-grow: 1; font-size: 11px; color: rgb(207,196,168); -unity-text-align: middle-center;" />
+                    <engine:Label text="3-1" style="flex-grow: 1; font-size: 11px; color: rgb(207,196,168); -unity-text-align: middle-center;" />
+                </engine:VisualElement>
+                <engine:VisualElement class="standing">
+                    <engine:Label text="Iolanthe" style="flex-grow: 1.4; font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="1-1" style="flex-grow: 1; font-size: 11px; color: rgb(207,196,168); -unity-text-align: middle-center;" />
+                    <engine:Label text="0-1" style="flex-grow: 1; font-size: 11px; color: rgb(207,196,168); -unity-text-align: middle-center;" />
+                    <engine:Label text="1-2" style="flex-grow: 1; font-size: 11px; color: rgb(207,196,168); -unity-text-align: middle-center;" />
+                </engine:VisualElement>
+                <engine:VisualElement class="standing">
+                    <engine:Label text="Severin" style="flex-grow: 1.4; font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="0-2" style="flex-grow: 1; font-size: 11px; color: rgb(207,196,168); -unity-text-align: middle-center;" />
+                    <engine:Label text="0-1" style="flex-grow: 1; font-size: 11px; color: rgb(207,196,168); -unity-text-align: middle-center;" />
+                    <engine:Label text="0-1" style="flex-grow: 1; font-size: 11px; color: rgb(207,196,168); -unity-text-align: middle-center;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 0 14px 16px; flex-direction: row;">
+            <engine:Button name="back-btn" text="Back" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
+            <engine:Button name="newgame-btn" text="New game" class="btn btn--primary" style="flex-grow: 1;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

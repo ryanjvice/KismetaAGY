@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/AutumnActions.uss" />
+
+    <!-- ============================================================
+         LEAVE STASIS (#34) -> RESULT (#35)
+         Two escapes presented by which applies now: pay 2 Salt (live if your
+         forge spot is open) OR Stasis Opposition (if occupied). Salt cost
+         verified vs supply. Result shows the stone returning, progress intact.
+         NATIVE NOTE: swap which .escape is the live vs inactive variant based on whether
+         the forge spot is occupied. Result panel hidden until escape chosen.
+         ============================================================ -->
+    <engine:VisualElement name="leave-stasis" class="modal modal--stasis">
+
+        <engine:VisualElement class="modal__header" style="background-color: rgb(20,24,40); border-bottom-color: rgb(43,58,90);">
+            <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px; margin-right: 6px;" />
+            <engine:VisualElement style="flex-grow: 1;">
+                <engine:Label text="Leave Stasis" style="font-size: 14px; color: var(--winter-accent);" />
+                <engine:Label text="your stone has stalled — choose how to return" style="font-size: 10px; color: rgb(122,138,154);" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- choose-escape view -->
+        <engine:VisualElement name="escape-view">
+            <engine:VisualElement style="padding: 12px 14px 4px;">
+                <engine:Label text="choose your escape" class="eyebrow" />
+
+                <!-- pay 2 salt (live — spot open) -->
+                <engine:VisualElement class="escape escape--live">
+                    <engine:VisualElement class="escape__head">
+                        <engine:VisualElement style="width: 30px; height: 30px; border-radius: var(--radius-md); background-color: rgb(22,38,31); border-width: 1px; border-color: var(--ok-border); align-items: center; justify-content: center; margin-right: 9px;">
+                            <engine:Label text="&#xea6f;" class="ti-icon" style="color: var(--ok-text);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="flex-grow: 1;">
+                            <engine:Label text="Pay 2 Salt" style="font-size: 13px; color: var(--ink);" />
+                            <engine:Label text="return to forge 5, your previous spot" style="font-size: 10px; color: var(--muted);" />
+                        </engine:VisualElement>
+                        <engine:Label text="spot open" class="escape__badge" style="background-color: rgb(22,38,31); border-color: var(--ok-border); color: var(--ok-text);" />
+                    </engine:VisualElement>
+                    <engine:VisualElement style="flex-direction: row; align-items: center; background-color: rgb(19,32,26); border-width: 1px; border-color: rgb(43,74,58); border-radius: var(--radius-md); padding: 8px 10px; margin-bottom: 9px;">
+                        <engine:Label text="cost" style="font-size: 10px; color: rgb(159,196,180); margin-right: 7px;" />
+                        <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 4px;" />
+                        <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 7px;" />
+                        <engine:Label text="2 Salt" style="font-size: 10px; color: rgb(207,196,168); flex-grow: 1;" />
+                        <engine:Label name="salt-check" text="you hold 3 · ok" style="font-size: 10px; color: var(--ok-text);" />
+                    </engine:VisualElement>
+                    <engine:Button name="pay-salt-btn" text="Pay 2 Salt &amp; return to forge 5" class="btn"
+                                   style="background-color: rgb(22,38,31); border-color: var(--ok-border); color: var(--ok-text);" />
+                </engine:VisualElement>
+
+                <!-- stasis opposition (inactive — only if spot occupied) -->
+                <engine:VisualElement class="escape escape--inactive">
+                    <engine:VisualElement class="escape__head">
+                        <engine:VisualElement style="width: 30px; height: 30px; border-radius: var(--radius-md); background-color: rgb(36,16,40); border-width: 1px; border-color: rgb(90,58,90); align-items: center; justify-content: center; margin-right: 9px;">
+                            <engine:Label text="&#xeb4c;" class="ti-icon" style="color: rgb(192,138,160);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="flex-grow: 1;">
+                            <engine:Label text="Declare Stasis Opposition" style="font-size: 13px; color: rgb(207,196,168);" />
+                            <engine:Label text="swap into your spot if a rival holds it" style="font-size: 10px; color: var(--muted);" />
+                        </engine:VisualElement>
+                        <engine:Label text="spot empty" class="escape__badge" style="background-color: rgb(26,16,32); border-color: var(--border-subtle); color: rgb(138,122,138);" />
+                    </engine:VisualElement>
+                    <engine:Label text="Only needed when another stone occupies forge 5. Your spot is open, so this isn't required this round."
+                                  style="font-size: 10px; color: rgb(138,122,138); white-space: normal;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="tip tip--caution">
+                <engine:Label text="Leaving stasis returns you to where you were — your Crucible progress was never lost, only your position."
+                              class="tip__text" style="color: rgb(212,184,122);" />
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 2px 14px 16px;">
+                <engine:Button name="stay-btn" text="Stay in stasis for now" class="btn btn--secondary" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- result view (#35) — hidden until escape chosen -->
+        <engine:VisualElement name="result-view" style="display: none;">
+            <engine:VisualElement style="padding: 18px 14px 4px; align-items: center; background-color: rgb(19,37,26);">
+                <engine:Label text="stone freed from stasis" style="font-size: 10px; color: var(--ok-text); letter-spacing: 2px;" />
+                <engine:Label text="back in the Forge at position 5" style="font-size: 13px; color: var(--ink); margin-top: 8px;" />
+            </engine:VisualElement>
+            <engine:VisualElement style="padding: 12px 14px 4px;">
+                <engine:VisualElement class="benefit-row" style="background-color: var(--panel-darker);">
+                    <engine:Label text="&#xeb81;" class="ti-icon" style="color: var(--ok-text); margin-right: 9px;" />
+                    <engine:Label text="Crucible progress intact — 3 of 4 cards fired" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
+                </engine:VisualElement>
+                <engine:VisualElement class="benefit-row" style="background-color: var(--panel-darker);">
+                    <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 9px; margin-left: 2px;" />
+                    <engine:Label text="1 Salt remaining" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:VisualElement class="tip tip--arcanum">
+                <engine:Label text="You're forging in the open again. Consider warding your stone before the next Autumn."
+                              class="tip__text" style="color: rgb(184,154,192);" />
+            </engine:VisualElement>
+            <engine:VisualElement style="padding: 4px 14px 16px; flex-direction: row;">
+                <engine:Button name="ward-btn" text="Ward stone" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px; color: var(--arcanum-text);" />
+                <engine:Button name="done-btn" text="Done" class="btn btn--primary" style="flex-grow: 1;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

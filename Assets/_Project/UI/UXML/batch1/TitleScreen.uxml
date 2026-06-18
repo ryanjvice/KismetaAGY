@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/TitleScreen.uss" />
+
+    <engine:VisualElement name="title-screen" class="screen" style="background-color: rgb(20,10,24);">
+
+        <!-- ============================================================
+             CEREMONIAL HEADER — frame broken (no status bar / dock).
+             NATIVE NOTE: the radial gold glow + faint sacred-geometry
+             backdrop were SVG/CSS-gradient. In Unity, use a background
+             sprite (Image element behind, or a 9-slice glow) on #title-hero.
+             The "8" altar sigil can be a sprite or a styled Label.
+             ============================================================ -->
+        <engine:VisualElement name="title-hero" class="title-hero">
+            <engine:VisualElement name="title-sigil" class="title-sigil">
+                <engine:Label text="8" class="title-sigil__mark" />
+            </engine:VisualElement>
+            <engine:Label text="KISMETA" class="title-wordmark" />
+            <engine:Label text="Alchemists of the Great Year" class="title-tagline" />
+            <engine:Label text="Turn your lead into gold, carry your stone to the Altar, and claim the title of Magnus Alchemista."
+                          class="title-flavor" />
+        </engine:VisualElement>
+
+        <!-- menu -->
+        <engine:VisualElement class="title-menu">
+            <engine:Button name="new-game-btn" text="New game" class="btn btn--primary" style="font-size: 14px;" />
+
+            <engine:VisualElement class="title-menu__row">
+                <engine:Button name="resume-btn" text="Resume" class="btn btn--menu" />
+                <engine:Button name="join-btn" text="Join" class="btn btn--menu" />
+            </engine:VisualElement>
+
+            <engine:VisualElement class="title-menu__row" style="margin-top: 2px;">
+                <engine:Button name="howto-btn" text="How to play" class="btn btn--menu-sm" />
+                <engine:Button name="codex-btn" text="Codex" class="btn btn--menu-sm" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

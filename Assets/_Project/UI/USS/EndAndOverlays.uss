@@ -1,0 +1,149 @@
+/* Kismeta — EndAndOverlays.uss
+   Shared styling for victory, chronicle, card table, and the three card
+   modals (#50-55). Builds on Kismeta.uss + reuses earlier component classes. */
+
+/* ---------- Victory (frame broken, ceremonial) ---------- */
+.victory-hero {
+    align-items: center;
+    padding: 30px 20px 18px;
+    background-color: rgb(42,30,8);
+}
+.victory-sigil {
+    width: 92px; height: 92px; border-radius: 46px;
+    background-color: var(--gold-deep);
+    border-width: 3px; border-color: var(--gold-bright);
+    align-items: center; justify-content: center;
+    margin-bottom: 16px;
+}
+.victory-title {
+    font-size: 16px; color: var(--gold-bright);
+    letter-spacing: 2px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
+}
+.win-condition {
+    flex-direction: row; align-items: center;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 8px 11px;
+    margin-bottom: 6px;
+}
+
+/* standings row */
+.standing {
+    flex-direction: row; align-items: center;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 8px 11px;
+    margin-bottom: 5px;
+}
+.standing__rank { width: 18px; font-size: 12px; -unity-font-style: bold; color: var(--muted); }
+
+/* ---------- Chronicle ---------- */
+.chart-host {
+    height: 170px;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    align-items: center; justify-content: center;
+    margin-bottom: 8px;
+}
+.stat-cell {
+    flex-grow: 1;
+    align-items: center;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 9px 2px;
+    margin-right: 7px;
+}
+.stat-cell:last-child { margin-right: 0; }
+.stat-cell__value { font-size: 18px; -unity-font-style: bold; }
+
+/* ---------- Card table (overlay) ---------- */
+.player-block {
+    background-color: rgb(26,20,13);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-left-width: 3px;
+    border-top-right-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    padding: 10px 12px;
+    margin-bottom: 9px;
+}
+.threat-badge {
+    background-color: rgb(42,16,16);
+    border-width: 1px; border-color: rgb(90,32,32);
+    border-radius: var(--radius-sm);
+    padding: 2px 6px;
+    font-size: 9px; color: var(--danger-text);
+}
+.table-action {
+    flex-grow: 1;
+    border-radius: var(--radius-sm);
+    border-width: 1px;
+    padding: 6px;
+    margin-right: 6px;
+    font-size: 10px;
+    -unity-text-align: middle-center;
+}
+.table-action:last-child { margin-right: 0; }
+
+/* ---------- Card modals (inspect / adept / fate) ---------- */
+.card-modal {
+    width: 380px;
+    border-radius: var(--radius-xl);
+    border-width: 1px;
+    overflow: hidden;
+}
+.card-modal--inspect { background-color: rgb(14,10,20); border-color: rgb(90,43,43); }
+.card-modal--adept { background-color: rgb(18,10,24); border-color: rgb(90,58,122); }
+.card-modal--fate { background-color: rgb(10,14,24); border-color: rgb(58,90,138); }
+
+.card-hero {
+    align-items: center;
+    padding: 18px 16px 12px;
+}
+.tarot {
+    width: 96px; height: 134px;
+    border-radius: 11px;
+    border-width: 2px;
+    align-items: center; justify-content: center;
+}
+.tarot--big { width: 108px; height: 150px; }
+.tarot__name {
+    font-size: 19px;
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
+    margin-top: 12px;
+}
+
+/* aspect tiles (inspect) */
+.aspect-tile {
+    flex-grow: 1;
+    align-items: center;
+    background-color: rgb(28,16,16);
+    border-width: 1px; border-color: rgb(90,43,26);
+    border-radius: var(--radius-md);
+    padding: 9px 2px;
+    margin-right: 7px;
+}
+.aspect-tile:last-child { margin-right: 0; }
+
+/* fired-effect rows (fate) */
+.effect-row {
+    flex-direction: row; align-items: center;
+    border-radius: var(--radius-md);
+    border-width: 1px;
+    padding: 10px 12px;
+    margin-bottom: 7px;
+}
+.effect-row--gain { background-color: rgb(19,36,26); border-color: var(--ok-border); }
+.effect-row--loss { background-color: rgb(36,18,24); border-color: rgb(106,48,64); }
+
+.table-action--active {
+    background-color: rgb(42,31,14);
+    border-color: rgb(90,68,32);
+    color: rgb(224,200,120);
+}

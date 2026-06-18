@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/SpringSteps.uss" />
+
+    <!-- ============================================================
+         CARD LIMITS (#42) — discard down to Spread 5 / Hand 5.
+         NATIVE NOTE: over-limit chips get the overlimit class (amber edge);
+         tapping discards. Wagered cards are set aside and don't count.
+         The Transit step (#44) follows; shown here as the forward CTA that
+         appears once both zones are legal (toggle in C#).
+         ============================================================ -->
+    <engine:VisualElement name="card-limits" class="screen screen--winter">
+
+        <engine:VisualElement class="statusbar" style="background-color: rgb(22,32,46); border-bottom-color: rgb(43,58,74);">
+            <engine:VisualElement class="statusbar__left">
+                <engine:VisualElement class="statusbar__sigil" style="border-color: rgb(224,160,96);">
+                    <engine:Label text="&#xec4f;" class="ti-icon" style="color: rgb(224,160,96);" />
+                </engine:VisualElement>
+                <engine:VisualElement>
+                    <engine:Label text="Card limits" class="statusbar__title" style="color: rgb(240,192,136);" />
+                    <engine:Label text="discard down to 5 per zone" class="statusbar__sub" style="color: rgb(122,138,154);" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 14px 4px;">
+            <engine:VisualElement class="readout" style="background-color: rgb(22,32,46); border-color: rgb(43,58,74);">
+                <engine:VisualElement class="readout__metric">
+                    <engine:Label name="spread-limit" text="4 / 5" class="readout__value" style="color: var(--ok-text);" />
+                    <engine:Label text="spread" class="readout__label" />
+                </engine:VisualElement>
+                <engine:VisualElement class="readout__metric">
+                    <engine:Label name="hand-limit" text="6 / 5" class="readout__value" style="color: rgb(224,160,96);" />
+                    <engine:Label text="hand · over" class="readout__label" />
+                </engine:VisualElement>
+                <engine:VisualElement class="readout__metric">
+                    <engine:Label name="to-discard" text="1" class="readout__value" style="color: var(--danger-text);" />
+                    <engine:Label text="to discard" class="readout__label" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- hand cards: the over-limit one flagged amber -->
+        <engine:VisualElement style="padding: 4px 14px 0;">
+            <engine:VisualElement class="swap-zone swap-zone--hand" style="background-color: rgb(22,16,28);">
+                <engine:VisualElement class="swap-zone__header">
+                    <engine:Label text="Hand — tap to discard" style="font-size: 12px; color: var(--winter-accent);" />
+                    <engine:Label name="hand-tally" text="6 / 5" style="font-size: 10px; color: rgb(224,160,96);" />
+                </engine:VisualElement>
+                <engine:VisualElement name="hand-cards" class="swap-zone__cards">
+                    <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--pentacles"><engine:Label text="J" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--cups"><engine:Label text="2" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="5" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="4" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--pentacles card-chip--overlimit"><engine:Label text="6" class="card-chip__rank" /></engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="tip tip--ok">
+            <engine:Label text="Wagered cards are set aside and don't count. Fates return to the deck; Adepts stay in your Arcanum."
+                          class="tip__text" style="color: rgb(159,196,180);" />
+        </engine:VisualElement>
+
+        <!-- transit CTA: enabled once legal (toggle the disabled class in C#) -->
+        <engine:VisualElement style="padding: 2px 14px 16px;">
+            <engine:Button name="transit-btn" text="Discard 1 more to transit" class="btn btn--disabled" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>
