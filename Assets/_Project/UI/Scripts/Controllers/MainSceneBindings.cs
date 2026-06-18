@@ -41,8 +41,24 @@ namespace Kismeta.UI.Controllers
             {
                 hintLbl.text = session.IsOver
                     ? $"Game over — winner P{session.WinnerPlayerId}"
-                    : $"Your turn · {loop.PendingHint} · P{loop.ActivePlayerId}";
+                    : FormatTurnHint(loop);
             }
+        }
+
+        static string FormatTurnHint(GameLoop loop)
+        {
+            if (loop.PendingHumanController != null)
+            {
+                int pid = loop.ActivePlayerId >= 0
+                    ? loop.ActivePlayerId
+                    : loop.PendingHumanController.Slot.Index;
+                return $"Your turn · {loop.PendingHint} · P{pid}";
+            }
+
+            if (loop.PendingHint != ActionHint.None)
+                return $"Resolving · {loop.PendingHint}";
+
+            return "Waiting for next step…";
         }
 
         public static void BindPassButton(VisualElement? root, GameSession session, CommandBridge bridge)

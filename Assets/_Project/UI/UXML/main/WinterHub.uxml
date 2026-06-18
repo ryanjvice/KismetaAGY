@@ -40,7 +40,10 @@
             <engine:Button name="limits-btn" text="Enforce limits" class="actionbtn btn btn--primary" style="display: none;" />
             <engine:Button name="transit-btn" text="Transit the age" class="actionbtn btn btn--primary" style="display: none;" />
             <engine:Button name="pass-btn" text="Pass" class="actionbtn actionbtn--tight btn btn--secondary" />
-            <engine:Button name="menu-btn" text="Table" class="actionbtn actionbtn--tight btn btn--secondary" />
+        </engine:VisualElement>
+
+        <engine:VisualElement class="screen__fab-layer">
+            <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

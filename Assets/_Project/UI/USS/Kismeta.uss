@@ -134,6 +134,7 @@
     border-width: 0;
     background-color: var(--autumn-bg);
     overflow: hidden;
+    position: relative;
 }
 
 .screen--spring { background-color: var(--spring-bg); }
@@ -310,6 +311,23 @@
 
 .actionbtn:last-child { margin-right: 0; }
 .actionbtn__label { font-size: var(--font-body); -unity-font-style: normal; }
+
+.screen__fab-layer {
+    position: absolute;
+    right: var(--space-md);
+    bottom: 68px;
+    flex-direction: row;
+}
+
+.screen__fab-layer .menu-btn-fab {
+    flex-grow: 0;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: var(--radius-md);
+    padding: 8px 10px;
+    font-size: 11px;
+    -unity-text-align: middle-center;
+}
 
 .dock {
     flex-shrink: 0;

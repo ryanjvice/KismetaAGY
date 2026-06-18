@@ -422,6 +422,7 @@ namespace Kismeta.Core.Players
             finally
             {
                 PendingHumanController = null;
+                PendingHint            = ActionHint.None;
                 PendingCardId          = null;
                 ActivePlayerId         = -1;
             }

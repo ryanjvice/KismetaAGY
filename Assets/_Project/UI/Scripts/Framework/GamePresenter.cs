@@ -30,7 +30,7 @@ namespace Kismeta.UI
         private CeremonyGate? _ceremonyGate;
 
         private bool _inGame;
-        private HotSeatController? _lastHuman;
+        private bool _humanPending;
         private ActionHint _lastHint = ActionHint.None;
         private Season _lastSeason = Season.Spring;
         private CeremonyStep? _lastCeremonyStep;
@@ -113,7 +113,7 @@ namespace Kismeta.UI
                 return;
             }
 
-            var hs = _loop.PendingHumanController;
+            var humanPending = _loop.PendingHumanController != null;
             var hint = _loop.PendingHint;
             var season = _session.Phase.CurrentSeason;
 
@@ -124,13 +124,21 @@ namespace Kismeta.UI
                 return;
             }
 
-            if (hs != _lastHuman || hint != _lastHint || season != _lastSeason)
+            if (humanPending)
             {
-                _lastHuman = hs;
+                _humanPending = true;
                 _lastHint = hint;
                 _lastSeason = season;
                 RouteGameplay();
-                RefreshActiveScreen();
+                return;
+            }
+
+            if (_humanPending || hint != _lastHint || season != _lastSeason)
+            {
+                _humanPending = false;
+                _lastHint = hint;
+                _lastSeason = season;
+                RouteGameplay();
             }
         }
 
@@ -151,7 +159,7 @@ namespace Kismeta.UI
                     or ScreenIds.FatefulWager or ScreenIds.CardLimits)
                 return;
 
-            RefreshActiveScreen();
+            RouteGameplay();
         }
 
         private void WireTitleScreen()
@@ -234,7 +242,7 @@ namespace Kismeta.UI
             _router.DismissOverlay();
             SetupBeginRequested?.Invoke(config);
             _inGame = true;
-            _lastHuman = null;
+            _humanPending = false;
             _lastHint = ActionHint.None;
             _lastCeremonyStep = null;
             RouteGameplay();

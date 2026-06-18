@@ -47,7 +47,10 @@
             <engine:Button name="consort-btn" text="Consort" class="actionbtn btn btn--secondary" />
             <engine:Button name="activate-btn" text="Activate" class="actionbtn btn btn--primary" />
             <engine:Button name="pass-btn" text="Pass" class="actionbtn actionbtn--tight btn btn--secondary" />
-            <engine:Button name="menu-btn" text="Table" class="actionbtn actionbtn--tight btn btn--secondary" />
+        </engine:VisualElement>
+
+        <engine:VisualElement class="screen__fab-layer">
+            <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
         </engine:VisualElement>
 
     </engine:VisualElement>
