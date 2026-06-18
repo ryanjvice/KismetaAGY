@@ -207,6 +207,9 @@ namespace Kismeta.UI
             _sheets.OnBuild = () => { Dismiss(); ShowBuildHouse(); };
             _sheets.OnWard = () => { Dismiss(); ShowPlaceWards(); };
             _sheets.OnLight = () => { Dismiss(); ShowLightTip(); };
+            _sheets.OnTrade = () => OnTrade?.Invoke();
+            _sheets.OnDuel = () => OnDuel?.Invoke();
+            _sheets.OnGambit = () => OnGambit?.Invoke();
             _sheets.OnClose = Dismiss;
         }
 
