@@ -20,7 +20,7 @@
     letter-spacing: 2px;
     -unity-text-align: middle-center;
     white-space: normal;
-    -unity-font-definition: url("project://database/Assets/Fonts/Kismeta-Serif.asset");
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
 }
 .win-condition {
     flex-direction: row; align-items: center;
@@ -93,10 +93,14 @@
 
 /* ---------- Card modals (inspect / adept / fate) ---------- */
 .card-modal {
-    width: 380px;
+    width: 92%;
+    max-width: 520px;
+    max-height: 88%;
+    flex-direction: column;
     border-radius: var(--radius-xl);
     border-width: 1px;
     overflow: hidden;
+    flex-shrink: 1;
 }
 .card-modal--inspect { background-color: rgb(14,10,20); border-color: rgb(90,43,43); }
 .card-modal--adept { background-color: rgb(18,10,24); border-color: rgb(90,58,122); }
@@ -115,7 +119,7 @@
 .tarot--big { width: 108px; height: 150px; }
 .tarot__name {
     font-size: 19px;
-    -unity-font-definition: url("project://database/Assets/Fonts/Kismeta-Serif.asset");
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
     margin-top: 12px;
 }
 

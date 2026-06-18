@@ -1,8 +1,10 @@
 /* Kismeta — TitleScreen.uss (per-screen styling) */
 
 .title-hero {
+    flex-grow: 1;
     padding: 30px 20px 22px;
     align-items: center;
+    justify-content: center;
     /* radial glow backdrop -> background sprite in Unity (see NATIVE NOTE) */
     background-color: rgb(34,21,10);
 }
@@ -35,7 +37,7 @@
     -unity-font-style: italic;
     white-space: normal;
     -unity-text-align: middle-center;
-    max-width: 240px;
+    max-width: 85%;
     margin-top: 14px;
 }
 

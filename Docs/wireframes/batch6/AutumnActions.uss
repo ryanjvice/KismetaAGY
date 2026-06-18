@@ -4,10 +4,13 @@
 
 /* modal chrome (Fire / Temper / Leave Stasis are modals) */
 .modal {
-    width: 380px;
+    width: 92%;
+    max-width: 520px;
+    max-height: 88%;
     border-radius: var(--radius-xl);
     border-width: 1px;
     overflow: hidden;
+    flex-shrink: 1;
 }
 .modal--fire   { background-color: rgb(22,16,12); border-color: rgb(106,58,26); }
 .modal--temper { background-color: rgb(18,12,20); border-color: rgb(106,80,32); }

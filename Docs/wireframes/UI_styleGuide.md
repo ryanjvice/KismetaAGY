@@ -1,9 +1,10 @@
 # Kismeta: Alchemists of the Great Year
 ## Mobile App — UI & Visual Style Guide
 
-*A reference for the faithful digital port. Documents the design system, shared
-components, color and type tokens, and per-scene specifications for every screen,
-modal, and card mocked up to date.*
+*Production design system for the Unity UI Toolkit port. Documents color and type
+tokens, responsive layout rules, shared components, and per-scene specifications.
+Wireframe mockups used a **380×844 design baseline** for proportions; the shipped
+game is **full-bleed and responsive** on phones and tablets.*
 
 ---
 
@@ -15,8 +16,8 @@ be checked against them.
 1. **One persistent frame.** Spring, Summer, and Autumn share a single layout —
    status bar, two rival strips, a central object, a context action bar, and a
    tableau dock. The player learns the frame once; only the center and the
-   actions change per season. This is what makes a dense board game legible on a
-   ~380px screen.
+   actions change per season. This is what makes a dense board game legible on any
+   portrait phone or tablet — the layout fills the viewport and scales with the device.
 
 2. **The center is either a *map* or *state*.** The central object shows a *map*
    when a season is about positions you read (Spring's zodiac wheel, Autumn's
@@ -112,33 +113,62 @@ turning year; a player can tell the season from color alone.
   only — KISMETA, age names (SCORPIO), "Magnus Alchemista", card proper names.
   Using serif marks a moment as a threshold.
 
-### Type scale (observed, px)
+### Type scale (baseline at 380×844)
 
-| Role | Size | Weight | Notes |
+Values below are the **design baseline**. Production uses scaled USS tokens
+(`--font-body`, `--font-label`, `--font-title`, `--font-display`) set at runtime
+by `ViewportLayout` from `--ui-scale`.
+
+| Role | Baseline size | Weight | Notes |
 |---|---|---|---|
-| Ceremony title | 26–36 | 600 | serif, letter-spacing .06–.14em |
-| Screen/modal title | 14 | 500 | with icon |
+| Ceremony title | 26–36 | 600 | serif, letter-spacing .06–.14em; uses `--font-display` |
+| Screen/modal title | 14 | 500 | with icon; `--font-title` |
 | Card proper name | 19 | 600 | serif |
 | Section value / stat | 15–18 | bold | numbers, counts |
-| Body | 11–13 | 400–500 | |
-| Label / eyebrow | 9–10 | 400–500 | uppercase, letter-spacing .06–.10em, `--muted-dim` |
-| Micro / caption | 7–9 | 400 | sub-labels under chips, fine print |
+| Body | 11–13 | 400–500 | `--font-body` |
+| Label / eyebrow | 9–10 | 400–500 | uppercase, letter-spacing .06–.10em, `--muted-dim`; `--font-label` |
+| Micro / caption | 7–9 | 400 | sub-labels under chips, fine print; `--font-micro` |
 
 ---
 
 ## 4. Spacing, Shape & Elevation
 
-- **Container:** max-width `380px`, centered. Radius `18px`, 1px border.
+- **Viewport:** screens fill `width: 100%` / `height: 100%` with safe-area padding
+  on the root (notch, home indicator). No mockup phone-card frame or fixed width cap.
+- **Design baseline:** 380×844 px artboard — drives proportions and PanelSettings
+  reference resolution, not production layout width.
 - **Cards/panels inside:** radius `9–14px`. Inset panels use a darker fill than
   their container with a 1px border one step lighter.
-- **Buttons:** radius `10–11px`, padding `12–14px` vertical. Primary uses the
-  season/semantic accent at ~1.15–1.2 brightness; secondary is muted bg + muted border.
-- **Header bars:** ~`10–13px` padding, 1px bottom border, slightly lifted bg.
+- **Buttons:** `min-height` ≥ 44px (`--touch-min`); radius `10–11px`; padding scales
+  with `--ui-scale`. Primary uses the season/semantic accent at ~1.15–1.2 brightness;
+  secondary is muted bg + muted border.
+- **Header bars:** padding via `--space-sm` / `--space-md`, 1px bottom border.
 - **Left-accent rows** (`border-left: 3px solid <player/season>`): used for
   per-item lists (ages in the chronicle, players in the card table).
-- **Icon set:** Tabler Icons (`ti-*`) throughout, sized 10–22px to context.
+- **Icon set:** Tabler Icons (`ti-*`) throughout, sized relative to `--font-title`.
 - **Decorative backdrops:** faint (opacity .25–.55) sacred-geometry, constellations,
   snowflakes, or rising-heat motes behind ceremonial and intro headers only.
+
+### 4.1 Responsive layout
+
+Production layout is implemented in Unity UI Toolkit via `ViewportLayout`
+(`Assets/_Project/UI/Scripts/Framework/ViewportLayout.cs`) and `Kismeta.uss`.
+
+| Concern | Rule |
+|---|---|
+| **Full bleed** | `.screen`, `.kismeta-root` are 100% viewport; flex column layout |
+| **Safe area** | `Screen.safeArea` applied as root padding on resize |
+| **Scale tokens** | `--ui-scale` = `min(viewportW/380, viewportH/844)`, clamped 0.85–1.35 |
+| **Spacing** | `--space-xs` … `--space-xl` derived from scale |
+| **Touch targets** | `--touch-min` ≥ 44px on buttons, action bar, setup pips |
+| **Flex frame** | status bar + rivals + **stage** (`flex-grow: 1`) + action bar + dock |
+| **Modals** | full-screen scrim; centered card at 92% width, max 520px, max-height 88%, scrollable body |
+| **Bottom sheets** | full width, anchored to bottom safe area, max-height 90% |
+| **Viewport classes** | `.viewport--compact` (w &lt; 360), `.viewport--regular`, `.viewport--tablet` (shortest side ≥ 600dp) |
+| **PanelSettings** | Scale With Screen Size; reference 380×844; match width/height ≈ 0.5 |
+
+**Test resolutions** in Unity Game view before shipping a screen: 390×844, 428×926,
+768×1024 (portrait phone and tablet).
 
 ---
 
@@ -178,7 +208,8 @@ group sub-actions into sheets rather than adding buttons.
 ### 5.5 Tableau dock (bottom)
 Your private zone summary: a label + count badges, a horizontally-scrollable Spread
 strip (aligned cards glow gold), Arcanum chips, and a Hand count (never the Hand
-cards — hidden). Recolored per season.
+cards — hidden). Recolored per season. Spread strip scrolls horizontally on narrow
+viewports; card chips use `--card-chip-w` / `--card-chip-h` tokens.
 
 ### 5.6 Step wizard
 Multi-stage actions (Duel, Gambit, Opposition, Craft, Activate, the season step
@@ -414,10 +445,10 @@ this age"; weighting favors "Temper first" over "End anyway."
 ## 7. Card System
 
 ### 7.1 Card chip (compact — used everywhere)
-~30–40px tall, suit-colored fill, gold border (or gold-bright 2px when selected/
-aligned), rank top + suit icon below. An alignment dot (top-right) or +value tag
-when it matches the current age. The atomic unit of every tableau, hand, spread,
-and tray.
+Token-sized (`--card-chip-w` × `--card-chip-h`, baseline ~34×48px), suit-colored fill,
+gold border (or gold-bright 2px when selected/aligned), rank top + suit icon below.
+An alignment dot (top-right) or +value tag when it matches the current age. The
+atomic unit of every tableau, hand, spread, and tray.
 
 ### 7.2 Minor Arcana inspect modal
 Tap any card to open. Full-size tarot-style card (mirrored rank corners, centered
@@ -494,12 +525,11 @@ Tracked design questions and unbuilt screens noted during the workshop:
 - **"No re-gambit this round"** — lock a defender after a failed gambit.
 - **Mode-awareness** — Quickplay/Magnus rule deltas must propagate to Build cost,
   Trade ratio, Opposition tally, Light-cauldron, etc.
-- **Flow map** — a single diagram of all screens and their connections.
 - **Hub-style consistency** — align Spring (wheel + rail) and Winter (checklist)
   hub treatments if desired.
 - **Skippable intros** — a veteran toggle for the season/age ceremonies.
 
 ---
 
-*Kismeta: Alchemists of the Great Year © 2026 Goodmagik Games. This guide documents
-the mobile-port mockups produced during design workshop.*
+*Kismeta: Alchemists of the Great Year © 2026 Goodmagik Games. Production UI
+specification — responsive full-viewport layout; 380×844 design baseline.*
