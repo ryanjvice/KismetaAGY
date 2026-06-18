@@ -16,11 +16,11 @@
 
         <engine:VisualElement class="statusbar" style="background-color: rgb(22,32,46); border-bottom-color: rgb(43,58,74);">
             <engine:VisualElement class="statusbar__left">
-                <engine:VisualElement class="statusbar__sigil" style="border-color: var(--arcanum-border);">
-                    <engine:Label text="&#xeb6c;" class="ti-icon" style="color: var(--arcanum-text);" />
+                <engine:VisualElement class="statusbar__sigil" style="border-color: rgb(106, 74, 138);">
+                    <engine:Label text="&#xeb6c;" class="ti-icon" style="color: rgb(205, 176, 224);" />
                 </engine:VisualElement>
                 <engine:VisualElement>
-                    <engine:Label text="Fateful Wager" class="statusbar__title" style="color: var(--arcanum-text);" />
+                    <engine:Label text="Fateful Wager" class="statusbar__title" style="color: rgb(205, 176, 224);" />
                     <engine:Label text="optional · bet on the next age" class="statusbar__sub" style="color: rgb(122,138,154);" />
                 </engine:VisualElement>
             </engine:VisualElement>
@@ -50,7 +50,7 @@
         <engine:VisualElement style="padding: 10px 14px 4px;">
             <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <engine:Label text="stake from your hand" class="eyebrow" style="margin-bottom: 0;" />
-                <engine:Label name="stake-count" text="3 staked" style="font-size: 10px; color: var(--arcanum-text);" />
+                <engine:Label name="stake-count" text="3 staked" style="font-size: 10px; color: rgb(205, 176, 224);" />
             </engine:VisualElement>
             <engine:VisualElement name="stake-cards" class="swap-zone__cards">
                 <engine:VisualElement class="card-chip card-chip--swords card-chip--selected"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
@@ -69,7 +69,7 @@
         <engine:VisualElement style="padding: 2px 14px 16px; flex-direction: row;">
             <engine:Button name="skip-btn" text="Skip wager" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
             <engine:Button name="place-btn" text="Place wager" class="btn"
-                           style="flex-grow: 1.4; background-color: var(--arcanum-bg); border-color: rgb(154,122,192); color: var(--arcanum-text);" />
+                           style="flex-grow: 1.4; background-color: rgb(36, 16, 40); border-color: rgb(154,122,192); color: rgb(205, 176, 224);" />
         </engine:VisualElement>
 
     </engine:VisualElement>

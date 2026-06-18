@@ -17,7 +17,15 @@ namespace Kismeta.UI
         public const string SummerMain = "SummerMain";
         public const string AutumnMain = "AutumnMain";
         public const string WinterHub = "WinterHub";
-        // Batch screens (Phase 4+)
+        // Batch 2 ceremonies (Phase 4)
+        public const string RoundOpen = "RoundOpen";
+        public const string AgeOpening = "AgeOpening";
+        public const string SpringIntro = "SpringIntro";
+        public const string SummerIntro = "SummerIntro";
+        public const string AutumnIntro = "AutumnIntro";
+        public const string WinterIntro = "WinterIntro";
+        public const string AgeClosing = "AgeClosing";
+        // Batch screens (Phase 5+)
         public const string Commune = "Commune";
         public const string Victory = "Victory";
     }

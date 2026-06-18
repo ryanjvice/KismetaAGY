@@ -21,6 +21,7 @@ namespace Kismeta.UI
 
         [SerializeField] private PanelSettings _panelSettings;
         [SerializeField] private VisualTreeAsset _initialScreen;
+        [SerializeField] private StyleSheet _tokenStylesheet;
 
         private UIDocument _document;
         private VisualElement _overlayLayer;
@@ -48,6 +49,7 @@ namespace Kismeta.UI
             _document = GetComponent<UIDocument>();
             if (_panelSettings != null)
                 _document.panelSettings = _panelSettings;
+            EnsureTokenStylesheetAssigned();
         }
 
         protected virtual void OnEnable()
@@ -86,14 +88,17 @@ namespace Kismeta.UI
             StretchToContentLayer(content);
             content.Clear();
             var host = new VisualElement();
-            host.AddToClassList("kismeta-root");
             host.AddToClassList("screen-host");
-            StretchToContentLayer(host);
+            PrepareCloneHost(host, stretchFull: true);
+            ApplyAssetStylesheets(host, screen);
             content.Add(host);
             screen.CloneTree(host);
-            var screenRoot = host.Q(className: "screen");
+            var screenRoot = host.Q(className: "screen") ?? (host.childCount > 0 ? host[0] : null);
             if (screenRoot != null)
+            {
+                ApplyAssetStylesheets(screenRoot, screen);
                 StretchToContentLayer(screenRoot);
+            }
 
             var layoutRoot = GetLayoutRoot();
             if (layoutRoot != null)
@@ -109,7 +114,7 @@ namespace Kismeta.UI
             overlay.Clear();
             overlay.RemoveFromClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
-            InstantiateOverlay(overlay, asset);
+            InstantiateOverlay(overlay, asset, _tokenStylesheet);
         }
 
         public void ShowBottomSheet(VisualTreeAsset asset)
@@ -121,23 +126,72 @@ namespace Kismeta.UI
             overlay.Clear();
             overlay.AddToClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
-            InstantiateOverlay(overlay, asset);
+            InstantiateOverlay(overlay, asset, _tokenStylesheet);
         }
 
         /// <summary>
         /// Clone overlay UXML into a token-scope host that is attached before cloning.
         /// Avoids NRE from inline <c>var(--token)</c> in UXML during detached Instantiate().
         /// </summary>
-        private static VisualElement InstantiateOverlay(VisualElement overlay, VisualTreeAsset asset)
+        private VisualElement InstantiateOverlay(VisualElement overlay, VisualTreeAsset asset, StyleSheet? tokenStylesheet)
         {
             var host = new VisualElement();
-            host.AddToClassList("kismeta-root");
             host.style.flexGrow = 0;
             host.style.flexShrink = 1;
             host.style.flexDirection = FlexDirection.Column;
+            PrepareCloneHost(host, stretchFull: false, tokenStylesheet);
+            ApplyAssetStylesheets(host, asset);
             overlay.Add(host);
             asset.CloneTree(host);
+            var screenRoot = host.Q(className: "screen") ?? (host.childCount > 0 ? host[0] : null);
+            if (screenRoot != null)
+                ApplyAssetStylesheets(screenRoot, asset);
             return host;
+        }
+
+        private static void ApplyAssetStylesheets(VisualElement target, VisualTreeAsset asset)
+        {
+            if (target == null || asset == null)
+                return;
+
+            foreach (var sheet in asset.stylesheets)
+            {
+                if (sheet != null && !target.styleSheets.Contains(sheet))
+                    target.styleSheets.Add(sheet);
+            }
+        }
+
+        /// <summary>
+        /// Attach token scope before <see cref="VisualTreeAsset.CloneTree"/>.
+        /// Inline <c>var(--token)</c> in UXML <c>style=""</c> attributes NRE during clone — use USS classes or literal values in UXML instead.
+        /// </summary>
+        private void PrepareCloneHost(VisualElement host, bool stretchFull, StyleSheet? tokenStylesheet = null)
+        {
+            host.AddToClassList("kismeta-root");
+            EnsureTokenStylesheets(host, tokenStylesheet);
+            if (stretchFull)
+                StretchToContentLayer(host);
+        }
+
+        private void EnsureTokenStylesheets(VisualElement host, StyleSheet? tokenStylesheet = null)
+        {
+            EnsureTokenStylesheetAssigned();
+            var sheet = tokenStylesheet ?? _tokenStylesheet;
+            if (sheet != null && !host.styleSheets.Contains(sheet))
+                host.styleSheets.Add(sheet);
+        }
+
+        private void EnsureTokenStylesheetAssigned()
+        {
+            if (_tokenStylesheet != null)
+                return;
+
+#if UNITY_EDITOR
+            _tokenStylesheet = UnityEditor.AssetDatabase.LoadAssetAtPath<StyleSheet>(
+                "Assets/_Project/UI/USS/Kismeta.uss");
+#endif
+            if (_tokenStylesheet == null)
+                Debug.LogWarning("[ViewportLayout] Kismeta.uss not assigned; inline var() in UXML may fail at runtime.");
         }
 
         public void DismissOverlay()

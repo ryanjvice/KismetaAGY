@@ -34,18 +34,18 @@
             <engine:VisualElement name="standings-list">
                 <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; margin-bottom: 6px;">
                     <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(192,57,43); border-width: 1px; border-color: rgb(229,115,115); margin-right: 9px;" />
-                    <engine:Label text="Aurelia fired to Gold" style="flex-grow: 1; font-size: 11px; color: var(--ink);" />
-                    <engine:Label text="5 &#8594; 7" style="font-size: 10px; color: var(--ok-text);" />
+                    <engine:Label text="Aurelia fired to Gold" style="flex-grow: 1; font-size: 11px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="5 &#8594; 7" style="font-size: 10px; color: rgb(127, 196, 168);" />
                 </engine:VisualElement>
                 <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; margin-bottom: 6px;">
                     <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(46,109,164); border-width: 1px; border-color: rgb(111,168,212); margin-right: 9px;" />
-                    <engine:Label text="Iolanthe held at Gold, defended twice" style="flex-grow: 1; font-size: 11px; color: var(--ink);" />
-                    <engine:Label text="7" style="font-size: 10px; color: var(--muted);" />
+                    <engine:Label text="Iolanthe held at Gold, defended twice" style="flex-grow: 1; font-size: 11px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="7" style="font-size: 10px; color: rgb(184, 154, 110);" />
                 </engine:VisualElement>
                 <engine:VisualElement class="panel" style="flex-direction: row; align-items: center;">
                     <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(31,110,74); border-width: 1px; border-color: rgb(93,202,165); margin-right: 9px;" />
-                    <engine:Label text="Severin opposed to stasis" style="flex-grow: 1; font-size: 11px; color: var(--ink);" />
-                    <engine:Label text="5 &#8594; &#10052;" style="font-size: 10px; color: var(--danger-text);" />
+                    <engine:Label text="Severin opposed to stasis" style="flex-grow: 1; font-size: 11px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="5 &#8594; &#10052;" style="font-size: 10px; color: rgb(240, 144, 138);" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
@@ -58,7 +58,7 @@
 
         <engine:VisualElement class="intro-cta">
             <engine:Button name="next-age-btn" text="Turn the wheel · cast the next age" class="btn"
-                           style="background-color: var(--arcanum-bg); border-color: var(--arcanum-border); color: var(--arcanum-text); font-size: 14px;" />
+                           style="background-color: rgb(36, 16, 40); border-color: rgb(106, 74, 138); color: rgb(205, 176, 224); font-size: 14px;" />
         </engine:VisualElement>
 
     </engine:VisualElement>

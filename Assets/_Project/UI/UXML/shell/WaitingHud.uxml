@@ -8,10 +8,8 @@
     <engine:VisualElement name="waiting-hud" class="screen screen--winter">
 
         <engine:VisualElement class="screen__body" style="justify-content: center; align-items: center;">
-            <engine:Label name="waiting-label" text="Waiting…"
-                          style="font-size: var(--font-title); color: var(--muted); -unity-text-align: middle-center;" />
-            <engine:Label name="season-label" text=""
-                          style="font-size: var(--font-label); color: var(--muted-dim); margin-top: 10px; -unity-text-align: middle-center;" />
+            <engine:Label name="waiting-label" text="Waiting…" class="shell-hud__title" />
+            <engine:Label name="season-label" text="" class="shell-hud__subtitle" />
         </engine:VisualElement>
 
     </engine:VisualElement>

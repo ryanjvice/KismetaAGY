@@ -26,15 +26,15 @@
         <engine:VisualElement style="padding: 14px 16px 4px;">
             <engine:Label text="the three labors fulfilled" class="eyebrow" />
             <engine:VisualElement class="win-condition">
-                <engine:Label text="&#xeb81;" class="ti-icon" style="color: var(--ok-text); margin-right: 9px;" />
+                <engine:Label text="&#xeb81;" class="ti-icon" style="color: rgb(127, 196, 168); margin-right: 9px;" />
                 <engine:Label text="All 4 Crucible cards forged" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
             </engine:VisualElement>
             <engine:VisualElement class="win-condition">
-                <engine:Label text="&#xeb81;" class="ti-icon" style="color: var(--ok-text); margin-right: 9px;" />
+                <engine:Label text="&#xeb81;" class="ti-icon" style="color: rgb(127, 196, 168); margin-right: 9px;" />
                 <engine:Label text="Stone tempered through all 8 stages to the Altar" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
             </engine:VisualElement>
             <engine:VisualElement class="win-condition">
-                <engine:Label text="&#xeb81;" class="ti-icon" style="color: var(--ok-text); margin-right: 9px;" />
+                <engine:Label text="&#xeb81;" class="ti-icon" style="color: rgb(127, 196, 168); margin-right: 9px;" />
                 <engine:Label text="Survived the final Opposition at Gold" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
             </engine:VisualElement>
         </engine:VisualElement>
@@ -43,23 +43,23 @@
         <engine:VisualElement style="padding: 10px 16px 4px;">
             <engine:Label text="final standings" class="eyebrow" />
             <engine:VisualElement name="standings">
-                <engine:VisualElement class="standing" style="border-color: var(--gold-deep);">
-                    <engine:Label text="1" class="standing__rank" style="color: var(--gold-bright);" />
+                <engine:VisualElement class="standing" style="border-color: rgb(201, 150, 47);">
+                    <engine:Label text="1" class="standing__rank" style="color: rgb(244, 211, 94);" />
                     <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(192,57,43); margin-right: 8px;" />
-                    <engine:Label text="Aurelia" style="flex-grow: 1; font-size: 12px; color: var(--ink);" />
-                    <engine:Label text="Altar" style="font-size: 10px; color: var(--gold-bright);" />
+                    <engine:Label text="Aurelia" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="Altar" style="font-size: 10px; color: rgb(244, 211, 94);" />
                 </engine:VisualElement>
                 <engine:VisualElement class="standing">
                     <engine:Label text="2" class="standing__rank" />
                     <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(46,109,164); margin-right: 8px;" />
-                    <engine:Label text="Iolanthe" style="flex-grow: 1; font-size: 12px; color: var(--ink);" />
-                    <engine:Label text="Gold" style="font-size: 10px; color: var(--muted);" />
+                    <engine:Label text="Iolanthe" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="Gold" style="font-size: 10px; color: rgb(184, 154, 110);" />
                 </engine:VisualElement>
                 <engine:VisualElement class="standing">
                     <engine:Label text="3" class="standing__rank" />
                     <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(31,110,74); margin-right: 8px;" />
-                    <engine:Label text="Severin" style="flex-grow: 1; font-size: 12px; color: var(--ink);" />
-                    <engine:Label text="Silver" style="font-size: 10px; color: var(--muted);" />
+                    <engine:Label text="Severin" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="Silver" style="font-size: 10px; color: rgb(184, 154, 110);" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>

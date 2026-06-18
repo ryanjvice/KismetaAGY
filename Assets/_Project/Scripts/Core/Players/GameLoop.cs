@@ -25,6 +25,7 @@ namespace Kismeta.Core.Players
     {
         private readonly GameSession _session;
         private readonly IReadOnlyList<IPlayerController> _controllers;
+        private CeremonyGate? _ceremonyGate;
 
         /// <summary>Set while the loop is awaiting a human controller's input.</summary>
         public HotSeatController? PendingHumanController { get; private set; }
@@ -49,6 +50,8 @@ namespace Kismeta.Core.Players
             _session     = session;
             _controllers = controllers;
         }
+
+        public void BindCeremonyGate(CeremonyGate gate) => _ceremonyGate = gate;
 
         // ─── Entry point ──────────────────────────────────────────────────────────
 
@@ -98,8 +101,15 @@ namespace Kismeta.Core.Players
         private async Task RunSpringAsync(CancellationToken ct)
         {
             SetPhase(Season.Spring);
-            Log("Spring — Step 1: Cosmic Age roll");
-            Apply(new RollCosmicAgeCommand(FindAgekeeperId()));
+
+            await RunRoundOpenCeremonyAsync(ct);
+            if (_session.IsOver || ct.IsCancellationRequested) return;
+
+            await WaitCeremonyUiAsync(CeremonyStep.AgeOpening, ct);
+            if (_session.IsOver || ct.IsCancellationRequested) return;
+
+            await WaitCeremonyUiAsync(CeremonyStep.SpringIntro, ct);
+            if (_session.IsOver || ct.IsCancellationRequested) return;
 
             Log("Spring — Step 2: Zodiac rolls");
             foreach (var player in _session.Players)
@@ -214,6 +224,9 @@ namespace Kismeta.Core.Players
         private async Task RunSummerAsync(CancellationToken ct)
         {
             SetPhase(Season.Summer);
+            await WaitCeremonyUiAsync(CeremonyStep.SummerIntro, ct);
+            if (_session.IsOver || ct.IsCancellationRequested) return;
+
             Log("Summer — Free-Action Pool");
             await RunFreeActionPool(ActionHint.SummerAction, ct);
         }
@@ -223,6 +236,9 @@ namespace Kismeta.Core.Players
         private async Task RunAutumnAsync(CancellationToken ct)
         {
             SetPhase(Season.Autumn);
+            await WaitCeremonyUiAsync(CeremonyStep.AutumnIntro, ct);
+            if (_session.IsOver || ct.IsCancellationRequested) return;
+
             Log("Autumn — Free-Action Pool");
             await RunFreeActionPool(ActionHint.AutumnAction, ct);
         }
@@ -232,6 +248,9 @@ namespace Kismeta.Core.Players
         private async Task RunWinterAsync(CancellationToken ct)
         {
             SetPhase(Season.Winter);
+            await WaitCeremonyUiAsync(CeremonyStep.WinterIntro, ct);
+            if (_session.IsOver || ct.IsCancellationRequested) return;
+
             Log("Winter — Step 1: Card Unlock");
             Apply(new SetCardLockCommand(false));
 
@@ -242,8 +261,64 @@ namespace Kismeta.Core.Players
             await RunWinterDiscardAsync(ct);
 
             Log("Winter — Step 4: Transit Age");
-            Apply(new TransitAgeCommand());
+            await RunAgeClosingCeremonyAsync(ct);
         }
+
+        private async Task RunRoundOpenCeremonyAsync(CancellationToken ct)
+        {
+            int keeperId = FindAgekeeperId();
+            Log("Spring — Step 1: Cosmic Age roll");
+
+            if (IsHumanPlayer(keeperId) && _ceremonyGate != null)
+            {
+                var result = await _ceremonyGate.WaitAsync(CeremonyStep.RoundOpen, ct);
+                if (result.Command is RollCosmicAgeCommand roll)
+                    Apply(roll);
+                else
+                    Apply(new RollCosmicAgeCommand(keeperId));
+            }
+            else
+            {
+                Apply(new RollCosmicAgeCommand(keeperId));
+            }
+        }
+
+        private async Task RunAgeClosingCeremonyAsync(CancellationToken ct)
+        {
+            if (_ceremonyGate != null && HasAnyHumanPlayer())
+            {
+                var result = await _ceremonyGate.WaitAsync(CeremonyStep.AgeClosing, ct);
+                if (result.Command is TransitAgeCommand)
+                    Apply(result.Command);
+                else
+                    Apply(new TransitAgeCommand());
+            }
+            else
+            {
+                Apply(new TransitAgeCommand());
+            }
+        }
+
+        private async Task WaitCeremonyUiAsync(CeremonyStep step, CancellationToken ct)
+        {
+            if (_ceremonyGate == null || !HasAnyHumanPlayer())
+                return;
+
+            await _ceremonyGate.WaitAsync(step, ct);
+        }
+
+        private bool HasAnyHumanPlayer()
+        {
+            foreach (var c in _controllers)
+            {
+                if (c is HotSeatController)
+                    return true;
+            }
+            return false;
+        }
+
+        private bool IsHumanPlayer(int playerId) =>
+            playerId >= 0 && playerId < _controllers.Count && _controllers[playerId] is HotSeatController;
 
         /// <summary>
         /// For each player: if over Hand or Spread limits, ask them to choose discards.

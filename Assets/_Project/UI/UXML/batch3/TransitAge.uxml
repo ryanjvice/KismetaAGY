@@ -13,11 +13,11 @@
          ============================================================ -->
     <engine:VisualElement name="transit" class="screen screen--winter" style="align-items: center; justify-content: center; padding: 30px 20px;">
 
-        <engine:VisualElement style="width: 64px; height: 64px; border-radius: 32px; background-color: rgb(36,26,14); border-width: 2px; border-color: var(--gold-deep); align-items: center; justify-content: center; margin-bottom: 16px;">
-            <engine:Label text="&#xec8c;" class="ti-icon" style="font-size: 28px; color: var(--gold);" />
+        <engine:VisualElement style="width: 64px; height: 64px; border-radius: 32px; background-color: rgb(36,26,14); border-width: 2px; border-color: rgb(201, 150, 47); align-items: center; justify-content: center; margin-bottom: 16px;">
+            <engine:Label text="&#xec8c;" class="ti-icon" style="font-size: 28px; color: rgb(232, 185, 74);" />
         </engine:VisualElement>
 
-        <engine:Label text="TRANSIT THE AGE" style="font-size: 18px; color: var(--gold); letter-spacing: 2px; -unity-font-definition: url('project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset');" />
+        <engine:Label text="TRANSIT THE AGE" style="font-size: 18px; color: rgb(232, 185, 74); letter-spacing: 2px; -unity-font-definition: url('project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset');" />
         <engine:Label text="the key passes · the deck reshuffles" style="font-size: 11px; color: rgb(122,138,154); margin-top: 6px;" />
 
         <engine:VisualElement class="panel" style="margin-top: 18px; align-self: stretch;">
@@ -29,7 +29,7 @@
         </engine:VisualElement>
 
         <engine:Label name="wager-flag" text="Your Pisces wager travels with you — it resolves when the next age is cast."
-                      style="font-size: 10px; color: var(--arcanum-text); margin-top: 14px; white-space: normal; -unity-text-align: middle-center;" />
+                      style="font-size: 10px; color: rgb(205, 176, 224); margin-top: 14px; white-space: normal; -unity-text-align: middle-center;" />
 
         <engine:Button name="transit-btn" text="Close the age" class="btn btn--primary" style="align-self: stretch; margin-top: 18px;" />
 

@@ -8,7 +8,7 @@
 
         <engine:VisualElement class="statusbar">
             <engine:VisualElement class="statusbar__left">
-                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
                 <engine:Label text="Resume" class="statusbar__title" style="margin-left: 4px;" />
             </engine:VisualElement>
         </engine:VisualElement>
@@ -19,7 +19,7 @@
                 <!-- Rows populated by ResumeScreenController -->
             </engine:ScrollView>
             <engine:Label name="resume-empty" text="No saved games yet."
-                          style="font-size: 11px; color: var(--muted); -unity-text-align: middle-center; margin-top: 24px; white-space: normal; display: none;" />
+                          style="font-size: 11px; color: rgb(184, 154, 110); -unity-text-align: middle-center; margin-top: 24px; white-space: normal; display: none;" />
         </engine:VisualElement>
 
     </engine:VisualElement>

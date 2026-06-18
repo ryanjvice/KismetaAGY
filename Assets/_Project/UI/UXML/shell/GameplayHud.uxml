@@ -20,10 +20,8 @@
 
         <engine:VisualElement class="screen__body">
             <engine:VisualElement class="stage">
-                <engine:Label name="hint-label" text="Your turn"
-                              style="font-size: var(--font-title); color: var(--ink); -unity-text-align: middle-center; white-space: normal;" />
-                <engine:Label text="Season screens arrive in Phase 2–3 batches."
-                              style="font-size: var(--font-label); color: var(--muted); margin-top: 12px; -unity-text-align: middle-center; white-space: normal;" />
+                <engine:Label name="hint-label" text="Your turn" class="shell-hud__hint" />
+                <engine:Label text="Season screens arrive in Phase 2–3 batches." class="shell-hud__hint-sub" />
             </engine:VisualElement>
         </engine:VisualElement>
 

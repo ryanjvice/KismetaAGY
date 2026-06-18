@@ -197,6 +197,34 @@
 .rival__name { font-size: var(--font-body); }
 .rival__stat { font-size: var(--font-label); color: var(--muted); }
 
+/* Shell HUD placeholders (WaitingHud, GameplayHud) — use classes, not inline var() in UXML */
+.shell-hud__title {
+    font-size: var(--font-title);
+    color: var(--muted);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+.shell-hud__subtitle {
+    font-size: var(--font-label);
+    color: var(--muted-dim);
+    margin-top: 10px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+.shell-hud__hint {
+    font-size: var(--font-title);
+    color: var(--ink);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+.shell-hud__hint-sub {
+    font-size: var(--font-label);
+    color: var(--muted);
+    margin-top: 12px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
 .stage {
     flex-grow: 1;
     flex-shrink: 1;

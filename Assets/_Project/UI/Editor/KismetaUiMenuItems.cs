@@ -12,6 +12,7 @@ namespace Kismeta.UI.Editor
     public static class KismetaUiMenuItems
     {
         private const string PanelSettingsPath = "Assets/_Project/UI/Settings/KismetaPanelSettings.asset";
+        private const string KismetaUssPath = "Assets/_Project/UI/USS/Kismeta.uss";
         private const string AppShellPath = "Assets/_Project/UI/UXML/shell/AppShell.uxml";
         private const string TitleScreenPath = "Assets/_Project/UI/UXML/batch1/TitleScreen.uxml";
         private const string SetupSheetPath = "Assets/_Project/UI/UXML/batch1/SetupSheet.uxml";
@@ -23,6 +24,13 @@ namespace Kismeta.UI.Editor
         private const string SummerMainPath = "Assets/_Project/UI/UXML/main/SummerMainScene.uxml";
         private const string AutumnMainPath = "Assets/_Project/UI/UXML/main/AutumnMainScene.uxml";
         private const string WinterHubPath = "Assets/_Project/UI/UXML/main/WinterHub.uxml";
+        private const string RoundOpenPath = "Assets/_Project/UI/UXML/batch2/RoundOpen.uxml";
+        private const string AgeOpeningPath = "Assets/_Project/UI/UXML/batch2/AgeOpening.uxml";
+        private const string SpringIntroPath = "Assets/_Project/UI/UXML/batch2/SpringIntro.uxml";
+        private const string SummerIntroPath = "Assets/_Project/UI/UXML/batch2/SummerIntro.uxml";
+        private const string AutumnIntroPath = "Assets/_Project/UI/UXML/batch2/AutumnIntro.uxml";
+        private const string WinterIntroPath = "Assets/_Project/UI/UXML/batch2/WinterIntro.uxml";
+        private const string AgeClosingPath = "Assets/_Project/UI/UXML/batch2/AgeClosing.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
@@ -95,6 +103,13 @@ namespace Kismeta.UI.Editor
             EnsureComponent<SummerSceneController>(bootstrap.gameObject);
             EnsureComponent<AutumnSceneController>(bootstrap.gameObject);
             EnsureComponent<WinterHubController>(bootstrap.gameObject);
+            EnsureComponent<RoundOpenController>(bootstrap.gameObject);
+            EnsureComponent<AgeOpeningController>(bootstrap.gameObject);
+            EnsureComponent<AgeClosingController>(bootstrap.gameObject);
+            EnsureComponent<SpringIntroController>(bootstrap.gameObject);
+            EnsureComponent<SummerIntroController>(bootstrap.gameObject);
+            EnsureComponent<AutumnIntroController>(bootstrap.gameObject);
+            EnsureComponent<WinterIntroController>(bootstrap.gameObject);
 
             var layout = bootstrap.GetComponent<ViewportLayout>();
             var layoutSo = new SerializedObject(layout);
@@ -131,6 +146,13 @@ namespace Kismeta.UI.Editor
             var summerMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerMainPath);
             var autumnMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnMainPath);
             var winterHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterHubPath);
+            var roundOpen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(RoundOpenPath);
+            var ageOpening = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeOpeningPath);
+            var springIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringIntroPath);
+            var summerIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerIntroPath);
+            var autumnIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnIntroPath);
+            var winterIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterIntroPath);
+            var ageClosing = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeClosingPath);
 
             var so = new SerializedObject(bootstrap);
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
@@ -147,6 +169,13 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_summerMain").objectReferenceValue = summerMain;
             so.FindProperty("_autumnMain").objectReferenceValue = autumnMain;
             so.FindProperty("_winterHub").objectReferenceValue = winterHub;
+            so.FindProperty("_roundOpen").objectReferenceValue = roundOpen;
+            so.FindProperty("_ageOpening").objectReferenceValue = ageOpening;
+            so.FindProperty("_springIntro").objectReferenceValue = springIntro;
+            so.FindProperty("_summerIntro").objectReferenceValue = summerIntro;
+            so.FindProperty("_autumnIntro").objectReferenceValue = autumnIntro;
+            so.FindProperty("_winterIntro").objectReferenceValue = winterIntro;
+            so.FindProperty("_ageClosing").objectReferenceValue = ageClosing;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -157,9 +186,11 @@ namespace Kismeta.UI.Editor
             var layout = bootstrap.GetComponent<ViewportLayout>();
             if (layout != null)
             {
+                var tokenStylesheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(KismetaUssPath);
                 var layoutSo = new SerializedObject(layout);
                 layoutSo.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
                 layoutSo.FindProperty("_initialScreen").objectReferenceValue = null;
+                layoutSo.FindProperty("_tokenStylesheet").objectReferenceValue = tokenStylesheet;
                 layoutSo.ApplyModifiedPropertiesWithoutUndo();
             }
 
@@ -192,6 +223,13 @@ namespace Kismeta.UI.Editor
             host.AddComponent<SummerSceneController>();
             host.AddComponent<AutumnSceneController>();
             host.AddComponent<WinterHubController>();
+            host.AddComponent<RoundOpenController>();
+            host.AddComponent<AgeOpeningController>();
+            host.AddComponent<AgeClosingController>();
+            host.AddComponent<SpringIntroController>();
+            host.AddComponent<SummerIntroController>();
+            host.AddComponent<AutumnIntroController>();
+            host.AddComponent<WinterIntroController>();
             host.AddComponent<UiResponsiveTest>();
 
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
@@ -210,6 +248,13 @@ namespace Kismeta.UI.Editor
             var summerMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerMainPath);
             var autumnMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnMainPath);
             var winterHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterHubPath);
+            var roundOpen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(RoundOpenPath);
+            var ageOpening = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeOpeningPath);
+            var springIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringIntroPath);
+            var summerIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerIntroPath);
+            var autumnIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnIntroPath);
+            var winterIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterIntroPath);
+            var ageClosing = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeClosingPath);
             var gameplayHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameplayHudPath);
             var waitingHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
             var cardModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
@@ -218,7 +263,9 @@ namespace Kismeta.UI.Editor
             router.ConfigureScreens(
                 titleScreen, gameplayHud, waitingHud, setupSheet,
                 joinScreen, resumeScreen, codexScreen, agekeeperContest,
-                springHub, summerMain, autumnMain, winterHub);
+                springHub, summerMain, autumnMain, winterHub,
+                roundOpen, ageOpening, springIntro, summerIntro,
+                autumnIntro, winterIntro, ageClosing);
 
             var doc = host.GetComponent<UIDocument>();
             doc.panelSettings = panelSettings;
@@ -227,6 +274,8 @@ namespace Kismeta.UI.Editor
             var layoutSo = new SerializedObject(host.GetComponent<ViewportLayout>());
             layoutSo.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
             layoutSo.FindProperty("_initialScreen").objectReferenceValue = null;
+            layoutSo.FindProperty("_tokenStylesheet").objectReferenceValue =
+                AssetDatabase.LoadAssetAtPath<StyleSheet>(KismetaUssPath);
             layoutSo.ApplyModifiedPropertiesWithoutUndo();
 
             host.GetComponent<ViewportLayout>()!.RunWhenReady(() =>

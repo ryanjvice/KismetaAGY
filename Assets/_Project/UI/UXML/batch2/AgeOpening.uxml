@@ -35,12 +35,12 @@
         <!-- cosmic effect -->
         <engine:VisualElement style="padding: 16px 16px 6px;">
             <engine:VisualElement class="panel" style="flex-direction: row; align-items: flex-start; background-color: rgb(22,16,40); border-color: rgb(58,42,90);">
-                <engine:VisualElement style="width: 30px; height: 30px; border-radius: var(--radius-md); background-color: rgb(36,16,56); border-width: 1px; border-color: var(--arcanum-border); align-items: center; justify-content: center; margin-right: 11px;">
-                    <engine:Label text="&#xeb6c;" class="ti-icon" style="color: var(--arcanum-text);" />
+                <engine:VisualElement style="width: 30px; height: 30px; border-radius: 9px; background-color: rgb(36,16,56); border-width: 1px; border-color: rgb(106, 74, 138); align-items: center; justify-content: center; margin-right: 11px;">
+                    <engine:Label text="&#xeb6c;" class="ti-icon" style="color: rgb(205, 176, 224);" />
                 </engine:VisualElement>
                 <engine:VisualElement style="flex-grow: 1;">
                     <engine:Label text="the age's cosmic effect" class="eyebrow" style="color: rgb(138,106,170); margin-bottom: 1px;" />
-                    <engine:Label name="effect-name" text="Court Cups are a Wild Suit" style="font-size: 13px; color: var(--ink);" />
+                    <engine:Label name="effect-name" text="Court Cups are a Wild Suit" style="font-size: 13px; color: rgb(243, 233, 210);" />
                     <engine:Label name="effect-desc" text="while Scorpio reigns, every Court Cup counts as any suit you need" style="font-size: 10px; color: rgb(154,138,172); white-space: normal;" />
                 </engine:VisualElement>
             </engine:VisualElement>
@@ -54,7 +54,7 @@
                 <engine:Label text="Mars &amp; Water cards harvest and align strongest" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
             </engine:VisualElement>
             <engine:VisualElement class="panel" style="flex-direction: row; align-items: center;">
-                <engine:Label text="&#xec3a;" class="ti-icon" style="color: var(--ok-text); margin-right: 9px;" />
+                <engine:Label text="&#xec3a;" class="ti-icon" style="color: rgb(127, 196, 168); margin-right: 9px;" />
                 <engine:Label text="Aqua Regia &amp; Sulphur reagents flow freely this round" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
             </engine:VisualElement>
         </engine:VisualElement>

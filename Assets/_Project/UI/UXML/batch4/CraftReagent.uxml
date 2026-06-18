@@ -17,9 +17,9 @@
 
         <engine:VisualElement class="statusbar">
             <engine:VisualElement class="statusbar__left">
-                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
                 <engine:VisualElement style="margin-left: 4px;">
-                    <engine:Label text="Craft a reagent" class="statusbar__title" style="color: var(--ok-text);" />
+                    <engine:Label text="Craft a reagent" class="statusbar__title" style="color: rgb(127, 196, 168);" />
                     <engine:Label text="3 matching cards → 1 reagent" class="statusbar__sub" />
                 </engine:VisualElement>
             </engine:VisualElement>
@@ -31,30 +31,30 @@
             <engine:VisualElement name="reagent-picker" style="flex-direction: row; flex-wrap: wrap; justify-content: space-between;">
                 <engine:Button name="pick-sulphur" class="reagent-pick reagent-pick--active">
                     <engine:VisualElement class="reagent-dot reagent-dot--sulphur" style="margin-right: 6px;" />
-                    <engine:Label text="Sulphur" style="font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="Sulphur" style="font-size: 11px; color: rgb(243, 233, 210);" />
                 </engine:Button>
                 <engine:Button name="pick-vitriol" class="reagent-pick">
                     <engine:VisualElement class="reagent-dot reagent-dot--vitriol" style="margin-right: 6px;" />
-                    <engine:Label text="Vitriol" style="font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="Vitriol" style="font-size: 11px; color: rgb(243, 233, 210);" />
                 </engine:Button>
                 <engine:Button name="pick-aqua" class="reagent-pick reagent-pick--locked">
                     <engine:VisualElement class="reagent-dot reagent-dot--aqua" style="margin-right: 6px;" />
-                    <engine:Label text="Aqua Regia" style="font-size: 11px; color: var(--muted);" />
+                    <engine:Label text="Aqua Regia" style="font-size: 11px; color: rgb(184, 154, 110);" />
                 </engine:Button>
                 <engine:Button name="pick-salt" class="reagent-pick">
                     <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 6px;" />
-                    <engine:Label text="Salt (any 3)" style="font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="Salt (any 3)" style="font-size: 11px; color: rgb(243, 233, 210);" />
                 </engine:Button>
             </engine:VisualElement>
             <engine:Label name="cauldron-note" text="Sulphur needs the lit Red cauldron — discard 3 Wands."
-                          style="font-size: 10px; color: var(--muted); margin-top: 7px; white-space: normal;" />
+                          style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 7px; white-space: normal;" />
         </engine:VisualElement>
 
         <!-- card pick (matching suit highlighted; others dim) -->
         <engine:VisualElement style="padding: 8px 14px 4px;">
             <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 7px;">
                 <engine:Label text="tap 3 Wands to discard" class="eyebrow" style="margin-bottom: 0;" />
-                <engine:Label name="pick-count" text="2 / 3" style="font-size: 11px; color: var(--ok-text);" />
+                <engine:Label name="pick-count" text="2 / 3" style="font-size: 11px; color: rgb(127, 196, 168);" />
             </engine:VisualElement>
             <engine:VisualElement name="card-pool" class="formula" style="flex-wrap: wrap;">
                 <engine:VisualElement class="card-chip card-chip--wands card-chip--selected"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
@@ -87,7 +87,7 @@
                 <engine:Label text="&#8594;" class="txn__arrow" />
                 <engine:VisualElement style="align-items: center;">
                     <engine:VisualElement class="reagent-dot reagent-dot--sulphur" style="width: 26px; height: 26px;" />
-                    <engine:Label text="Sulphur" style="font-size: 9px; color: var(--muted); margin-top: 3px;" />
+                    <engine:Label text="Sulphur" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 3px;" />
                 </engine:VisualElement>
             </engine:VisualElement>
             <engine:Button name="result-done-btn" text="Back to the workshop" class="btn btn--primary" />

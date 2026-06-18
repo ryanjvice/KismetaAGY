@@ -18,7 +18,7 @@
 
         <engine:VisualElement class="statusbar" style="border-bottom-color: rgb(74,32,32);">
             <engine:VisualElement class="statusbar__left">
-                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
                 <engine:Label text="Duel · Severin" class="statusbar__title" style="color: rgb(240,176,160); margin-left: 4px;" />
             </engine:VisualElement>
         </engine:VisualElement>
@@ -43,7 +43,7 @@
         <!-- step 2: ante -->
         <engine:VisualElement name="step-ante" style="display: none; padding: 8px 14px 4px;">
             <engine:Label text="ante a card of your own" class="eyebrow" />
-            <engine:Label text="safe if you win · returns to the deck if you lose" style="font-size: 10px; color: var(--muted); margin-bottom: 8px; white-space: normal;" />
+            <engine:Label text="safe if you win · returns to the deck if you lose" style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 8px; white-space: normal;" />
             <engine:VisualElement class="tray__cards">
                 <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
                 <engine:VisualElement class="card-chip card-chip--pentacles"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
@@ -55,17 +55,17 @@
         <engine:VisualElement name="step-roll" style="display: none; padding: 8px 14px 4px;">
             <engine:VisualElement class="dice-row">
                 <engine:VisualElement style="align-items: center;">
-                    <engine:VisualElement name="die-you" class="die-big die-big--you"><engine:Label name="die-you-pip" text="?" class="die-big__pip" style="color: var(--gold);" /></engine:VisualElement>
-                    <engine:Label text="you" style="font-size: 9px; color: var(--muted); margin-top: 4px;" />
+                    <engine:VisualElement name="die-you" class="die-big die-big--you"><engine:Label name="die-you-pip" text="?" class="die-big__pip" style="color: rgb(232, 185, 74);" /></engine:VisualElement>
+                    <engine:Label text="you" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 4px;" />
                 </engine:VisualElement>
                 <engine:Label text="vs" class="die-vs" />
                 <engine:VisualElement style="align-items: center;">
                     <engine:VisualElement name="die-foe" class="die-big die-big--foe"><engine:Label name="die-foe-pip" text="?" class="die-big__pip" style="color: rgb(184,154,192);" /></engine:VisualElement>
-                    <engine:Label text="Severin" style="font-size: 9px; color: var(--muted); margin-top: 4px;" />
+                    <engine:Label text="Severin" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 4px;" />
                 </engine:VisualElement>
             </engine:VisualElement>
             <engine:Button name="roll-btn" text="Roll the dice" class="btn btn--primary" />
-            <engine:Label name="roll-outcome" text="" style="font-size: 12px; color: var(--ink); -unity-text-align: middle-center; margin-top: 10px; display: none;" />
+            <engine:Label name="roll-outcome" text="" style="font-size: 12px; color: rgb(243, 233, 210); -unity-text-align: middle-center; margin-top: 10px; display: none;" />
         </engine:VisualElement>
 
     </engine:VisualElement>

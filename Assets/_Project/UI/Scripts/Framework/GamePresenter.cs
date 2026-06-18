@@ -1,3 +1,4 @@
+using System;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
@@ -25,14 +26,17 @@ namespace Kismeta.UI
         private readonly CommandBridge _bridge = new();
         private GameSession? _session;
         private GameLoop? _loop;
+        private CeremonyGate? _ceremonyGate;
 
         private bool _inGame;
         private HotSeatController? _lastHuman;
         private ActionHint _lastHint = ActionHint.None;
         private Season _lastSeason = Season.Spring;
+        private CeremonyStep? _lastCeremonyStep;
 
         public CommandBridge Bridge => _bridge;
         public bool IsInGame => _inGame;
+        public CeremonyGate? CeremonyGate => _ceremonyGate;
 
         public event Action<UiSetupConfig>? SetupBeginRequested;
 
@@ -52,12 +56,13 @@ namespace Kismeta.UI
                 _router.GoTo(ScreenIds.Title);
         }
 
-        public void Bind(GameSession session, GameLoop loop)
+        public void Bind(GameSession session, GameLoop loop, CeremonyGate? ceremonyGate = null)
         {
             Unbind();
 
             _session = session;
             _loop = loop;
+            _ceremonyGate = ceremonyGate;
             _bridge.Bind(loop);
 
             session.OnEvent += OnSessionEvent;
@@ -76,13 +81,33 @@ namespace Kismeta.UI
                 _loop.OnLog -= OnLoopLog;
             _session = null;
             _loop = null;
+            _ceremonyGate = null;
             _inGame = false;
+            _lastCeremonyStep = null;
         }
 
         private void Update()
         {
             if (_loop == null || _session == null || !_inGame)
                 return;
+
+            var ceremony = _ceremonyGate?.ActiveStep;
+            if (ceremony != _lastCeremonyStep)
+            {
+                _lastCeremonyStep = ceremony;
+                if (ceremony != null)
+                    RouteIfNeeded(MapCeremonyScreen(ceremony.Value));
+                else
+                    RouteGameplay();
+                RefreshActiveScreen();
+                return;
+            }
+
+            if (ceremony != null)
+            {
+                RefreshActiveScreen();
+                return;
+            }
 
             var hs = _loop.PendingHumanController;
             var hint = _loop.PendingHint;
@@ -189,6 +214,7 @@ namespace Kismeta.UI
             _inGame = true;
             _lastHuman = null;
             _lastHint = ActionHint.None;
+            _lastCeremonyStep = null;
             RouteGameplay();
         }
 
@@ -219,6 +245,18 @@ namespace Kismeta.UI
             RefreshActiveScreen();
         }
 
+        private static string MapCeremonyScreen(CeremonyStep step) => step switch
+        {
+            CeremonyStep.RoundOpen => ScreenIds.RoundOpen,
+            CeremonyStep.AgeOpening => ScreenIds.AgeOpening,
+            CeremonyStep.SpringIntro => ScreenIds.SpringIntro,
+            CeremonyStep.SummerIntro => ScreenIds.SummerIntro,
+            CeremonyStep.AutumnIntro => ScreenIds.AutumnIntro,
+            CeremonyStep.WinterIntro => ScreenIds.WinterIntro,
+            CeremonyStep.AgeClosing => ScreenIds.AgeClosing,
+            _ => ScreenIds.Waiting
+        };
+
         private static string ResolveSeasonMainScreen(Season season) => season switch
         {
             Season.Spring => ScreenIds.SpringHub,
@@ -239,6 +277,25 @@ namespace Kismeta.UI
             if (_session == null || _loop == null) return;
 
             var controller = _router.ActiveController;
+            var gate = _ceremonyGate;
+            if (gate != null)
+            {
+                if (controller is RoundOpenController roundOpen)
+                    roundOpen.BindState(_session, gate);
+                else if (controller is AgeOpeningController ageOpening)
+                    ageOpening.BindState(_session, gate);
+                else if (controller is AgeClosingController ageClosing)
+                    ageClosing.BindState(_session, gate);
+                else if (controller is SpringIntroController springIntro)
+                    springIntro.BindState(_session, gate);
+                else if (controller is SummerIntroController summerIntro)
+                    summerIntro.BindState(_session, gate);
+                else if (controller is AutumnIntroController autumnIntro)
+                    autumnIntro.BindState(_session, gate);
+                else if (controller is WinterIntroController winterIntro)
+                    winterIntro.BindState(_session, gate);
+            }
+
             if (controller is SpringHubController spring)
                 spring.BindState(_session, _loop, _bridge);
             else if (controller is SummerSceneController summer)

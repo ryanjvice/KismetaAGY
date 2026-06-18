@@ -51,11 +51,19 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _summerMain;
         [SerializeField] private VisualTreeAsset _autumnMain;
         [SerializeField] private VisualTreeAsset _winterHub;
+        [SerializeField] private VisualTreeAsset _roundOpen;
+        [SerializeField] private VisualTreeAsset _ageOpening;
+        [SerializeField] private VisualTreeAsset _springIntro;
+        [SerializeField] private VisualTreeAsset _summerIntro;
+        [SerializeField] private VisualTreeAsset _autumnIntro;
+        [SerializeField] private VisualTreeAsset _winterIntro;
+        [SerializeField] private VisualTreeAsset _ageClosing;
 
         private CardDatabase? _db;
         private CrucibleCodexDatabase? _codexDb;
         private GameSession? _session;
         private GameLoop? _loop;
+        private CeremonyGate? _ceremonyGate;
         private List<IPlayerController>? _controllers;
         private GameDebugUI? _ui;
         private GamePresenter? _presenter;
@@ -131,6 +139,13 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<SummerSceneController>();
             EnsureController<AutumnSceneController>();
             EnsureController<WinterHubController>();
+            EnsureController<RoundOpenController>();
+            EnsureController<AgeOpeningController>();
+            EnsureController<AgeClosingController>();
+            EnsureController<SpringIntroController>();
+            EnsureController<SummerIntroController>();
+            EnsureController<AutumnIntroController>();
+            EnsureController<WinterIntroController>();
 
             router.RefreshControllers();
 
@@ -145,7 +160,9 @@ namespace Kismeta.Game.Bootstrap
                 router.ConfigureScreens(
                     _titleScreen, _gameplayHud, _waitingHud, _setupSheet,
                     _joinScreen, _resumeScreen, _codexScreen, _agekeeperContest,
-                    _springHub, _summerMain, _autumnMain, _winterHub);
+                    _springHub, _summerMain, _autumnMain, _winterHub,
+                    _roundOpen, _ageOpening, _springIntro, _summerIntro,
+                    _autumnIntro, _winterIntro, _ageClosing);
                 layout.RunWhenReady(ShowTitleScreen);
             }
             else
@@ -175,7 +192,7 @@ namespace Kismeta.Game.Bootstrap
             int humans = Mathf.Clamp(_humanPlayers, 0, count);
             BuildSession(count, humans, mode, crucibleBuild, config.FirstAgekeeperPlayerId);
 
-            _presenter!.Bind(_session!, _loop!);
+            _presenter!.Bind(_session!, _loop!, _ceremonyGate);
 
             if (_debugUiFallback)
             {
@@ -255,7 +272,9 @@ namespace Kismeta.Game.Bootstrap
                 Debug.Log(detail);
             };
 
+            _ceremonyGate = new CeremonyGate();
             _loop = new GameLoop(_session, _controllers);
+            _loop.BindCeremonyGate(_ceremonyGate);
             _loop.OnLog += msg => Debug.Log($"[GameLoop] {msg}");
 
             if (_ui != null)

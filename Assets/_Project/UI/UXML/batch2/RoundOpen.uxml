@@ -21,8 +21,8 @@
             <engine:Label name="keeper-eyebrow" text="Iolanthe casts the age" class="ceremony-eyebrow" />
 
             <!-- die host: animate in C# -->
-            <engine:VisualElement name="age-die" style="width: 88px; height: 88px; border-radius: var(--radius-lg); background-color: rgb(36,20,52); border-width: 2px; border-color: var(--arcanum-border); align-items: center; justify-content: center; margin-bottom: 14px;">
-                <engine:Label name="die-face" text="?" style="font-size: 40px; color: var(--arcanum-text);" />
+            <engine:VisualElement name="age-die" style="width: 88px; height: 88px; border-radius: 14px; background-color: rgb(36,20,52); border-width: 2px; border-color: rgb(106, 74, 138); align-items: center; justify-content: center; margin-bottom: 14px;">
+                <engine:Label name="die-face" text="?" style="font-size: 40px; color: rgb(205, 176, 224);" />
             </engine:VisualElement>
 
             <engine:Label text="the cosmic age die" class="ceremony-prelabel" />
@@ -32,8 +32,8 @@
         <!-- pending wager (shown only if one is staked; hidden by C# otherwise) -->
         <engine:VisualElement name="pending-wager" style="padding: 14px 16px 4px;">
             <engine:Label text="a wager awaits the cast" class="eyebrow" />
-            <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; background-color: var(--arcanum-bg); border-color: var(--arcanum-border);">
-                <engine:Label text="&#xeb6c;" class="ti-icon" style="color: var(--arcanum-text); margin-right: 9px;" />
+            <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; background-color: rgb(36, 16, 40); border-color: rgb(106, 74, 138);">
+                <engine:Label text="&#xeb6c;" class="ti-icon" style="color: rgb(205, 176, 224); margin-right: 9px;" />
                 <engine:Label name="wager-line" text="You staked 3 cards on Pisces last Winter — it resolves the instant the die lands."
                               style="flex-grow: 1; font-size: 11px; color: rgb(184,154,192); white-space: normal;" />
             </engine:VisualElement>

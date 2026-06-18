@@ -2,6 +2,7 @@ using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.Core.Views;
 using Kismeta.UI;
+using Kismeta.UI.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 

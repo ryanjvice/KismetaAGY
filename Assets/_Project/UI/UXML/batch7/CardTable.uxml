@@ -17,22 +17,22 @@
 
         <engine:VisualElement class="statusbar" style="background-color: rgb(28,22,14);">
             <engine:VisualElement class="statusbar__left">
-                <engine:VisualElement class="statusbar__sigil" style="background-color: rgb(42,31,14); border-color: var(--gold-deep);">
-                    <engine:Label text="&#xefb2;" class="ti-icon" style="color: var(--gold);" />
+                <engine:VisualElement class="statusbar__sigil" style="background-color: rgb(42,31,14); border-color: rgb(201, 150, 47);">
+                    <engine:Label text="&#xefb2;" class="ti-icon" style="color: rgb(232, 185, 74);" />
                 </engine:VisualElement>
                 <engine:VisualElement>
-                    <engine:Label text="Card table" class="statusbar__title" style="color: var(--gold);" />
+                    <engine:Label text="Card table" class="statusbar__title" style="color: rgb(232, 185, 74);" />
                     <engine:Label text="all public cards in play" class="statusbar__sub" />
                 </engine:VisualElement>
             </engine:VisualElement>
-            <engine:Button name="close-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+            <engine:Button name="close-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
         </engine:VisualElement>
 
         <!-- sort controls -->
         <engine:VisualElement style="padding: 8px 14px; flex-direction: row;">
             <engine:Button name="sort-threat" text="by threat" class="table-action" style="background-color: rgb(42,31,14); border-color: rgb(90,68,32); color: rgb(224,200,120);" />
-            <engine:Button name="sort-turn" text="turn order" class="table-action" style="background-color: var(--panel-darker); border-color: var(--border-subtle); color: var(--muted);" />
-            <engine:Button name="sort-arcanum" text="arcanum" class="table-action" style="background-color: var(--panel-darker); border-color: var(--border-subtle); color: var(--muted);" />
+            <engine:Button name="sort-turn" text="turn order" class="table-action" style="background-color: rgb(16, 10, 18); border-color: rgb(58, 36, 64); color: rgb(184, 154, 110);" />
+            <engine:Button name="sort-arcanum" text="arcanum" class="table-action" style="background-color: rgb(16, 10, 18); border-color: rgb(58, 36, 64); color: rgb(184, 154, 110);" />
         </engine:VisualElement>
 
         <engine:ScrollView name="players" style="height: 420px; padding: 0 12px 14px;">
@@ -41,13 +41,13 @@
             <engine:VisualElement class="player-block" style="border-left-color: rgb(46,109,164);">
                 <engine:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 8px;">
                     <engine:VisualElement style="width: 20px; height: 20px; border-radius: 10px; background-color: rgb(46,109,164); margin-right: 8px;" />
-                    <engine:Label text="Iolanthe" style="font-size: 13px; color: var(--ink); margin-right: 6px;" />
-                    <engine:Label text="Gold · 7" style="font-size: 9px; color: var(--muted);" />
+                    <engine:Label text="Iolanthe" style="font-size: 13px; color: rgb(243, 233, 210); margin-right: 6px;" />
+                    <engine:Label text="Gold · 7" style="font-size: 9px; color: rgb(184, 154, 110);" />
                     <engine:Label text="threat" class="threat-badge" style="margin-left: 6px;" />
                     <engine:VisualElement style="flex-grow: 1;" />
                     <engine:Label text="hand 4" style="font-size: 9px; color: rgb(122,138,154);" />
                 </engine:VisualElement>
-                <engine:Label text="spread" style="font-size: 8px; color: var(--muted-dim); margin-bottom: 4px;" />
+                <engine:Label text="spread" style="font-size: 8px; color: rgb(138, 106, 122); margin-bottom: 4px;" />
                 <engine:VisualElement style="flex-direction: row; flex-wrap: wrap; margin-bottom: 8px;">
                     <engine:VisualElement class="card-chip card-chip--cups card-chip--selected" style="width: 30px; height: 42px; margin-right: 4px;"><engine:Label text="Q" class="card-chip__rank" /></engine:VisualElement>
                     <engine:VisualElement class="card-chip card-chip--cups card-chip--selected" style="width: 30px; height: 42px; margin-right: 4px;"><engine:Label text="5" class="card-chip__rank" /></engine:VisualElement>
@@ -64,7 +64,7 @@
             <engine:VisualElement class="player-block" style="border-left-color: rgb(31,110,74);">
                 <engine:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 8px;">
                     <engine:VisualElement style="width: 20px; height: 20px; border-radius: 10px; background-color: rgb(31,110,74); margin-right: 8px;" />
-                    <engine:Label text="Severin" style="font-size: 13px; color: var(--ink); margin-right: 6px;" />
+                    <engine:Label text="Severin" style="font-size: 13px; color: rgb(243, 233, 210); margin-right: 6px;" />
                     <engine:Label text="stasis &#10052;" style="font-size: 9px; color: rgb(122,138,154);" />
                     <engine:VisualElement style="flex-grow: 1;" />
                     <engine:Label text="hand 3" style="font-size: 9px; color: rgb(122,138,154);" />
@@ -77,13 +77,13 @@
             </engine:VisualElement>
 
             <!-- you -->
-            <engine:VisualElement class="player-block" style="border-left-color: var(--gold-bright); border-color: rgb(90,68,32);">
+            <engine:VisualElement class="player-block" style="border-left-color: rgb(244, 211, 94); border-color: rgb(90,68,32);">
                 <engine:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 8px;">
-                    <engine:VisualElement style="width: 20px; height: 20px; border-radius: 10px; background-color: var(--gold-bright); margin-right: 8px;" />
-                    <engine:Label text="You" style="font-size: 13px; color: var(--ink); margin-right: 6px;" />
-                    <engine:Label text="forge · 5" style="font-size: 9px; color: var(--muted);" />
+                    <engine:VisualElement style="width: 20px; height: 20px; border-radius: 10px; background-color: rgb(244, 211, 94); margin-right: 8px;" />
+                    <engine:Label text="You" style="font-size: 13px; color: rgb(243, 233, 210); margin-right: 6px;" />
+                    <engine:Label text="forge · 5" style="font-size: 9px; color: rgb(184, 154, 110);" />
                     <engine:VisualElement style="flex-grow: 1;" />
-                    <engine:Label text="hand 5" style="font-size: 9px; color: var(--muted);" />
+                    <engine:Label text="hand 5" style="font-size: 9px; color: rgb(184, 154, 110);" />
                 </engine:VisualElement>
                 <engine:VisualElement style="flex-direction: row; flex-wrap: wrap;">
                     <engine:VisualElement class="card-chip card-chip--wands card-chip--selected" style="width: 30px; height: 42px; margin-right: 4px;"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>

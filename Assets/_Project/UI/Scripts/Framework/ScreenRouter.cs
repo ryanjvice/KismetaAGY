@@ -59,7 +59,14 @@ namespace Kismeta.UI
             VisualTreeAsset? springHub = null,
             VisualTreeAsset? summerMain = null,
             VisualTreeAsset? autumnMain = null,
-            VisualTreeAsset? winterHub = null)
+            VisualTreeAsset? winterHub = null,
+            VisualTreeAsset? roundOpen = null,
+            VisualTreeAsset? ageOpening = null,
+            VisualTreeAsset? springIntro = null,
+            VisualTreeAsset? summerIntro = null,
+            VisualTreeAsset? autumnIntro = null,
+            VisualTreeAsset? winterIntro = null,
+            VisualTreeAsset? ageClosing = null)
         {
             var screens = new List<ScreenAsset>
             {
@@ -83,6 +90,20 @@ namespace Kismeta.UI
                 screens.Add(new ScreenAsset { Id = ScreenIds.AutumnMain, Uxml = autumnMain });
             if (winterHub != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.WinterHub, Uxml = winterHub });
+            if (roundOpen != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.RoundOpen, Uxml = roundOpen });
+            if (ageOpening != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.AgeOpening, Uxml = ageOpening });
+            if (springIntro != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.SpringIntro, Uxml = springIntro });
+            if (summerIntro != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.SummerIntro, Uxml = summerIntro });
+            if (autumnIntro != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.AutumnIntro, Uxml = autumnIntro });
+            if (winterIntro != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.WinterIntro, Uxml = winterIntro });
+            if (ageClosing != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.AgeClosing, Uxml = ageClosing });
 
             _screens = screens.ToArray();
             _setupSheet = setupSheet;

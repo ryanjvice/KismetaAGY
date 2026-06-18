@@ -18,7 +18,7 @@
 
         <engine:VisualElement class="statusbar" style="border-bottom-color: rgb(43,58,74);">
             <engine:VisualElement class="statusbar__left">
-                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
                 <engine:Label text="Trade · Severin" class="statusbar__title" style="color: rgb(168,205,240); margin-left: 4px;" />
             </engine:VisualElement>
         </engine:VisualElement>
@@ -27,8 +27,8 @@
         <engine:VisualElement style="padding: 12px 14px 0;">
             <engine:VisualElement class="tray tray--give">
                 <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <engine:Label text="you give" style="font-size: 12px; color: var(--gold);" />
-                    <engine:Label name="give-count" text="1 card" style="font-size: 10px; color: var(--muted);" />
+                    <engine:Label text="you give" style="font-size: 12px; color: rgb(232, 185, 74);" />
+                    <engine:Label name="give-count" text="1 card" style="font-size: 10px; color: rgb(184, 154, 110);" />
                 </engine:VisualElement>
                 <engine:VisualElement name="give-cards" class="tray__cards">
                     <engine:VisualElement class="card-chip card-chip--pentacles card-chip--selected"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
@@ -37,15 +37,15 @@
         </engine:VisualElement>
 
         <engine:VisualElement style="align-items: center; padding: 2px;">
-            <engine:Label text="&#8645;" style="font-size: 18px; color: var(--muted);" />
+            <engine:Label text="&#8645;" style="font-size: 18px; color: rgb(184, 154, 110);" />
         </engine:VisualElement>
 
         <!-- they give -->
         <engine:VisualElement style="padding: 0 14px;">
             <engine:VisualElement class="tray tray--get">
                 <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <engine:Label text="Severin gives (public cards)" style="font-size: 12px; color: var(--ok-text);" />
-                    <engine:Label name="get-count" text="1 card" style="font-size: 10px; color: var(--muted);" />
+                    <engine:Label text="Severin gives (public cards)" style="font-size: 12px; color: rgb(127, 196, 168);" />
+                    <engine:Label name="get-count" text="1 card" style="font-size: 10px; color: rgb(184, 154, 110);" />
                 </engine:VisualElement>
                 <engine:VisualElement name="get-cards" class="tray__cards">
                     <engine:VisualElement class="card-chip card-chip--cups card-chip--selected"><engine:Label text="Q" class="card-chip__rank" /></engine:VisualElement>

@@ -9,7 +9,7 @@ Unity UI Toolkit assets ported from `Docs/wireframes/`. This folder is the **pro
 | `USS/` | Shared `Kismeta.uss` (canonical) + per-screen stylesheets |
 | `UXML/batch1/` | Title, SetupSheet, Join, Resume, Codex, AgekeeperContest |
 | `UXML/main/` | Season main scenes: SpringHub, SummerMain, AutumnMain, WinterHub |
-| `UXML/batchN/` | Screen layouts (batches 2–7) |
+| `UXML/batch2/` | Ceremony screens: RoundOpen, AgeOpening, season intros, AgeClosing |
 | `UXML/shell/` | `AppShell.uxml`, `GameplayHud` (dev fallback), `WaitingHud` |
 | `Scripts/Framework/` | ViewportLayout, ScreenRouter, GamePresenter, CommandBridge |
 | `Scripts/Controllers/` | Shell + season main scene controllers |
@@ -39,19 +39,26 @@ flowchart TB
 | **`AppShell.uxml`** | The **only** UIDocument Source Asset. Provides `content-layer` + `overlay-layer`. Never assign TitleScreen or ad-hoc layouts here. |
 | **`ScreenRouter`** | Maps screen ids to UXML; calls `ViewportLayout.SetScreen()` to swap children in `content-layer`. |
 | **`ViewportLayout`** | Safe-area padding, viewport classes, modal/sheet overlays, full-bleed stretch for instantiated screens. |
-| **`GamePresenter`** | Routes by season to main scenes when a human is pending; `WaitingHud` for AI turns. |
+| **`GamePresenter`** | Ceremony-first routing via `CeremonyGate`; then season hubs when human pending; `WaitingHud` for AI turns. |
 | **`ScreenController`** | Attach/detach/refresh on the host GameObject when the router loads a screen. |
 | **`CommandBridge`** | Submits `IGameCommand` to `HotSeatController` (e.g. Pass). |
 | **`GameBootstrap`** | `Awake`: sets AppShell on UIDocument; `Start`: Title → Setup sheet → Begin starts the loop. |
 
 Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `ScreenRouter`. Call `ScreenRouter.RefreshControllers()` after adding components at runtime.
 
+## Phase 4 complete — Batch 2 ceremonies
+
+- **CeremonyGate:** `GameLoop` pauses at `RoundOpen`, `AgeOpening`, four season intros, and `AgeClosing`; UI calls `Complete()` / `CompleteWithCommand()` to resume.
+- **Flow:** Agekeeper contest → **RoundOpen** (roll) → **AgeOpening** → **SpringIntro** → Spring gameplay → season intros at Summer/Autumn/Winter → **AgeClosing** → next round.
+- **AI agekeeper:** Non-human agekeeper auto-applies `RollCosmicAgeCommand`; humans still see **AgeOpening** and intros.
+- **TransitAge** moved to **AgeClosing** CTA (`next-age-btn`).
+
 ## Phase 3 complete — Season main scenes
 
 - **Routing:** `GamePresenter` maps `Season` → `SpringHub` / `SummerMain` / `AutumnMain` / `WinterHub` on human turns; `WaitingHud` while AI decides.
 - **Bind:** Status bar, rivals strip, spread dock, step rails (Spring/Winter), cauldrons (Summer), stone label (Autumn) from `GamePublicView`.
 - **Pass:** Summer, Autumn, and Winter main scenes wire **Pass** via `CommandBridge` during free-action phases.
-- **Stubs:** Craft/Consort/Activate, Fire/Temper/Oppose, Commune, card table, and Winter advance CTAs log until Phase 4.
+- **Stubs:** Commune, craft/fire actions, card table, and Winter advance CTAs log until Phase 5.
 - **`GameplayHud`** remains registered for dev fallback but is no longer used in normal play routing.
 
 ## Phase 2 complete — Batch 1 shell
@@ -86,7 +93,7 @@ Open `Bootstrap.unity` (or your play scene with `GameBootstrap`), then:
 - GameBootstrap **Use Production Ui** = on
 - **Save the scene** (`Ctrl+S`)
 
-**Play-test:** Title → New game → Start Game → agekeeper contest → season main scene on your turn; `WaitingHud` during AI turns; Pass in Summer/Autumn/Winter free-action phases.
+**Play-test:** Title → New game → Start Game → agekeeper contest → **RoundOpen** (roll die) → AgeOpening → SpringIntro → season main scene on your turn; season intros between seasons; AgeClosing at Winter end.
 
 ## Full-bleed / responsive rules
 
@@ -127,6 +134,6 @@ panel root → .kismeta-root → .app-shell → .content-layer → .screen-host 
 
 Visual tokens, components, and per-screen specs: [`Docs/wireframes/UI_styleGuide.md`](../../Docs/wireframes/UI_styleGuide.md).
 
-## Next: Phase 4 — Action sheets and commands
+## Next: Phase 5 — Batch 3 Spring and Winter steps
 
-Wire Commune, Summer/Autumn action sheets, and Winter step screens to `CommandBridge`.
+Wire Commune sheet, Spring harvest/roll UI, and Winter unlock/wager/limits/transit screens to `CommandBridge`.

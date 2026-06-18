@@ -14,7 +14,7 @@
 
         <engine:VisualElement class="statusbar">
             <engine:VisualElement class="statusbar__left">
-                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
                 <engine:Label text="Join a game" class="statusbar__title" style="margin-left: 4px;" />
             </engine:VisualElement>
         </engine:VisualElement>

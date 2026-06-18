@@ -30,7 +30,7 @@
         <engine:VisualElement style="padding: 10px 14px 4px;">
             <engine:VisualElement class="readout" style="background-color: rgb(22,32,46); border-color: rgb(43,58,74);">
                 <engine:VisualElement class="readout__metric">
-                    <engine:Label name="spread-limit" text="4 / 5" class="readout__value" style="color: var(--ok-text);" />
+                    <engine:Label name="spread-limit" text="4 / 5" class="readout__value" style="color: rgb(127, 196, 168);" />
                     <engine:Label text="spread" class="readout__label" />
                 </engine:VisualElement>
                 <engine:VisualElement class="readout__metric">
@@ -38,7 +38,7 @@
                     <engine:Label text="hand · over" class="readout__label" />
                 </engine:VisualElement>
                 <engine:VisualElement class="readout__metric">
-                    <engine:Label name="to-discard" text="1" class="readout__value" style="color: var(--danger-text);" />
+                    <engine:Label name="to-discard" text="1" class="readout__value" style="color: rgb(240, 144, 138);" />
                     <engine:Label text="to discard" class="readout__label" />
                 </engine:VisualElement>
             </engine:VisualElement>
@@ -48,7 +48,7 @@
         <engine:VisualElement style="padding: 4px 14px 0;">
             <engine:VisualElement class="swap-zone swap-zone--hand" style="background-color: rgb(22,16,28);">
                 <engine:VisualElement class="swap-zone__header">
-                    <engine:Label text="Hand — tap to discard" style="font-size: 12px; color: var(--winter-accent);" />
+                    <engine:Label text="Hand — tap to discard" style="font-size: 12px; color: rgb(158, 201, 224);" />
                     <engine:Label name="hand-tally" text="6 / 5" style="font-size: 10px; color: rgb(224,160,96);" />
                 </engine:VisualElement>
                 <engine:VisualElement name="hand-cards" class="swap-zone__cards">
