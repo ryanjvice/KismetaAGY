@@ -26,7 +26,7 @@ Unity UI Toolkit assets ported from `Docs/wireframes/`.
 
 | Token / class | Purpose |
 |---------------|---------|
-| `--ui-scale` | Clamped scale from 380×844 baseline |
+| `--ui-scale` | Informational only on `ViewportLayout`; panel scaling via PanelSettings |
 | `--touch-min` | Minimum 44px touch targets |
 | `--card-chip-w/h` | Scaled card chips |
 | `.overlay-layer` | Full-screen scrim for modals |

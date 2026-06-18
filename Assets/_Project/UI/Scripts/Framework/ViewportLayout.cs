@@ -5,8 +5,9 @@ using UnityEngine.UIElements;
 namespace Kismeta.UI
 {
     /// <summary>
-    /// Full-viewport UI host: safe-area padding, responsive USS tokens, and overlay layer
-    /// for modals and bottom sheets. Design baseline is 380×844; production fills the screen.
+    /// Full-viewport UI host: safe-area padding, viewport classes, and overlay layer
+    /// for modals and bottom sheets. Typography/size scaling comes from PanelSettings
+    /// (Scale With Screen Size, 380×844 reference). USS variables are static defaults.
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class ViewportLayout : MonoBehaviour
@@ -25,6 +26,9 @@ namespace Kismeta.UI
 
         public VisualElement Root => _document != null ? _document.rootVisualElement : null;
         public bool IsOverlayVisible => _overlayLayer != null && _overlayLayer.style.display == DisplayStyle.Flex;
+
+        /// <summary>Last computed scale factor (informational; PanelSettings also scales the panel).</summary>
+        public float UiScale { get; private set; } = 1f;
 
         protected virtual void Awake()
         {
@@ -170,8 +174,8 @@ namespace Kismeta.UI
                 return;
 
             float scale = Mathf.Clamp(Mathf.Min(w / DesignWidth, h / DesignHeight), ScaleMin, ScaleMax);
+            UiScale = scale;
             ApplySafeAreaPadding(root, w, h);
-            ApplyScaleTokens(root, scale);
             ApplyViewportClass(root, w, h);
         }
 
@@ -189,24 +193,6 @@ namespace Kismeta.UI
             root.style.paddingTop = (sh - safe.yMax) / sh * panelH;
         }
 
-        private static void ApplyScaleTokens(VisualElement root, float scale)
-        {
-            SetToken(root, "--ui-scale", scale);
-            SetToken(root, "--space-xs", 4f * scale);
-            SetToken(root, "--space-sm", 8f * scale);
-            SetToken(root, "--space-md", 12f * scale);
-            SetToken(root, "--space-lg", 16f * scale);
-            SetToken(root, "--space-xl", 24f * scale);
-            SetToken(root, "--font-micro", 8f * scale);
-            SetToken(root, "--font-label", 10f * scale);
-            SetToken(root, "--font-body", 12f * scale);
-            SetToken(root, "--font-title", 14f * scale);
-            SetToken(root, "--font-display", 34f * scale);
-            SetToken(root, "--touch-min", Mathf.Max(44f, 44f * scale));
-            SetToken(root, "--card-chip-w", 34f * scale);
-            SetToken(root, "--card-chip-h", 48f * scale);
-        }
-
         private static void ApplyViewportClass(VisualElement root, float w, float h)
         {
             root.RemoveFromClassList("viewport--compact");
@@ -221,8 +207,5 @@ namespace Kismeta.UI
             else
                 root.AddToClassList("viewport--regular");
         }
-
-        private static void SetToken(VisualElement element, string name, float value) =>
-            element.style.SetCustomProperty(name, new StyleFloat(value));
     }
 }

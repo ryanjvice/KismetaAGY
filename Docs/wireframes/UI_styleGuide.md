@@ -115,9 +115,9 @@ turning year; a player can tell the season from color alone.
 
 ### Type scale (baseline at 380×844)
 
-Values below are the **design baseline**. Production uses scaled USS tokens
-(`--font-body`, `--font-label`, `--font-title`, `--font-display`) set at runtime
-by `ViewportLayout` from `--ui-scale`.
+Values below are the **design baseline**. Production uses USS token defaults (`--font-body`, etc.) scaled uniformly by
+**PanelSettings → Scale With Screen Size** (380×844 reference). `ViewportLayout`
+does not write USS variables at runtime (Unity API is read-only for custom properties).
 
 | Role | Baseline size | Weight | Notes |
 |---|---|---|---|
@@ -158,8 +158,7 @@ Production layout is implemented in Unity UI Toolkit via `ViewportLayout`
 |---|---|
 | **Full bleed** | `.screen`, `.kismeta-root` are 100% viewport; flex column layout |
 | **Safe area** | `Screen.safeArea` applied as root padding on resize |
-| **Scale tokens** | `--ui-scale` = `min(viewportW/380, viewportH/844)`, clamped 0.85–1.35 |
-| **Spacing** | `--space-xs` … `--space-xl` derived from scale |
+| **Spacing / type / touch** | Static USS token defaults; scaled by PanelSettings |
 | **Touch targets** | `--touch-min` ≥ 44px on buttons, action bar, setup pips |
 | **Flex frame** | status bar + rivals + **stage** (`flex-grow: 1`) + action bar + dock |
 | **Modals** | full-screen scrim; centered card at 92% width, max 520px, max-height 88%, scrollable body |
