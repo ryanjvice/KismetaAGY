@@ -19,13 +19,11 @@
 .title-sigil__mark {
     font-size: 34px; color: rgb(90,60,10);
     -unity-font-style: bold;
-    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
 }
 
 .title-wordmark {
     font-size: 34px; color: var(--gold);
     letter-spacing: 5px;
-    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
 }
 .title-tagline {
     font-size: 11px; color: rgb(201,168,74);

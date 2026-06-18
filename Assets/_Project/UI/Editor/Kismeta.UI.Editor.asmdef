@@ -2,7 +2,8 @@
     "name": "Kismeta.UI.Editor",
     "rootNamespace": "Kismeta.UI.Editor",
     "references": [
-        "Kismeta.UI"
+        "Kismeta.UI",
+        "Kismeta.Game"
     ],
     "includePlatforms": [
         "Editor"

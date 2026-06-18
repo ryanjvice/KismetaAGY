@@ -243,6 +243,13 @@ MonoBehaviour:
   _humanPlayers: 1
   _totalPlayers: 2
   _gameMode: 0
+  _useProductionUi: 1
+  _debugUiFallback: 0
+  _panelSettings: {fileID: 11400000, guid: 2f562a8366d18d844b573c8bef474941, type: 2}
+  _titleScreen: {fileID: 9197481963319205126, guid: b44be3fc0d0a8944a96a90543cf35210, type: 3}
+  _gameplayHud: {fileID: 9197481963319205126, guid: 500f094547886df429cac57944e79ac7, type: 3}
+  _waitingHud: {fileID: 9197481963319205126, guid: 23c9356e19d8a3343a869197fd22074c, type: 3}
+  _setupSheet: {fileID: 9197481963319205126, guid: f349b93fc3fde7647b0c740e772f9ca7, type: 3}
 --- !u!4 &1726667743
 Transform:
   m_ObjectHideFlags: 0

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+
+    <engine:VisualElement name="waiting-hud" class="screen screen--winter">
+
+        <engine:VisualElement class="screen__body" style="justify-content: center; align-items: center;">
+            <engine:Label name="waiting-label" text="Waiting…"
+                          style="font-size: var(--font-title); color: var(--muted); -unity-text-align: middle-center;" />
+            <engine:Label name="season-label" text=""
+                          style="font-size: var(--font-label); color: var(--muted-dim); margin-top: 10px; -unity-text-align: middle-center;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

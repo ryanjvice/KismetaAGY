@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+
+    <engine:VisualElement name="gameplay-hud" class="screen screen--summer">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:VisualElement class="statusbar__sigil" />
+                <engine:VisualElement>
+                    <engine:Label name="status-season" text="Summer" class="statusbar__title" />
+                    <engine:Label name="status-step" text="—" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
+        </engine:VisualElement>
+
+        <engine:VisualElement class="screen__body">
+            <engine:VisualElement class="stage">
+                <engine:Label name="hint-label" text="Your turn"
+                              style="font-size: var(--font-title); color: var(--ink); -unity-text-align: middle-center; white-space: normal;" />
+                <engine:Label text="Season screens arrive in Phase 2–3 batches."
+                              style="font-size: var(--font-label); color: var(--muted); margin-top: 12px; -unity-text-align: middle-center; white-space: normal;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="actionbar">
+            <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

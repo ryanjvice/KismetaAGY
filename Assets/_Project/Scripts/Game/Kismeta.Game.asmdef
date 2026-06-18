@@ -3,7 +3,8 @@
     "rootNamespace": "Kismeta.Game",
     "references": [
         "Kismeta.Core",
-        "Kismeta.Data"
+        "Kismeta.Data",
+        "Kismeta.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using Kismeta.UI;
+using Kismeta.UI.Controllers;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -54,6 +56,44 @@ namespace Kismeta.UI.Editor
             Debug.Log("[Kismeta.UI] PanelSettings configured for responsive full-screen layout (380×844 reference).");
         }
 
+        private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
+        private const string WaitingHudPath = "Assets/_Project/UI/UXML/shell/WaitingHud.uxml";
+
+        [MenuItem("Kismeta/UI/Wire Bootstrap UI References")]
+        public static void WireBootstrapUiReferences()
+        {
+            var bootstrap = Object.FindFirstObjectByType<Kismeta.Game.Bootstrap.GameBootstrap>();
+            if (bootstrap == null)
+            {
+                Debug.LogWarning("[Kismeta.UI] No GameBootstrap in the open scene.");
+                return;
+            }
+
+            var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
+            var title = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TitleScreenPath);
+            var gameplay = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameplayHudPath);
+            var waiting = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
+            var setup = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SetupSheetPath);
+
+            var so = new SerializedObject(bootstrap);
+            so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
+            so.FindProperty("_titleScreen").objectReferenceValue = title;
+            so.FindProperty("_gameplayHud").objectReferenceValue = gameplay;
+            so.FindProperty("_waitingHud").objectReferenceValue = waiting;
+            so.FindProperty("_setupSheet").objectReferenceValue = setup;
+            so.FindProperty("_useProductionUi").boolValue = true;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            var doc = bootstrap.GetComponent<UIDocument>();
+            if (doc != null)
+                doc.visualTreeAsset = null;
+
+            EditorUtility.SetDirty(bootstrap);
+            if (doc != null)
+                EditorUtility.SetDirty(doc);
+            Debug.Log("[Kismeta.UI] Wired GameBootstrap UI references.");
+        }
+
         [MenuItem("Kismeta/UI/Create UI Test Scene")]
         public static void CreateUiTestScene()
         {
@@ -63,9 +103,14 @@ namespace Kismeta.UI.Editor
             if (light != null) Object.DestroyImmediate(light);
 
             var host = new GameObject("UiShell");
-            var doc = host.AddComponent<UIDocument>();
-            var layout = host.AddComponent<ViewportLayout>();
-            var demo = host.AddComponent<UiResponsiveTest>();
+            host.AddComponent<UIDocument>();
+            host.AddComponent<ViewportLayout>();
+            host.AddComponent<ScreenRouter>();
+            host.AddComponent<GamePresenter>();
+            host.AddComponent<TitleScreenController>();
+            host.AddComponent<GameplayHudController>();
+            host.AddComponent<WaitingHudController>();
+            host.AddComponent<UiResponsiveTest>();
 
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
             if (panelSettings == null)
@@ -74,17 +119,28 @@ namespace Kismeta.UI.Editor
 
             var titleScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TitleScreenPath);
             var setupSheet = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SetupSheetPath);
+            var gameplayHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameplayHudPath);
+            var waitingHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
             var cardModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
 
-            doc.panelSettings = panelSettings;
-            doc.visualTreeAsset = titleScreen;
+            var router = host.GetComponent<ScreenRouter>();
+            router.ConfigureScreens(titleScreen, gameplayHud, waitingHud, setupSheet);
 
-            var layoutSo = new SerializedObject(layout);
+            var doc = host.GetComponent<UIDocument>();
+            doc.panelSettings = panelSettings;
+            doc.visualTreeAsset = null;
+
+            var layoutSo = new SerializedObject(host.GetComponent<ViewportLayout>());
             layoutSo.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
-            layoutSo.FindProperty("_initialScreen").objectReferenceValue = titleScreen;
+            layoutSo.FindProperty("_initialScreen").objectReferenceValue = null;
             layoutSo.ApplyModifiedPropertiesWithoutUndo();
 
-            var demoSo = new SerializedObject(demo);
+            host.GetComponent<ViewportLayout>()!.RunWhenReady(() =>
+            {
+                host.GetComponent<ScreenRouter>()!.GoTo(ScreenIds.Title);
+            });
+
+            var demoSo = new SerializedObject(host.GetComponent<UiResponsiveTest>());
             demoSo.FindProperty("_setupSheet").objectReferenceValue = setupSheet;
             demoSo.FindProperty("_cardModals").objectReferenceValue = cardModals;
             demoSo.ApplyModifiedPropertiesWithoutUndo();

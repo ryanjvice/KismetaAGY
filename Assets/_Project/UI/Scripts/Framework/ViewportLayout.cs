@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -25,6 +26,18 @@ namespace Kismeta.UI
         private VisualElement _overlayLayer;
 
         public VisualElement Root => _document != null ? _document.rootVisualElement : null;
+
+        /// <summary>Active screen root inside the content layer (after app shell is built).</summary>
+        public VisualElement ContentScreenRoot
+        {
+            get
+            {
+                var layer = Root?.Q("content-layer");
+                if (layer == null || layer.childCount == 0)
+                    return null;
+                return layer[0];
+            }
+        }
         public bool IsOverlayVisible => _overlayLayer != null && _overlayLayer.style.display == DisplayStyle.Flex;
 
         /// <summary>Last computed scale factor (informational; PanelSettings also scales the panel).</summary>
@@ -35,8 +48,6 @@ namespace Kismeta.UI
             _document = GetComponent<UIDocument>();
             if (_panelSettings != null)
                 _document.panelSettings = _panelSettings;
-            if (_initialScreen != null)
-                _document.visualTreeAsset = _initialScreen;
         }
 
         protected virtual void OnEnable()
@@ -55,10 +66,22 @@ namespace Kismeta.UI
 
         public void SetScreen(VisualTreeAsset screen)
         {
-            if (_document == null) return;
+            if (_document == null || screen == null)
+                return;
+
             DismissOverlay();
-            _document.visualTreeAsset = screen;
-            _document.rootVisualElement.schedule.Execute(InitializeTree).StartingIn(0);
+            var root = Root;
+            if (root == null)
+                return;
+
+            EnsureAppShell(root);
+            var content = root.Q("content-layer");
+            if (content == null)
+                return;
+
+            content.Clear();
+            content.Add(screen.Instantiate());
+            root.schedule.Execute(() => ApplyLayout(root)).StartingIn(0);
         }
 
         public void ShowModal(VisualTreeAsset asset)
@@ -97,6 +120,20 @@ namespace Kismeta.UI
             _overlayLayer.RemoveFromClassList("overlay-layer--sheet");
         }
 
+        /// <summary>Runs after the UIDocument panel has a valid layout (avoids startup races).</summary>
+        public void RunWhenReady(Action action)
+        {
+            if (action == null) return;
+            var root = Root;
+            if (root == null)
+            {
+                action();
+                return;
+            }
+
+            root.schedule.Execute(() => action()).StartingIn(1);
+        }
+
         private void OnGeometryChanged(GeometryChangedEvent evt) => ApplyLayout(evt.target as VisualElement);
 
         private void InitializeTree()
@@ -105,7 +142,10 @@ namespace Kismeta.UI
             if (root == null) return;
 
             EnsureAppShell(root);
-            ApplyLayout(root);
+            if (_initialScreen != null && ContentScreenRoot == null)
+                SetScreen(_initialScreen);
+            else
+                ApplyLayout(root);
         }
 
         private void EnsureAppShell(VisualElement root)

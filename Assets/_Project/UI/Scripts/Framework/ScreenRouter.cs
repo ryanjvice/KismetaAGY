@@ -1,0 +1,156 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+namespace Kismeta.UI
+{
+    /// <summary>
+    /// Maps screen ids to UXML assets and controllers; loads screens into
+    /// <see cref="ViewportLayout"/>'s content layer and manages overlay sheets.
+    /// </summary>
+    [RequireComponent(typeof(ViewportLayout))]
+    public sealed class ScreenRouter : MonoBehaviour
+    {
+        [Serializable]
+        public struct ScreenAsset
+        {
+            public string Id;
+            public VisualTreeAsset Uxml;
+        }
+
+        [SerializeField] private ScreenAsset[] _screens;
+        [SerializeField] private VisualTreeAsset _setupSheet;
+
+        private ViewportLayout _layout;
+        private readonly Dictionary<string, VisualTreeAsset> _assets = new();
+        private readonly Dictionary<string, ScreenController> _controllers = new();
+        private ScreenController? _active;
+        private string? _currentId;
+
+        public string? CurrentScreenId => _currentId;
+        public ScreenController? ActiveController => _active;
+        public event Action<string>? ScreenChanged;
+
+        public void RefreshControllers()
+        {
+            _controllers.Clear();
+            foreach (var controller in GetComponents<ScreenController>())
+                _controllers[controller.ScreenId] = controller;
+        }
+
+        private void Awake()
+        {
+            _layout = GetComponent<ViewportLayout>();
+            RebuildRegistry();
+            RefreshControllers();
+        }
+
+        /// <summary>Runtime wiring from <see cref="GameBootstrap"/> when assets are not set in the inspector.</summary>
+        public void ConfigureScreens(
+            VisualTreeAsset title,
+            VisualTreeAsset gameplayHud,
+            VisualTreeAsset waitingHud,
+            VisualTreeAsset setupSheet)
+        {
+            _screens = new[]
+            {
+                new ScreenAsset { Id = ScreenIds.Title, Uxml = title },
+                new ScreenAsset { Id = ScreenIds.GameplayHud, Uxml = gameplayHud },
+                new ScreenAsset { Id = ScreenIds.Waiting, Uxml = waitingHud },
+            };
+            _setupSheet = setupSheet;
+            RebuildRegistry();
+            RefreshControllers();
+        }
+
+        private void RebuildRegistry()
+        {
+            _assets.Clear();
+            if (_screens == null) return;
+            foreach (var entry in _screens)
+            {
+                if (string.IsNullOrEmpty(entry.Id) || entry.Uxml == null)
+                    continue;
+                _assets[entry.Id] = entry.Uxml;
+            }
+        }
+
+        public bool GoTo(string screenId)
+        {
+            if (!_assets.TryGetValue(screenId, out var uxml))
+            {
+                Debug.LogWarning($"[ScreenRouter] Unknown screen '{screenId}'.");
+                return false;
+            }
+
+            _layout.SetScreen(uxml);
+            _active?.Detach();
+
+            _controllers.TryGetValue(screenId, out var controller);
+            _active = controller;
+
+            var screenRoot = _layout.ContentScreenRoot;
+            if (_active != null && screenRoot != null)
+                _active.AttachTo(screenRoot);
+
+            _currentId = screenId;
+            ScreenChanged?.Invoke(screenId);
+            return true;
+        }
+
+        public void ShowSetupSheet(Action<VisualElement>? onOpened = null, Action? onClosed = null, Action? onBegin = null)
+        {
+            if (_setupSheet == null)
+            {
+                Debug.LogWarning("[ScreenRouter] Setup sheet UXML not assigned.");
+                return;
+            }
+
+            _layout.ShowBottomSheet(_setupSheet);
+
+            var root = _layout.Root;
+            var sheetRoot = root?.Q<VisualElement>("setup-sheet");
+            if (sheetRoot != null)
+                onOpened?.Invoke(sheetRoot);
+            var close = root?.Q<Button>("close-btn");
+            var begin = root?.Q<Button>("begin-btn");
+
+            if (close != null)
+            {
+                close.clicked -= HandleClose;
+                close.clicked += HandleClose;
+            }
+
+            if (begin != null && onBegin != null)
+            {
+                begin.clicked -= HandleBegin;
+                begin.clicked += HandleBegin;
+            }
+
+            void HandleClose()
+            {
+                Cleanup();
+                onClosed?.Invoke();
+            }
+
+            void HandleBegin()
+            {
+                onBegin?.Invoke();
+                Cleanup();
+            }
+
+            void Cleanup()
+            {
+                _layout.DismissOverlay();
+                if (close != null) close.clicked -= HandleClose;
+                if (begin != null) begin.clicked -= HandleBegin;
+            }
+        }
+
+        public void DismissOverlay() => _layout.DismissOverlay();
+
+        public T? GetController<T>(string screenId) where T : ScreenController =>
+            _controllers.TryGetValue(screenId, out var c) ? c as T : null;
+    }
+}

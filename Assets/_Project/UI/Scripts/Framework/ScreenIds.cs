@@ -1,0 +1,17 @@
+namespace Kismeta.UI
+{
+    /// <summary>Stable screen identifiers for <see cref="ScreenRouter"/>.</summary>
+    public static class ScreenIds
+    {
+        public const string Title = "Title";
+        public const string Waiting = "Waiting";
+        public const string GameplayHud = "GameplayHud";
+        public const string SetupSheet = "SetupSheet";
+        // Batch screens (Phase 2+)
+        public const string Commune = "Commune";
+        public const string SummerMain = "SummerMain";
+        public const string AutumnMain = "AutumnMain";
+        public const string WinterHub = "WinterHub";
+        public const string Victory = "Victory";
+    }
+}
