@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+    <engine:Style src="../USS/AutumnActions.uss" />
+
+    <!-- ============================================================
+         TEMPER YOUR STONE (#32) — modal. Discard a FORGED crucible card to
+         advance a whole STAGE. The final Temper at Gold reaches the Altar
+         (the winning move; trophy callout). Cost is a card, not reagents.
+         NATIVE NOTE: only forged cards are selectable; selecting one arms the
+         button. If at Gold with all cards forged, this hands to Victory.
+         ============================================================ -->
+    <engine:VisualElement name="temper-modal" class="modal modal--temper">
+
+        <engine:VisualElement class="modal__header" style="background-color: rgb(28,20,8); border-bottom-color: rgb(74,58,24);">
+            <engine:VisualElement style="width: 30px; height: 30px; border-radius: var(--radius-md); background-color: var(--arcanum-bg); border-width: 1px; border-color: var(--arcanum-border); align-items: center; justify-content: center; margin-right: 10px;">
+                <engine:Label text="&#xea1b;" class="ti-icon" style="color: var(--arcanum-text);" />
+            </engine:VisualElement>
+            <engine:VisualElement style="flex-grow: 1;">
+                <engine:Label text="Temper your stone" style="font-size: 14px; color: var(--arcanum-text);" />
+                <engine:Label text="discard a forged crucible card to advance a stage" style="font-size: 10px; color: rgb(168,148,106);" />
+            </engine:VisualElement>
+            <engine:Button name="temper-close" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 16px 14px 4px;">
+            <!-- stage track Lead..Altar -->
+            <engine:VisualElement class="stage-track">
+                <engine:VisualElement style="align-items: center;">
+                    <engine:VisualElement class="stage-node" style="background-color: rgb(46,46,46);"><engine:Label text="L" style="color: rgb(136,136,136);" /></engine:VisualElement>
+                    <engine:Label text="lead" class="stage-label" />
+                </engine:VisualElement>
+                <engine:VisualElement class="stage-conn" />
+                <engine:VisualElement style="align-items: center;">
+                    <engine:VisualElement class="stage-node" style="background-color: rgb(168,114,44);"><engine:Label text="B" style="color: rgb(58,36,0);" /></engine:VisualElement>
+                    <engine:Label text="bronze" class="stage-label" />
+                </engine:VisualElement>
+                <engine:VisualElement class="stage-conn" />
+                <engine:VisualElement style="align-items: center;">
+                    <engine:VisualElement class="stage-node" style="background-color: rgb(207,207,207);"><engine:Label text="S" style="color: rgb(58,58,58);" /></engine:VisualElement>
+                    <engine:Label text="silver" class="stage-label" />
+                </engine:VisualElement>
+                <engine:VisualElement class="stage-conn" style="background-color: rgb(138,106,42);" />
+                <engine:VisualElement style="align-items: center;">
+                    <engine:VisualElement class="stage-node stage-node--now" style="background-color: var(--gold); border-color: var(--gold-bright);"><engine:Label text="G" style="color: rgb(90,60,10);" /></engine:VisualElement>
+                    <engine:Label text="gold · now" class="stage-label" style="color: var(--gold);" />
+                </engine:VisualElement>
+                <engine:VisualElement class="stage-conn" style="background-color: var(--gold-deep);" />
+                <engine:VisualElement style="align-items: center;">
+                    <engine:VisualElement class="stage-node stage-node--altar" style="background-color: var(--gold-bright);"><engine:Label text="&#xea69;" class="ti-icon" style="color: rgb(90,60,10); font-size: 13px;" /></engine:VisualElement>
+                    <engine:Label text="ALTAR" class="stage-label" style="color: var(--gold-bright);" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <!-- forged card to discard -->
+            <engine:VisualElement style="background-color: rgb(26,18,40); border-width: 1px; border-color: rgb(74,58,106); border-radius: var(--radius-md); padding: 11px 12px; margin-bottom: 8px;">
+                <engine:Label text="discard to temper — choose a forged card" class="eyebrow" style="color: rgb(138,106,170);" />
+                <engine:VisualElement style="flex-direction: row; align-items: center;">
+                    <engine:Button name="card-d" style="flex-direction: column; align-items: center; background-color: var(--arcanum-bg); border-width: 2px; border-color: rgb(58,42,74); border-radius: var(--radius-sm); padding: 8px 10px; margin-right: 10px;">
+                        <engine:Label text="&#xeae7;" class="ti-icon" style="font-size: 18px; color: rgb(240,192,176);" />
+                        <engine:Label text="Crucible D" style="font-size: 9px; color: var(--arcanum-text); margin-top: 3px;" />
+                        <engine:Label text="forged · ready" style="font-size: 7px; color: var(--ok-text);" />
+                    </engine:Button>
+                    <engine:VisualElement style="flex-grow: 1;">
+                        <engine:Label text="Your 4th and final crucible card." style="font-size: 11px; color: rgb(207,196,216); white-space: normal;" />
+                        <engine:Label text="Discarding it carries your golden stone across the threshold." style="font-size: 10px; color: rgb(154,138,172); white-space: normal;" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="tip tip--ok">
+            <engine:Label text="This is the winning move. All 4 crucible cards are forged and you survived Opposition at Gold — tempering now reaches the Altar and ends the game."
+                          class="tip__text" style="color: rgb(159,196,180);" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 2px 14px 16px;">
+            <engine:Button name="temper-btn" text="Select a forged card to temper" class="btn btn--disabled" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

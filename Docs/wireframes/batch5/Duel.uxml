@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+    <engine:Style src="../USS/Contests.uss" />
+
+    <!-- ============================================================
+         DUEL (#47) — 3-step wizard: target a rival's Spread card, ante your
+         own, roll off. High roll steals.
+         NATIVE NOTE: the three step panels (#step-target / #step-ante /
+         #step-roll) are stacked; show one at a time in C#. The dice animate
+         (sprite-swap or 3D). Establishes the wizard + dual-die pattern that
+         Gambit and Opposition extend.
+         ============================================================ -->
+    <engine:VisualElement name="duel" class="screen" style="background-color: rgb(22,12,12);">
+
+        <engine:VisualElement class="statusbar" style="border-bottom-color: rgb(74,32,32);">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:Label text="Duel · Severin" class="statusbar__title" style="color: rgb(240,176,160); margin-left: 4px;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="wizard-steps">
+            <engine:VisualElement name="wd-1" class="wizard-dot wizard-dot--active" />
+            <engine:VisualElement name="wd-2" class="wizard-dot" />
+            <engine:VisualElement name="wd-3" class="wizard-dot" />
+        </engine:VisualElement>
+
+        <!-- step 1: target -->
+        <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
+            <engine:Label text="choose a card to win from Severin's Spread" class="eyebrow" />
+            <engine:VisualElement class="tray__cards">
+                <engine:VisualElement class="card-chip card-chip--cups"><engine:Label text="Q" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="8" class="card-chip__rank" /></engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Button name="target-next" text="Choose this card" class="btn btn--primary" style="margin-top: 12px;" />
+        </engine:VisualElement>
+
+        <!-- step 2: ante -->
+        <engine:VisualElement name="step-ante" style="display: none; padding: 8px 14px 4px;">
+            <engine:Label text="ante a card of your own" class="eyebrow" />
+            <engine:Label text="safe if you win · returns to the deck if you lose" style="font-size: 10px; color: var(--muted); margin-bottom: 8px; white-space: normal;" />
+            <engine:VisualElement class="tray__cards">
+                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="card-chip card-chip--pentacles"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Button name="ante-next" text="Ante &amp; roll" class="btn btn--primary" style="margin-top: 12px;" />
+        </engine:VisualElement>
+
+        <!-- step 3: roll -->
+        <engine:VisualElement name="step-roll" style="display: none; padding: 8px 14px 4px;">
+            <engine:VisualElement class="dice-row">
+                <engine:VisualElement style="align-items: center;">
+                    <engine:VisualElement name="die-you" class="die-big die-big--you"><engine:Label name="die-you-pip" text="?" class="die-big__pip" style="color: var(--gold);" /></engine:VisualElement>
+                    <engine:Label text="you" style="font-size: 9px; color: var(--muted); margin-top: 4px;" />
+                </engine:VisualElement>
+                <engine:Label text="vs" class="die-vs" />
+                <engine:VisualElement style="align-items: center;">
+                    <engine:VisualElement name="die-foe" class="die-big die-big--foe"><engine:Label name="die-foe-pip" text="?" class="die-big__pip" style="color: rgb(184,154,192);" /></engine:VisualElement>
+                    <engine:Label text="Severin" style="font-size: 9px; color: var(--muted); margin-top: 4px;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Button name="roll-btn" text="Roll the dice" class="btn btn--primary" />
+            <engine:Label name="roll-outcome" text="" style="font-size: 12px; color: var(--ink); -unity-text-align: middle-center; margin-top: 10px; display: none;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

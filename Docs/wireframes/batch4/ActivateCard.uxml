@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+    <engine:Style src="../USS/SummerActions.uss" />
+
+    <!-- ============================================================
+         ACTIVATE A CRUCIBLE CARD (#21)
+         NATIVE NOTE: pick a dormant crucible card (shown by cauldron color),
+         then the formula auto-evaluates against your Spread. Filled slots from
+         matching cards, dashed slots for what's missing. Lighting the cauldron
+         is the CONSEQUENCE shown inline. Build formula slots in C#.
+         ============================================================ -->
+    <engine:VisualElement name="activate" class="screen screen--summer">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:VisualElement style="margin-left: 4px;">
+                    <engine:Label text="Activate a Crucible card" class="statusbar__title" style="color: var(--gold);" />
+                    <engine:Label text="complete a formula to light its cauldron" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 12px 14px 4px;">
+            <engine:Label text="crucible card" class="eyebrow" />
+            <engine:VisualElement class="panel" style="flex-direction: row; align-items: center;">
+                <engine:VisualElement style="width: 34px; height: 48px; border-radius: var(--radius-sm); background-color: rgb(58,26,14); border-width: 1px; border-color: var(--gold-deep); align-items: center; justify-content: center; margin-right: 11px;">
+                    <engine:Label text="C" style="font-size: 14px; color: var(--gold); -unity-font-style: bold;" />
+                </engine:VisualElement>
+                <engine:VisualElement style="flex-grow: 1;">
+                    <engine:Label name="formula-name" text="Crucible C — Sulphur set" style="font-size: 12px; color: var(--ink);" />
+                    <engine:Label name="formula-req" text="needs 3 Wands in your Spread" style="font-size: 10px; color: var(--muted);" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 8px 14px 4px;">
+            <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 7px;">
+                <engine:Label text="formula" class="eyebrow" style="margin-bottom: 0;" />
+                <engine:Label name="formula-progress" text="2 / 3" style="font-size: 11px; color: var(--gold);" />
+            </engine:VisualElement>
+            <engine:VisualElement name="formula-slots" class="formula">
+                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="A" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="formula-slot formula-slot--empty"><engine:Label text="?" style="font-size: 14px; color: rgb(90,74,58);" /></engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- cauldron consequence -->
+        <engine:VisualElement class="tip tip--caution">
+            <engine:Label text="Activating moves the card's coal to the Red cauldron — lighting it. A lit cauldron lets you craft Sulphur."
+                          class="tip__text" style="color: rgb(224,200,120);" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 2px 14px 16px;">
+            <engine:Button name="activate-btn" text="Need 1 more Wand to activate" class="btn btn--disabled" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

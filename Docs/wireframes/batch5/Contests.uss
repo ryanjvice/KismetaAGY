@@ -1,0 +1,85 @@
+/* Kismeta — Contests.uss
+   Shared styling for Trade, Duel, Gambit, Opposition (#26, 47-49) and the
+   Stasis result (#33). Builds on Kismeta.uss + reuses SummerActions stepper. */
+
+/* step-wizard header counter */
+.wizard-steps {
+    flex-direction: row; align-items: center; justify-content: center;
+    padding: 8px 0 4px;
+}
+.wizard-dot {
+    width: 8px; height: 8px; border-radius: 4px;
+    background-color: var(--border-subtle);
+    margin: 0 4px;
+}
+.wizard-dot--active { background-color: var(--gold); }
+.wizard-dot--done { background-color: var(--ok-text); }
+
+/* dual dice */
+.dice-row {
+    flex-direction: row; align-items: center; justify-content: center;
+    margin: 10px 0;
+}
+.die-big {
+    width: 64px; height: 64px; border-radius: var(--radius-md);
+    border-width: 2px;
+    align-items: center; justify-content: center;
+    margin: 0 14px;
+}
+.die-big--you { background-color: rgb(36,20,18); border-color: var(--gold-deep); }
+.die-big--foe { background-color: rgb(22,18,32); border-color: rgb(74,58,106); }
+.die-big__pip { font-size: 30px; -unity-font-style: bold; }
+.die-vs { font-size: 13px; color: var(--muted); }
+
+/* contest party header (you vs rival) */
+.party {
+    flex-direction: row; align-items: center;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 9px 12px;
+}
+.party__dot { width: 18px; height: 18px; border-radius: 9px; border-width: 1px; margin-right: 8px; }
+
+/* alignment tally (Opposition) */
+.tally {
+    flex-direction: row; align-items: center;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 7px 11px;
+    margin-bottom: 5px;
+}
+.tally__pts { font-size: 13px; -unity-font-style: bold; }
+.tally__pts--sign { color: var(--gold-bright); }
+.tally__pts--planet { color: rgb(240,153,123); }
+.tally__pts--element { color: var(--ok-text); }
+.tally__total {
+    background-color: var(--ok-bg);
+    border-color: var(--ok-border);
+}
+
+/* trade trays (give / get) */
+.tray {
+    border-radius: var(--radius-lg);
+    border-width: 1px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+}
+.tray--give { background-color: rgb(28,18,12); border-color: rgb(74,48,24); }
+.tray--get { background-color: rgb(19,32,26); border-color: rgb(43,74,58); }
+.tray__cards { flex-direction: row; flex-wrap: wrap; }
+.tray__cards > .card-chip { margin-right: 5px; margin-bottom: 5px; }
+
+/* resolution banner */
+.verdict-banner {
+    align-items: center;
+    padding: 18px 16px 12px;
+}
+.verdict-banner--win { background-color: rgb(19,37,26); }
+.verdict-banner--loss { background-color: rgb(38,16,22); }
+.verdict-title {
+    font-size: 22px;
+    letter-spacing: 2px;
+    -unity-font-definition: url("project://database/Assets/Fonts/Kismeta-Serif.asset");
+}

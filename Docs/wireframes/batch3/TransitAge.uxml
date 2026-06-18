@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+
+    <!-- ============================================================
+         TRANSIT THE AGE (#44) — the Winter close: key passes, deck
+         reshuffles, then hands to the age-close ceremony. Card Lock (#15)
+         is the Spring twin of this (lock instead of transit); reuse this
+         layout with swapped copy and a green palette.
+         ============================================================ -->
+    <engine:VisualElement name="transit" class="screen screen--winter" style="align-items: center; justify-content: center; padding: 30px 20px;">
+
+        <engine:VisualElement style="width: 64px; height: 64px; border-radius: 32px; background-color: rgb(36,26,14); border-width: 2px; border-color: var(--gold-deep); align-items: center; justify-content: center; margin-bottom: 16px;">
+            <engine:Label text="&#xec8c;" class="ti-icon" style="font-size: 28px; color: var(--gold);" />
+        </engine:VisualElement>
+
+        <engine:Label text="TRANSIT THE AGE" style="font-size: 18px; color: var(--gold); letter-spacing: 2px; -unity-font-definition: url('project://database/Assets/Fonts/Kismeta-Serif.asset');" />
+        <engine:Label text="the key passes · the deck reshuffles" style="font-size: 11px; color: rgb(122,138,154); margin-top: 6px;" />
+
+        <engine:VisualElement class="panel" style="margin-top: 18px; align-self: stretch;">
+            <engine:Label text="what carries into the next age" class="eyebrow" />
+            <engine:Label text="· Lit cauldrons stay lit" style="font-size: 11px; color: rgb(207,196,168); margin-bottom: 3px;" />
+            <engine:Label text="· Astral houses remain raised" style="font-size: 11px; color: rgb(207,196,168); margin-bottom: 3px;" />
+            <engine:Label text="· Active crucible cards persist" style="font-size: 11px; color: rgb(207,196,168); margin-bottom: 3px;" />
+            <engine:Label text="· Your stone holds its forge position" style="font-size: 11px; color: rgb(207,196,168);" />
+        </engine:VisualElement>
+
+        <engine:Label name="wager-flag" text="Your Pisces wager travels with you — it resolves when the next age is cast."
+                      style="font-size: 10px; color: var(--arcanum-text); margin-top: 14px; white-space: normal; -unity-text-align: middle-center;" />
+
+        <engine:Button name="transit-btn" text="Close the age" class="btn btn--primary" style="align-self: stretch; margin-top: 18px;" />
+
+    </engine:VisualElement>
+</engine:UXML>

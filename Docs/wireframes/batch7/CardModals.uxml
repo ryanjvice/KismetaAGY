@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+    <engine:Style src="../USS/EndAndOverlays.uss" />
+
+    <!-- ============================================================
+         CARD MODALS (#53 inspect, #54 adept, #55 fate)
+         Three sibling roots; show one at a time. All present as overlays.
+         NATIVE NOTE: tarot art is a sprite per card; alignment values in the
+         inspect modal are computed vs the current age in C#.
+         ============================================================ -->
+    <engine:VisualElement name="card-modals">
+
+        <!-- ===== #53 Minor Arcana inspect ===== -->
+        <engine:VisualElement name="inspect-modal" class="card-modal card-modal--inspect">
+            <engine:VisualElement class="modal__header" style="background-color: rgb(28,16,16); border-bottom-color: rgb(74,32,32);">
+                <engine:Label text="Card detail" style="flex-grow: 1; font-size: 12px; color: rgb(240,176,160);" />
+                <engine:Button name="inspect-close" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement class="card-hero" style="background-color: rgb(36,16,16);">
+                <engine:VisualElement class="tarot tarot--big card-chip--wands" style="border-color: var(--gold-deep);">
+                    <engine:Label text="&#xee7e;" class="ti-icon" style="font-size: 46px; color: rgb(244,216,192);" />
+                </engine:VisualElement>
+                <engine:Label name="inspect-name" text="Seven of Wands" class="tarot__name" style="color: rgb(244,216,192);" />
+                <engine:Label text="minor arcana · rank 7" style="font-size: 10px; color: rgb(208,144,128);" />
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 13px 16px 4px;">
+                <engine:Label text="aspects" class="eyebrow" />
+                <engine:VisualElement style="flex-direction: row;">
+                    <engine:VisualElement class="aspect-tile">
+                        <engine:Label text="&#xec3a;" class="ti-icon" style="color: rgb(240,153,123);" />
+                        <engine:Label text="Fire" style="font-size: 11px; color: var(--ink);" />
+                        <engine:Label text="element" style="font-size: 8px; color: var(--muted);" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="aspect-tile">
+                        <engine:Label text="&#xeb4c;" class="ti-icon" style="color: rgb(224,138,106);" />
+                        <engine:Label text="Mars" style="font-size: 11px; color: var(--ink);" />
+                        <engine:Label text="planet" style="font-size: 8px; color: var(--muted);" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="aspect-tile">
+                        <engine:Label text="&#xee7e;" class="ti-icon" style="color: rgb(244,200,154);" />
+                        <engine:Label text="Wands" style="font-size: 11px; color: var(--ink);" />
+                        <engine:Label text="suit" style="font-size: 8px; color: var(--muted);" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 10px 16px 4px;">
+                <engine:Label text="alignment this age" class="eyebrow" />
+                <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; border-color: rgb(106,80,32);">
+                    <engine:VisualElement style="flex-grow: 1;">
+                        <engine:Label name="inspect-align-age" text="Age of Scorpio · Mars · Water" style="font-size: 11px; color: var(--ink);" />
+                        <engine:Label name="inspect-align-why" text="its Mars matches the age's planet" style="font-size: 10px; color: var(--muted);" />
+                    </engine:VisualElement>
+                    <engine:Label name="inspect-align-pts" text="+2" style="font-size: 17px; color: rgb(240,153,123); -unity-font-style: bold;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 10px 16px 4px;">
+                <engine:Label text="good for" class="eyebrow" />
+                <engine:VisualElement style="flex-direction: row; flex-wrap: wrap;">
+                    <engine:Label text="crafting Sulphur" style="font-size: 10px; color: rgb(240,176,160); background-color: rgb(42,18,18); border-radius: var(--radius-sm); padding: 4px 9px; margin-right: 6px; margin-bottom: 6px;" />
+                    <engine:Label text="Mars sets" style="font-size: 10px; color: rgb(224,200,120); background-color: rgb(42,35,14); border-radius: var(--radius-sm); padding: 4px 9px; margin-right: 6px; margin-bottom: 6px;" />
+                    <engine:Label text="alignment +2" style="font-size: 10px; color: var(--ok-text); background-color: rgb(19,36,26); border-radius: var(--radius-sm); padding: 4px 9px;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 8px 16px 16px;">
+                <engine:Button name="inspect-done" text="Done" class="btn btn--secondary" style="color: rgb(240,176,160);" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- ===== #54 Adept received ===== -->
+        <engine:VisualElement name="adept-modal" class="card-modal card-modal--adept" style="display: none;">
+            <engine:VisualElement class="card-hero" style="background-color: rgb(46,26,68);">
+                <engine:Label text="you drew an adept" class="eyebrow" style="color: rgb(176,144,208); -unity-text-align: middle-center;" />
+                <engine:VisualElement class="tarot card-modal--adept" style="border-color: rgb(154,122,192);">
+                    <engine:Label text="&#xea8a;" class="ti-icon" style="font-size: 40px; color: rgb(224,200,240);" />
+                </engine:VisualElement>
+                <engine:Label name="adept-name" text="The Hierophant" class="tarot__name" style="color: rgb(224,200,240);" />
+                <engine:Label text="active adept · major arcana" style="font-size: 10px; color: rgb(168,144,192);" />
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 13px 16px 4px;">
+                <engine:VisualElement class="panel" style="border-color: rgb(74,58,106);">
+                    <engine:Label text="its power" class="eyebrow" style="color: rgb(138,106,170);" />
+                    <engine:Label name="adept-power" text="Counts as a Sign alignment toward the Cosmic Age — adding to your Harvest and every Opposition while active."
+                                  style="font-size: 12px; color: var(--ink); white-space: normal;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="tip tip--ok">
+                <engine:Label text="Your Arcanum has 1 open slot — placing The Hierophant fills it. You can hold up to 2 active."
+                              class="tip__text" style="color: rgb(159,196,180);" />
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 4px 16px 16px; flex-direction: row;">
+                <engine:Button name="adept-hold" text="Hold inactive" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
+                <engine:Button name="adept-place" text="Place active" class="btn" style="flex-grow: 1.4; background-color: rgb(46,26,68); border-color: rgb(154,122,192); color: rgb(224,200,240);" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- ===== #55 Fate received ===== -->
+        <engine:VisualElement name="fate-modal" class="card-modal card-modal--fate" style="display: none;">
+            <engine:VisualElement class="card-hero" style="background-color: rgb(22,51,90);">
+                <engine:Label text="the fates intervene" class="eyebrow" style="color: rgb(138,176,224); -unity-text-align: middle-center;" />
+                <engine:VisualElement class="tarot card-modal--fate" style="border-color: rgb(90,138,192);">
+                    <engine:Label text="&#xed1d;" class="ti-icon" style="font-size: 40px; color: rgb(188,216,240);" />
+                </engine:VisualElement>
+                <engine:Label name="fate-name" text="Wheel of Fortune" class="tarot__name" style="color: rgb(188,216,240);" />
+                <engine:Label text="fate · resolves at once" style="font-size: 10px; color: rgb(127,160,196);" />
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 13px 16px 4px;">
+                <engine:Label text="the wheel turns — now" class="eyebrow" style="-unity-text-align: middle-center; color: rgb(127,160,196);" />
+                <engine:VisualElement name="fate-effects">
+                    <engine:VisualElement class="effect-row effect-row--gain">
+                        <engine:VisualElement style="flex-grow: 1;">
+                            <engine:Label text="Fortune favors you" style="font-size: 12px; color: rgb(159,225,203);" />
+                            <engine:Label text="draw 3 cards from the common deck" style="font-size: 10px; color: rgb(138,172,154);" />
+                        </engine:VisualElement>
+                        <engine:Label text="+3" style="font-size: 13px; color: var(--ok-text); -unity-font-style: bold;" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="effect-row effect-row--loss">
+                        <engine:VisualElement style="flex-grow: 1;">
+                            <engine:Label text="but the wheel takes too" style="font-size: 12px; color: rgb(240,168,160);" />
+                            <engine:Label text="a random reagent returns to the supply" style="font-size: 10px; color: rgb(196,144,144);" />
+                        </engine:VisualElement>
+                        <engine:Label text="&#8722;1" style="font-size: 13px; color: var(--danger-text); -unity-font-style: bold;" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="tip" style="background-color: rgb(26,32,48); border-width: 1px; border-color: rgb(58,74,106); margin: 10px 16px;">
+                <engine:Label text="Fates resolve the instant they're drawn — you don't choose when. After resolving, it stays face-up in your Arcanum."
+                              class="tip__text" style="color: rgb(160,180,208);" />
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 4px 16px 16px;">
+                <engine:Button name="fate-accept" text="Accept your fate" class="btn" style="background-color: rgb(22,51,90); border-color: rgb(90,138,192); color: rgb(188,216,240);" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

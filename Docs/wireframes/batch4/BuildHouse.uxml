@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+    <engine:Style src="../USS/SummerActions.uss" />
+
+    <!-- ============================================================
+         BUILD AN ASTRAL HOUSE (#23)
+         NATIVE NOTE: cost is sign-derived ("2 Mars" cards); cost cards are
+         tagged with WHY they qualify. Quickplay halves the cost (1 card) —
+         drive the cost label/slots from the active GameMode in C#.
+         ============================================================ -->
+    <engine:VisualElement name="build-house" class="screen screen--summer">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:VisualElement style="margin-left: 4px;">
+                    <engine:Label text="Build an Astral House" class="statusbar__title" style="color: var(--arcanum-text);" />
+                    <engine:Label text="a permanent sign-aligned engine" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 12px 14px 4px;">
+            <engine:Label text="cost — 2 Mars cards" class="eyebrow" />
+            <engine:VisualElement name="cost-cards" class="formula">
+                <engine:VisualElement class="card-chip card-chip--wands card-chip--selected"><engine:Label text="7" class="card-chip__rank" /><engine:Label text="Mars" class="card-chip__tag" style="background-color: rgb(240,153,123);" /></engine:VisualElement>
+                <engine:VisualElement class="card-chip card-chip--wands card-chip--selected"><engine:Label text="A" class="card-chip__rank" /><engine:Label text="Mars" class="card-chip__tag" style="background-color: rgb(240,153,123);" /></engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 14px 4px;">
+            <engine:Label text="three permanent benefits" class="eyebrow" />
+            <engine:VisualElement class="benefit-row">
+                <engine:Label text="&#xebc7;" class="ti-icon" style="color: var(--ok-text); margin-right: 9px;" />
+                <engine:Label text="A harvest source each Spring" style="font-size: 11px; color: rgb(207,196,184); white-space: normal;" />
+            </engine:VisualElement>
+            <engine:VisualElement class="benefit-row">
+                <engine:Label text="&#xeb4c;" class="ti-icon" style="color: rgb(240,176,160); margin-right: 9px;" />
+                <engine:Label text="An Opposition boost on its sign" style="font-size: 11px; color: rgb(207,196,184); white-space: normal;" />
+            </engine:VisualElement>
+            <engine:VisualElement class="benefit-row">
+                <engine:Label text="&#xeb6c;" class="ti-icon" style="color: var(--arcanum-text); margin-right: 9px;" />
+                <engine:Label text="A permanent cosmic effect" style="font-size: 11px; color: rgb(207,196,184); white-space: normal;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="tip tip--caution">
+            <engine:Label text="Houses are permanent — the cards are spent for good and cannot be reclaimed. Build deliberately."
+                          class="tip__text" style="color: rgb(224,200,120);" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 2px 14px 16px;">
+            <engine:Button name="build-btn" text="Raise the House on Scorpio" class="btn"
+                           style="background-color: var(--arcanum-bg); border-color: rgb(154,122,192); color: var(--arcanum-text);" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

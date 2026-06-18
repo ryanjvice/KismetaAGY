@@ -1,0 +1,97 @@
+/* Kismeta — SpringSteps.uss
+   Shared styling for the Spring step screens (#11-15) and reused by Winter
+   tap-to-swap. Builds on Kismeta.uss tokens. */
+
+/* tap-to-swap: two stacked zones (Spread / Hand) with movable chips */
+.swap-zone {
+    border-radius: var(--radius-lg);
+    border-width: 1px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+}
+.swap-zone--spread {
+    background-color: rgb(19,32,26);
+    border-color: rgb(43,74,58);
+}
+.swap-zone--hand {
+    background-color: rgb(22,16,28);
+    border-color: var(--border-subtle);
+}
+.swap-zone__header {
+    flex-direction: row; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+}
+.swap-zone__cards {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.swap-zone__cards > .card-chip { margin-right: 5px; margin-bottom: 5px; }
+
+/* a card showing its alignment value tag */
+.card-chip__tag {
+    position: absolute;
+    top: -5px; right: -5px;
+    background-color: var(--gold-bright);
+    border-radius: 6px;
+    padding: 0 3px;
+    font-size: 8px;
+    color: rgb(26,14,31);
+    -unity-font-style: bold;
+}
+
+/* live readout row */
+.readout {
+    flex-direction: row; align-items: center; justify-content: space-between;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 9px 12px;
+    margin-bottom: 8px;
+}
+.readout__metric { align-items: center; }
+.readout__value { font-size: 15px; -unity-font-style: bold; }
+.readout__label { font-size: 8px; color: var(--muted); }
+
+/* big roll button / die host */
+.roll-host {
+    align-items: center; justify-content: center;
+    margin: 8px 0 14px;
+}
+.die {
+    width: 70px; height: 70px; border-radius: var(--radius-md);
+    border-width: 2px; border-color: var(--gold-deep);
+    background-color: rgb(36,20,18);
+    align-items: center; justify-content: center;
+}
+
+/* harvest tally row */
+.tally-row {
+    flex-direction: row; align-items: center;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 8px 11px;
+    margin-bottom: 6px;
+}
+.tally-row__pts { font-size: 14px; -unity-font-style: bold; }
+
+/* ---------- Winter wager sign grid (also used by Spring if needed) ---------- */
+.sign-cell {
+    width: 22%;
+    height: 44px;
+    margin-bottom: 8px;
+    border-radius: var(--radius-md);
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    color: var(--muted);
+    font-size: 18px;
+    -unity-text-align: middle-center;
+}
+.sign-cell--selected {
+    background-color: var(--arcanum-bg);
+    border-width: 2px; border-color: rgb(154,122,192);
+    color: var(--arcanum-text);
+}
+
+/* over-limit card flag (Winter card limits) */
+.card-chip--overlimit { border-width: 2px; border-color: rgb(224,160,96); }

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+    <engine:Style src="../USS/SummerActions.uss" />
+
+    <!-- ============================================================
+         CRAFT A REAGENT (#19) -> FORGE RESULT (#20)
+         NATIVE NOTE: pick a reagent (filters the card pool by suit; dormant
+         cauldrons are locked), then tap 3 matching cards. Non-matching cards
+         dim. On forge, swap to the result view (txn strip + stockpile). The
+         result panel below is hidden initially; reveal it in C# after craft.
+         ============================================================ -->
+    <engine:VisualElement name="craft-reagent" class="screen screen--summer">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:VisualElement style="margin-left: 4px;">
+                    <engine:Label text="Craft a reagent" class="statusbar__title" style="color: var(--ok-text);" />
+                    <engine:Label text="3 matching cards → 1 reagent" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- reagent picker -->
+        <engine:VisualElement style="padding: 12px 14px 4px;">
+            <engine:Label text="choose a reagent to forge" class="eyebrow" />
+            <engine:VisualElement name="reagent-picker" style="flex-direction: row; flex-wrap: wrap; justify-content: space-between;">
+                <engine:Button name="pick-sulphur" class="reagent-pick reagent-pick--active">
+                    <engine:VisualElement class="reagent-dot reagent-dot--sulphur" style="margin-right: 6px;" />
+                    <engine:Label text="Sulphur" style="font-size: 11px; color: var(--ink);" />
+                </engine:Button>
+                <engine:Button name="pick-vitriol" class="reagent-pick">
+                    <engine:VisualElement class="reagent-dot reagent-dot--vitriol" style="margin-right: 6px;" />
+                    <engine:Label text="Vitriol" style="font-size: 11px; color: var(--ink);" />
+                </engine:Button>
+                <engine:Button name="pick-aqua" class="reagent-pick reagent-pick--locked">
+                    <engine:VisualElement class="reagent-dot reagent-dot--aqua" style="margin-right: 6px;" />
+                    <engine:Label text="Aqua Regia" style="font-size: 11px; color: var(--muted);" />
+                </engine:Button>
+                <engine:Button name="pick-salt" class="reagent-pick">
+                    <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 6px;" />
+                    <engine:Label text="Salt (any 3)" style="font-size: 11px; color: var(--ink);" />
+                </engine:Button>
+            </engine:VisualElement>
+            <engine:Label name="cauldron-note" text="Sulphur needs the lit Red cauldron — discard 3 Wands."
+                          style="font-size: 10px; color: var(--muted); margin-top: 7px; white-space: normal;" />
+        </engine:VisualElement>
+
+        <!-- card pick (matching suit highlighted; others dim) -->
+        <engine:VisualElement style="padding: 8px 14px 4px;">
+            <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 7px;">
+                <engine:Label text="tap 3 Wands to discard" class="eyebrow" style="margin-bottom: 0;" />
+                <engine:Label name="pick-count" text="2 / 3" style="font-size: 11px; color: var(--ok-text);" />
+            </engine:VisualElement>
+            <engine:VisualElement name="card-pool" class="formula" style="flex-wrap: wrap;">
+                <engine:VisualElement class="card-chip card-chip--wands card-chip--selected"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="card-chip card-chip--wands card-chip--selected"><engine:Label text="A" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="4" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="card-chip card-chip--cups" style="opacity: 0.22;"><engine:Label text="K" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="card-chip card-chip--pentacles" style="opacity: 0.22;"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="card-chip card-chip--swords" style="opacity: 0.22;"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- forge contract -->
+        <engine:VisualElement class="tip tip--ok">
+            <engine:Label name="contract-line" text="3 Wands → 1 Sulphur into the Red cauldron"
+                          class="tip__text" style="color: rgb(159,196,180);" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 2px 14px 16px;">
+            <engine:Button name="forge-btn" text="Forge — needs 1 more card" class="btn btn--disabled" />
+        </engine:VisualElement>
+
+        <!-- ===== RESULT (#20) — hidden until forged ===== -->
+        <engine:VisualElement name="forge-result" style="display: none; padding: 0 14px 16px;">
+            <engine:VisualElement class="txn">
+                <engine:VisualElement style="flex-direction: row;">
+                    <engine:VisualElement class="card-chip card-chip--wands" style="width: 24px; height: 34px;"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--wands" style="width: 24px; height: 34px; margin-left: 3px;"><engine:Label text="A" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--wands" style="width: 24px; height: 34px; margin-left: 3px;"><engine:Label text="4" class="card-chip__rank" /></engine:VisualElement>
+                </engine:VisualElement>
+                <engine:Label text="&#8594;" class="txn__arrow" />
+                <engine:VisualElement style="align-items: center;">
+                    <engine:VisualElement class="reagent-dot reagent-dot--sulphur" style="width: 26px; height: 26px;" />
+                    <engine:Label text="Sulphur" style="font-size: 9px; color: var(--muted); margin-top: 3px;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Button name="result-done-btn" text="Back to the workshop" class="btn btn--primary" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

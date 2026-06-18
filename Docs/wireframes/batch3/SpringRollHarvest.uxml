@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+    <engine:Style src="../USS/SpringSteps.uss" />
+
+    <!-- ============================================================
+         ROLL YOUR SIGN (#11) + HARVEST TALLY (#12)
+         NATIVE NOTE: the zodiac wheel + landing meeple was SVG. Animate
+         #wheel-host (sprite wheel + meeple rotated to the rolled segment,
+         or Painter2D). After it settles, reveal the harvest tally below.
+         ============================================================ -->
+    <engine:VisualElement name="spring-roll" class="screen screen--spring">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:VisualElement class="statusbar__sigil" style="border-color: var(--spring-accent);">
+                    <engine:Label text="&#xeb2f;" class="ti-icon" style="color: var(--spring-accent);" />
+                </engine:VisualElement>
+                <engine:VisualElement>
+                    <engine:Label text="Spring · roll &amp; harvest" class="statusbar__title" style="color: var(--spring-accent);" />
+                    <engine:Label text="step 2–3 of 5" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- wheel -->
+        <engine:VisualElement class="stage" style="background-color: rgb(22,40,28); border-color: rgb(43,74,50); align-items: center;">
+            <engine:Label text="determine your sign" class="eyebrow" style="color: rgb(122,154,130);" />
+            <engine:VisualElement name="wheel-host" class="roll-host" style="width: 150px; height: 150px;">
+                <engine:Label text="[ wheel ]" style="font-size: 11px; color: rgb(122,154,130);" />
+            </engine:VisualElement>
+            <engine:Label name="rolled-sign" text="Scorpio" style="font-size: 18px; color: var(--gold-bright); -unity-font-definition: url('project://database/Assets/Fonts/Kismeta-Serif.asset');" />
+            <engine:Label name="sign-match" text="matches the age · +3 alignment" style="font-size: 10px; color: rgb(154,172,146);" />
+        </engine:VisualElement>
+
+        <!-- harvest tally -->
+        <engine:VisualElement style="padding: 8px 14px 4px;">
+            <engine:Label text="your harvest" class="eyebrow" style="color: rgb(106,138,114);" />
+            <engine:VisualElement name="tally-list">
+                <engine:VisualElement class="tally-row">
+                    <engine:Label text="base draw" style="flex-grow: 1; font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="+3" class="tally-row__pts" style="color: var(--muted);" />
+                </engine:VisualElement>
+                <engine:VisualElement class="tally-row">
+                    <engine:Label text="sign alignment bonus" style="flex-grow: 1; font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="+6" class="tally-row__pts" style="color: var(--gold-bright);" />
+                </engine:VisualElement>
+                <engine:VisualElement class="tally-row">
+                    <engine:Label text="Agekeeper's Boon" style="flex-grow: 1; font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="+2" class="tally-row__pts" style="color: var(--ok-text);" />
+                </engine:VisualElement>
+                <engine:VisualElement class="tally-row" style="background-color: var(--ok-bg); border-color: var(--ok-border);">
+                    <engine:Label text="total harvested" style="flex-grow: 1; font-size: 12px; color: var(--ink);" />
+                    <engine:Label name="harvest-total" text="11" class="tally-row__pts" style="color: var(--ok-text); font-size: 16px;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 14px 16px;">
+            <engine:Button name="roll-btn" text="Roll for your sign" class="btn btn--primary" style="color: var(--spring-accent);" />
+            <engine:Button name="continue-btn" text="Gather harvest · continue" class="btn"
+                           style="background-color: var(--ok-bg); border-color: var(--ok-border); color: var(--spring-accent); margin-top: 8px; display: none;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>
