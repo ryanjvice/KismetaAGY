@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/AutumnActions.uss" />
+
+    <engine:VisualElement name="end-autumn" class="screen screen--autumn">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:VisualElement class="statusbar__sigil" style="background-color: rgb(42,21,14); border-color: rgb(224, 138, 74);">
+                    <engine:Label text="&#xed5a;" class="ti-icon" style="color: rgb(224, 138, 74);" />
+                </engine:VisualElement>
+                <engine:VisualElement>
+                    <engine:Label text="End your Autumn?" class="statusbar__title" style="color: rgb(224, 138, 74);" />
+                    <engine:Label text="pass the forge and move to Winter" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Button name="close-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 13px 14px 4px;">
+            <engine:Label text="your autumn at the forge" class="eyebrow" />
+            <engine:VisualElement name="recap-list" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 14px 4px;">
+            <engine:Label text="still available this autumn" class="eyebrow" />
+            <engine:VisualElement class="tip tip--caution" style="margin: 0; flex-direction: column; align-items: stretch;" />
+            <engine:Label text="passing forfeits any remaining Autumn actions"
+                          style="font-size: 9px; color: rgb(122,106,74); -unity-text-align: middle-center; margin-top: 7px;" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 14px 16px; flex-direction: row;">
+            <engine:Button name="keep-btn" text="Keep forging" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
+            <engine:Button name="end-btn" text="End Autumn · to Winter" class="btn btn--primary" style="flex-grow: 1.3; color: rgb(224, 138, 74);" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

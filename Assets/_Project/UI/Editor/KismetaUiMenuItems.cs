@@ -45,6 +45,11 @@ namespace Kismeta.UI.Editor
         private const string DuelPath = "Assets/_Project/UI/UXML/batch5/Duel.uxml";
         private const string GambitPath = "Assets/_Project/UI/UXML/batch5/Gambit.uxml";
         private const string OppositionPath = "Assets/_Project/UI/UXML/batch5/Opposition.uxml";
+        private const string FireStonePath = "Assets/_Project/UI/UXML/batch6/FireStone.uxml";
+        private const string TemperStonePath = "Assets/_Project/UI/UXML/batch6/TemperStone.uxml";
+        private const string ManageCardsPath = "Assets/_Project/UI/UXML/batch6/ManageCards.uxml";
+        private const string LeaveStasisPath = "Assets/_Project/UI/UXML/batch6/LeaveStasis.uxml";
+        private const string EndAutumnPath = "Assets/_Project/UI/UXML/batch6/EndAutumn.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
@@ -140,6 +145,12 @@ namespace Kismeta.UI.Editor
             EnsureComponent<DuelController>(bootstrap.gameObject);
             EnsureComponent<GambitController>(bootstrap.gameObject);
             EnsureComponent<OppositionController>(bootstrap.gameObject);
+            EnsureComponent<AutumnOverlayHost>(bootstrap.gameObject);
+            EnsureComponent<FireStoneController>(bootstrap.gameObject);
+            EnsureComponent<TemperStoneController>(bootstrap.gameObject);
+            EnsureComponent<ManageCardsController>(bootstrap.gameObject);
+            EnsureComponent<LeaveStasisController>(bootstrap.gameObject);
+            EnsureComponent<EndAutumnController>(bootstrap.gameObject);
 
             var layout = bootstrap.GetComponent<ViewportLayout>();
             var layoutSo = new SerializedObject(layout);
@@ -197,6 +208,11 @@ namespace Kismeta.UI.Editor
             var duel = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(DuelPath);
             var gambit = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GambitPath);
             var opposition = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(OppositionPath);
+            var fireStone = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FireStonePath);
+            var temperStone = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TemperStonePath);
+            var manageCards = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ManageCardsPath);
+            var leaveStasis = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(LeaveStasisPath);
+            var endAutumn = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(EndAutumnPath);
 
             var so = new SerializedObject(bootstrap);
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
@@ -234,6 +250,11 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_duel").objectReferenceValue = duel;
             so.FindProperty("_gambit").objectReferenceValue = gambit;
             so.FindProperty("_opposition").objectReferenceValue = opposition;
+            so.FindProperty("_fireStone").objectReferenceValue = fireStone;
+            so.FindProperty("_temperStone").objectReferenceValue = temperStone;
+            so.FindProperty("_manageCards").objectReferenceValue = manageCards;
+            so.FindProperty("_leaveStasis").objectReferenceValue = leaveStasis;
+            so.FindProperty("_endAutumn").objectReferenceValue = endAutumn;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -304,6 +325,12 @@ namespace Kismeta.UI.Editor
             host.AddComponent<DuelController>();
             host.AddComponent<GambitController>();
             host.AddComponent<OppositionController>();
+            host.AddComponent<AutumnOverlayHost>();
+            host.AddComponent<FireStoneController>();
+            host.AddComponent<TemperStoneController>();
+            host.AddComponent<ManageCardsController>();
+            host.AddComponent<LeaveStasisController>();
+            host.AddComponent<EndAutumnController>();
             host.AddComponent<UiResponsiveTest>();
 
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);

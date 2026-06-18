@@ -192,3 +192,29 @@ Autumn Oppose button ──► ContestOverlayHost (Opposition)
 **Autumn:** Oppose → fee → tally → Stasis result panel on win.
 
 Overlays dismiss automatically when it is no longer the human player's turn (`DismissIfNotHumanTurn`).
+
+## Phase 8 — Batch 6: Autumn forge actions
+
+Fire, Temper, Manage Cards, Leave Stasis, and End Autumn confirm are full-screen modals managed by `AutumnOverlayHost` on `GameBootstrap`. Opposition remains on `ContestOverlayHost` (Batch 5).
+
+```
+AutumnMain action bar ──► AutumnOverlayHost (Fire / Temper / Cards / Leave Stasis / End Autumn)
+Autumn Oppose button  ──► ContestOverlayHost (Opposition)
+                              │
+                              ▼
+                        CommandBridge.TrySubmit ──► HotSeatController
+```
+
+| Screen | Command | Notes |
+|--------|---------|-------|
+| Fire | `FireStoneCommand` | Mantle + Active slot; spread alignment via `AlchemicalValidator`; fixed `AlchemicalCost` |
+| Temper | `TemperCommand` | Eligible Fired slot from prior round; winning CTA when next position is Altar |
+| Manage cards | _(read-only)_ | Crucible pills, spread, hand, reagents |
+| Leave Stasis | `LeaveStasisCommand` | 2 Salt when forge spot open; clash via `StasisOppositionEvent` |
+| End Autumn | `PassCrucibleActionCommand` | Pass opens confirm modal (like Summer End Summer) |
+
+### Autumn play-test path
+
+Reach Autumn → **Fire** (mantle + alignment + cost) → **Temper** (after full forging round) → **Oppose** (Batch 5) → **Cards** review → enter **Stasis** (via opposition loss) → **Leave Stasis** (2 Salt) → **Pass** → End Autumn confirm → Winter intro.
+
+Victory coronation on Altar temper is deferred to Batch 7; `session.IsOver` dismisses overlays and the main scene shows the game-over hint until the Victory screen exists.

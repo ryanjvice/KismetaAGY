@@ -29,13 +29,13 @@
             <!-- position track 5 -> 6 -> (7) -->
             <engine:VisualElement class="track">
                 <engine:VisualElement style="align-items: center;">
-                    <engine:VisualElement class="track-node track-node--now"><engine:Label text="5" /></engine:VisualElement>
-                    <engine:Label text="Silver · now" style="font-size: 8px; color: rgb(184, 154, 110); margin-top: 3px;" />
+                    <engine:VisualElement class="track-node track-node--now"><engine:Label name="track-now-val" text="5" /></engine:VisualElement>
+                    <engine:Label name="track-now-label" text="now" style="font-size: 8px; color: rgb(184, 154, 110); margin-top: 3px;" />
                 </engine:VisualElement>
                 <engine:VisualElement class="track-arrow"><engine:VisualElement class="track-conn" /></engine:VisualElement>
                 <engine:VisualElement style="align-items: center;">
-                    <engine:VisualElement class="track-node track-node--target"><engine:Label text="6" /></engine:VisualElement>
-                    <engine:Label text="target" style="font-size: 8px; color: rgb(232, 185, 74); margin-top: 3px;" />
+                    <engine:VisualElement class="track-node track-node--target"><engine:Label name="track-target-val" text="6" /></engine:VisualElement>
+                    <engine:Label name="track-target-label" text="target" style="font-size: 8px; color: rgb(232, 185, 74); margin-top: 3px;" />
                 </engine:VisualElement>
                 <engine:VisualElement class="track-arrow" style="opacity: 0.4;"><engine:Label text="&#8594;" style="color: rgb(184, 154, 110);" /></engine:VisualElement>
                 <engine:VisualElement style="align-items: center; opacity: 0.5;">
@@ -44,37 +44,15 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:Label text="cost to advance · 2 reagents" class="eyebrow" style="color: rgb(154,90,58);" />
-            <engine:VisualElement class="pay-pill">
-                <engine:VisualElement style="flex-direction: row; align-items: center;">
-                    <engine:Label text="paying" style="font-size: 10px; color: rgb(184,148,106); margin-right: 8px;" />
-                    <engine:VisualElement name="pay-slots" style="flex-direction: row;">
-                        <engine:VisualElement class="pay-slot pay-slot--empty" />
-                        <engine:VisualElement class="pay-slot pay-slot--empty" />
-                    </engine:VisualElement>
-                </engine:VisualElement>
-                <engine:Label name="pay-count" text="0 / 2" style="font-size: 11px; color: rgb(184,148,106);" />
-            </engine:VisualElement>
+            <engine:Label text="alchemical alignment" class="eyebrow" style="color: rgb(154,90,58);" />
+            <engine:Label name="align-formula" text="" style="font-size: 10px; color: rgb(184,148,106); margin-bottom: 6px; white-space: normal;" />
+            <engine:VisualElement name="align-cards" class="tray__cards" style="margin-bottom: 8px;" />
 
-            <engine:Label text="tap reagents to spend" style="font-size: 9px; color: rgb(106,90,74); margin-bottom: 6px;" />
-            <engine:VisualElement name="supply">
-                <engine:VisualElement class="stepper-row">
-                    <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 9px;" />
-                    <engine:Label text="Salt" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="have 3" style="font-size: 9px; color: rgb(122,90,74); margin-right: 8px;" />
-                    <engine:Button name="fire-salt-minus" class="stepper-btn stepper-btn--minus"><engine:Label text="&#8722;" style="color: rgb(212,160,122);" /></engine:Button>
-                    <engine:Label name="fire-salt-val" text="0" class="stepper-value" style="color: rgb(184, 154, 110);" />
-                    <engine:Button name="fire-salt-plus" class="stepper-btn stepper-btn--plus"><engine:Label text="+" style="color: rgb(232, 185, 74);" /></engine:Button>
-                </engine:VisualElement>
-                <engine:VisualElement class="stepper-row">
-                    <engine:VisualElement class="reagent-dot reagent-dot--vitriol" style="margin-right: 9px;" />
-                    <engine:Label text="Vitriol" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="have 2" style="font-size: 9px; color: rgb(122,90,74); margin-right: 8px;" />
-                    <engine:Button name="fire-vitriol-minus" class="stepper-btn stepper-btn--minus"><engine:Label text="&#8722;" style="color: rgb(212,160,122);" /></engine:Button>
-                    <engine:Label name="fire-vitriol-val" text="0" class="stepper-value" style="color: rgb(184, 154, 110);" />
-                    <engine:Button name="fire-vitriol-plus" class="stepper-btn stepper-btn--plus"><engine:Label text="+" style="color: rgb(232, 185, 74);" /></engine:Button>
-                </engine:VisualElement>
-            </engine:VisualElement>
+            <engine:Label text="crucible slot" class="eyebrow" style="color: rgb(154,90,58);" />
+            <engine:VisualElement name="crucible-slots" style="flex-direction: row; flex-wrap: wrap; margin-bottom: 8px;" />
+
+            <engine:Label name="cost-summary" text="Alchemical cost" class="eyebrow" style="color: rgb(154,90,58);" />
+            <engine:VisualElement name="supply" style="display: none;" />
         </engine:VisualElement>
 
         <engine:VisualElement class="tip tip--danger">

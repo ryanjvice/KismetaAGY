@@ -72,6 +72,11 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _duel;
         [SerializeField] private VisualTreeAsset _gambit;
         [SerializeField] private VisualTreeAsset _opposition;
+        [SerializeField] private VisualTreeAsset _fireStone;
+        [SerializeField] private VisualTreeAsset _temperStone;
+        [SerializeField] private VisualTreeAsset _manageCards;
+        [SerializeField] private VisualTreeAsset _leaveStasis;
+        [SerializeField] private VisualTreeAsset _endAutumn;
 
         private CardDatabase? _db;
         private CrucibleCodexDatabase? _codexDb;
@@ -176,6 +181,12 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<DuelController>();
             EnsureController<GambitController>();
             EnsureController<OppositionController>();
+            EnsureController<AutumnOverlayHost>();
+            EnsureController<FireStoneController>();
+            EnsureController<TemperStoneController>();
+            EnsureController<ManageCardsController>();
+            EnsureController<LeaveStasisController>();
+            EnsureController<EndAutumnController>();
 
             router.RefreshControllers();
 
@@ -186,6 +197,10 @@ namespace Kismeta.Game.Bootstrap
 
             var contestOverlays = GetComponent<ContestOverlayHost>();
             contestOverlays?.Configure(_trade, _duel, _gambit, _opposition);
+
+            var autumnOverlays = GetComponent<AutumnOverlayHost>();
+            autumnOverlays?.Configure(
+                _fireStone, _temperStone, _manageCards, _leaveStasis, _endAutumn);
 
             if (_titleScreen != null && _gameplayHud != null && _waitingHud != null)
             {

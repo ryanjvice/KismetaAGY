@@ -35,61 +35,27 @@
         <!-- crucible card states -->
         <engine:VisualElement style="padding: 8px 14px 4px;">
             <engine:Label text="crucible cards" class="eyebrow" />
-            <engine:VisualElement style="flex-direction: row;">
-                <engine:VisualElement class="crucible-pill crucible-pill--forged">
-                    <engine:Label text="&#xeb81;" class="ti-icon" style="color: rgb(127, 196, 168);" />
-                    <engine:Label text="A" style="font-size: 10px; color: rgb(243, 233, 210); margin-top: 2px;" />
-                    <engine:Label text="forged" style="font-size: 7px; color: rgb(127, 196, 168);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="crucible-pill crucible-pill--ready">
-                    <engine:Label text="&#xea1b;" class="ti-icon" style="color: rgb(232, 185, 74);" />
-                    <engine:Label text="C" style="font-size: 10px; color: rgb(243, 233, 210); margin-top: 2px;" />
-                    <engine:Label text="temper-ready" style="font-size: 7px; color: rgb(232, 185, 74);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="crucible-pill crucible-pill--active">
-                    <engine:Label text="&#xec3a;" class="ti-icon" style="color: rgb(154,122,106);" />
-                    <engine:Label text="B" style="font-size: 10px; color: rgb(207,196,168); margin-top: 2px;" />
-                    <engine:Label text="active" style="font-size: 7px; color: rgb(184, 154, 110);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="crucible-pill crucible-pill--dormant">
-                    <engine:Label text="&#xeae2;" class="ti-icon" style="color: rgb(106,90,74);" />
-                    <engine:Label text="D" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 2px;" />
-                    <engine:Label text="dormant" style="font-size: 7px; color: rgb(106,90,74);" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-            <engine:Label text="Crucible C is forged — you can Temper to advance a stage this Autumn."
+            <engine:VisualElement name="crucible-pills" style="flex-direction: row; flex-wrap: wrap;" />
+            <engine:Label name="context-note" text=""
                           style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 6px; white-space: normal;" />
         </engine:VisualElement>
 
         <!-- spread (aligned dotted) -->
         <engine:VisualElement style="padding: 10px 14px 4px;">
             <engine:Label text="Spread · visible · duel-exposed" class="eyebrow" style="color: rgb(244, 211, 94);" />
-            <engine:VisualElement name="spread-strip" style="flex-direction: row; flex-wrap: wrap;">
-                <engine:VisualElement class="card-chip card-chip--wands card-chip--selected" style="margin-right: 5px;"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--cups card-chip--selected" style="margin-right: 5px;"><engine:Label text="K" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--pentacles" style="margin-right: 5px;"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--wands card-chip--selected"><engine:Label text="A" class="card-chip__rank" /></engine:VisualElement>
-            </engine:VisualElement>
+            <engine:VisualElement name="spread-strip" style="flex-direction: row; flex-wrap: wrap;" />
         </engine:VisualElement>
 
         <!-- hand (yours to see in Autumn) -->
         <engine:VisualElement style="padding: 8px 14px 4px;">
             <engine:Label text="Hand · hidden reserve" class="eyebrow" style="color: rgb(127, 196, 168);" />
-            <engine:VisualElement name="hand-strip" style="flex-direction: row; flex-wrap: wrap;">
-                <engine:VisualElement class="card-chip card-chip--swords" style="margin-right: 5px;"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--pentacles" style="margin-right: 5px;"><engine:Label text="J" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--cups" style="margin-right: 5px;"><engine:Label text="2" class="card-chip__rank" /></engine:VisualElement>
-            </engine:VisualElement>
+            <engine:VisualElement name="hand-strip" style="flex-direction: row; flex-wrap: wrap;" />
         </engine:VisualElement>
 
         <!-- reagents -->
         <engine:VisualElement style="padding: 8px 14px 16px;">
             <engine:Label text="reagents" class="eyebrow" />
-            <engine:VisualElement class="panel" style="flex-direction: row; align-items: center;">
-                <engine:VisualElement style="flex-direction: row; align-items: center; margin-right: 14px;"><engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 4px;" /><engine:Label text="3" style="font-size: 11px; color: rgb(243, 233, 210);" /></engine:VisualElement>
-                <engine:VisualElement style="flex-direction: row; align-items: center; margin-right: 14px;"><engine:VisualElement class="reagent-dot reagent-dot--vitriol" style="margin-right: 4px;" /><engine:Label text="2" style="font-size: 11px; color: rgb(243, 233, 210);" /></engine:VisualElement>
-                <engine:VisualElement style="flex-direction: row; align-items: center;"><engine:VisualElement class="reagent-dot reagent-dot--sulphur" style="margin-right: 4px;" /><engine:Label text="1" style="font-size: 11px; color: rgb(243, 233, 210);" /></engine:VisualElement>
-            </engine:VisualElement>
+            <engine:VisualElement name="reagent-panel" class="panel" style="flex-direction: row; align-items: center;" />
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 0 14px 16px;">

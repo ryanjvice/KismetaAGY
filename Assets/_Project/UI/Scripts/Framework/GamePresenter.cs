@@ -25,6 +25,7 @@ namespace Kismeta.UI
         private ViewportLayout _layout;
         private SummerOverlayHost? _summerOverlays;
         private ContestOverlayHost? _contestOverlays;
+        private AutumnOverlayHost? _autumnOverlays;
         private readonly CommandBridge _bridge = new();
         private GameSession? _session;
         private GameLoop? _loop;
@@ -48,6 +49,7 @@ namespace Kismeta.UI
             _layout = GetComponent<ViewportLayout>();
             _summerOverlays = GetComponent<SummerOverlayHost>();
             _contestOverlays = GetComponent<ContestOverlayHost>();
+            _autumnOverlays = GetComponent<AutumnOverlayHost>();
         }
 
         /// <summary>Wire title menu and show the title screen before a session exists.</summary>
@@ -78,6 +80,7 @@ namespace Kismeta.UI
             WireStepScreens();
             WireSummerNavigation();
             WireContestNavigation();
+            WireAutumnNavigation();
         }
 
         public void Unbind()
@@ -271,6 +274,7 @@ namespace Kismeta.UI
             {
                 _summerOverlays?.DismissIfNotHumanTurn();
                 _contestOverlays?.DismissIfNotHumanTurn();
+                _autumnOverlays?.DismissIfNotHumanTurn();
                 RouteIfNeeded(ScreenIds.Waiting);
                 RefreshActiveScreen();
                 return;
@@ -337,6 +341,20 @@ namespace Kismeta.UI
                 autumn.OnOppose = () => _contestOverlays.ShowOpposition();
         }
 
+        private void WireAutumnNavigation()
+        {
+            if (_autumnOverlays == null) return;
+
+            var autumn = _router.GetController<AutumnSceneController>(ScreenIds.AutumnMain);
+            if (autumn == null) return;
+
+            autumn.OnFire = () => _autumnOverlays.ShowFire();
+            autumn.OnTemper = () => _autumnOverlays.ShowTemper();
+            autumn.OnManageCards = () => _autumnOverlays.ShowManageCards();
+            autumn.OnLeaveStasis = () => _autumnOverlays.ShowLeaveStasis();
+            autumn.OnPass = () => _autumnOverlays.ShowEndAutumn();
+        }
+
         private static string MapCeremonyScreen(CeremonyStep step) => step switch
         {
             CeremonyStep.RoundOpen => ScreenIds.RoundOpen,
@@ -399,6 +417,7 @@ namespace Kismeta.UI
             else if (controller is AutumnSceneController autumn)
             {
                 autumn.BindState(_session, _loop, _bridge);
+                _autumnOverlays?.BindState(_session, _bridge);
                 _contestOverlays?.BindState(_session, _bridge);
             }
             else if (controller is WinterHubController winter)
