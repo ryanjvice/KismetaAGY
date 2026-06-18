@@ -85,13 +85,15 @@ namespace Kismeta.UI
 
             StretchToContentLayer(content);
             content.Clear();
-            var instance = screen.Instantiate();
-            instance.AddToClassList("screen-host");
-            StretchToContentLayer(instance);
-            var screenRoot = instance.Q(className: "screen");
+            var host = new VisualElement();
+            host.AddToClassList("kismeta-root");
+            host.AddToClassList("screen-host");
+            StretchToContentLayer(host);
+            content.Add(host);
+            screen.CloneTree(host);
+            var screenRoot = host.Q(className: "screen");
             if (screenRoot != null)
                 StretchToContentLayer(screenRoot);
-            content.Add(instance);
 
             var layoutRoot = GetLayoutRoot();
             if (layoutRoot != null)

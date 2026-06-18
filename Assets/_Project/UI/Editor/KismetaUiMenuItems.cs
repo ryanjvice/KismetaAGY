@@ -19,6 +19,10 @@ namespace Kismeta.UI.Editor
         private const string ResumeScreenPath = "Assets/_Project/UI/UXML/batch1/ResumeScreen.uxml";
         private const string CodexScreenPath = "Assets/_Project/UI/UXML/batch1/CodexScreen.uxml";
         private const string AgekeeperContestPath = "Assets/_Project/UI/UXML/batch1/AgekeeperContest.uxml";
+        private const string SpringHubPath = "Assets/_Project/UI/UXML/main/SpringHub.uxml";
+        private const string SummerMainPath = "Assets/_Project/UI/UXML/main/SummerMainScene.uxml";
+        private const string AutumnMainPath = "Assets/_Project/UI/UXML/main/AutumnMainScene.uxml";
+        private const string WinterHubPath = "Assets/_Project/UI/UXML/main/WinterHub.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
@@ -87,6 +91,10 @@ namespace Kismeta.UI.Editor
             EnsureComponent<ResumeScreenController>(bootstrap.gameObject);
             EnsureComponent<CodexScreenController>(bootstrap.gameObject);
             EnsureComponent<AgekeeperContestController>(bootstrap.gameObject);
+            EnsureComponent<SpringHubController>(bootstrap.gameObject);
+            EnsureComponent<SummerSceneController>(bootstrap.gameObject);
+            EnsureComponent<AutumnSceneController>(bootstrap.gameObject);
+            EnsureComponent<WinterHubController>(bootstrap.gameObject);
 
             var layout = bootstrap.GetComponent<ViewportLayout>();
             var layoutSo = new SerializedObject(layout);
@@ -119,6 +127,10 @@ namespace Kismeta.UI.Editor
             var resume = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResumeScreenPath);
             var codex = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CodexScreenPath);
             var agekeeperContest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgekeeperContestPath);
+            var springHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHubPath);
+            var summerMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerMainPath);
+            var autumnMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnMainPath);
+            var winterHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterHubPath);
 
             var so = new SerializedObject(bootstrap);
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
@@ -131,6 +143,10 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_resumeScreen").objectReferenceValue = resume;
             so.FindProperty("_codexScreen").objectReferenceValue = codex;
             so.FindProperty("_agekeeperContest").objectReferenceValue = agekeeperContest;
+            so.FindProperty("_springHub").objectReferenceValue = springHub;
+            so.FindProperty("_summerMain").objectReferenceValue = summerMain;
+            so.FindProperty("_autumnMain").objectReferenceValue = autumnMain;
+            so.FindProperty("_winterHub").objectReferenceValue = winterHub;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -172,6 +188,10 @@ namespace Kismeta.UI.Editor
             host.AddComponent<ResumeScreenController>();
             host.AddComponent<CodexScreenController>();
             host.AddComponent<AgekeeperContestController>();
+            host.AddComponent<SpringHubController>();
+            host.AddComponent<SummerSceneController>();
+            host.AddComponent<AutumnSceneController>();
+            host.AddComponent<WinterHubController>();
             host.AddComponent<UiResponsiveTest>();
 
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
@@ -186,6 +206,10 @@ namespace Kismeta.UI.Editor
             var resumeScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResumeScreenPath);
             var codexScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CodexScreenPath);
             var agekeeperContest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgekeeperContestPath);
+            var springHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHubPath);
+            var summerMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerMainPath);
+            var autumnMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnMainPath);
+            var winterHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterHubPath);
             var gameplayHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameplayHudPath);
             var waitingHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
             var cardModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
@@ -193,7 +217,8 @@ namespace Kismeta.UI.Editor
             var router = host.GetComponent<ScreenRouter>();
             router.ConfigureScreens(
                 titleScreen, gameplayHud, waitingHud, setupSheet,
-                joinScreen, resumeScreen, codexScreen, agekeeperContest);
+                joinScreen, resumeScreen, codexScreen, agekeeperContest,
+                springHub, summerMain, autumnMain, winterHub);
 
             var doc = host.GetComponent<UIDocument>();
             doc.panelSettings = panelSettings;

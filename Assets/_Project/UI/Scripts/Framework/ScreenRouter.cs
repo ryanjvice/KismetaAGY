@@ -55,7 +55,11 @@ namespace Kismeta.UI
             VisualTreeAsset? join = null,
             VisualTreeAsset? resume = null,
             VisualTreeAsset? codex = null,
-            VisualTreeAsset? agekeeperContest = null)
+            VisualTreeAsset? agekeeperContest = null,
+            VisualTreeAsset? springHub = null,
+            VisualTreeAsset? summerMain = null,
+            VisualTreeAsset? autumnMain = null,
+            VisualTreeAsset? winterHub = null)
         {
             var screens = new List<ScreenAsset>
             {
@@ -71,6 +75,14 @@ namespace Kismeta.UI
                 screens.Add(new ScreenAsset { Id = ScreenIds.Codex, Uxml = codex });
             if (agekeeperContest != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.AgekeeperContest, Uxml = agekeeperContest });
+            if (springHub != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.SpringHub, Uxml = springHub });
+            if (summerMain != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.SummerMain, Uxml = summerMain });
+            if (autumnMain != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.AutumnMain, Uxml = autumnMain });
+            if (winterHub != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.WinterHub, Uxml = winterHub });
 
             _screens = screens.ToArray();
             _setupSheet = setupSheet;

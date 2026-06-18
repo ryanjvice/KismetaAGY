@@ -47,6 +47,10 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _resumeScreen;
         [SerializeField] private VisualTreeAsset _codexScreen;
         [SerializeField] private VisualTreeAsset _agekeeperContest;
+        [SerializeField] private VisualTreeAsset _springHub;
+        [SerializeField] private VisualTreeAsset _summerMain;
+        [SerializeField] private VisualTreeAsset _autumnMain;
+        [SerializeField] private VisualTreeAsset _winterHub;
 
         private CardDatabase? _db;
         private CrucibleCodexDatabase? _codexDb;
@@ -123,6 +127,10 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<ResumeScreenController>();
             EnsureController<CodexScreenController>();
             EnsureController<AgekeeperContestController>();
+            EnsureController<SpringHubController>();
+            EnsureController<SummerSceneController>();
+            EnsureController<AutumnSceneController>();
+            EnsureController<WinterHubController>();
 
             router.RefreshControllers();
 
@@ -136,7 +144,8 @@ namespace Kismeta.Game.Bootstrap
 
                 router.ConfigureScreens(
                     _titleScreen, _gameplayHud, _waitingHud, _setupSheet,
-                    _joinScreen, _resumeScreen, _codexScreen, _agekeeperContest);
+                    _joinScreen, _resumeScreen, _codexScreen, _agekeeperContest,
+                    _springHub, _summerMain, _autumnMain, _winterHub);
                 layout.RunWhenReady(ShowTitleScreen);
             }
             else

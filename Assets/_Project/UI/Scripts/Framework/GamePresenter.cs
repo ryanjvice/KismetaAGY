@@ -1,4 +1,3 @@
-using System;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
@@ -91,7 +90,7 @@ namespace Kismeta.UI
 
             if (_session.IsOver)
             {
-                RouteIfNeeded(ScreenIds.GameplayHud);
+                RouteIfNeeded(ResolveSeasonMainScreen(_session.Phase.CurrentSeason));
                 RefreshActiveScreen();
                 return;
             }
@@ -204,7 +203,7 @@ namespace Kismeta.UI
         {
             if (_session!.IsOver)
             {
-                RouteIfNeeded(ScreenIds.GameplayHud);
+                RouteIfNeeded(ResolveSeasonMainScreen(_session.Phase.CurrentSeason));
                 RefreshActiveScreen();
                 return;
             }
@@ -216,9 +215,18 @@ namespace Kismeta.UI
                 return;
             }
 
-            RouteIfNeeded(ScreenIds.GameplayHud);
+            RouteIfNeeded(ResolveSeasonMainScreen(_session.Phase.CurrentSeason));
             RefreshActiveScreen();
         }
+
+        private static string ResolveSeasonMainScreen(Season season) => season switch
+        {
+            Season.Spring => ScreenIds.SpringHub,
+            Season.Summer => ScreenIds.SummerMain,
+            Season.Autumn => ScreenIds.AutumnMain,
+            Season.Winter => ScreenIds.WinterHub,
+            _ => ScreenIds.SpringHub
+        };
 
         private void RouteIfNeeded(string screenId)
         {
@@ -228,10 +236,20 @@ namespace Kismeta.UI
 
         private void RefreshActiveScreen()
         {
+            if (_session == null || _loop == null) return;
+
             var controller = _router.ActiveController;
-            if (controller is GameplayHudController hud && _session != null && _loop != null)
+            if (controller is SpringHubController spring)
+                spring.BindState(_session, _loop, _bridge);
+            else if (controller is SummerSceneController summer)
+                summer.BindState(_session, _loop, _bridge);
+            else if (controller is AutumnSceneController autumn)
+                autumn.BindState(_session, _loop, _bridge);
+            else if (controller is WinterHubController winter)
+                winter.BindState(_session, _loop, _bridge);
+            else if (controller is GameplayHudController hud)
                 hud.BindState(_session, _loop, _bridge);
-            else if (controller is WaitingHudController waiting && _session != null && _loop != null)
+            else if (controller is WaitingHudController waiting)
                 waiting.BindState(_session, _loop);
             else if (controller is ResumeScreenController resumeCtrl)
                 resumeCtrl.RebuildList();

@@ -7,11 +7,12 @@ Unity UI Toolkit assets ported from `Docs/wireframes/`. This folder is the **pro
 | Path | Contents |
 |------|----------|
 | `USS/` | Shared `Kismeta.uss` (canonical) + per-screen stylesheets |
-| `UXML/batch1/` | Title, SetupSheet, Join, Resume, Codex |
+| `UXML/batch1/` | Title, SetupSheet, Join, Resume, Codex, AgekeeperContest |
+| `UXML/main/` | Season main scenes: SpringHub, SummerMain, AutumnMain, WinterHub |
 | `UXML/batchN/` | Screen layouts (batches 2–7) |
-| `UXML/shell/` | `AppShell.uxml`, `GameplayHud`, `WaitingHud` |
+| `UXML/shell/` | `AppShell.uxml`, `GameplayHud` (dev fallback), `WaitingHud` |
 | `Scripts/Framework/` | ViewportLayout, ScreenRouter, GamePresenter, CommandBridge |
-| `Scripts/Controllers/` | Title, Join, Resume, Codex, GameplayHud, WaitingHud |
+| `Scripts/Controllers/` | Shell + season main scene controllers |
 | `Scripts/Components/` | CardChipFactory, RivalStripBuilder |
 | `Scripts/Setup/` | `UiSetupConfig`, mapper to Core `GameMode` |
 | `Settings/` | `KismetaPanelSettings.asset` (380×844 **reference** only) |
@@ -38,12 +39,20 @@ flowchart TB
 | **`AppShell.uxml`** | The **only** UIDocument Source Asset. Provides `content-layer` + `overlay-layer`. Never assign TitleScreen or ad-hoc layouts here. |
 | **`ScreenRouter`** | Maps screen ids to UXML; calls `ViewportLayout.SetScreen()` to swap children in `content-layer`. |
 | **`ViewportLayout`** | Safe-area padding, viewport classes, modal/sheet overlays, full-bleed stretch for instantiated screens. |
-| **`GamePresenter`** | Routes by `GameLoop` hint / pending human; wires title menu at startup via `InitializeForTitle()`. |
+| **`GamePresenter`** | Routes by season to main scenes when a human is pending; `WaitingHud` for AI turns. |
 | **`ScreenController`** | Attach/detach/refresh on the host GameObject when the router loads a screen. |
 | **`CommandBridge`** | Submits `IGameCommand` to `HotSeatController` (e.g. Pass). |
 | **`GameBootstrap`** | `Awake`: sets AppShell on UIDocument; `Start`: Title → Setup sheet → Begin starts the loop. |
 
 Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `ScreenRouter`. Call `ScreenRouter.RefreshControllers()` after adding components at runtime.
+
+## Phase 3 complete — Season main scenes
+
+- **Routing:** `GamePresenter` maps `Season` → `SpringHub` / `SummerMain` / `AutumnMain` / `WinterHub` on human turns; `WaitingHud` while AI decides.
+- **Bind:** Status bar, rivals strip, spread dock, step rails (Spring/Winter), cauldrons (Summer), stone label (Autumn) from `GamePublicView`.
+- **Pass:** Summer, Autumn, and Winter main scenes wire **Pass** via `CommandBridge` during free-action phases.
+- **Stubs:** Craft/Consort/Activate, Fire/Temper/Oppose, Commune, card table, and Winter advance CTAs log until Phase 4.
+- **`GameplayHud`** remains registered for dev fallback but is no longer used in normal play routing.
 
 ## Phase 2 complete — Batch 1 shell
 
@@ -51,11 +60,12 @@ Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `
 - **Join** — room-code entry; back returns to title (multiplayer stub)
 - **Resume** — empty-state list; persistence stub
 - **Codex** — tabbed reference + search filter (static glossary samples)
-- **Setup sheet** — unchanged compact overlay; Begin starts the game loop
+- **Setup sheet** → agekeeper contest → game loop
+- **Agekeeper contest** — zodiac die roll; winner passed to session setup
 
 ## Phase 1 — UI spine (foundation)
 
-- Title → Setup sheet → gameplay placeholder HUD (`GameplayHud` / `WaitingHud`)
+- Title → setup → agekeeper → season main scenes / `WaitingHud`
 - Setup sheet uses `SetupSheetState`; maps wireframe "Magnus" to `GameMode.MagnusAlchemist`
 - IMGUI `GameDebugUI` remains available via **Debug Ui Fallback** on `GameBootstrap`
 
@@ -76,7 +86,7 @@ Open `Bootstrap.unity` (or your play scene with `GameBootstrap`), then:
 - GameBootstrap **Use Production Ui** = on
 - **Save the scene** (`Ctrl+S`)
 
-**Play-test:** Title → Join / Resume / Codex / How to play (back to title) → New game → Begin → gameplay HUD; Pass during free-action phases.
+**Play-test:** Title → New game → Start Game → agekeeper contest → season main scene on your turn; `WaitingHud` during AI turns; Pass in Summer/Autumn/Winter free-action phases.
 
 ## Full-bleed / responsive rules
 
@@ -117,6 +127,6 @@ panel root → .kismeta-root → .app-shell → .content-layer → .screen-host 
 
 Visual tokens, components, and per-screen specs: [`Docs/wireframes/UI_styleGuide.md`](../../Docs/wireframes/UI_styleGuide.md).
 
-## Next: Phase 3 — Main scene controllers
+## Next: Phase 4 — Action sheets and commands
 
-Port Autumn/Summer/Spring-hub/Winter-hub with real `Bind()` and replace the gameplay placeholder HUD.
+Wire Commune, Summer/Autumn action sheets, and Winter step screens to `CommandBridge`.

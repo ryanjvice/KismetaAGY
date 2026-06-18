@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+
+    <engine:VisualElement name="winter-hub" class="screen screen--winter">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:VisualElement class="statusbar__sigil" />
+                <engine:VisualElement>
+                    <engine:Label name="status-season" text="Winter" class="statusbar__title" />
+                    <engine:Label name="status-step" text="—" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
+        </engine:VisualElement>
+
+        <engine:VisualElement name="rivals" class="rivals" />
+
+        <engine:VisualElement class="screen__body">
+            <engine:VisualElement class="stage" style="padding: 16px;">
+                <engine:Label text="closing rites" class="eyebrow" />
+                <engine:Label name="limits-line" text="Spread 0/5 · Hand 0/5" style="font-size: 11px; color: rgb(184, 154, 110); margin-bottom: 12px;" />
+                <engine:VisualElement name="step-rail" class="steprail">
+                    <engine:VisualElement name="step-0" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="unlock" class="step__label" /></engine:VisualElement>
+                    <engine:VisualElement name="step-1" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="wager" class="step__label" /></engine:VisualElement>
+                    <engine:VisualElement name="step-2" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="limits" class="step__label" /></engine:VisualElement>
+                    <engine:VisualElement name="step-3" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="transit" class="step__label" /></engine:VisualElement>
+                </engine:VisualElement>
+                <engine:Label name="hint-label" text="Your turn" style="font-size: 11px; color: rgb(158, 201, 224); margin-top: 14px;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="actionbar">
+            <engine:Button name="continue-btn" text="Continue" class="actionbtn btn btn--primary" style="display: none;" />
+            <engine:Button name="limits-btn" text="Enforce limits" class="actionbtn btn btn--primary" style="display: none;" />
+            <engine:Button name="transit-btn" text="Transit the age" class="actionbtn btn btn--primary" style="display: none;" />
+            <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" style="flex-grow: 0; min-width: 56px;" />
+            <engine:Button name="menu-btn" text="Table" class="actionbtn btn btn--secondary" style="flex-grow: 0; min-width: 56px;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>
