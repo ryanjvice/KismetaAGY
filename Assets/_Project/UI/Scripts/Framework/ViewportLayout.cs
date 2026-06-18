@@ -52,16 +52,16 @@ namespace Kismeta.UI
 
         protected virtual void OnEnable()
         {
-            var root = Root;
-            if (root == null) return;
+            var layoutRoot = GetLayoutRoot();
+            if (layoutRoot == null) return;
 
-            root.RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
-            root.schedule.Execute(InitializeTree).StartingIn(0);
+            layoutRoot.RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
+            layoutRoot.schedule.Execute(InitializeTree).StartingIn(0);
         }
 
         protected virtual void OnDisable()
         {
-            Root?.UnregisterCallback<GeometryChangedEvent>(OnGeometryChanged);
+            GetLayoutRoot()?.UnregisterCallback<GeometryChangedEvent>(OnGeometryChanged);
         }
 
         public void SetScreen(VisualTreeAsset screen)
@@ -74,20 +74,36 @@ namespace Kismeta.UI
             if (root == null)
                 return;
 
+            EnsurePanelRootFillsViewport(root);
             EnsureAppShell(root);
             var content = root.Q("content-layer");
             if (content == null)
+            {
+                Debug.LogError("[ViewportLayout] content-layer missing. Assign AppShell.uxml to UIDocument Source Asset.");
                 return;
+            }
 
+            StretchToContentLayer(content);
             content.Clear();
-            content.Add(screen.Instantiate());
-            root.schedule.Execute(() => ApplyLayout(root)).StartingIn(0);
+            var instance = screen.Instantiate();
+            instance.AddToClassList("screen-host");
+            StretchToContentLayer(instance);
+            var screenRoot = instance.Q(className: "screen");
+            if (screenRoot != null)
+                StretchToContentLayer(screenRoot);
+            content.Add(instance);
+
+            var layoutRoot = GetLayoutRoot();
+            if (layoutRoot != null)
+                layoutRoot.schedule.Execute(() => ApplyLayout(layoutRoot)).StartingIn(0);
         }
 
         public void ShowModal(VisualTreeAsset asset)
         {
             if (asset == null) return;
             var overlay = EnsureOverlayLayer();
+            if (overlay == null) return;
+
             overlay.Clear();
             overlay.RemoveFromClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
@@ -102,6 +118,8 @@ namespace Kismeta.UI
         {
             if (asset == null) return;
             var overlay = EnsureOverlayLayer();
+            if (overlay == null) return;
+
             overlay.Clear();
             overlay.AddToClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
@@ -120,37 +138,113 @@ namespace Kismeta.UI
             _overlayLayer.RemoveFromClassList("overlay-layer--sheet");
         }
 
-        /// <summary>Runs after the UIDocument panel has a valid layout (avoids startup races).</summary>
+        /// <summary>Runs after the panel has non-zero layout (avoids startup races).</summary>
         public void RunWhenReady(Action action)
         {
             if (action == null) return;
-            var root = Root;
-            if (root == null)
+
+            var layoutRoot = GetLayoutRoot();
+            if (layoutRoot == null)
             {
                 action();
                 return;
             }
 
-            root.schedule.Execute(() => action()).StartingIn(1);
+            var attempts = 0;
+            void TryRun()
+            {
+                attempts++;
+                float w = layoutRoot.resolvedStyle.width;
+                float h = layoutRoot.resolvedStyle.height;
+                if (w > 0f && h > 0f)
+                {
+                    ApplyLayout(layoutRoot);
+                    action();
+                    return;
+                }
+
+                if (attempts >= 120)
+                {
+                    Debug.LogWarning("[ViewportLayout] RunWhenReady timed out; running action anyway.");
+                    action();
+                    return;
+                }
+
+                layoutRoot.schedule.Execute(TryRun).StartingIn(1);
+            }
+
+            layoutRoot.schedule.Execute(TryRun).StartingIn(1);
         }
 
-        private void OnGeometryChanged(GeometryChangedEvent evt) => ApplyLayout(evt.target as VisualElement);
+        private void OnGeometryChanged(GeometryChangedEvent evt) =>
+            ApplyLayout(evt.target as VisualElement);
 
         private void InitializeTree()
         {
             var root = Root;
             if (root == null) return;
 
+            EnsurePanelRootFillsViewport(root);
             EnsureAppShell(root);
-            if (_initialScreen != null && ContentScreenRoot == null)
+            BindOverlayLayer(root);
+
+            var layoutRoot = GetLayoutRoot();
+            if (layoutRoot == null) return;
+
+            StretchToContentLayer(layoutRoot);
+
+            bool routerManaged = GetComponent<ScreenRouter>() != null;
+            if (!routerManaged && _initialScreen != null && ContentScreenRoot == null)
                 SetScreen(_initialScreen);
             else
-                ApplyLayout(root);
+                ApplyLayout(layoutRoot);
+        }
+
+        private static void EnsurePanelRootFillsViewport(VisualElement panelRoot)
+        {
+            panelRoot.style.flexGrow = 1;
+            panelRoot.style.flexShrink = 0;
+            panelRoot.style.flexDirection = FlexDirection.Column;
+            panelRoot.style.width = new StyleLength(new Length(100, LengthUnit.Percent));
+            panelRoot.style.height = new StyleLength(new Length(100, LengthUnit.Percent));
+        }
+
+        private static void StretchToContentLayer(VisualElement el)
+        {
+            el.style.flexGrow = 1;
+            el.style.flexShrink = 0;
+            el.style.width = new StyleLength(new Length(100, LengthUnit.Percent));
+            el.style.height = new StyleLength(new Length(100, LengthUnit.Percent));
+            el.style.minHeight = new StyleLength(new Length(100, LengthUnit.Percent));
+            el.style.flexDirection = FlexDirection.Column;
+            el.style.alignSelf = Align.Stretch;
+        }
+
+        private VisualElement GetLayoutRoot()
+        {
+            var root = Root;
+            if (root == null) return null;
+
+            var shell = root.Q(className: "kismeta-root");
+            return shell ?? root;
+        }
+
+        private void BindOverlayLayer(VisualElement root)
+        {
+            _overlayLayer = root.Q<VisualElement>("overlay-layer");
+            if (_overlayLayer == null) return;
+
+            _overlayLayer.UnregisterCallback<ClickEvent>(OnOverlayBackgroundClicked);
+            _overlayLayer.RegisterCallback<ClickEvent>(OnOverlayBackgroundClicked);
         }
 
         private void EnsureAppShell(VisualElement root)
         {
-            root.AddToClassList("kismeta-root");
+            var layoutRoot = root.Q(className: "kismeta-root");
+            if (layoutRoot != null)
+                layoutRoot.AddToClassList("kismeta-root");
+            else
+                root.AddToClassList("kismeta-root");
 
             if (root.Q("app-shell") != null)
                 return;
@@ -187,7 +281,10 @@ namespace Kismeta.UI
 
             _overlayLayer = shell.Q<VisualElement>("overlay-layer");
             if (_overlayLayer != null)
+            {
+                _overlayLayer.RegisterCallback<ClickEvent>(OnOverlayBackgroundClicked);
                 return _overlayLayer;
+            }
 
             _overlayLayer = new VisualElement { name = "overlay-layer" };
             _overlayLayer.AddToClassList("overlay-layer");

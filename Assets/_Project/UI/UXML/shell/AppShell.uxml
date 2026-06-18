@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+
+    <!-- Stable UIDocument root: ScreenRouter swaps content-layer children only. -->
+    <engine:VisualElement class="kismeta-root">
+        <engine:VisualElement name="app-shell" class="app-shell">
+            <engine:VisualElement name="content-layer" class="content-layer" />
+            <engine:VisualElement name="overlay-layer" class="overlay-layer" style="display: none;" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

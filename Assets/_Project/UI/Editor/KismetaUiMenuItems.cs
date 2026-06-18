@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Kismeta.Game.Bootstrap;
 using Kismeta.UI;
 using Kismeta.UI.Controllers;
 using UnityEditor;
@@ -11,10 +12,13 @@ namespace Kismeta.UI.Editor
     public static class KismetaUiMenuItems
     {
         private const string PanelSettingsPath = "Assets/_Project/UI/Settings/KismetaPanelSettings.asset";
+        private const string AppShellPath = "Assets/_Project/UI/UXML/shell/AppShell.uxml";
         private const string TitleScreenPath = "Assets/_Project/UI/UXML/batch1/TitleScreen.uxml";
         private const string SetupSheetPath = "Assets/_Project/UI/UXML/batch1/SetupSheet.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
+        private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
+        private const string WaitingHudPath = "Assets/_Project/UI/UXML/shell/WaitingHud.uxml";
 
         [MenuItem("Kismeta/UI/Create Panel Settings")]
         public static void CreatePanelSettings()
@@ -56,13 +60,41 @@ namespace Kismeta.UI.Editor
             Debug.Log("[Kismeta.UI] PanelSettings configured for responsive full-screen layout (380×844 reference).");
         }
 
-        private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
-        private const string WaitingHudPath = "Assets/_Project/UI/UXML/shell/WaitingHud.uxml";
+        [MenuItem("Kismeta/UI/Setup Bootstrap Scene")]
+        public static void SetupBootstrapScene()
+        {
+            var bootstrap = Object.FindFirstObjectByType<GameBootstrap>();
+            if (bootstrap == null)
+            {
+                Debug.LogWarning("[Kismeta.UI] No GameBootstrap in the open scene.");
+                return;
+            }
+
+            WireBootstrapUiReferences();
+
+            EnsureComponent<UIDocument>(bootstrap.gameObject);
+            EnsureComponent<ViewportLayout>(bootstrap.gameObject);
+            EnsureComponent<ScreenRouter>(bootstrap.gameObject);
+            EnsureComponent<GamePresenter>(bootstrap.gameObject);
+            EnsureComponent<TitleScreenController>(bootstrap.gameObject);
+            EnsureComponent<GameplayHudController>(bootstrap.gameObject);
+            EnsureComponent<WaitingHudController>(bootstrap.gameObject);
+
+            var layout = bootstrap.GetComponent<ViewportLayout>();
+            var layoutSo = new SerializedObject(layout);
+            layoutSo.FindProperty("_panelSettings").objectReferenceValue =
+                AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
+            layoutSo.FindProperty("_initialScreen").objectReferenceValue = null;
+            layoutSo.ApplyModifiedPropertiesWithoutUndo();
+
+            EditorSceneManager.MarkSceneDirty(bootstrap.gameObject.scene);
+            Debug.Log("[Kismeta.UI] Bootstrap scene UI stack configured. Save the scene (Ctrl+S).");
+        }
 
         [MenuItem("Kismeta/UI/Wire Bootstrap UI References")]
         public static void WireBootstrapUiReferences()
         {
-            var bootstrap = Object.FindFirstObjectByType<Kismeta.Game.Bootstrap.GameBootstrap>();
+            var bootstrap = Object.FindFirstObjectByType<GameBootstrap>();
             if (bootstrap == null)
             {
                 Debug.LogWarning("[Kismeta.UI] No GameBootstrap in the open scene.");
@@ -70,6 +102,7 @@ namespace Kismeta.UI.Editor
             }
 
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
+            var appShell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AppShellPath);
             var title = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TitleScreenPath);
             var gameplay = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameplayHudPath);
             var waiting = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
@@ -77,6 +110,7 @@ namespace Kismeta.UI.Editor
 
             var so = new SerializedObject(bootstrap);
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
+            so.FindProperty("_appShell").objectReferenceValue = appShell;
             so.FindProperty("_titleScreen").objectReferenceValue = title;
             so.FindProperty("_gameplayHud").objectReferenceValue = gameplay;
             so.FindProperty("_waitingHud").objectReferenceValue = waiting;
@@ -84,14 +118,22 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
 
-            var doc = bootstrap.GetComponent<UIDocument>();
-            if (doc != null)
-                doc.visualTreeAsset = null;
+            var doc = bootstrap.GetComponent<UIDocument>() ?? bootstrap.gameObject.AddComponent<UIDocument>();
+            doc.panelSettings = panelSettings;
+            doc.visualTreeAsset = appShell;
+
+            var layout = bootstrap.GetComponent<ViewportLayout>();
+            if (layout != null)
+            {
+                var layoutSo = new SerializedObject(layout);
+                layoutSo.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
+                layoutSo.FindProperty("_initialScreen").objectReferenceValue = null;
+                layoutSo.ApplyModifiedPropertiesWithoutUndo();
+            }
 
             EditorUtility.SetDirty(bootstrap);
-            if (doc != null)
-                EditorUtility.SetDirty(doc);
-            Debug.Log("[Kismeta.UI] Wired GameBootstrap UI references.");
+            EditorUtility.SetDirty(doc);
+            Debug.Log("[Kismeta.UI] Wired GameBootstrap UI references (AppShell + screens).");
         }
 
         [MenuItem("Kismeta/UI/Create UI Test Scene")]
@@ -116,6 +158,7 @@ namespace Kismeta.UI.Editor
             if (panelSettings == null)
                 CreatePanelSettings();
             panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
+            var appShell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AppShellPath);
 
             var titleScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TitleScreenPath);
             var setupSheet = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SetupSheetPath);
@@ -128,7 +171,7 @@ namespace Kismeta.UI.Editor
 
             var doc = host.GetComponent<UIDocument>();
             doc.panelSettings = panelSettings;
-            doc.visualTreeAsset = null;
+            doc.visualTreeAsset = appShell;
 
             var layoutSo = new SerializedObject(host.GetComponent<ViewportLayout>());
             layoutSo.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
@@ -138,6 +181,7 @@ namespace Kismeta.UI.Editor
             host.GetComponent<ViewportLayout>()!.RunWhenReady(() =>
             {
                 host.GetComponent<ScreenRouter>()!.GoTo(ScreenIds.Title);
+                host.GetComponent<GamePresenter>()!.InitializeForTitle();
             });
 
             var demoSo = new SerializedObject(host.GetComponent<UiResponsiveTest>());
@@ -150,12 +194,20 @@ namespace Kismeta.UI.Editor
             Debug.Log($"[Kismeta.UI] UI test scene at {UiTestScenePath}. Play: full-bleed Title; New game = sheet; Codex = inspect modal.");
         }
 
+        private static T EnsureComponent<T>(GameObject go) where T : Component
+        {
+            var c = go.GetComponent<T>();
+            return c != null ? c : go.AddComponent<T>();
+        }
+
         private static void ApplyResponsivePanelSettings(PanelSettings settings)
         {
             settings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
             settings.referenceResolution = new Vector2Int(380, 844);
             settings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
             settings.match = 0.5f;
+            settings.clearColor = true;
+            settings.colorClearValue = new Color(22f / 255f, 10f / 255f, 28f / 255f, 1f);
         }
     }
 }

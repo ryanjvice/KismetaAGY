@@ -20,6 +20,7 @@ namespace Kismeta.Game.Bootstrap
     /// Entry-point MonoBehaviour. Wires the game stack and starts <see cref="GameLoop"/>.
     /// With production UI enabled, defers session creation until the setup sheet Begin action.
     /// </summary>
+    [DefaultExecutionOrder(-1000)]
     public sealed class GameBootstrap : MonoBehaviour
     {
         [Header("Players (IMGUI / fallback)")]
@@ -37,6 +38,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private bool _useProductionUi = true;
         [SerializeField] private bool _debugUiFallback;
         [SerializeField] private PanelSettings _panelSettings;
+        [SerializeField] private VisualTreeAsset _appShell;
         [SerializeField] private VisualTreeAsset _titleScreen;
         [SerializeField] private VisualTreeAsset _gameplayHud;
         [SerializeField] private VisualTreeAsset _waitingHud;
@@ -51,6 +53,12 @@ namespace Kismeta.Game.Bootstrap
         private GamePresenter? _presenter;
         private CancellationTokenSource _cts = new();
         private bool _loopStarted;
+
+        private void Awake()
+        {
+            if (_useProductionUi)
+                PrepareUiDocument();
+        }
 
         private void Start()
         {
@@ -85,13 +93,19 @@ namespace Kismeta.Game.Bootstrap
             _cts.Dispose();
         }
 
-        private void EnsureProductionUi()
+        private void PrepareUiDocument()
         {
             var doc = GetComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>();
-            // All screens load via ViewportLayout.SetScreen — a Source Asset here gets reloaded and wipes the tree.
-            doc.visualTreeAsset = null;
             if (_panelSettings != null)
                 doc.panelSettings = _panelSettings;
+
+            // AppShell.uxml is the stable root; ScreenRouter swaps content-layer only.
+            doc.visualTreeAsset = _appShell;
+        }
+
+        private void EnsureProductionUi()
+        {
+            PrepareUiDocument();
 
             var layout = GetComponent<ViewportLayout>() ?? gameObject.AddComponent<ViewportLayout>();
             var router = GetComponent<ScreenRouter>() ?? gameObject.AddComponent<ScreenRouter>();
@@ -105,6 +119,12 @@ namespace Kismeta.Game.Bootstrap
 
             if (_titleScreen != null && _gameplayHud != null && _waitingHud != null)
             {
+                if (_appShell == null)
+                {
+                    Debug.LogError("[GameBootstrap] App Shell UXML not assigned. Run Kismeta → UI → Wire Bootstrap UI References.");
+                    return;
+                }
+
                 router.ConfigureScreens(_titleScreen, _gameplayHud, _waitingHud, _setupSheet);
                 layout.RunWhenReady(ShowTitleScreen);
             }
