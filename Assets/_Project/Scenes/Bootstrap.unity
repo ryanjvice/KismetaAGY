@@ -289,6 +289,12 @@ MonoBehaviour:
   _winterUnlock: {fileID: 9197481963319205126, guid: 2a127e9c6e2c5924db4d4e5a87389aa1, type: 3}
   _fatefulWager: {fileID: 9197481963319205126, guid: df8ecc00a3c57bd44ac1509e90459d74, type: 3}
   _cardLimits: {fileID: 9197481963319205126, guid: c0d8fbb17e40eb840aa1ddb77db097ec, type: 3}
+  _summerSheets: {fileID: 9197481963319205126, guid: df597b49f21bebf42b0bf53e578598ef, type: 3}
+  _craftReagent: {fileID: 9197481963319205126, guid: 3ad25c1bbbe875f4a8f4d0d6afd0654a, type: 3}
+  _activateCard: {fileID: 9197481963319205126, guid: c2bc9df204537bf4785068ed5a32f5a1, type: 3}
+  _buildHouse: {fileID: 9197481963319205126, guid: 17d1b9ef5e64d044294754e593412e12, type: 3}
+  _placeWards: {fileID: 9197481963319205126, guid: 5cc5e001c98bd3547b1f0181ea83ee3b, type: 3}
+  _endSummer: {fileID: 9197481963319205126, guid: 230850dabc890f644bd6284cf7cac3ee, type: 3}
 --- !u!4 &1726667743
 Transform:
   m_ObjectHideFlags: 0

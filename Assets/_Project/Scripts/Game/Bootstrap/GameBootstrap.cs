@@ -62,6 +62,12 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _winterUnlock;
         [SerializeField] private VisualTreeAsset _fatefulWager;
         [SerializeField] private VisualTreeAsset _cardLimits;
+        [SerializeField] private VisualTreeAsset _summerSheets;
+        [SerializeField] private VisualTreeAsset _craftReagent;
+        [SerializeField] private VisualTreeAsset _activateCard;
+        [SerializeField] private VisualTreeAsset _buildHouse;
+        [SerializeField] private VisualTreeAsset _placeWards;
+        [SerializeField] private VisualTreeAsset _endSummer;
 
         private CardDatabase? _db;
         private CrucibleCodexDatabase? _codexDb;
@@ -154,8 +160,20 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<WinterUnlockController>();
             EnsureController<FatefulWagerController>();
             EnsureController<CardLimitsController>();
+            EnsureController<SummerOverlayHost>();
+            EnsureController<SummerSheetsController>();
+            EnsureController<CraftReagentController>();
+            EnsureController<ActivateCardController>();
+            EnsureController<BuildHouseController>();
+            EnsureController<PlaceWardsController>();
+            EnsureController<EndSummerController>();
 
             router.RefreshControllers();
+
+            var summerOverlays = GetComponent<SummerOverlayHost>();
+            summerOverlays?.Configure(
+                _summerSheets, _craftReagent, _activateCard,
+                _buildHouse, _placeWards, _endSummer);
 
             if (_titleScreen != null && _gameplayHud != null && _waitingHud != null)
             {

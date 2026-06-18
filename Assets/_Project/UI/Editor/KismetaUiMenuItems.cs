@@ -35,6 +35,12 @@ namespace Kismeta.UI.Editor
         private const string WinterUnlockPath = "Assets/_Project/UI/UXML/batch3/WinterUnlock.uxml";
         private const string FatefulWagerPath = "Assets/_Project/UI/UXML/batch3/FatefulWager.uxml";
         private const string CardLimitsPath = "Assets/_Project/UI/UXML/batch3/CardLimits.uxml";
+        private const string SummerSheetsPath = "Assets/_Project/UI/UXML/batch4/SummerSheets.uxml";
+        private const string CraftReagentPath = "Assets/_Project/UI/UXML/batch4/CraftReagent.uxml";
+        private const string ActivateCardPath = "Assets/_Project/UI/UXML/batch4/ActivateCard.uxml";
+        private const string BuildHousePath = "Assets/_Project/UI/UXML/batch4/BuildHouse.uxml";
+        private const string PlaceWardsPath = "Assets/_Project/UI/UXML/batch4/PlaceWards.uxml";
+        private const string EndSummerPath = "Assets/_Project/UI/UXML/batch4/EndSummer.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
@@ -118,6 +124,13 @@ namespace Kismeta.UI.Editor
             EnsureComponent<WinterUnlockController>(bootstrap.gameObject);
             EnsureComponent<FatefulWagerController>(bootstrap.gameObject);
             EnsureComponent<CardLimitsController>(bootstrap.gameObject);
+            EnsureComponent<SummerOverlayHost>(bootstrap.gameObject);
+            EnsureComponent<SummerSheetsController>(bootstrap.gameObject);
+            EnsureComponent<CraftReagentController>(bootstrap.gameObject);
+            EnsureComponent<ActivateCardController>(bootstrap.gameObject);
+            EnsureComponent<BuildHouseController>(bootstrap.gameObject);
+            EnsureComponent<PlaceWardsController>(bootstrap.gameObject);
+            EnsureComponent<EndSummerController>(bootstrap.gameObject);
 
             var layout = bootstrap.GetComponent<ViewportLayout>();
             var layoutSo = new SerializedObject(layout);
@@ -165,6 +178,12 @@ namespace Kismeta.UI.Editor
             var winterUnlock = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterUnlockPath);
             var fatefulWager = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FatefulWagerPath);
             var cardLimits = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardLimitsPath);
+            var summerSheets = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerSheetsPath);
+            var craftReagent = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CraftReagentPath);
+            var activateCard = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ActivateCardPath);
+            var buildHouse = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(BuildHousePath);
+            var placeWards = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PlaceWardsPath);
+            var endSummer = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(EndSummerPath);
 
             var so = new SerializedObject(bootstrap);
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
@@ -192,6 +211,12 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_winterUnlock").objectReferenceValue = winterUnlock;
             so.FindProperty("_fatefulWager").objectReferenceValue = fatefulWager;
             so.FindProperty("_cardLimits").objectReferenceValue = cardLimits;
+            so.FindProperty("_summerSheets").objectReferenceValue = summerSheets;
+            so.FindProperty("_craftReagent").objectReferenceValue = craftReagent;
+            so.FindProperty("_activateCard").objectReferenceValue = activateCard;
+            so.FindProperty("_buildHouse").objectReferenceValue = buildHouse;
+            so.FindProperty("_placeWards").objectReferenceValue = placeWards;
+            so.FindProperty("_endSummer").objectReferenceValue = endSummer;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -250,6 +275,13 @@ namespace Kismeta.UI.Editor
             host.AddComponent<WinterUnlockController>();
             host.AddComponent<FatefulWagerController>();
             host.AddComponent<CardLimitsController>();
+            host.AddComponent<SummerOverlayHost>();
+            host.AddComponent<SummerSheetsController>();
+            host.AddComponent<CraftReagentController>();
+            host.AddComponent<ActivateCardController>();
+            host.AddComponent<BuildHouseController>();
+            host.AddComponent<PlaceWardsController>();
+            host.AddComponent<EndSummerController>();
             host.AddComponent<UiResponsiveTest>();
 
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);

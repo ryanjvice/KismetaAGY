@@ -47,6 +47,26 @@ flowchart TB
 
 Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `ScreenRouter`. Call `ScreenRouter.RefreshControllers()` after adding components at runtime.
 
+## Phase 6 complete — Batch 4 Summer actions
+
+- **Overlay architecture:** Summer sub-flows use `ViewportLayout` overlays (`SummerOverlayHost`) while `SummerMain` stays the active `ScreenRouter` screen.
+- **Hub:** Craft / Consort sheets, direct Activate, Pass → End Summer confirm modal.
+- **Commands:** `CraftReagentCommand`, `ActivateCrucibleCommand`, `BuildAstralHouseCommand`, `PlaceCardWardCommand`, `PassCrucibleActionCommand` (Summer pass fix in `CommandBridge`).
+- **Deferred:** Trade / Duel / Gambit (Consort rows disabled); Card Table stub.
+
+| Screen | Controller | Command |
+|--------|------------|---------|
+| Craft & build / Consort sheets | `SummerSheetsController` | navigation |
+| Craft reagent | `CraftReagentController` | `CraftReagentCommand` |
+| Activate crucible | `ActivateCardController` | `ActivateCrucibleCommand` |
+| Build astral house | `BuildHouseController` | `BuildAstralHouseCommand` |
+| Place wards | `PlaceWardsController` | `PlaceCardWardCommand` |
+| End Summer | `EndSummerController` | `PassCrucibleActionCommand` |
+
+**Summer play-test path:**
+
+Reach Summer → **Craft** sheet → craft reagent → **Activate** crucible → **Craft** → build house → place ward → **Pass** → End Summer confirm → Autumn intro.
+
 ## Phase 5 complete — Batch 3 Spring & Winter steps
 
 - **Hint routing:** `ActionHint.Commune` → **Commune**; `ActionHint.DiscardToLimit` → **CardLimits**; `ActionHint.WinterAction` → **WinterHub** (sub-screens opened from hub CTAs).
@@ -146,6 +166,4 @@ panel root → .kismeta-root → .app-shell → .content-layer → .screen-host 
 
 Visual tokens, components, and per-screen specs: [`Docs/wireframes/UI_styleGuide.md`](../../Docs/wireframes/UI_styleGuide.md).
 
-## Next: Phase 5 — Batch 3 Spring and Winter steps
-
-Wire Commune sheet, Spring harvest/roll UI, and Winter unlock/wager/limits/transit screens to `CommandBridge`.
+## Next: Phase 7 — Batch 5 contests (Trade, Duel, Gambit)

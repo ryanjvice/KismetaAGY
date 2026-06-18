@@ -25,6 +25,7 @@ namespace Kismeta.UI
 
         private UIDocument _document;
         private VisualElement _overlayLayer;
+        private VisualElement _overlayContentRoot;
 
         public VisualElement Root => _document != null ? _document.rootVisualElement : null;
 
@@ -40,6 +41,9 @@ namespace Kismeta.UI
             }
         }
         public bool IsOverlayVisible => _overlayLayer != null && _overlayLayer.style.display == DisplayStyle.Flex;
+
+        /// <summary>Root of the most recently shown overlay UXML clone.</summary>
+        public VisualElement? OverlayContentRoot => _overlayContentRoot;
 
         /// <summary>Last computed scale factor (informational; PanelSettings also scales the panel).</summary>
         public float UiScale { get; private set; } = 1f;
@@ -129,6 +133,23 @@ namespace Kismeta.UI
             InstantiateOverlay(overlay, asset, _tokenStylesheet);
         }
 
+        /// <summary>Show a programmatic overlay (no UXML asset).</summary>
+        public void ShowOverlayElement(VisualElement content, bool asSheet = false)
+        {
+            if (content == null) return;
+            var overlay = EnsureOverlayLayer();
+            if (overlay == null) return;
+
+            overlay.Clear();
+            if (asSheet)
+                overlay.AddToClassList("overlay-layer--sheet");
+            else
+                overlay.RemoveFromClassList("overlay-layer--sheet");
+            overlay.style.display = DisplayStyle.Flex;
+            overlay.Add(content);
+            _overlayContentRoot = content;
+        }
+
         /// <summary>
         /// Clone overlay UXML into a token-scope host that is attached before cloning.
         /// Avoids NRE from inline <c>var(--token)</c> in UXML during detached Instantiate().
@@ -146,6 +167,7 @@ namespace Kismeta.UI
             var screenRoot = host.Q(className: "screen") ?? (host.childCount > 0 ? host[0] : null);
             if (screenRoot != null)
                 ApplyAssetStylesheets(screenRoot, asset);
+            _overlayContentRoot = screenRoot ?? host;
             return host;
         }
 
@@ -200,6 +222,7 @@ namespace Kismeta.UI
             _overlayLayer.Clear();
             _overlayLayer.style.display = DisplayStyle.None;
             _overlayLayer.RemoveFromClassList("overlay-layer--sheet");
+            _overlayContentRoot = null;
         }
 
         /// <summary>Runs after the panel has non-zero layout (avoids startup races).</summary>

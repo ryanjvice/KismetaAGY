@@ -1,3 +1,4 @@
+using System;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
@@ -14,16 +15,22 @@ namespace Kismeta.UI.Controllers
     {
         public override string ScreenId => ScreenIds.SummerMain;
 
+        public Action OnCraftBuild;
+        public Action OnConsort;
+        public Action OnActivate;
+        public Action OnPass;
+        public Action OnOpenCardTable;
+
         CommandBridge? _bridge;
         int _localPlayerId;
 
         protected override void Wire()
         {
-            Btn("craftbuild-btn")!.clicked += () => Debug.Log("[UI] Craft & build — Phase 4");
-            Btn("consort-btn")!.clicked += () => Debug.Log("[UI] Consort — Phase 4");
-            Btn("activate-btn")!.clicked += () => Debug.Log("[UI] Activate — Phase 4");
-            Btn("menu-btn")!.clicked += () => Debug.Log("[UI] Card table — Phase 4");
-            Btn("pass-btn")!.clicked += OnPass;
+            Btn("craftbuild-btn")!.clicked += () => OnCraftBuild?.Invoke();
+            Btn("consort-btn")!.clicked += () => OnConsort?.Invoke();
+            Btn("activate-btn")!.clicked += () => OnActivate?.Invoke();
+            Btn("pass-btn")!.clicked += () => OnPass?.Invoke();
+            Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -86,7 +93,5 @@ namespace Kismeta.UI.Controllers
                 strip.Add(CardChipFactory.CreateFromDefinition(def.Rank.ToString(), def.Id, db));
             }
         }
-
-        void OnPass() => _bridge?.SubmitPass();
     }
 }
