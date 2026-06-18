@@ -1,3 +1,4 @@
+using System;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.Core.Views;
@@ -12,6 +13,8 @@ namespace Kismeta.UI.Controllers
     {
         public override string ScreenId => ScreenIds.AutumnMain;
 
+        public Action? OnOppose;
+
         CommandBridge? _bridge;
         int _localPlayerId;
 
@@ -19,10 +22,16 @@ namespace Kismeta.UI.Controllers
         {
             Btn("fire-btn")!.clicked += () => Debug.Log("[UI] Fire — Phase 4");
             Btn("temper-btn")!.clicked += () => Debug.Log("[UI] Temper — Phase 4");
-            Btn("oppose-btn")!.clicked += () => Debug.Log("[UI] Oppose — Phase 4");
+            Btn("oppose-btn")!.clicked += OnOpposeClicked;
             Btn("manage-cards-btn")!.clicked += () => Debug.Log("[UI] Manage cards — Phase 4");
             Btn("menu-btn")!.clicked += () => Debug.Log("[UI] Card table — Phase 4");
             Btn("pass-btn")!.clicked += OnPass;
+        }
+
+        void OnOpposeClicked()
+        {
+            if (_bridge != null && _bridge.CanSubmit && _bridge.PendingHint == ActionHint.AutumnAction)
+                OnOppose?.Invoke();
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -35,6 +44,9 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             MainSceneBindings.BindStatusBar(Root, session, loop);
             MainSceneBindings.BindPassButton(Root, session, bridge);
+
+            bool canOppose = bridge.CanSubmit && bridge.PendingHint == ActionHint.AutumnAction;
+            Btn("oppose-btn")?.SetEnabled(canOppose);
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             if (Lbl("stone-label") != null && local != null)

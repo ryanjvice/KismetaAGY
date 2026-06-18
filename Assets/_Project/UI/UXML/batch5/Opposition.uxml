@@ -21,7 +21,7 @@
         <engine:VisualElement class="statusbar">
             <engine:VisualElement class="statusbar__left">
                 <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
-                <engine:Label text="Oppose · Iolanthe" class="statusbar__title" style="color: rgb(240,176,160); margin-left: 4px;" />
+                <engine:Label name="contest-title" text="Oppose · Iolanthe" class="statusbar__title" style="color: rgb(240,176,160); margin-left: 4px;" />
             </engine:VisualElement>
         </engine:VisualElement>
 
@@ -29,10 +29,18 @@
             <engine:VisualElement name="wo-1" class="wizard-dot wizard-dot--active" />
             <engine:VisualElement name="wo-2" class="wizard-dot" />
             <engine:VisualElement name="wo-3" class="wizard-dot" />
+            <engine:VisualElement name="wo-4" class="wizard-dot" />
+        </engine:VisualElement>
+
+        <!-- step 0: target rival -->
+        <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
+            <engine:Label text="choose a rival forging stone" class="eyebrow" />
+            <engine:VisualElement name="rival-cards" class="tray__cards" />
+            <engine:Button name="target-next" text="Oppose this rival" class="btn btn--primary" style="margin-top: 12px;" />
         </engine:VisualElement>
 
         <!-- step 1: fee -->
-        <engine:VisualElement name="step-fee" style="padding: 8px 14px 4px;">
+        <engine:VisualElement name="step-fee" style="display: none; padding: 8px 14px 4px;">
             <engine:Label text="pay the stone-ward fee — 2 reagents" class="eyebrow" />
             <engine:VisualElement class="pay-pill">
                 <engine:VisualElement style="flex-direction: row; align-items: center;">
@@ -44,12 +52,14 @@
                 </engine:VisualElement>
                 <engine:Label name="fee-count" text="0 / 2" style="font-size: 11px; color: rgb(184, 154, 110);" />
             </engine:VisualElement>
-            <engine:VisualElement class="stepper-row">
-                <engine:VisualElement class="reagent-dot reagent-dot--vitriol" style="margin-right: 9px;" />
-                <engine:Label text="Vitriol" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
-                <engine:Button name="o-fee-minus" class="stepper-btn stepper-btn--minus"><engine:Label text="&#8722;" style="color: rgb(212,160,122);" /></engine:Button>
-                <engine:Label name="o-fee-val" text="0" class="stepper-value" style="color: rgb(184, 154, 110);" />
-                <engine:Button name="o-fee-plus" class="stepper-btn stepper-btn--plus"><engine:Label text="+" style="color: rgb(232, 185, 74);" /></engine:Button>
+            <engine:VisualElement name="fee-supply">
+                <engine:VisualElement class="stepper-row">
+                    <engine:VisualElement class="reagent-dot reagent-dot--vitriol" style="margin-right: 9px;" />
+                    <engine:Label text="Vitriol" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
+                    <engine:Button name="o-fee-minus" class="stepper-btn stepper-btn--minus"><engine:Label text="&#8722;" style="color: rgb(212,160,122);" /></engine:Button>
+                    <engine:Label name="o-fee-val" text="0" class="stepper-value" style="color: rgb(184, 154, 110);" />
+                    <engine:Button name="o-fee-plus" class="stepper-btn stepper-btn--plus"><engine:Label text="+" style="color: rgb(232, 185, 74);" /></engine:Button>
+                </engine:VisualElement>
             </engine:VisualElement>
             <engine:Button name="o-fee-next" text="Pay 2 more" class="btn btn--disabled" style="margin-top: 8px;" />
         </engine:VisualElement>
@@ -69,24 +79,14 @@
             <engine:Label text="alignment tally — higher total wins" class="eyebrow" />
 
             <engine:Label text="you" style="font-size: 10px; color: rgb(232, 185, 74); margin-bottom: 4px;" />
-            <engine:VisualElement class="tally">
-                <engine:Label text="set sign matches age" style="flex-grow: 1; font-size: 11px; color: rgb(243, 233, 210);" />
-                <engine:Label text="+3" class="tally__pts tally__pts--sign" />
-            </engine:VisualElement>
-            <engine:VisualElement class="tally">
-                <engine:Label text="house on this sign" style="flex-grow: 1; font-size: 11px; color: rgb(243, 233, 210);" />
-                <engine:Label text="+1" class="tally__pts tally__pts--element" />
-            </engine:VisualElement>
+            <engine:VisualElement name="tally-you-rows" />
             <engine:VisualElement class="tally tally__total">
                 <engine:Label text="your total" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
                 <engine:Label name="you-total" text="4" class="tally__pts" style="color: rgb(127, 196, 168); font-size: 16px;" />
             </engine:VisualElement>
 
-            <engine:Label text="Iolanthe" style="font-size: 10px; color: rgb(168,205,240); margin: 8px 0 4px;" />
-            <engine:VisualElement class="tally">
-                <engine:Label text="planet match" style="flex-grow: 1; font-size: 11px; color: rgb(243, 233, 210);" />
-                <engine:Label text="+2" class="tally__pts tally__pts--planet" />
-            </engine:VisualElement>
+            <engine:Label text="rival" style="font-size: 10px; color: rgb(168,205,240); margin: 8px 0 4px;" />
+            <engine:VisualElement name="tally-foe-rows" />
             <engine:VisualElement class="tally tally__total" style="background-color: rgb(38,16,22); border-color: rgb(106,48,48);">
                 <engine:Label text="her total" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
                 <engine:Label name="foe-total" text="2" class="tally__pts" style="color: rgb(240, 144, 138); font-size: 16px;" />

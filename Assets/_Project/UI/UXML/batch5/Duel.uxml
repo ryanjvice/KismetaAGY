@@ -19,7 +19,7 @@
         <engine:VisualElement class="statusbar" style="border-bottom-color: rgb(74,32,32);">
             <engine:VisualElement class="statusbar__left">
                 <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
-                <engine:Label text="Duel · Severin" class="statusbar__title" style="color: rgb(240,176,160); margin-left: 4px;" />
+                <engine:Label name="contest-title" text="Duel · Severin" class="statusbar__title" style="color: rgb(240,176,160); margin-left: 4px;" />
             </engine:VisualElement>
         </engine:VisualElement>
 
@@ -31,23 +31,16 @@
 
         <!-- step 1: target -->
         <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
-            <engine:Label text="choose a card to win from Severin's Spread" class="eyebrow" />
-            <engine:VisualElement class="tray__cards">
-                <engine:VisualElement class="card-chip card-chip--cups"><engine:Label text="Q" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="8" class="card-chip__rank" /></engine:VisualElement>
-            </engine:VisualElement>
-            <engine:Button name="target-next" text="Choose this card" class="btn btn--primary" style="margin-top: 12px;" />
+            <engine:Label text="choose a rival" class="eyebrow" />
+            <engine:VisualElement name="rival-cards" class="tray__cards" />
+            <engine:Button name="target-next" text="Challenge this rival" class="btn btn--primary" style="margin-top: 12px;" />
         </engine:VisualElement>
 
         <!-- step 2: ante -->
         <engine:VisualElement name="step-ante" style="display: none; padding: 8px 14px 4px;">
             <engine:Label text="ante a card of your own" class="eyebrow" />
             <engine:Label text="safe if you win · returns to the deck if you lose" style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 8px; white-space: normal;" />
-            <engine:VisualElement class="tray__cards">
-                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--pentacles"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
-            </engine:VisualElement>
+            <engine:VisualElement name="ante-cards" class="tray__cards" />
             <engine:Button name="ante-next" text="Ante &amp; roll" class="btn btn--primary" style="margin-top: 12px;" />
         </engine:VisualElement>
 

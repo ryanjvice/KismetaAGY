@@ -1,0 +1,133 @@
+using Kismeta.Core.Entities;
+using Kismeta.UI.Controllers;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+namespace Kismeta.UI
+{
+    /// <summary>
+    /// Manages shared contest overlays (Trade, Duel, Gambit, Opposition) as full-screen modals.
+    /// </summary>
+    public sealed class ContestOverlayHost : MonoBehaviour
+    {
+        VisualTreeAsset? _trade;
+        VisualTreeAsset? _duel;
+        VisualTreeAsset? _gambit;
+        VisualTreeAsset? _opposition;
+
+        ViewportLayout? _layout;
+        GameSession? _session;
+        CommandBridge? _bridge;
+
+        TradeController? _tradeCtrl;
+        DuelController? _duelCtrl;
+        GambitController? _gambitCtrl;
+        OppositionController? _oppositionCtrl;
+
+        enum ActiveContest { None, Trade, Duel, Gambit, Opposition }
+        ActiveContest _active = ActiveContest.None;
+
+        public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
+
+        void Awake()
+        {
+            _layout = GetComponent<ViewportLayout>();
+            _tradeCtrl = GetComponent<TradeController>();
+            _duelCtrl = GetComponent<DuelController>();
+            _gambitCtrl = GetComponent<GambitController>();
+            _oppositionCtrl = GetComponent<OppositionController>();
+        }
+
+        public void Configure(
+            VisualTreeAsset trade,
+            VisualTreeAsset duel,
+            VisualTreeAsset gambit,
+            VisualTreeAsset opposition)
+        {
+            _trade = trade;
+            _duel = duel;
+            _gambit = gambit;
+            _opposition = opposition;
+        }
+
+        public void BindState(GameSession session, CommandBridge bridge)
+        {
+            _session = session;
+            _bridge = bridge;
+        }
+
+        public void DismissIfNotHumanTurn()
+        {
+            if (_bridge != null && _bridge.CanSubmit) return;
+            Dismiss();
+        }
+
+        public void ShowTrade() => ShowContest(_trade, _tradeCtrl, WireTrade, ActiveContest.Trade);
+        public void ShowDuel() => ShowContest(_duel, _duelCtrl, WireDuel, ActiveContest.Duel);
+        public void ShowGambit() => ShowContest(_gambit, _gambitCtrl, WireGambit, ActiveContest.Gambit);
+        public void ShowOpposition() => ShowContest(_opposition, _oppositionCtrl, WireOpposition, ActiveContest.Opposition);
+
+        public void Dismiss()
+        {
+            _active = ActiveContest.None;
+            _tradeCtrl?.Detach();
+            _duelCtrl?.Detach();
+            _gambitCtrl?.Detach();
+            _oppositionCtrl?.Detach();
+            _layout?.DismissOverlay();
+        }
+
+        void ShowContest<T>(VisualTreeAsset? asset, T? controller, System.Action wire, ActiveContest kind)
+            where T : OverlayController
+        {
+            if (_layout == null || asset == null || controller == null) return;
+            _layout.ShowModal(asset);
+            var root = _layout.OverlayContentRoot;
+            if (root == null) return;
+            controller.AttachTo(root);
+            _active = kind;
+            wire();
+            RefreshOpenOverlay();
+        }
+
+        void RefreshOpenOverlay()
+        {
+            if (_session == null || _bridge == null) return;
+            switch (_active)
+            {
+                case ActiveContest.Trade: _tradeCtrl?.BindState(_session, _bridge); break;
+                case ActiveContest.Duel: _duelCtrl?.BindState(_session, _bridge); break;
+                case ActiveContest.Gambit: _gambitCtrl?.BindState(_session, _bridge); break;
+                case ActiveContest.Opposition: _oppositionCtrl?.BindState(_session, _bridge); break;
+            }
+        }
+
+        void WireTrade()
+        {
+            if (_tradeCtrl == null) return;
+            _tradeCtrl.OnBack = Dismiss;
+            _tradeCtrl.OnCompleted = Dismiss;
+        }
+
+        void WireDuel()
+        {
+            if (_duelCtrl == null) return;
+            _duelCtrl.OnBack = Dismiss;
+            _duelCtrl.OnCompleted = Dismiss;
+        }
+
+        void WireGambit()
+        {
+            if (_gambitCtrl == null) return;
+            _gambitCtrl.OnBack = Dismiss;
+            _gambitCtrl.OnCompleted = Dismiss;
+        }
+
+        void WireOpposition()
+        {
+            if (_oppositionCtrl == null) return;
+            _oppositionCtrl.OnBack = Dismiss;
+            _oppositionCtrl.OnCompleted = Dismiss;
+        }
+    }
+}

@@ -166,4 +166,29 @@ panel root → .kismeta-root → .app-shell → .content-layer → .screen-host 
 
 Visual tokens, components, and per-screen specs: [`Docs/wireframes/UI_styleGuide.md`](../../Docs/wireframes/UI_styleGuide.md).
 
-## Next: Phase 7 — Batch 5 contests (Trade, Duel, Gambit)
+## Phase 7 — Batch 5: Contests (shared)
+
+Trade, Duel, Gambit (Summer Consort), and Opposition (Autumn Oppose) are full-screen modals managed by `ContestOverlayHost` alongside `SummerOverlayHost` on `GameBootstrap`.
+
+```
+Summer Consort sheet ──► ContestOverlayHost (Trade / Duel / Gambit)
+Autumn Oppose button ──► ContestOverlayHost (Opposition)
+                              │
+                              ▼
+                        CommandBridge.TrySubmit ──► HotSeatController
+```
+
+| Screen | Command | Notes |
+|--------|---------|-------|
+| Trade | `DirectTradeCommand` | Immediate 1:1 spread swap; dual trays |
+| Duel | `InitiateDuelCommand` | Rival pick → ante → d12 roll from `DuelResolvedEvent` |
+| Gambit | `InitiateGambitCommand` | Rival pick → ward fee preview (skip if 0) → stake → roll |
+| Opposition | `InitiateOppositionCommand` | Forging targets only → ward fee → tally → Stasis result on win |
+
+### Play-test checklist
+
+**Summer:** Consort → Duel (ante + roll) → Consort → Trade (1-for-1 swap) → Consort → Gambit (warded rival).
+
+**Autumn:** Oppose → fee → tally → Stasis result panel on win.
+
+Overlays dismiss automatically when it is no longer the human player's turn (`DismissIfNotHumanTurn`).

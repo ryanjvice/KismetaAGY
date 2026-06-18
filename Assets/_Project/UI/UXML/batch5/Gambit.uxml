@@ -19,7 +19,7 @@
         <engine:VisualElement class="statusbar" style="border-bottom-color: rgb(74,62,24);">
             <engine:VisualElement class="statusbar__left">
                 <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
-                <engine:Label text="Gambit · Iolanthe" class="statusbar__title" style="color: rgb(224,200,120); margin-left: 4px;" />
+                <engine:Label name="contest-title" text="Gambit · Iolanthe" class="statusbar__title" style="color: rgb(224,200,120); margin-left: 4px;" />
             </engine:VisualElement>
         </engine:VisualElement>
 
@@ -32,22 +32,15 @@
 
         <!-- step 1: target active card -->
         <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
-            <engine:Label text="target an active card" class="eyebrow" />
-            <engine:VisualElement class="party" style="margin-bottom: 6px;">
-                <engine:VisualElement style="width: 30px; height: 42px; border-radius: 6px; background-color: rgb(36, 16, 40); border-width: 1px; border-color: rgb(106, 74, 138); align-items: center; justify-content: center; margin-right: 10px;">
-                    <engine:Label text="&#xea8a;" class="ti-icon" style="color: rgb(205, 176, 224);" />
-                </engine:VisualElement>
-                <engine:VisualElement style="flex-grow: 1;">
-                    <engine:Label text="The Magician (Adept)" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="warded ·  fee 2 to challenge" style="font-size: 10px; color: rgb(224,200,120);" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-            <engine:Button name="g-target-next" text="Target this card" class="btn btn--primary" style="margin-top: 8px;" />
+            <engine:Label text="choose a rival" class="eyebrow" />
+            <engine:VisualElement name="rival-cards" class="tray__cards" style="margin-bottom: 8px;" />
+            <engine:Label name="ward-note" text="select a rival to see ward fee" style="font-size: 10px; color: rgb(224,200,120); margin-bottom: 6px;" />
+            <engine:Button name="g-target-next" text="Challenge this rival" class="btn btn--primary" style="margin-top: 8px;" />
         </engine:VisualElement>
 
         <!-- step 2: pay ward fee (reuses stepper; skipped if unwarded) -->
         <engine:VisualElement name="step-fee" style="display: none; padding: 8px 14px 4px;">
-            <engine:Label text="pay the ward fee — 2 reagents" class="eyebrow" />
+            <engine:Label text="rival pays the ward fee to enter" class="eyebrow" />
             <engine:VisualElement class="pay-pill">
                 <engine:VisualElement style="flex-direction: row; align-items: center;">
                     <engine:Label text="paying" style="font-size: 10px; color: rgb(184, 154, 110); margin-right: 8px;" />
@@ -74,10 +67,7 @@
         <engine:VisualElement name="step-stake" style="display: none; padding: 8px 14px 4px;">
             <engine:Label text="stake a matching-type card" class="eyebrow" />
             <engine:Label text="win to swap · lose and it's arrested (1 Salt to free)" style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 8px; white-space: normal;" />
-            <engine:VisualElement class="tray__cards">
-                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--cups"><engine:Label text="K" class="card-chip__rank" /></engine:VisualElement>
-            </engine:VisualElement>
+            <engine:VisualElement name="stake-cards" class="tray__cards" />
             <engine:Button name="g-stake-next" text="Stake &amp; roll" class="btn btn--primary" style="margin-top: 12px;" />
         </engine:VisualElement>
 

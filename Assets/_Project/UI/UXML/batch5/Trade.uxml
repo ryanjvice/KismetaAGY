@@ -19,9 +19,11 @@
         <engine:VisualElement class="statusbar" style="border-bottom-color: rgb(43,58,74);">
             <engine:VisualElement class="statusbar__left">
                 <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
-                <engine:Label text="Trade · Severin" class="statusbar__title" style="color: rgb(168,205,240); margin-left: 4px;" />
+                <engine:Label name="contest-title" text="Trade · Severin" class="statusbar__title" style="color: rgb(168,205,240); margin-left: 4px;" />
             </engine:VisualElement>
         </engine:VisualElement>
+
+        <engine:VisualElement name="rival-strip" style="padding: 8px 14px 0; flex-direction: row; flex-wrap: wrap;" />
 
         <!-- you give -->
         <engine:VisualElement style="padding: 12px 14px 0;">
@@ -60,8 +62,8 @@
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 2px 14px 16px;">
-            <engine:Button name="propose-btn" text="Propose the trade" class="btn btn--primary" />
-            <engine:Label text="Severin must accept before it resolves"
+            <engine:Button name="propose-btn" text="Complete trade" class="btn btn--primary" />
+            <engine:Label text="Cards swap immediately in hot-seat play"
                           style="font-size: 9px; color: rgb(106,122,138); -unity-text-align: middle-center; margin-top: 7px;" />
         </engine:VisualElement>
 

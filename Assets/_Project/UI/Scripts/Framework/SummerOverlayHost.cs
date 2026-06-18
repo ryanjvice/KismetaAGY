@@ -1,3 +1,4 @@
+using System;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Controllers;
 using UnityEngine;
@@ -27,6 +28,10 @@ namespace Kismeta.UI
         BuildHouseController? _build;
         PlaceWardsController? _wards;
         EndSummerController? _endSummerCtrl;
+
+        public Action OnTrade;
+        public Action OnDuel;
+        public Action OnGambit;
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
 
@@ -192,6 +197,7 @@ namespace Kismeta.UI
             _build?.BindState(_session, _bridge);
             _wards?.BindState(_session, _bridge);
             _endSummerCtrl?.BindState(_session, _bridge);
+            _sheets?.BindState(_session, _bridge);
         }
 
         void WireSheets()

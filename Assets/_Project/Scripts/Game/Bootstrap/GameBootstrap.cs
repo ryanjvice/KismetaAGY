@@ -68,6 +68,10 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _buildHouse;
         [SerializeField] private VisualTreeAsset _placeWards;
         [SerializeField] private VisualTreeAsset _endSummer;
+        [SerializeField] private VisualTreeAsset _trade;
+        [SerializeField] private VisualTreeAsset _duel;
+        [SerializeField] private VisualTreeAsset _gambit;
+        [SerializeField] private VisualTreeAsset _opposition;
 
         private CardDatabase? _db;
         private CrucibleCodexDatabase? _codexDb;
@@ -167,6 +171,11 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<BuildHouseController>();
             EnsureController<PlaceWardsController>();
             EnsureController<EndSummerController>();
+            EnsureController<ContestOverlayHost>();
+            EnsureController<TradeController>();
+            EnsureController<DuelController>();
+            EnsureController<GambitController>();
+            EnsureController<OppositionController>();
 
             router.RefreshControllers();
 
@@ -174,6 +183,9 @@ namespace Kismeta.Game.Bootstrap
             summerOverlays?.Configure(
                 _summerSheets, _craftReagent, _activateCard,
                 _buildHouse, _placeWards, _endSummer);
+
+            var contestOverlays = GetComponent<ContestOverlayHost>();
+            contestOverlays?.Configure(_trade, _duel, _gambit, _opposition);
 
             if (_titleScreen != null && _gameplayHud != null && _waitingHud != null)
             {

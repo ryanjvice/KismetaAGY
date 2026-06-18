@@ -295,6 +295,10 @@ MonoBehaviour:
   _buildHouse: {fileID: 9197481963319205126, guid: 17d1b9ef5e64d044294754e593412e12, type: 3}
   _placeWards: {fileID: 9197481963319205126, guid: 5cc5e001c98bd3547b1f0181ea83ee3b, type: 3}
   _endSummer: {fileID: 9197481963319205126, guid: 230850dabc890f644bd6284cf7cac3ee, type: 3}
+  _trade: {fileID: 9197481963319205126, guid: f2de55905a3446a4b85c1f3a2e69d632, type: 3}
+  _duel: {fileID: 9197481963319205126, guid: d38330957eeb899419e4a9d055553bcf, type: 3}
+  _gambit: {fileID: 9197481963319205126, guid: eceadc2ed3a289d46974dfc0ee16743e, type: 3}
+  _opposition: {fileID: 9197481963319205126, guid: ab9532d9d810ed042bc50542cf4d6759, type: 3}
 --- !u!4 &1726667743
 Transform:
   m_ObjectHideFlags: 0

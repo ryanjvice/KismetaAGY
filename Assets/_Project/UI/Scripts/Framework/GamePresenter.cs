@@ -24,6 +24,7 @@ namespace Kismeta.UI
         private ScreenRouter _router;
         private ViewportLayout _layout;
         private SummerOverlayHost? _summerOverlays;
+        private ContestOverlayHost? _contestOverlays;
         private readonly CommandBridge _bridge = new();
         private GameSession? _session;
         private GameLoop? _loop;
@@ -46,6 +47,7 @@ namespace Kismeta.UI
             _router = GetComponent<ScreenRouter>();
             _layout = GetComponent<ViewportLayout>();
             _summerOverlays = GetComponent<SummerOverlayHost>();
+            _contestOverlays = GetComponent<ContestOverlayHost>();
         }
 
         /// <summary>Wire title menu and show the title screen before a session exists.</summary>
@@ -75,6 +77,7 @@ namespace Kismeta.UI
             WireAgekeeperContest();
             WireStepScreens();
             WireSummerNavigation();
+            WireContestNavigation();
         }
 
         public void Unbind()
@@ -267,6 +270,7 @@ namespace Kismeta.UI
             if (_loop.PendingHumanController == null)
             {
                 _summerOverlays?.DismissIfNotHumanTurn();
+                _contestOverlays?.DismissIfNotHumanTurn();
                 RouteIfNeeded(ScreenIds.Waiting);
                 RefreshActiveScreen();
                 return;
@@ -318,6 +322,19 @@ namespace Kismeta.UI
             summer.OnPass = () => _summerOverlays.ShowEndSummer();
             summer.OnOpenCardTable = () =>
                 Debug.Log("[UI] Card table — Batch 7");
+        }
+
+        private void WireContestNavigation()
+        {
+            if (_summerOverlays == null || _contestOverlays == null) return;
+
+            _summerOverlays.OnTrade = () => { _summerOverlays.Dismiss(); _contestOverlays.ShowTrade(); };
+            _summerOverlays.OnDuel = () => { _summerOverlays.Dismiss(); _contestOverlays.ShowDuel(); };
+            _summerOverlays.OnGambit = () => { _summerOverlays.Dismiss(); _contestOverlays.ShowGambit(); };
+
+            var autumn = _router.GetController<AutumnSceneController>(ScreenIds.AutumnMain);
+            if (autumn != null)
+                autumn.OnOppose = () => _contestOverlays.ShowOpposition();
         }
 
         private static string MapCeremonyScreen(CeremonyStep step) => step switch
@@ -377,9 +394,13 @@ namespace Kismeta.UI
             {
                 summer.BindState(_session, _loop, _bridge);
                 _summerOverlays?.BindState(_session, _bridge);
+                _contestOverlays?.BindState(_session, _bridge);
             }
             else if (controller is AutumnSceneController autumn)
+            {
                 autumn.BindState(_session, _loop, _bridge);
+                _contestOverlays?.BindState(_session, _bridge);
+            }
             else if (controller is WinterHubController winter)
                 winter.BindState(_session, _loop, _bridge);
             else if (controller is CommuneController commune)

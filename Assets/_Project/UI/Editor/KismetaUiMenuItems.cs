@@ -41,6 +41,10 @@ namespace Kismeta.UI.Editor
         private const string BuildHousePath = "Assets/_Project/UI/UXML/batch4/BuildHouse.uxml";
         private const string PlaceWardsPath = "Assets/_Project/UI/UXML/batch4/PlaceWards.uxml";
         private const string EndSummerPath = "Assets/_Project/UI/UXML/batch4/EndSummer.uxml";
+        private const string TradePath = "Assets/_Project/UI/UXML/batch5/Trade.uxml";
+        private const string DuelPath = "Assets/_Project/UI/UXML/batch5/Duel.uxml";
+        private const string GambitPath = "Assets/_Project/UI/UXML/batch5/Gambit.uxml";
+        private const string OppositionPath = "Assets/_Project/UI/UXML/batch5/Opposition.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
@@ -131,6 +135,11 @@ namespace Kismeta.UI.Editor
             EnsureComponent<BuildHouseController>(bootstrap.gameObject);
             EnsureComponent<PlaceWardsController>(bootstrap.gameObject);
             EnsureComponent<EndSummerController>(bootstrap.gameObject);
+            EnsureComponent<ContestOverlayHost>(bootstrap.gameObject);
+            EnsureComponent<TradeController>(bootstrap.gameObject);
+            EnsureComponent<DuelController>(bootstrap.gameObject);
+            EnsureComponent<GambitController>(bootstrap.gameObject);
+            EnsureComponent<OppositionController>(bootstrap.gameObject);
 
             var layout = bootstrap.GetComponent<ViewportLayout>();
             var layoutSo = new SerializedObject(layout);
@@ -184,6 +193,10 @@ namespace Kismeta.UI.Editor
             var buildHouse = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(BuildHousePath);
             var placeWards = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PlaceWardsPath);
             var endSummer = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(EndSummerPath);
+            var trade = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TradePath);
+            var duel = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(DuelPath);
+            var gambit = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GambitPath);
+            var opposition = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(OppositionPath);
 
             var so = new SerializedObject(bootstrap);
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
@@ -217,6 +230,10 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_buildHouse").objectReferenceValue = buildHouse;
             so.FindProperty("_placeWards").objectReferenceValue = placeWards;
             so.FindProperty("_endSummer").objectReferenceValue = endSummer;
+            so.FindProperty("_trade").objectReferenceValue = trade;
+            so.FindProperty("_duel").objectReferenceValue = duel;
+            so.FindProperty("_gambit").objectReferenceValue = gambit;
+            so.FindProperty("_opposition").objectReferenceValue = opposition;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -282,6 +299,11 @@ namespace Kismeta.UI.Editor
             host.AddComponent<BuildHouseController>();
             host.AddComponent<PlaceWardsController>();
             host.AddComponent<EndSummerController>();
+            host.AddComponent<ContestOverlayHost>();
+            host.AddComponent<TradeController>();
+            host.AddComponent<DuelController>();
+            host.AddComponent<GambitController>();
+            host.AddComponent<OppositionController>();
             host.AddComponent<UiResponsiveTest>();
 
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
