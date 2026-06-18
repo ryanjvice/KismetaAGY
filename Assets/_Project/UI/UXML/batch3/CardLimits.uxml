@@ -44,6 +44,17 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
+        <!-- spread cards: tap to discard -->
+        <engine:VisualElement style="padding: 4px 14px 0;">
+            <engine:VisualElement class="swap-zone swap-zone--spread" style="background-color: rgb(22,32,46);">
+                <engine:VisualElement class="swap-zone__header">
+                    <engine:Label text="Spread — tap to discard" style="font-size: 12px; color: rgb(244, 211, 94);" />
+                    <engine:Label name="spread-tally" text="4 / 5" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                </engine:VisualElement>
+                <engine:VisualElement name="spread-cards" class="swap-zone__cards" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
         <!-- hand cards: the over-limit one flagged amber -->
         <engine:VisualElement style="padding: 4px 14px 0;">
             <engine:VisualElement class="swap-zone swap-zone--hand" style="background-color: rgb(22,16,28);">

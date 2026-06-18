@@ -10,6 +10,7 @@ Unity UI Toolkit assets ported from `Docs/wireframes/`. This folder is the **pro
 | `UXML/batch1/` | Title, SetupSheet, Join, Resume, Codex, AgekeeperContest |
 | `UXML/main/` | Season main scenes: SpringHub, SummerMain, AutumnMain, WinterHub |
 | `UXML/batch2/` | Ceremony screens: RoundOpen, AgeOpening, season intros, AgeClosing |
+| `UXML/batch3/` | Spring/Winter step screens: Commune, WinterUnlock, FatefulWager, CardLimits |
 | `UXML/shell/` | `AppShell.uxml`, `GameplayHud` (dev fallback), `WaitingHud` |
 | `Scripts/Framework/` | ViewportLayout, ScreenRouter, GamePresenter, CommandBridge |
 | `Scripts/Controllers/` | Shell + season main scene controllers |
@@ -39,12 +40,23 @@ flowchart TB
 | **`AppShell.uxml`** | The **only** UIDocument Source Asset. Provides `content-layer` + `overlay-layer`. Never assign TitleScreen or ad-hoc layouts here. |
 | **`ScreenRouter`** | Maps screen ids to UXML; calls `ViewportLayout.SetScreen()` to swap children in `content-layer`. |
 | **`ViewportLayout`** | Safe-area padding, viewport classes, modal/sheet overlays, full-bleed stretch for instantiated screens. |
-| **`GamePresenter`** | Ceremony-first routing via `CeremonyGate`; then season hubs when human pending; `WaitingHud` for AI turns. |
+| **`GamePresenter`** | Ceremony-first routing via `CeremonyGate`; hint-based step screens (`Commune`, `CardLimits`); season hubs when human pending; `WaitingHud` for AI turns. |
 | **`ScreenController`** | Attach/detach/refresh on the host GameObject when the router loads a screen. |
 | **`CommandBridge`** | Submits `IGameCommand` to `HotSeatController` (e.g. Pass). |
 | **`GameBootstrap`** | `Awake`: sets AppShell on UIDocument; `Start`: Title → Setup sheet → Begin starts the loop. |
 
 Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `ScreenRouter`. Call `ScreenRouter.RefreshControllers()` after adding components at runtime.
+
+## Phase 5 complete — Batch 3 Spring & Winter steps
+
+- **Hint routing:** `ActionHint.Commune` → **Commune**; `ActionHint.DiscardToLimit` → **CardLimits**; `ActionHint.WinterAction` → **WinterHub** (sub-screens opened from hub CTAs).
+- **Spring:** **SpringHub** shows zodiac sign + harvest tally after auto roll/harvest; **Commune** tap-swap → `CommuneCommand` → auto Card Lock.
+- **Winter:** **WinterHub** → **WinterUnlock** (per-tap `WinterMoveCardCommand`) / **FatefulWager** (`PlaceFatefulWagerCommand` or Pass skip) → **CardLimits** (`DiscardToLimitCommand`) → **AgeClosing**.
+- **Deferred:** Full `SpringRollHarvest` screen (display-only on SpringHub); `TransitAge.uxml` (transit via AgeClosing ceremony).
+
+**Full-round play-test path:**
+
+Title → setup → agekeeper → RoundOpen → AgeOpening → SpringIntro → **SpringHub** (sign + harvest) → **Commune** → Summer → Autumn → WinterIntro → **WinterHub** → unlock / wager / pass → **CardLimits** → **AgeClosing** → next round
 
 ## Phase 4 complete — Batch 2 ceremonies
 
@@ -58,7 +70,7 @@ Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `
 - **Routing:** `GamePresenter` maps `Season` → `SpringHub` / `SummerMain` / `AutumnMain` / `WinterHub` on human turns; `WaitingHud` while AI decides.
 - **Bind:** Status bar, rivals strip, spread dock, step rails (Spring/Winter), cauldrons (Summer), stone label (Autumn) from `GamePublicView`.
 - **Pass:** Summer, Autumn, and Winter main scenes wire **Pass** via `CommandBridge` during free-action phases.
-- **Stubs:** Commune, craft/fire actions, card table, and Winter advance CTAs log until Phase 5.
+- **Stubs:** Craft/fire actions and card table log until later batches.
 - **`GameplayHud`** remains registered for dev fallback but is no longer used in normal play routing.
 
 ## Phase 2 complete — Batch 1 shell
@@ -93,7 +105,7 @@ Open `Bootstrap.unity` (or your play scene with `GameBootstrap`), then:
 - GameBootstrap **Use Production Ui** = on
 - **Save the scene** (`Ctrl+S`)
 
-**Play-test:** Title → New game → Start Game → agekeeper contest → **RoundOpen** (roll die) → AgeOpening → SpringIntro → season main scene on your turn; season intros between seasons; AgeClosing at Winter end.
+**Play-test:** Title → New game → Start Game → agekeeper contest → **RoundOpen** (roll die) → AgeOpening → SpringIntro → **SpringHub** → **Commune** → season main scenes; season intros between seasons; Winter unlock/wager/limits → **AgeClosing** at Winter end.
 
 ## Full-bleed / responsive rules
 

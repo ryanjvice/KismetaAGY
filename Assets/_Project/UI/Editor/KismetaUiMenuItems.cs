@@ -31,6 +31,10 @@ namespace Kismeta.UI.Editor
         private const string AutumnIntroPath = "Assets/_Project/UI/UXML/batch2/AutumnIntro.uxml";
         private const string WinterIntroPath = "Assets/_Project/UI/UXML/batch2/WinterIntro.uxml";
         private const string AgeClosingPath = "Assets/_Project/UI/UXML/batch2/AgeClosing.uxml";
+        private const string CommunePath = "Assets/_Project/UI/UXML/batch3/Commune.uxml";
+        private const string WinterUnlockPath = "Assets/_Project/UI/UXML/batch3/WinterUnlock.uxml";
+        private const string FatefulWagerPath = "Assets/_Project/UI/UXML/batch3/FatefulWager.uxml";
+        private const string CardLimitsPath = "Assets/_Project/UI/UXML/batch3/CardLimits.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
@@ -110,6 +114,10 @@ namespace Kismeta.UI.Editor
             EnsureComponent<SummerIntroController>(bootstrap.gameObject);
             EnsureComponent<AutumnIntroController>(bootstrap.gameObject);
             EnsureComponent<WinterIntroController>(bootstrap.gameObject);
+            EnsureComponent<CommuneController>(bootstrap.gameObject);
+            EnsureComponent<WinterUnlockController>(bootstrap.gameObject);
+            EnsureComponent<FatefulWagerController>(bootstrap.gameObject);
+            EnsureComponent<CardLimitsController>(bootstrap.gameObject);
 
             var layout = bootstrap.GetComponent<ViewportLayout>();
             var layoutSo = new SerializedObject(layout);
@@ -153,6 +161,10 @@ namespace Kismeta.UI.Editor
             var autumnIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnIntroPath);
             var winterIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterIntroPath);
             var ageClosing = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeClosingPath);
+            var commune = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommunePath);
+            var winterUnlock = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterUnlockPath);
+            var fatefulWager = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FatefulWagerPath);
+            var cardLimits = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardLimitsPath);
 
             var so = new SerializedObject(bootstrap);
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
@@ -176,6 +188,10 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_autumnIntro").objectReferenceValue = autumnIntro;
             so.FindProperty("_winterIntro").objectReferenceValue = winterIntro;
             so.FindProperty("_ageClosing").objectReferenceValue = ageClosing;
+            so.FindProperty("_commune").objectReferenceValue = commune;
+            so.FindProperty("_winterUnlock").objectReferenceValue = winterUnlock;
+            so.FindProperty("_fatefulWager").objectReferenceValue = fatefulWager;
+            so.FindProperty("_cardLimits").objectReferenceValue = cardLimits;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -230,6 +246,10 @@ namespace Kismeta.UI.Editor
             host.AddComponent<SummerIntroController>();
             host.AddComponent<AutumnIntroController>();
             host.AddComponent<WinterIntroController>();
+            host.AddComponent<CommuneController>();
+            host.AddComponent<WinterUnlockController>();
+            host.AddComponent<FatefulWagerController>();
+            host.AddComponent<CardLimitsController>();
             host.AddComponent<UiResponsiveTest>();
 
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
@@ -255,6 +275,10 @@ namespace Kismeta.UI.Editor
             var autumnIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnIntroPath);
             var winterIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterIntroPath);
             var ageClosing = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeClosingPath);
+            var commune = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommunePath);
+            var winterUnlock = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterUnlockPath);
+            var fatefulWager = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FatefulWagerPath);
+            var cardLimits = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardLimitsPath);
             var gameplayHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameplayHudPath);
             var waitingHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
             var cardModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
@@ -265,7 +289,8 @@ namespace Kismeta.UI.Editor
                 joinScreen, resumeScreen, codexScreen, agekeeperContest,
                 springHub, summerMain, autumnMain, winterHub,
                 roundOpen, ageOpening, springIntro, summerIntro,
-                autumnIntro, winterIntro, ageClosing);
+                autumnIntro, winterIntro, ageClosing,
+                commune, winterUnlock, fatefulWager, cardLimits);
 
             var doc = host.GetComponent<UIDocument>();
             doc.panelSettings = panelSettings;

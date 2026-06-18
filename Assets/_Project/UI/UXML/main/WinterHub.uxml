@@ -35,7 +35,8 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="actionbar">
-            <engine:Button name="continue-btn" text="Continue" class="actionbtn btn btn--primary" style="display: none;" />
+            <engine:Button name="continue-btn" text="Unlock cards" class="actionbtn btn btn--primary" style="display: none;" />
+            <engine:Button name="wager-btn" text="Fateful wager" class="actionbtn btn btn--primary" style="display: none;" />
             <engine:Button name="limits-btn" text="Enforce limits" class="actionbtn btn btn--primary" style="display: none;" />
             <engine:Button name="transit-btn" text="Transit the age" class="actionbtn btn btn--primary" style="display: none;" />
             <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" style="flex-grow: 0; min-width: 56px;" />

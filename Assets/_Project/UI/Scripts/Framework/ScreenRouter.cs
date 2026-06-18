@@ -66,7 +66,11 @@ namespace Kismeta.UI
             VisualTreeAsset? summerIntro = null,
             VisualTreeAsset? autumnIntro = null,
             VisualTreeAsset? winterIntro = null,
-            VisualTreeAsset? ageClosing = null)
+            VisualTreeAsset? ageClosing = null,
+            VisualTreeAsset? commune = null,
+            VisualTreeAsset? winterUnlock = null,
+            VisualTreeAsset? fatefulWager = null,
+            VisualTreeAsset? cardLimits = null)
         {
             var screens = new List<ScreenAsset>
             {
@@ -104,6 +108,14 @@ namespace Kismeta.UI
                 screens.Add(new ScreenAsset { Id = ScreenIds.WinterIntro, Uxml = winterIntro });
             if (ageClosing != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.AgeClosing, Uxml = ageClosing });
+            if (commune != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.Commune, Uxml = commune });
+            if (winterUnlock != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.WinterUnlock, Uxml = winterUnlock });
+            if (fatefulWager != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.FatefulWager, Uxml = fatefulWager });
+            if (cardLimits != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.CardLimits, Uxml = cardLimits });
 
             _screens = screens.ToArray();
             _setupSheet = setupSheet;

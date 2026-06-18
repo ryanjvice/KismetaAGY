@@ -1,3 +1,4 @@
+using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.Core.Views;
@@ -12,23 +13,18 @@ namespace Kismeta.UI.Controllers
     {
         public override string ScreenId => ScreenIds.WinterHub;
 
+        public System.Action? OnOpenUnlock;
+        public System.Action? OnOpenWager;
+
         CommandBridge? _bridge;
         int _localPlayerId;
 
         protected override void Wire()
         {
-            HookAdvance("continue-btn");
-            HookAdvance("limits-btn");
-            HookAdvance("transit-btn");
-            Btn("menu-btn")!.clicked += () => Debug.Log("[UI] Card table — Phase 4");
+            Btn("continue-btn")!.clicked += () => OnOpenUnlock?.Invoke();
+            Btn("wager-btn")!.clicked += () => OnOpenWager?.Invoke();
+            Btn("menu-btn")!.clicked += () => Debug.Log("[UI] Card table — future work");
             Btn("pass-btn")!.clicked += OnPass;
-        }
-
-        void HookAdvance(string name)
-        {
-            var b = Btn(name);
-            if (b != null)
-                b.clicked += () => Debug.Log($"[UI] Winter advance ({name}) — Phase 4");
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -51,15 +47,20 @@ namespace Kismeta.UI.Controllers
                     $"Spread {local.Spread.Count}/5 · Hand {local.HandCardCount}/5";
             }
 
-            BindWinterCta(session.Phase.CurrentStepIndex);
+            BindWinterCta(session, bridge);
             RivalStripBuilder.Populate(El("rivals"), view, _localPlayerId);
         }
 
-        void BindWinterCta(int stepIndex)
+        void BindWinterCta(GameSession session, CommandBridge bridge)
         {
-            SetCtaVisible("continue-btn", stepIndex == 0);
-            SetCtaVisible("limits-btn", stepIndex == 2);
-            SetCtaVisible("transit-btn", stepIndex == 3);
+            bool winterAction = bridge.PendingHint == ActionHint.WinterAction;
+            var player = session.Players[_localPlayerId];
+            bool canWager = winterAction && player.FatefulWagerSign == ZodiacSign.None;
+
+            SetCtaVisible("continue-btn", winterAction);
+            SetCtaVisible("wager-btn", canWager);
+            SetCtaVisible("limits-btn", false);
+            SetCtaVisible("transit-btn", false);
         }
 
         void SetCtaVisible(string name, bool visible)

@@ -71,6 +71,7 @@ namespace Kismeta.UI
             WireTitleScreen();
             WireShellScreens();
             WireAgekeeperContest();
+            WireStepScreens();
         }
 
         public void Unbind()
@@ -241,8 +242,37 @@ namespace Kismeta.UI
                 return;
             }
 
-            RouteIfNeeded(ResolveSeasonMainScreen(_session.Phase.CurrentSeason));
+            RouteIfNeeded(ResolveGameplayScreen(_session.Phase.CurrentSeason, _loop.PendingHint));
             RefreshActiveScreen();
+        }
+
+        private static string ResolveGameplayScreen(Season season, ActionHint hint) => hint switch
+        {
+            ActionHint.Commune => ScreenIds.Commune,
+            ActionHint.DiscardToLimit => ScreenIds.CardLimits,
+            _ => ResolveSeasonMainScreen(season)
+        };
+
+        private void WireStepScreens()
+        {
+            var spring = _router.GetController<SpringHubController>(ScreenIds.SpringHub);
+            if (spring != null)
+                spring.OnOpenCommune = () => _router.GoTo(ScreenIds.Commune);
+
+            var winter = _router.GetController<WinterHubController>(ScreenIds.WinterHub);
+            if (winter != null)
+            {
+                winter.OnOpenUnlock = () => _router.GoTo(ScreenIds.WinterUnlock);
+                winter.OnOpenWager = () => _router.GoTo(ScreenIds.FatefulWager);
+            }
+
+            var unlock = _router.GetController<WinterUnlockController>(ScreenIds.WinterUnlock);
+            if (unlock != null)
+                unlock.OnDone = () => _router.GoTo(ScreenIds.WinterHub);
+
+            var wager = _router.GetController<FatefulWagerController>(ScreenIds.FatefulWager);
+            if (wager != null)
+                wager.OnCompleted = () => _router.GoTo(ScreenIds.WinterHub);
         }
 
         private static string MapCeremonyScreen(CeremonyStep step) => step switch
@@ -304,6 +334,14 @@ namespace Kismeta.UI
                 autumn.BindState(_session, _loop, _bridge);
             else if (controller is WinterHubController winter)
                 winter.BindState(_session, _loop, _bridge);
+            else if (controller is CommuneController commune)
+                commune.BindState(_session, _bridge);
+            else if (controller is WinterUnlockController winterUnlock)
+                winterUnlock.BindState(_session, _bridge);
+            else if (controller is FatefulWagerController fatefulWager)
+                fatefulWager.BindState(_session, _bridge);
+            else if (controller is CardLimitsController cardLimits)
+                cardLimits.BindState(_session, _bridge);
             else if (controller is GameplayHudController hud)
                 hud.BindState(_session, _loop, _bridge);
             else if (controller is WaitingHudController waiting)

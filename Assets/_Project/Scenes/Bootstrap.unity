@@ -236,6 +236,10 @@ GameObject:
   - component: {fileID: 1726667756}
   - component: {fileID: 1726667757}
   - component: {fileID: 1726667758}
+  - component: {fileID: 1726667759}
+  - component: {fileID: 1726667760}
+  - component: {fileID: 1726667761}
+  - component: {fileID: 1726667762}
   m_Layer: 0
   m_Name: GameBootstrap
   m_TagString: Untagged
@@ -281,6 +285,10 @@ MonoBehaviour:
   _autumnIntro: {fileID: 9197481963319205126, guid: e38dccfb4ba682341bf8d69b540f1545, type: 3}
   _winterIntro: {fileID: 9197481963319205126, guid: 6542ba701070b694b89a0f0561232a31, type: 3}
   _ageClosing: {fileID: 9197481963319205126, guid: c409715823e777440a4e755e751e4376, type: 3}
+  _commune: {fileID: 9197481963319205126, guid: 2e1aebe88c59536408a43118524a5c2a, type: 3}
+  _winterUnlock: {fileID: 9197481963319205126, guid: 2a127e9c6e2c5924db4d4e5a87389aa1, type: 3}
+  _fatefulWager: {fileID: 9197481963319205126, guid: df8ecc00a3c57bd44ac1509e90459d74, type: 3}
+  _cardLimits: {fileID: 9197481963319205126, guid: c0d8fbb17e40eb840aa1ddb77db097ec, type: 3}
 --- !u!4 &1726667743
 Transform:
   m_ObjectHideFlags: 0
@@ -493,6 +501,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4c072838f61c8b423d4e5f60718293a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.WinterHubController
+--- !u!114 &1726667759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3abc078c6afc35448fa3f20070d4233, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.CommuneController
+--- !u!114 &1726667760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15cade3d84fb16f4eaa5234d1eb3910d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.WinterUnlockController
+--- !u!114 &1726667761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aa1be9e0dffe54489f6b057770b1688, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.FatefulWagerController
+--- !u!114 &1726667762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f6071829a3b4c5d6e7f80912345678, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.CardLimitsController
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
