@@ -278,6 +278,21 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
+        public void Commune_Allows_Spread_Above_Winter_Limit()
+        {
+            var db      = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            GivePlayerCards(session, 0, 7);
+
+            var spreadIds = new List<string>(session.Players[0].Spread);
+            var result = session.Apply(new CommuneCommand(0, spreadIds, System.Array.Empty<string>()));
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(7, session.Players[0].Spread.Count);
+        }
+
+        [Test]
         public void Commune_Fails_If_Cards_Not_Owned()
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();

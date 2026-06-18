@@ -130,8 +130,22 @@ namespace Kismeta.UI
             }
         }
 
-        private void OnSessionEvent(IGameEvent _) => RefreshActiveScreen();
-        private void OnLoopLog(string _) => RefreshActiveScreen();
+        private void OnSessionEvent(IGameEvent _) => RefreshActiveScreenIfNeeded();
+        private void OnLoopLog(string _) => RefreshActiveScreenIfNeeded();
+
+        private void RefreshActiveScreenIfNeeded()
+        {
+            if (_session == null || _loop == null) return;
+
+            // Step screens bind via ActivePlayerId; skip refresh while the loop clears it post-submit.
+            var activeId = _router.CurrentScreenId;
+            if (_loop.PendingHumanController == null && _loop.ActivePlayerId < 0
+                && activeId is ScreenIds.Commune or ScreenIds.WinterUnlock
+                    or ScreenIds.FatefulWager or ScreenIds.CardLimits)
+                return;
+
+            RefreshActiveScreen();
+        }
 
         private void WireTitleScreen()
         {

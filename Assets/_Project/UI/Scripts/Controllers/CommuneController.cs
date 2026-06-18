@@ -33,7 +33,10 @@ namespace Kismeta.UI.Controllers
         {
             _session = session;
             _bridge = bridge;
-            int pid = bridge.ActivePlayerId;
+
+            int pid = ResolvePlayerId(session, bridge);
+            if (pid < 0) return;
+
             if (pid != _playerId)
             {
                 _playerId = pid;
@@ -48,6 +51,19 @@ namespace Kismeta.UI.Controllers
             TapSwapBindings.RebuildZones(Root, session, _spreadIds, _handIds,
                 session.Board.CosmicAgeSign, OnTapMove);
             UpdateLockButton();
+        }
+
+        static int ResolvePlayerId(GameSession session, CommandBridge bridge)
+        {
+            int pid = bridge.ActivePlayerId;
+            if (pid >= 0 && pid < session.Players.Count)
+                return pid;
+
+            var hs = bridge.PendingController;
+            if (hs != null && hs.Slot.Index >= 0 && hs.Slot.Index < session.Players.Count)
+                return hs.Slot.Index;
+
+            return -1;
         }
 
         void SeedFromPlayer(GameSession session, int playerId)
@@ -94,9 +110,8 @@ namespace Kismeta.UI.Controllers
 
         void OnLock()
         {
-            if (_bridge == null || _handIds.Count > WinterRules.HandLimit) return;
+            if (_bridge == null || _playerId < 0 || _handIds.Count > WinterRules.HandLimit) return;
             _bridge.TrySubmit(new CommuneCommand(_playerId, _spreadIds, _handIds));
-            _initialized = false;
         }
     }
 }
