@@ -11,10 +11,11 @@ Unity UI Toolkit assets ported from `Docs/wireframes/`. This folder is the **pro
 | `UXML/main/` | Season main scenes: SpringHub, SummerMain, AutumnMain, WinterHub |
 | `UXML/batch2/` | Ceremony screens: RoundOpen, AgeOpening, season intros, AgeClosing |
 | `UXML/batch3/` | Spring/Winter step screens: Commune, WinterUnlock, FatefulWager, CardLimits |
+| `UXML/batch4/` | Summer action overlays: SummerSheets, CraftReagent, ActivateCard, BuildHouse, PlaceWards, EndSummer |
 | `UXML/shell/` | `AppShell.uxml`, `GameplayHud` (dev fallback), `WaitingHud` |
 | `Scripts/Framework/` | ViewportLayout, ScreenRouter, GamePresenter, CommandBridge |
 | `Scripts/Controllers/` | Shell + season main scene controllers |
-| `Scripts/Components/` | CardChipFactory, RivalStripBuilder |
+| `Scripts/Components/` | CardChipFactory, RivalStripBuilder, ReagentStepper |
 | `Scripts/Setup/` | `UiSetupConfig`, mapper to Core `GameMode` |
 | `Settings/` | `KismetaPanelSettings.asset` (380×844 **reference** only) |
 | `Editor/` | Menu items under **Kismeta → UI** |
@@ -47,6 +48,17 @@ flowchart TB
 
 Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `ScreenRouter`. Call `ScreenRouter.RefreshControllers()` after adding components at runtime.
 
+## Phase 6 complete — Batch 4 Summer actions
+
+- **Overlay navigation:** Summer sub-screens use `ViewportLayout` overlays via `SummerOverlayHost`; `SummerMain` stays the active `ScreenRouter` screen during `ActionHint.SummerAction`.
+- **Hub:** Craft & build sheet, Consort sheet (Trade/Duel/Gambit disabled — Batch 5), atomic **Activate**, **Pass** → **End Summer** confirmation modal.
+- **Actions wired:** `CraftReagentCommand`, `ActivateCrucibleCommand`, `BuildAstralHouseCommand`, `PlaceCardWardCommand`, `PassCrucibleActionCommand`.
+- **Deferred:** Trade (#26), Duel/Gambit contests (#33, 47–49), Card Table (`menu-btn` stub).
+
+**Summer play-test path:**
+
+Reach **SummerMain** → **Craft & build** → craft reagent (forge result) → **Activate** dormant crucible → **Build** astral house (planet-matching card) → **Place wards** (one ward per action) → **Pass** → **End Summer** → repeat passes until **AutumnIntro**
+
 ## Phase 5 complete — Batch 3 Spring & Winter steps
 
 - **Hint routing:** `ActionHint.Commune` → **Commune**; `ActionHint.DiscardToLimit` → **CardLimits**; `ActionHint.WinterAction` → **WinterHub** (sub-screens opened from hub CTAs).
@@ -69,8 +81,9 @@ Title → setup → agekeeper → RoundOpen → AgeOpening → SpringIntro → *
 
 - **Routing:** `GamePresenter` maps `Season` → `SpringHub` / `SummerMain` / `AutumnMain` / `WinterHub` on human turns; `WaitingHud` while AI decides.
 - **Bind:** Status bar, rivals strip, spread dock, step rails (Spring/Winter), cauldrons (Summer), stone label (Autumn) from `GamePublicView`.
-- **Pass:** Summer, Autumn, and Winter main scenes wire **Pass** via `CommandBridge` during free-action phases.
-- **Stubs:** Craft/fire actions and card table log until later batches.
+- **Pass:** Summer, Autumn, and Winter main scenes wire **Pass** via `CommandBridge` during free-action phases (Summer opens **End Summer** modal first).
+- **Summer actions:** Craft, activate, build, ward overlays via `SummerOverlayHost`.
+- **Stubs:** Card table (`menu-btn`); Consort contests until Batch 5.
 - **`GameplayHud`** remains registered for dev fallback but is no longer used in normal play routing.
 
 ## Phase 2 complete — Batch 1 shell

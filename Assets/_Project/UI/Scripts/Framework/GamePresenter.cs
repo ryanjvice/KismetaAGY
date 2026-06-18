@@ -6,6 +6,7 @@ using Kismeta.Core.Players;
 using Kismeta.UI.Controllers;
 using Kismeta.UI.Setup;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Kismeta.UI
 {
@@ -23,6 +24,7 @@ namespace Kismeta.UI
 
         private ScreenRouter _router;
         private ViewportLayout _layout;
+        private SummerOverlayHost? _summerOverlays;
         private readonly CommandBridge _bridge = new();
         private GameSession? _session;
         private GameLoop? _loop;
@@ -44,6 +46,7 @@ namespace Kismeta.UI
         {
             _router = GetComponent<ScreenRouter>();
             _layout = GetComponent<ViewportLayout>();
+            _summerOverlays = GetComponent<SummerOverlayHost>();
         }
 
         /// <summary>Wire title menu and show the title screen before a session exists.</summary>
@@ -72,6 +75,7 @@ namespace Kismeta.UI
             WireShellScreens();
             WireAgekeeperContest();
             WireStepScreens();
+            WireSummerNavigation();
         }
 
         public void Unbind()
@@ -137,6 +141,9 @@ namespace Kismeta.UI
         private void RefreshActiveScreenIfNeeded()
         {
             if (_session == null || _loop == null) return;
+
+            if (_summerOverlays != null && _summerOverlays.IsOpen)
+                return;
 
             // Step screens bind via ActivePlayerId; skip refresh while the loop clears it post-submit.
             var activeId = _router.CurrentScreenId;
@@ -250,8 +257,9 @@ namespace Kismeta.UI
                 return;
             }
 
-            if (_loop!.PendingHumanController == null)
+            if (_loop.PendingHumanController == null)
             {
+                _summerOverlays?.DismissIfOpen();
                 RouteIfNeeded(ScreenIds.Waiting);
                 RefreshActiveScreen();
                 return;
@@ -288,6 +296,33 @@ namespace Kismeta.UI
             var wager = _router.GetController<FatefulWagerController>(ScreenIds.FatefulWager);
             if (wager != null)
                 wager.OnCompleted = () => _router.GoTo(ScreenIds.WinterHub);
+        }
+
+        private void WireSummerNavigation()
+        {
+            if (_summerOverlays == null) return;
+
+            var summer = _router.GetController<SummerSceneController>(ScreenIds.SummerMain);
+            if (summer == null) return;
+
+            summer.OnCraftBuild = () => _summerOverlays.ShowCraftBuildSheet();
+            summer.OnConsort = () => _summerOverlays.ShowConsortSheet();
+            summer.OnActivate = () => _summerOverlays.ShowActivate();
+            summer.OnPass = () => _summerOverlays.ShowEndSummer();
+        }
+
+        public void ConfigureSummerOverlays(
+            VisualTreeAsset? summerSheets,
+            VisualTreeAsset? craftReagent,
+            VisualTreeAsset? activateCard,
+            VisualTreeAsset? buildHouse,
+            VisualTreeAsset? placeWards,
+            VisualTreeAsset? endSummer)
+        {
+            if (_summerOverlays == null)
+                _summerOverlays = GetComponent<SummerOverlayHost>();
+            _summerOverlays?.Configure(summerSheets, craftReagent, activateCard, buildHouse, placeWards, endSummer);
+            WireSummerNavigation();
         }
 
         private static string MapCeremonyScreen(CeremonyStep step) => step switch
@@ -344,7 +379,10 @@ namespace Kismeta.UI
             if (controller is SpringHubController spring)
                 spring.BindState(_session, _loop, _bridge);
             else if (controller is SummerSceneController summer)
+            {
                 summer.BindState(_session, _loop, _bridge);
+                _summerOverlays?.Bind(_session, _bridge);
+            }
             else if (controller is AutumnSceneController autumn)
                 autumn.BindState(_session, _loop, _bridge);
             else if (controller is WinterHubController winter)
