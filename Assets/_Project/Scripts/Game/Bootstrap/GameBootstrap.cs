@@ -46,6 +46,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _joinScreen;
         [SerializeField] private VisualTreeAsset _resumeScreen;
         [SerializeField] private VisualTreeAsset _codexScreen;
+        [SerializeField] private VisualTreeAsset _agekeeperContest;
 
         private CardDatabase? _db;
         private CrucibleCodexDatabase? _codexDb;
@@ -78,7 +79,8 @@ namespace Kismeta.Game.Bootstrap
                 else
                 {
                     _ui = gameObject.AddComponent<GameDebugUI>();
-                    BuildSession(_totalPlayers, _humanPlayers, _gameMode);
+                    BuildSession(_totalPlayers, _humanPlayers, _gameMode,
+                        CrucibleBuildMode.Curated, 0);
                     _ = StartLoopAsync(_cts.Token);
                 }
             }
@@ -120,6 +122,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<JoinScreenController>();
             EnsureController<ResumeScreenController>();
             EnsureController<CodexScreenController>();
+            EnsureController<AgekeeperContestController>();
 
             router.RefreshControllers();
 
@@ -133,7 +136,7 @@ namespace Kismeta.Game.Bootstrap
 
                 router.ConfigureScreens(
                     _titleScreen, _gameplayHud, _waitingHud, _setupSheet,
-                    _joinScreen, _resumeScreen, _codexScreen);
+                    _joinScreen, _resumeScreen, _codexScreen, _agekeeperContest);
                 layout.RunWhenReady(ShowTitleScreen);
             }
             else
@@ -159,9 +162,9 @@ namespace Kismeta.Game.Bootstrap
         {
             if (_loopStarted) return;
 
-            var (count, mode) = UiSetupConfigMapper.ToSessionConfig(config);
+            var (count, mode, crucibleBuild) = UiSetupConfigMapper.ToSessionConfig(config);
             int humans = Mathf.Clamp(_humanPlayers, 0, count);
-            BuildSession(count, humans, mode);
+            BuildSession(count, humans, mode, crucibleBuild, config.FirstAgekeeperPlayerId);
 
             _presenter!.Bind(_session!, _loop!);
 
@@ -175,7 +178,8 @@ namespace Kismeta.Game.Bootstrap
             _ = StartLoopAsync(_cts.Token);
         }
 
-        private void BuildSession(int totalPlayers, int humanPlayers, GameMode mode)
+        private void BuildSession(int totalPlayers, int humanPlayers, GameMode mode,
+            CrucibleBuildMode crucibleBuild, int firstAgekeeperPlayerId)
         {
             int count = Mathf.Clamp(totalPlayers, 2, 4);
             int humans = Mathf.Clamp(humanPlayers, 0, count);
@@ -225,7 +229,11 @@ namespace Kismeta.Game.Bootstrap
                 sessionId: Guid.NewGuid().ToString(),
                 mode: mode,
                 players: players,
-                rules: rules);
+                rules: rules,
+                crucibleBuild: crucibleBuild)
+            {
+                FirstAgekeeperPlayerId = firstAgekeeperPlayerId
+            };
 
             _session.OnEvent += evt =>
             {

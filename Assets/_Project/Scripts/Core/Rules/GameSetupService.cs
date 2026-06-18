@@ -10,25 +10,13 @@ namespace Kismeta.Core.Rules
     /// Performs the full pre-game setup sequence:
     ///   1. Creates one CardInstance per definition and registers it with the session.
     ///   2. Shuffles all Kismeta (common) instances into BoardState.CommonDeck.
-    ///   3. Builds the Quickplay Crucible deck for the player count and deals 4 per player.
-    ///   4. Deals 1 starter Spread card to each player (redeals Major Arcana).
-    ///   5. Sets Player 0 as the first Agekeeper.
-    ///
-    /// M2: Agekeeper assigned by index; Crucible counts are Quickplay standard.
+    ///   3. Builds the Crucible deck (curated per mode or Let the Fates Decide).
+    ///   4. Deals 4 Crucible cards per player.
+    ///   5. Deals 1 starter Spread card to each player (redeals Major Arcana).
+    ///   6. Sets the first Agekeeper from <see cref="GameSession.FirstAgekeeperPlayerId"/>.
     /// </summary>
     public sealed class GameSetupService
     {
-        // Quickplay crucible counts per group, indexed by player count (2-4).
-        // Format: [playerCount] = count
-        private static int CrucibleGroupCount(CrucibleGroup group, int playerCount) => group switch
-        {
-            CrucibleGroup.A => playerCount == 2 ? 3 : playerCount == 3 ? 3 : 3,
-            CrucibleGroup.B => playerCount == 2 ? 4 : playerCount == 3 ? 5 : 5,
-            CrucibleGroup.C => playerCount == 2 ? 1 : playerCount == 3 ? 3 : 5,
-            CrucibleGroup.D => playerCount == 2 ? 0 : playerCount == 3 ? 0 : 1,
-            _               => 0
-        };
-
         private readonly ICardDatabase _db;
         private readonly Random _rng;
 
@@ -42,21 +30,18 @@ namespace Kismeta.Core.Rules
         {
             int playerCount = session.Players.Count;
 
-            // Separate definitions by deck
             var kismetaDefs  = new List<CardDefinition>();
             var crucibleDefs = new List<CardDefinition>();
 
             foreach (var def in _db.GetAll())
             {
                 if (def.Deck == Deck.Kismeta)  kismetaDefs.Add(def);
-                if (def.Deck == Deck.Crucible)  crucibleDefs.Add(def);
+                if (def.Deck == Deck.Crucible) crucibleDefs.Add(def);
             }
 
-            // Create + register all instances
             var kismetaInsts  = CreateAndRegister(kismetaDefs,  session);
             var crucibleInsts = CreateAndRegister(crucibleDefs, session);
 
-            // Shuffle common deck
             Shuffle(kismetaInsts);
             foreach (var inst in kismetaInsts)
             {
@@ -64,8 +49,10 @@ namespace Kismeta.Core.Rules
                 inst.MoveTo(CardZone.Deck, -1);
             }
 
-            // Build and deal Crucible deck
-            var crucibleDeckInsts = BuildCrucibleDeck(crucibleInsts, playerCount);
+            var crucibleDeckInsts = session.CrucibleBuild == CrucibleBuildMode.LetTheFatesDecide
+                ? BuildFatesCrucibleDeck(crucibleInsts, playerCount)
+                : BuildCuratedCrucibleDeck(crucibleInsts, session.Mode, playerCount);
+
             foreach (var inst in crucibleDeckInsts)
             {
                 session.Board.CrucibleDeck.Push(inst.InstanceId);
@@ -73,18 +60,25 @@ namespace Kismeta.Core.Rules
             }
 
             DealCrucibleCards(session, crucibleDeckInsts);
-
-            // Assign a random Codex variant to each player.
             AssignCodexVariants(session);
-
-            // Starter Spread card per player
             DealStarterSpreadCards(session);
-
-            // Set Agekeeper
-            session.Players[0].IsAgekeeper = true;
+            SetFirstAgekeeper(session);
 
             session.EmitEvent(new GameSetupCompleteEvent(playerCount));
             return CommandResult.Ok("Game setup complete.");
+        }
+
+        private static void SetFirstAgekeeper(GameSession session)
+        {
+            int id = session.FirstAgekeeperPlayerId;
+            if (id < 0 || id >= session.Players.Count)
+                id = 0;
+
+            foreach (var player in session.Players)
+                player.IsAgekeeper = false;
+
+            session.Players[id].IsAgekeeper = true;
+            session.EmitEvent(new FirstAgekeeperDeterminedEvent(id));
         }
 
         private static List<CardInstance> CreateAndRegister(List<CardDefinition> defs, GameSession session)
@@ -99,14 +93,15 @@ namespace Kismeta.Core.Rules
             return list;
         }
 
-        private List<CardInstance> BuildCrucibleDeck(List<CardInstance> allCrucible, int playerCount)
+        private List<CardInstance> BuildCuratedCrucibleDeck(
+            List<CardInstance> allCrucible, GameMode mode, int playerCount)
         {
             var result = new List<CardInstance>();
             int pc = Math.Clamp(playerCount, 2, 4);
 
             foreach (var group in new[] { CrucibleGroup.A, CrucibleGroup.B, CrucibleGroup.C, CrucibleGroup.D })
             {
-                int needed = CrucibleGroupCount(group, pc);
+                int needed = CuratedGroupCount(mode, group, pc);
                 if (needed == 0) continue;
 
                 var groupInsts = new List<CardInstance>();
@@ -125,12 +120,65 @@ namespace Kismeta.Core.Rules
             return result;
         }
 
+        private List<CardInstance> BuildFatesCrucibleDeck(List<CardInstance> allCrucible, int playerCount)
+        {
+            var pool = new List<CardInstance>(allCrucible);
+            Shuffle(pool);
+
+            int needed = playerCount * 4;
+            var result = new List<CardInstance>(needed);
+            for (int i = 0; i < Math.Min(needed, pool.Count); i++)
+                result.Add(pool[i]);
+
+            Shuffle(result);
+            return result;
+        }
+
+        /// <summary>Curated counts from Rules/setup.md §IV.I.</summary>
+        private static int CuratedGroupCount(GameMode mode, CrucibleGroup group, int playerCount) =>
+            (mode, group, playerCount) switch
+            {
+                (GameMode.Quickplay, CrucibleGroup.A, 2) => 3,
+                (GameMode.Quickplay, CrucibleGroup.B, 2) => 4,
+                (GameMode.Quickplay, CrucibleGroup.C, 2) => 1,
+                (GameMode.Quickplay, CrucibleGroup.A, 3) => 3,
+                (GameMode.Quickplay, CrucibleGroup.B, 3) => 6,
+                (GameMode.Quickplay, CrucibleGroup.C, 3) => 3,
+                (GameMode.Quickplay, CrucibleGroup.A, 4) => 4,
+                (GameMode.Quickplay, CrucibleGroup.B, 4) => 7,
+                (GameMode.Quickplay, CrucibleGroup.C, 4) => 5,
+
+                (GameMode.Standard, CrucibleGroup.A, 2) => 1,
+                (GameMode.Standard, CrucibleGroup.B, 2) => 4,
+                (GameMode.Standard, CrucibleGroup.C, 2) => 2,
+                (GameMode.Standard, CrucibleGroup.D, 2) => 1,
+                (GameMode.Standard, CrucibleGroup.A, 3) => 2,
+                (GameMode.Standard, CrucibleGroup.B, 3) => 5,
+                (GameMode.Standard, CrucibleGroup.C, 3) => 4,
+                (GameMode.Standard, CrucibleGroup.D, 3) => 1,
+                (GameMode.Standard, CrucibleGroup.A, 4) => 2,
+                (GameMode.Standard, CrucibleGroup.B, 4) => 7,
+                (GameMode.Standard, CrucibleGroup.C, 4) => 5,
+                (GameMode.Standard, CrucibleGroup.D, 4) => 2,
+
+                (GameMode.MagnusAlchemist, CrucibleGroup.B, 2) => 2,
+                (GameMode.MagnusAlchemist, CrucibleGroup.C, 2) => 4,
+                (GameMode.MagnusAlchemist, CrucibleGroup.D, 2) => 2,
+                (GameMode.MagnusAlchemist, CrucibleGroup.B, 3) => 3,
+                (GameMode.MagnusAlchemist, CrucibleGroup.C, 3) => 6,
+                (GameMode.MagnusAlchemist, CrucibleGroup.D, 3) => 3,
+                (GameMode.MagnusAlchemist, CrucibleGroup.B, 4) => 5,
+                (GameMode.MagnusAlchemist, CrucibleGroup.C, 4) => 7,
+                (GameMode.MagnusAlchemist, CrucibleGroup.D, 4) => 4,
+
+                _ => 0
+            };
+
         private static void DealCrucibleCards(GameSession session, List<CardInstance> crucibleDeck)
         {
             int playerCount = session.Players.Count;
             int perPlayer   = crucibleDeck.Count / playerCount;
 
-            // Pop from the deck stack so it is empty after dealing (all cards go to players).
             foreach (var player in session.Players)
             {
                 for (int i = 0; i < perPlayer && session.Board.CrucibleDeck.Count > 0; i++)
@@ -152,7 +200,6 @@ namespace Kismeta.Core.Rules
 
         private void AssignCodexVariants(GameSession session)
         {
-            // Build a shuffled pool; each player must receive a unique variant.
             var pool = new List<CodexVariant>(AllCodexVariants);
             Shuffle(pool);
 

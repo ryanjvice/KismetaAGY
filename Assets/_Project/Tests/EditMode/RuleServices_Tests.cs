@@ -46,19 +46,22 @@ namespace Kismeta.Core.Tests
                 validator:     new ActionValidator());
 
         private static GameSession BuildSession(CardDatabase db, CrucibleCodexDatabase codexDb,
-            int playerCount = 2, int seed = 42)
+            int playerCount = 2, int seed = 42, GameMode mode = GameMode.Quickplay,
+            CrucibleBuildMode crucibleBuild = CrucibleBuildMode.Curated)
         {
             var players = new List<PlayerState>(playerCount);
             for (int i = 0; i < playerCount; i++)
                 players.Add(new PlayerState(i, (PlayerColor)i));
-            return new GameSession("test", GameMode.Quickplay, players, BuildRules(db, codexDb, seed));
+            return new GameSession("test", mode, players, BuildRules(db, codexDb, seed), crucibleBuild);
         }
 
         /// <summary>Run Setup and return the configured session.</summary>
         private static GameSession SetupSession(CardDatabase db, CrucibleCodexDatabase codexDb,
-            int playerCount = 2, int seed = 42)
+            int playerCount = 2, int seed = 42, GameMode mode = GameMode.Quickplay,
+            CrucibleBuildMode crucibleBuild = CrucibleBuildMode.Curated, int firstAgekeeperId = 0)
         {
-            var session = BuildSession(db, codexDb, playerCount, seed);
+            var session = BuildSession(db, codexDb, playerCount, seed, mode, crucibleBuild);
+            session.FirstAgekeeperPlayerId = firstAgekeeperId;
             var result  = session.Apply(new SetupGameCommand());
             Assert.IsTrue(result.IsOk, $"Setup failed: {result.Message}");
             return session;
@@ -126,13 +129,55 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
-        public void Setup_Sets_Player0_As_Agekeeper()
+        public void Setup_Sets_Designated_Agekeeper()
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();
-            var session = SetupSession(db, codexDb);
-            Assert.IsTrue(session.Players[0].IsAgekeeper);
-            for (int i = 1; i < session.Players.Count; i++)
+            var session = SetupSession(db, codexDb, firstAgekeeperId: 1);
+            Assert.IsFalse(session.Players[0].IsAgekeeper);
+            Assert.IsTrue(session.Players[1].IsAgekeeper);
+            for (int i = 2; i < session.Players.Count; i++)
                 Assert.IsFalse(session.Players[i].IsAgekeeper);
+        }
+
+        [Test]
+        public void AgekeeperContest_SeededWinner_IsDeterministic()
+        {
+            var first = AgekeeperContestService.Resolve(3, new System.Random(99));
+            var again = AgekeeperContestService.Resolve(3, new System.Random(99));
+            Assert.AreEqual(first.WinnerPlayerId, again.WinnerPlayerId);
+            Assert.AreEqual(3, first.FinalRolls.Count);
+        }
+
+        [Test]
+        public void AgekeeperContest_Tie_RerollsUntilSingleWinner()
+        {
+            var rng = new SeededContestRng(6, 6, 3, 8, 4);
+            var result = AgekeeperContestService.Resolve(3, rng);
+            Assert.AreEqual(0, result.WinnerPlayerId);
+            Assert.AreEqual(2, result.FinalRolls.Count);
+        }
+
+        [Test]
+        public void Setup_Curated_Standard_2p_Builds_Eight_Crucible_Cards()
+        {
+            var db      = LoadDb();            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, playerCount: 2, mode: GameMode.Standard);
+            int total = 0;
+            foreach (var player in session.Players)
+                total += player.CrucibleSlots.Count;
+            Assert.AreEqual(8, total);
+            Assert.AreEqual(0, session.Board.CrucibleDeck.Count);
+        }
+
+        [Test]
+        public void Setup_Fates_2p_Deals_Four_Per_Player_From_Random_Pool()
+        {
+            var db      = LoadDb();            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, playerCount: 2,
+                crucibleBuild: CrucibleBuildMode.LetTheFatesDecide, seed: 7);
+            foreach (var player in session.Players)
+                Assert.AreEqual(4, player.CrucibleSlots.Count);
+            Assert.AreEqual(0, session.Board.CrucibleDeck.Count);
         }
 
         [Test]
@@ -1088,6 +1133,23 @@ namespace Kismeta.Core.Tests
 
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.AreEqual(3, player.Spread.Count, "Spread count unchanged when already within limit.");
+        }
+
+        private sealed class SeededContestRng : System.Random
+        {
+            readonly Queue<int> _values = new();
+
+            public SeededContestRng(params int[] rounds)
+            {
+                foreach (int v in rounds)
+                    _values.Enqueue(v);
+            }
+
+            public override int Next(int minValue, int maxValue)
+            {
+                Assert.IsTrue(_values.Count > 0, "SeededContestRng exhausted.");
+                return _values.Dequeue();
+            }
         }
     }
 }

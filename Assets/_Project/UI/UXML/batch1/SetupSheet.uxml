@@ -24,8 +24,6 @@
                 <engine:Button name="players-2" text="2" class="player-pip" />
                 <engine:Button name="players-3" text="3" class="player-pip player-pip--active" />
                 <engine:Button name="players-4" text="4" class="player-pip" />
-                <engine:Button name="players-5" text="5" class="player-pip" />
-                <engine:Button name="players-6" text="6" class="player-pip" />
             </engine:VisualElement>
         </engine:VisualElement>
 
@@ -49,24 +47,21 @@
 
         <engine:VisualElement style="padding: 10px 16px 6px;">
             <engine:Label text="crucible deck" class="eyebrow" />
-            <engine:VisualElement style="flex-direction: row;">
-                <engine:Button name="deck-curated" text="Curated" class="player-pip player-pip--active" style="font-size: 12px; -unity-font-style: normal;" />
-                <engine:Button name="deck-random" text="Random" class="player-pip" style="font-size: 12px; -unity-font-style: normal;" />
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <engine:VisualElement style="padding: 10px 16px 6px;">
-            <engine:Label text="first agekeeper" class="eyebrow" />
-            <engine:VisualElement style="flex-direction: row;">
-                <engine:Button name="keeper-random" text="Random" class="player-pip player-pip--active" style="font-size: 11px; -unity-font-style: normal;" />
-                <engine:Button name="keeper-youngest" text="Youngest" class="player-pip" style="font-size: 11px; -unity-font-style: normal;" />
-                <engine:Button name="keeper-choose" text="Choose" class="player-pip" style="font-size: 11px; -unity-font-style: normal;" />
+            <engine:VisualElement name="deck-list">
+                <engine:Button name="deck-curated" class="mode-row mode-row--active">
+                    <engine:Label text="Curated" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="preset for mode" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                </engine:Button>
+                <engine:Button name="deck-random" class="mode-row">
+                    <engine:Label text="Let the Fates Decide" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="random cards" style="font-size: 10px; color: rgb(205, 176, 224);" />
+                </engine:Button>
             </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 12px 16px 18px;">
-            <engine:Button name="begin-btn" text="Light the cauldrons · begin" class="btn btn--primary" style="font-size: 14px;" />
-            <engine:Label name="summary" text="3 alchemists · Standard · curated deck · random agekeeper"
+            <engine:Button name="begin-btn" text="Start Game" class="btn btn--primary" style="font-size: 14px;" />
+            <engine:Label name="summary" text="3 alchemists · Standard · curated deck"
                           style="font-size: 9px; color: rgb(106,90,74); -unity-text-align: middle-center; margin-top: 8px;" />
         </engine:VisualElement>
 

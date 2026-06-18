@@ -19,6 +19,7 @@ namespace Kismeta.UI
         [SerializeField] private bool _startAtTitle = true;
 
         private readonly SetupSheetState _setupSheetState = new();
+        private UiSetupConfig _pendingSetupConfig;
 
         private ScreenRouter _router;
         private ViewportLayout _layout;
@@ -47,6 +48,7 @@ namespace Kismeta.UI
         {
             WireTitleScreen();
             WireShellScreens();
+            WireAgekeeperContest();
             if (_router.CurrentScreenId != ScreenIds.Title)
                 _router.GoTo(ScreenIds.Title);
         }
@@ -64,6 +66,7 @@ namespace Kismeta.UI
 
             WireTitleScreen();
             WireShellScreens();
+            WireAgekeeperContest();
         }
 
         public void Unbind()
@@ -114,7 +117,7 @@ namespace Kismeta.UI
             {
                 _router.ShowSetupSheet(
                     onOpened: sheet => _setupSheetState.Attach(sheet),
-                    onBegin: () => NotifySetupBegin(_setupSheetState.Current));
+                    onBegin: BeginAgekeeperContest);
             };
             title.OnResume = () => _router.GoTo(ScreenIds.Resume);
             title.OnJoin = () => _router.GoTo(ScreenIds.Join);
@@ -156,6 +159,28 @@ namespace Kismeta.UI
         {
             _router.GoTo(ScreenIds.Codex);
             _router.GetController<CodexScreenController>(ScreenIds.Codex)?.ShowTab(CodexTabs.Terms);
+        }
+
+        private void WireAgekeeperContest()
+        {
+            var contest = _router.GetController<AgekeeperContestController>(ScreenIds.AgekeeperContest);
+            if (contest == null) return;
+
+            contest.OnComplete = winnerId =>
+            {
+                var cfg = _pendingSetupConfig;
+                cfg.FirstAgekeeperPlayerId = winnerId;
+                NotifySetupBegin(cfg);
+            };
+        }
+
+        private void BeginAgekeeperContest()
+        {
+            _pendingSetupConfig = _setupSheetState.Current;
+            _setupSheetState.Detach();
+            _router.GoTo(ScreenIds.AgekeeperContest);
+            _router.GetController<AgekeeperContestController>(ScreenIds.AgekeeperContest)
+                ?.BeginContest(_pendingSetupConfig.Players);
         }
 
         public void NotifySetupBegin(UiSetupConfig config)

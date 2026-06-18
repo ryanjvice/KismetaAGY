@@ -10,6 +10,12 @@ namespace Kismeta.Core.Commands
         public GameSetupCompleteEvent(int playerCount) => PlayerCount = playerCount;
     }
 
+    public sealed class FirstAgekeeperDeterminedEvent : IGameEvent
+    {
+        public int PlayerId { get; }
+        public FirstAgekeeperDeterminedEvent(int playerId) => PlayerId = playerId;
+    }
+
     public sealed class CosmicAgeSetEvent : IGameEvent
     {
         public ZodiacSign Sign    { get; }

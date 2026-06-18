@@ -54,7 +54,8 @@ namespace Kismeta.UI
             VisualTreeAsset setupSheet,
             VisualTreeAsset? join = null,
             VisualTreeAsset? resume = null,
-            VisualTreeAsset? codex = null)
+            VisualTreeAsset? codex = null,
+            VisualTreeAsset? agekeeperContest = null)
         {
             var screens = new List<ScreenAsset>
             {
@@ -68,6 +69,8 @@ namespace Kismeta.UI
                 screens.Add(new ScreenAsset { Id = ScreenIds.Resume, Uxml = resume });
             if (codex != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.Codex, Uxml = codex });
+            if (agekeeperContest != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.AgekeeperContest, Uxml = agekeeperContest });
 
             _screens = screens.ToArray();
             _setupSheet = setupSheet;

@@ -32,7 +32,7 @@ namespace Kismeta.UI.Controllers
         void Wire()
         {
             if (_root == null) return;
-            for (int n = 2; n <= 6; n++)
+            for (int n = 2; n <= 4; n++)
             {
                 int count = n;
                 _root.Q<Button>($"players-{n}")!.clicked += () => { _cfg.Players = count; Refresh(); };
@@ -42,9 +42,6 @@ namespace Kismeta.UI.Controllers
             _root.Q<Button>("mode-magnus")!.clicked += () => { _cfg.Mode = GameMode.MagnusAlchemist; Refresh(); };
             _root.Q<Button>("deck-curated")!.clicked += () => { _cfg.Deck = UiDeckBuild.Curated; Refresh(); };
             _root.Q<Button>("deck-random")!.clicked += () => { _cfg.Deck = UiDeckBuild.Random; Refresh(); };
-            _root.Q<Button>("keeper-random")!.clicked += () => { _cfg.Keeper = UiKeeperPick.Random; Refresh(); };
-            _root.Q<Button>("keeper-youngest")!.clicked += () => { _cfg.Keeper = UiKeeperPick.Youngest; Refresh(); };
-            _root.Q<Button>("keeper-choose")!.clicked += () => { _cfg.Keeper = UiKeeperPick.Choose; Refresh(); };
         }
 
         void Unwire()
@@ -55,22 +52,19 @@ namespace Kismeta.UI.Controllers
         void Refresh()
         {
             if (_root == null) return;
-            for (int n = 2; n <= 6; n++)
+            for (int n = 2; n <= 4; n++)
                 _root.Q<Button>($"players-{n}")!.EnableInClassList("player-pip--active", n == _cfg.Players);
 
             _root.Q<Button>("mode-quickplay")!.EnableInClassList("mode-row--active", _cfg.Mode == GameMode.Quickplay);
             _root.Q<Button>("mode-standard")!.EnableInClassList("mode-row--active", _cfg.Mode == GameMode.Standard);
             _root.Q<Button>("mode-magnus")!.EnableInClassList("mode-row--active", _cfg.Mode == GameMode.MagnusAlchemist);
-            _root.Q<Button>("deck-curated")!.EnableInClassList("player-pip--active", _cfg.Deck == UiDeckBuild.Curated);
-            _root.Q<Button>("deck-random")!.EnableInClassList("player-pip--active", _cfg.Deck == UiDeckBuild.Random);
-            _root.Q<Button>("keeper-random")!.EnableInClassList("player-pip--active", _cfg.Keeper == UiKeeperPick.Random);
-            _root.Q<Button>("keeper-youngest")!.EnableInClassList("player-pip--active", _cfg.Keeper == UiKeeperPick.Youngest);
-            _root.Q<Button>("keeper-choose")!.EnableInClassList("player-pip--active", _cfg.Keeper == UiKeeperPick.Choose);
+            _root.Q<Button>("deck-curated")!.EnableInClassList("mode-row--active", _cfg.Deck == UiDeckBuild.Curated);
+            _root.Q<Button>("deck-random")!.EnableInClassList("mode-row--active", _cfg.Deck == UiDeckBuild.Random);
 
             var summary = _root.Q<Label>("summary");
             if (summary != null)
                 summary.text =
-                    $"{_cfg.Players} alchemists · {_cfg.Mode} · {_cfg.Deck.ToString().ToLower()} deck · {_cfg.Keeper.ToString().ToLower()} agekeeper";
+                    $"{_cfg.Players} alchemists · {UiSetupConfigMapper.ModeDisplayName(_cfg.Mode)} · {UiSetupConfigMapper.DeckDisplayName(_cfg.Deck)}";
         }
     }
 }

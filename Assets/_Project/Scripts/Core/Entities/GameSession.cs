@@ -21,6 +21,9 @@ namespace Kismeta.Core.Entities
     {
         public string  SessionId { get; }
         public GameMode Mode     { get; }
+        public CrucibleBuildMode CrucibleBuild { get; }
+        /// <summary>Set before <see cref="SetupGameCommand"/>; defaults to player 0.</summary>
+        public int FirstAgekeeperPlayerId { get; set; } = -1;
         public bool IsOver       { get; private set; }
         public int? WinnerPlayerId { get; private set; }
         public bool CardLockActive { get; private set; }
@@ -41,13 +44,15 @@ namespace Kismeta.Core.Entities
         public event Action<IGameEvent>? OnEvent;
 
         public GameSession(string sessionId, GameMode mode,
-            IReadOnlyList<PlayerState> players, GameRuleSet? rules = null)
+            IReadOnlyList<PlayerState> players, GameRuleSet? rules = null,
+            CrucibleBuildMode crucibleBuild = CrucibleBuildMode.Curated)
         {
             if (players.Count < 2 || players.Count > 4)
                 throw new ArgumentOutOfRangeException(nameof(players), "Kismeta requires 2–4 players.");
 
             SessionId = sessionId;
             Mode      = mode;
+            CrucibleBuild = crucibleBuild;
             _rules    = rules;
 
             _players = new List<PlayerState>(players);
