@@ -1,3 +1,4 @@
+using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
@@ -16,17 +17,23 @@ namespace Kismeta.UI.Controllers
 
         public System.Action? OnOpenCommune;
 
+        GameSession? _session;
+        GameLoop? _loop;
+        CommandBridge? _bridge;
         int _localPlayerId;
 
         protected override void Wire()
         {
-            Btn("commune-btn")!.clicked += () => OnOpenCommune?.Invoke();
+            Btn("commune-btn")!.clicked += OnPrimaryAction;
             Btn("menu-btn")!.clicked += () => Debug.Log("[UI] Card table — future work");
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
         {
-            _localPlayerId = bridge.ActivePlayerId;
+            _session = session;
+            _loop = loop;
+            _bridge = bridge;
+            _localPlayerId = ResolveLocalPlayerId(session, loop, bridge);
             if (Root == null) return;
 
             var view = GamePublicView.From(session);
@@ -37,7 +44,7 @@ namespace Kismeta.UI.Controllers
 
             var player = session.Players[_localPlayerId];
             BindWheelAndHarvest(session, player);
-            BindCommuneCta(bridge);
+            BindSpringCta(bridge, loop);
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             if (Lbl("spread-count") != null && local != null)
@@ -45,6 +52,78 @@ namespace Kismeta.UI.Controllers
 
             RivalStripBuilder.Populate(El("rivals"), view, _localPlayerId);
             PopulateSpreadStrip(session, local);
+        }
+
+        static int ResolveLocalPlayerId(GameSession session, GameLoop loop, CommandBridge bridge)
+        {
+            if (bridge.ActivePlayerId >= 0 && bridge.ActivePlayerId < session.Players.Count)
+                return bridge.ActivePlayerId;
+            if (loop.ActivePlayerId >= 0 && loop.ActivePlayerId < session.Players.Count)
+                return loop.ActivePlayerId;
+            var hs = bridge.PendingController;
+            if (hs != null && hs.Slot.Index >= 0 && hs.Slot.Index < session.Players.Count)
+                return hs.Slot.Index;
+            return 0;
+        }
+
+        void OnPrimaryAction()
+        {
+            if (_bridge == null) return;
+
+            switch (_bridge.PendingHint)
+            {
+                case ActionHint.Commune:
+                    OnOpenCommune?.Invoke();
+                    break;
+                case ActionHint.AdeptDecision:
+                    SubmitDeclineAdept();
+                    break;
+            }
+        }
+
+        void SubmitDeclineAdept()
+        {
+            if (_bridge == null || _loop == null) return;
+            var adeptId = _loop.PendingCardId;
+            if (string.IsNullOrEmpty(adeptId)) return;
+
+            int pid = _bridge.PendingController?.Slot.Index ?? _localPlayerId;
+            if (pid < 0) return;
+            _bridge.TrySubmit(new DeclineAdeptCommand(pid, adeptId));
+        }
+
+        void BindSpringCta(CommandBridge bridge, GameLoop loop)
+        {
+            var btn = Btn("commune-btn");
+            if (btn == null) return;
+
+            var hint = bridge.PendingHint;
+            bool canAct = bridge.CanSubmit && loop.PendingHumanController != null;
+
+            if (!canAct)
+            {
+                btn.style.display = DisplayStyle.None;
+                return;
+            }
+
+            switch (hint)
+            {
+                case ActionHint.Commune:
+                    btn.style.display = DisplayStyle.Flex;
+                    btn.text = "Commune";
+                    btn.SetEnabled(true);
+                    btn.EnableInClassList("btn--disabled", false);
+                    break;
+                case ActionHint.AdeptDecision:
+                    btn.style.display = DisplayStyle.Flex;
+                    btn.text = "Decline Adept";
+                    btn.SetEnabled(!string.IsNullOrEmpty(loop.PendingCardId));
+                    btn.EnableInClassList("btn--disabled", string.IsNullOrEmpty(loop.PendingCardId));
+                    break;
+                default:
+                    btn.style.display = DisplayStyle.None;
+                    break;
+            }
         }
 
         void BindWheelAndHarvest(GameSession session, PlayerState player)
@@ -104,15 +183,6 @@ namespace Kismeta.UI.Controllers
             ZodiacSign.Pisces => "\u2653",
             _ => "?"
         };
-
-        void BindCommuneCta(CommandBridge bridge)
-        {
-            var communeBtn = Btn("commune-btn");
-            if (communeBtn == null) return;
-            bool active = bridge.PendingHint == ActionHint.Commune;
-            communeBtn.style.display = active ? DisplayStyle.Flex : DisplayStyle.None;
-            communeBtn.SetEnabled(active);
-        }
 
         void PopulateSpreadStrip(GameSession session, PublicPlayerView? local)
         {

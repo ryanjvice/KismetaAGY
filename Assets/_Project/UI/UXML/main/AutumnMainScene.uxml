@@ -42,9 +42,9 @@
             <engine:Button name="fire-btn" text="Fire" class="actionbtn btn btn--secondary" />
             <engine:Button name="temper-btn" text="Temper" class="actionbtn btn btn--secondary" />
             <engine:Button name="oppose-btn" text="Oppose" class="actionbtn btn btn--secondary" />
-            <engine:Button name="manage-cards-btn" text="Cards" class="actionbtn btn btn--secondary" style="flex-grow: 0; min-width: 56px;" />
-            <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" style="flex-grow: 0; min-width: 56px;" />
-            <engine:Button name="menu-btn" text="Table" class="actionbtn btn btn--secondary" style="flex-grow: 0; min-width: 56px;" />
+            <engine:Button name="manage-cards-btn" text="Cards" class="actionbtn btn btn--secondary" />
+            <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
+            <engine:Button name="menu-btn" text="Table" class="actionbtn btn btn--secondary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

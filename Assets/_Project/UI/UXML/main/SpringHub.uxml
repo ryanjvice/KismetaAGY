@@ -47,7 +47,7 @@
 
         <engine:VisualElement class="actionbar">
             <engine:Button name="commune-btn" text="Commune" class="actionbtn btn btn--primary" />
-            <engine:Button name="menu-btn" text="Table" class="actionbtn btn btn--secondary" style="flex-grow: 0; min-width: 64px;" />
+            <engine:Button name="menu-btn" text="Table" class="actionbtn btn btn--secondary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

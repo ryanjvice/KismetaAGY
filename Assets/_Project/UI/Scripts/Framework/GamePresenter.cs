@@ -127,6 +127,7 @@ namespace Kismeta.UI
                 _lastHint = hint;
                 _lastSeason = season;
                 RouteGameplay();
+                RefreshActiveScreen();
             }
         }
 

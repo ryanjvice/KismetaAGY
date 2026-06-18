@@ -46,8 +46,8 @@
             <engine:Button name="craftbuild-btn" text="Craft &amp; build" class="actionbtn btn btn--secondary" />
             <engine:Button name="consort-btn" text="Consort" class="actionbtn btn btn--secondary" />
             <engine:Button name="activate-btn" text="Activate" class="actionbtn btn btn--primary" />
-            <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" style="flex-grow: 0; min-width: 56px;" />
-            <engine:Button name="menu-btn" text="Table" class="actionbtn btn btn--secondary" style="flex-grow: 0; min-width: 56px;" />
+            <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
+            <engine:Button name="menu-btn" text="Table" class="actionbtn btn btn--secondary" />
         </engine:VisualElement>
 
     </engine:VisualElement>
