@@ -1,0 +1,337 @@
+/* ============================================================
+   Kismeta — shared stylesheet for Unity UI Toolkit (USS)
+   Design tokens + reusable component classes.
+   USS is a CSS subset: supported here = colors, flexbox,
+   border, border-radius, padding/margin, font-size, opacity.
+   NOT supported = gradients (use flat fills / sprite bg),
+   box-shadow, inline SVG, pseudo-elements, calc().
+   ============================================================ */
+
+/* ---------- 1. Design tokens (USS custom properties) ---------- */
+/* Define on :root so every UXML can reference var(--name). */
+:root {
+    /* brand / global */
+    --ink: rgb(243, 233, 210);
+    --gold: rgb(232, 185, 74);
+    --gold-deep: rgb(201, 150, 47);
+    --gold-bright: rgb(244, 211, 94);
+    --muted: rgb(184, 154, 110);
+    --muted-dim: rgb(138, 106, 122);
+
+    /* suit fills */
+    --suit-wands: rgb(122, 31, 26);
+    --suit-cups: rgb(31, 58, 110);
+    --suit-pentacles: rgb(31, 110, 74);
+    --suit-swords: rgb(138, 106, 31);
+
+    /* reagent dots */
+    --reagent-salt: rgb(207, 207, 207);
+    --reagent-sulphur: rgb(192, 57, 43);
+    --reagent-vitriol: rgb(31, 110, 74);
+    --reagent-aqua: rgb(46, 109, 164);
+    --reagent-quick: rgb(184, 148, 31);
+
+    /* seasonal palettes: base bg + accent */
+    --spring-bg: rgb(15, 20, 16);
+    --spring-accent: rgb(127, 196, 154);
+    --summer-bg: rgb(24, 15, 10);
+    --summer-accent: rgb(240, 176, 96);
+    --autumn-bg: rgb(22, 10, 10);
+    --autumn-accent: rgb(224, 138, 74);
+    --winter-bg: rgb(14, 20, 32);
+    --winter-accent: rgb(158, 201, 224);
+
+    /* semantic */
+    --ok-bg: rgb(22, 38, 31);
+    --ok-border: rgb(43, 106, 74);
+    --ok-text: rgb(127, 196, 168);
+    --danger-bg: rgb(38, 16, 22);
+    --danger-border: rgb(106, 48, 48);
+    --danger-text: rgb(240, 144, 138);
+    --caution-bg: rgb(42, 31, 14);
+    --caution-border: rgb(106, 90, 58);
+    --caution-text: rgb(224, 200, 120);
+    --arcanum-bg: rgb(36, 16, 40);
+    --arcanum-border: rgb(106, 74, 138);
+    --arcanum-text: rgb(205, 176, 224);
+
+    /* surfaces shared by frames */
+    --panel-dark: rgb(22, 10, 28);
+    --panel-darker: rgb(16, 10, 18);
+    --border-subtle: rgb(58, 36, 64);
+
+    /* layout */
+    --radius-sm: 6px;
+    --radius-md: 9px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+}
+
+/* ---------- 2. Frame skeleton ---------- */
+/* The persistent container every in-game screen shares. */
+
+.screen {
+    width: 380px;
+    border-radius: var(--radius-xl);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    /* per-season bg set by a modifier class, e.g. .screen--autumn */
+    background-color: var(--autumn-bg);
+    overflow: hidden;
+}
+
+.screen--spring { background-color: var(--spring-bg); }
+.screen--summer { background-color: var(--summer-bg); }
+.screen--autumn { background-color: var(--autumn-bg); }
+.screen--winter { background-color: var(--winter-bg); }
+
+/* status bar */
+.statusbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--border-subtle);
+}
+.statusbar__left { flex-direction: row; align-items: center; }
+.statusbar__sigil {
+    width: 26px; height: 26px; border-radius: 13px;
+    border-width: 1px; border-color: var(--gold-deep);
+    align-items: center; justify-content: center;
+    margin-right: 8px;
+}
+.statusbar__title { font-size: 13px; color: var(--gold); }
+.statusbar__sub { font-size: 10px; color: var(--muted); }
+
+/* rival strips */
+.rivals { flex-direction: row; padding: 8px 12px 4px; }
+.rival {
+    flex-grow: 1;
+    flex-direction: row; align-items: center;
+    background-color: var(--panel-dark);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 6px 8px;
+    margin-right: 6px;
+}
+.rival:last-child { margin-right: 0; }
+.rival__dot { width: 18px; height: 18px; border-radius: 9px; border-width: 1px; margin-right: 6px; }
+.rival__name { font-size: 11px; }
+.rival__stat { font-size: 9px; color: var(--muted); }
+
+/* central object stage */
+.stage {
+    margin: 4px 10px 6px;
+    border-radius: var(--radius-lg);
+    border-width: 1px; border-color: rgb(74, 32, 48);
+    /* radial gradient in mockups -> flat fill here; see README */
+    background-color: rgb(42, 18, 40);
+    padding: 12px;
+}
+
+/* context action bar */
+.actionbar { flex-direction: row; padding: 0 12px 8px; }
+.actionbtn {
+    flex-grow: 1;
+    border-radius: var(--radius-md);
+    padding: 9px 4px;
+    margin-right: 6px;
+    align-items: center;
+    border-width: 1px;
+}
+.actionbtn:last-child { margin-right: 0; }
+.actionbtn__label { font-size: 11px; -unity-font-style: normal; }
+
+/* tableau dock */
+.dock {
+    border-top-width: 1px; border-top-color: var(--border-subtle);
+    background-color: var(--panel-darker);
+    padding: 8px 12px 12px;
+}
+.dock__header { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+
+/* ---------- 3. Cards ---------- */
+.card-chip {
+    width: 34px; height: 48px;
+    border-radius: var(--radius-sm);
+    border-width: 1px; border-color: var(--gold-deep);
+    align-items: center; justify-content: center;
+}
+.card-chip--selected { border-width: 2px; border-color: var(--gold-bright); }
+.card-chip--wands { background-color: var(--suit-wands); }
+.card-chip--cups { background-color: var(--suit-cups); }
+.card-chip--pentacles { background-color: var(--suit-pentacles); }
+.card-chip--swords { background-color: var(--suit-swords); }
+.card-chip__rank { font-size: 11px; color: white; -unity-font-style: bold; }
+
+/* reagent dot */
+.reagent-dot { width: 16px; height: 16px; border-radius: 8px; border-width: 1px; }
+.reagent-dot--salt { background-color: var(--reagent-salt); border-color: white; }
+.reagent-dot--sulphur { background-color: var(--reagent-sulphur); border-color: rgb(229, 115, 115); }
+.reagent-dot--vitriol { background-color: var(--reagent-vitriol); border-color: rgb(93, 202, 165); }
+.reagent-dot--aqua { background-color: var(--reagent-aqua); border-color: rgb(111, 168, 212); }
+.reagent-dot--quick { background-color: var(--reagent-quick); border-color: rgb(224, 192, 96); }
+
+/* ---------- 4. Buttons ---------- */
+.btn {
+    border-radius: var(--radius-md);
+    padding: 13px;
+    align-items: center;
+    border-width: 1px;
+    -unity-text-align: middle-center;
+}
+.btn--primary {
+    background-color: rgb(58, 46, 14);
+    border-color: var(--gold-deep);
+    color: var(--gold);
+}
+.btn--secondary {
+    background-color: var(--panel-dark);
+    border-color: rgb(74, 58, 90);
+    color: var(--muted);
+}
+.btn--disabled {
+    background-color: rgb(42, 21, 48);
+    border-color: var(--border-subtle);
+    color: rgb(90, 74, 106);
+}
+.btn:hover { opacity: 0.92; }
+
+/* ---------- 5. Panels & semantic blocks ---------- */
+.panel {
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+}
+.tip {
+    flex-direction: row;
+    border-radius: var(--radius-md);
+    padding: 9px 11px;
+    margin: 8px 14px;
+}
+.tip--ok { background-color: var(--ok-bg); border-width: 1px; border-color: var(--ok-border); }
+.tip--caution { background-color: var(--caution-bg); border-width: 1px; border-color: var(--caution-border); }
+.tip--danger { background-color: var(--danger-bg); border-width: 1px; border-color: var(--danger-border); }
+.tip--arcanum { background-color: var(--arcanum-bg); border-width: 1px; border-color: var(--arcanum-border); }
+.tip__text { font-size: 10px; -unity-text-align: upper-left; flex-shrink: 1; }
+
+/* eyebrow / section label */
+.eyebrow {
+    font-size: 9px;
+    color: var(--muted-dim);
+    -unity-font-style: normal;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+/* ---------- 6. Step rail (sequenced-season hubs) ---------- */
+.steprail { flex-direction: row; align-items: center; padding: 4px 2px 8px; }
+.step { flex-grow: 1; align-items: center; }
+.step__dot {
+    width: 22px; height: 22px; border-radius: 11px;
+    border-width: 1px; align-items: center; justify-content: center;
+}
+.step__dot--done { background-color: var(--ok-bg); border-color: var(--ok-border); }
+.step__dot--active { border-width: 2px; }
+.step__dot--locked { background-color: var(--panel-darker); border-color: rgb(58, 58, 58); }
+.step__label { font-size: 8px; color: var(--muted); margin-top: 3px; }
+.step__connector { width: 12px; height: 1px; background-color: var(--border-subtle); }
+
+/* ---------- 7. Setup-screen classes ---------- */
+.player-pip {
+    flex-grow: 1;
+    border-radius: var(--radius-md);
+    padding: 11px 0;
+    margin-right: 7px;
+    align-items: center;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    color: var(--muted);
+    font-size: 18px; -unity-font-style: bold;
+}
+.player-pip:last-child { margin-right: 0; }
+.player-pip--active {
+    background-color: var(--arcanum-bg);
+    border-width: 2px; border-color: var(--gold-deep);
+    color: var(--ink);
+}
+
+.mode-row {
+    flex-direction: row; align-items: center;
+    border-radius: var(--radius-md);
+    padding: 11px 13px;
+    margin-bottom: 9px;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+}
+.mode-row--active {
+    background-color: var(--arcanum-bg);
+    border-width: 2px; border-color: var(--gold-deep);
+}
+.mode-row__icon {
+    width: 34px; height: 34px; border-radius: var(--radius-md);
+    background-color: rgb(22,10,28);
+    border-width: 1px;
+    margin-right: 11px;
+}
+.mode-row__radio {
+    width: 20px; height: 20px; border-radius: 10px;
+    border-width: 2px; border-color: var(--border-subtle);
+    align-items: center; justify-content: center;
+}
+.mode-row__radio--on { border-color: var(--gold-deep); }
+
+/* ---------- 8. Tabler icon font ---------- */
+/* NATIVE NOTE: import the Tabler webfont as a Font asset (TTF) in Unity,
+   assign it to a USS -unity-font / -unity-font-definition, and reference
+   glyphs by their unicode codepoint (the &#x....; entities in the UXML).
+   Alternatively swap every icon Label for an Image element + sprite. */
+.ti-icon {
+    -unity-font-definition: url("project://database/Assets/Fonts/tabler-icons.asset");
+    font-size: 14px;
+}
+
+/* ---------- 9. Cauldron nodes (Summer center, optional pure-USS build) ---------- */
+.cauldron {
+    width: 66px; height: 66px; border-radius: 33px;
+    align-items: center; justify-content: center;
+    position: absolute;
+}
+.cauldron--lit { border-width: 3px; border-color: var(--gold-bright); }
+.cauldron--dormant { border-width: 2px; border-color: rgb(90,58,74); opacity: 0.6; }
+
+/* ---------- 10. Sheet overlay (compact setup, modals) ---------- */
+.sheet {
+    width: 380px;
+    background-color: rgb(26,14,31);
+    border-top-width: 2px; border-top-color: var(--gold-deep);
+    border-top-left-radius: var(--radius-xl);
+    border-top-right-radius: var(--radius-xl);
+}
+.sheet__header {
+    flex-direction: row; align-items: center; justify-content: space-between;
+    padding: 13px 16px;
+    background-color: var(--panel-dark);
+    border-bottom-width: 1px; border-bottom-color: var(--border-subtle);
+}
+
+/* ---------- 11. Codex tabs ---------- */
+.codex-tab {
+    flex-grow: 1;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    font-size: 11px;
+    padding: 6px;
+    margin-right: 6px;
+    -unity-text-align: middle-center;
+}
+.codex-tab:last-child { margin-right: 0; }
+.codex-tab--active {
+    background-color: var(--arcanum-bg);
+    border-color: var(--gold-deep);
+    color: var(--ink);
+}
