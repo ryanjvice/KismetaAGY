@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+    <engine:Style src="../USS/AgeCeremony.uss" />
+
+    <!-- ============================================================
+         AGE OPENING — folds flow-map #7 (round-open roll), #8 (reveal),
+         #9 (pending wager resolves) into one ceremony, frame broken.
+         NATIVE NOTE: starfield + drawn constellation + glowing sigil were
+         SVG. In Unity: background sprite (starfield), the constellation as
+         a sprite or LineRenderer overlay, the sigil as a sprite with a glow.
+         The Agekeeper's die roll animates before this reveal (see Round-open).
+         ============================================================ -->
+    <engine:VisualElement name="age-open" class="screen ceremony" style="background-color: rgb(10,8,16);">
+
+        <engine:VisualElement class="ceremony-hero ceremony-hero--open">
+            <engine:Label text="the heavens turn · an age dawns" class="ceremony-eyebrow" />
+
+            <engine:VisualElement name="age-sigil" class="ceremony-sigil ceremony-sigil--open">
+                <engine:Label text="&#9007;" class="ceremony-sigil__glyph" />
+            </engine:VisualElement>
+
+            <engine:Label text="the age of" class="ceremony-prelabel" />
+            <engine:Label name="age-name" text="SCORPIO" class="ceremony-agename" />
+
+            <engine:VisualElement class="ceremony-aspects">
+                <engine:Label name="age-planet" text="Mars" class="ceremony-aspect ceremony-aspect--planet" />
+                <engine:Label name="age-element" text="Water" class="ceremony-aspect ceremony-aspect--element" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- cosmic effect -->
+        <engine:VisualElement style="padding: 16px 16px 6px;">
+            <engine:VisualElement class="panel" style="flex-direction: row; align-items: flex-start; background-color: rgb(22,16,40); border-color: rgb(58,42,90);">
+                <engine:VisualElement style="width: 30px; height: 30px; border-radius: var(--radius-md); background-color: rgb(36,16,56); border-width: 1px; border-color: var(--arcanum-border); align-items: center; justify-content: center; margin-right: 11px;">
+                    <engine:Label text="&#xeb6c;" class="ti-icon" style="color: var(--arcanum-text);" />
+                </engine:VisualElement>
+                <engine:VisualElement style="flex-grow: 1;">
+                    <engine:Label text="the age's cosmic effect" class="eyebrow" style="color: rgb(138,106,170); margin-bottom: 1px;" />
+                    <engine:Label name="effect-name" text="Court Cups are a Wild Suit" style="font-size: 13px; color: var(--ink);" />
+                    <engine:Label name="effect-desc" text="while Scorpio reigns, every Court Cup counts as any suit you need" style="font-size: 10px; color: rgb(154,138,172); white-space: normal;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- this age favors -->
+        <engine:VisualElement style="padding: 8px 16px 4px;">
+            <engine:Label text="this age favors" class="eyebrow" />
+            <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; margin-bottom: 6px;">
+                <engine:Label text="&#xea7a;" class="ti-icon" style="color: rgb(240,153,123); margin-right: 9px;" />
+                <engine:Label text="Mars &amp; Water cards harvest and align strongest" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
+            </engine:VisualElement>
+            <engine:VisualElement class="panel" style="flex-direction: row; align-items: center;">
+                <engine:Label text="&#xec3a;" class="ti-icon" style="color: var(--ok-text); margin-right: 9px;" />
+                <engine:Label text="Aqua Regia &amp; Sulphur reagents flow freely this round" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- agekeeper -->
+        <engine:VisualElement class="intro-tip tip--arcanum" style="align-items: center;">
+            <engine:Label name="agekeeper-line" text="Iolanthe serves as Agekeeper — she cast the age and holds the key this round."
+                          class="tip__text" style="color: rgb(168,176,216);" />
+        </engine:VisualElement>
+
+        <engine:VisualElement class="intro-cta">
+            <engine:Button name="enter-btn" text="Enter the age · begin Spring" class="btn btn--primary" style="font-size: 14px;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

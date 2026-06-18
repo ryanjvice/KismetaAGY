@@ -24,7 +24,11 @@ All rule text and card data lives in two canonical files:
 | `_source/Kismeta_GameGuide.md` | **Edit directly** — canonical source |
 | `_source/Kismeta_CardReference.md` | **Edit directly** — canonical source |
 | `docs-split.manifest.json` | Edit when adding, removing, or renaming a split output file |
-| `README.md` | **Hand-maintained** — navigation index and dev notes |
+| `README.md` | **Hand-maintained** — navigation index |
+| `ARCHITECTURE.md` | **Hand-maintained** — project structure and layering |
+| `UI.md` | **Hand-maintained** — uGUI spec and mockup catalog |
+| `_images/README.md` | **Hand-maintained** — image folder conventions |
+| `_images/mockups/README.md` | **Hand-maintained** — mockup file index |
 | `Cards/README.md` | **Hand-maintained** — card doc index |
 | Everything else (`Rules/`, `Reference/`, `Lore/`, `Cards/**`, `Glossary.md`) | **Generated** — do not edit directly |
 
@@ -79,6 +83,12 @@ If you edit a generated file manually, your changes will be overwritten the next
 ## Renaming a section in the source
 
 If you rename a heading in a `_source/` file that is referenced as a `start` or `end` anchor in the manifest, sync will fail with a clear error. Update the manifest entry's `start`/`end` to match the new heading, then re-run sync.
+
+---
+
+## Docs sync tooling
+
+`npm run docs:sync` is referenced throughout this folder but requires a `package.json` with the docs-split script at the repo root. If sync is not yet set up in Great Year, edit `_source/` files and run sync from whichever environment provides the script, or add the tooling in a follow-up.
 
 ---
 

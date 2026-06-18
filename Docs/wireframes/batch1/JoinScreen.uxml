@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+
+    <!-- ============================================================
+         JOIN GAME — room-code entry (Resume is a simple list, omitted
+         here as trivial). NATIVE NOTE: the TextField is a real input;
+         validate the code and connect in C#.
+         ============================================================ -->
+    <engine:VisualElement name="join-screen" class="screen" style="background-color: rgb(19,16,15);">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:Label text="Join a game" class="statusbar__title" style="margin-left: 4px;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 24px 18px;">
+            <engine:Label text="enter the room code" class="eyebrow" style="-unity-text-align: middle-center;" />
+            <engine:TextField name="room-code" max-length="6" style="margin: 8px 0 16px; font-size: 20px; -unity-text-align: middle-center;" />
+            <engine:Button name="join-confirm-btn" text="Join" class="btn btn--primary" />
+            <engine:Label text="ask the host for the 6-character code"
+                          style="font-size: 10px; color: rgb(106,90,74); -unity-text-align: middle-center; margin-top: 10px; white-space: normal;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

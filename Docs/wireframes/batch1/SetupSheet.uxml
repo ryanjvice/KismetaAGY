@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+
+    <!-- ============================================================
+         COMPACT SETUP SHEET — bottom sheet that rises over the title.
+         NATIVE NOTE: present as an overlay. In Unity add this tree to a
+         top-level overlay VisualElement with a dimmed scrim behind, and
+         animate translateY in C# (experimental.animation) for the rise.
+         ============================================================ -->
+    <engine:VisualElement name="setup-sheet" class="sheet">
+
+        <engine:VisualElement class="sheet__header">
+            <engine:Label text="New game" class="statusbar__title" style="color: var(--gold);" />
+            <engine:Button name="close-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 14px 16px 6px;">
+            <engine:Label text="alchemists" class="eyebrow" />
+            <engine:VisualElement name="player-row" style="flex-direction: row;">
+                <engine:Button name="players-2" text="2" class="player-pip" />
+                <engine:Button name="players-3" text="3" class="player-pip player-pip--active" />
+                <engine:Button name="players-4" text="4" class="player-pip" />
+                <engine:Button name="players-5" text="5" class="player-pip" />
+                <engine:Button name="players-6" text="6" class="player-pip" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 16px 6px;">
+            <engine:Label text="game mode" class="eyebrow" />
+            <engine:VisualElement name="mode-list">
+                <engine:Button name="mode-quickplay" class="mode-row">
+                    <engine:Label text="Quickplay" style="flex-grow: 1; font-size: 13px; color: var(--ink);" />
+                    <engine:Label text="~30 min" style="font-size: 10px; color: var(--ok-text);" />
+                </engine:Button>
+                <engine:Button name="mode-standard" class="mode-row mode-row--active">
+                    <engine:Label text="Standard" style="flex-grow: 1; font-size: 13px; color: var(--ink);" />
+                    <engine:Label text="~60 min" style="font-size: 10px; color: var(--gold-deep);" />
+                </engine:Button>
+                <engine:Button name="mode-magnus" class="mode-row">
+                    <engine:Label text="Magnus Alchemist" style="flex-grow: 1; font-size: 13px; color: var(--ink);" />
+                    <engine:Label text="~90 min" style="font-size: 10px; color: var(--arcanum-text);" />
+                </engine:Button>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 16px 6px;">
+            <engine:Label text="crucible deck" class="eyebrow" />
+            <engine:VisualElement style="flex-direction: row;">
+                <engine:Button name="deck-curated" text="Curated" class="player-pip player-pip--active" style="font-size: 12px; -unity-font-style: normal;" />
+                <engine:Button name="deck-random" text="Random" class="player-pip" style="font-size: 12px; -unity-font-style: normal;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 10px 16px 6px;">
+            <engine:Label text="first agekeeper" class="eyebrow" />
+            <engine:VisualElement style="flex-direction: row;">
+                <engine:Button name="keeper-random" text="Random" class="player-pip player-pip--active" style="font-size: 11px; -unity-font-style: normal;" />
+                <engine:Button name="keeper-youngest" text="Youngest" class="player-pip" style="font-size: 11px; -unity-font-style: normal;" />
+                <engine:Button name="keeper-choose" text="Choose" class="player-pip" style="font-size: 11px; -unity-font-style: normal;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 12px 16px 18px;">
+            <engine:Button name="begin-btn" text="Light the cauldrons · begin" class="btn btn--primary" style="font-size: 14px;" />
+            <engine:Label name="summary" text="3 alchemists · Standard · curated deck · random agekeeper"
+                          style="font-size: 9px; color: rgb(106,90,74); -unity-text-align: middle-center; margin-top: 8px;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

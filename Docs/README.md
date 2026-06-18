@@ -1,21 +1,22 @@
 # Kismeta: Alchemists of the Great Year — Design Docs
 
-Design and rules documentation for the Unity mobile port of **Kismeta: Alchemists of the Great Year**, a strategic card-and-dice game by Goodmagik Games. This folder is the authoritative reference for all game rules, card data, and lore used during development.
+Design and rules documentation for **Great Year**, the Unity mobile game based on *Kismeta: Alchemists of the Great Year* by Goodmagik Games. This folder is the authoritative reference for game rules, card data, lore, and UI mockups used during development.
 
-> **Editing these docs:** Edit `_source/Kismeta_GameGuide.md` or `_source/Kismeta_CardReference.md`, then run `npm run docs:sync` from the repo root. See [MAINTENANCE.md](MAINTENANCE.md) for the full workflow.
+> **Editing rules/card docs:** Edit `_source/Kismeta_GameGuide.md` or `_source/Kismeta_CardReference.md`, then run `npm run docs:sync` from the repo root. See [MAINTENANCE.md](MAINTENANCE.md) for the full workflow.
 
 ---
 
 ## Quick Start
 
-| You want to…                            | Start here                                                                 |
-| --------------------------------------- | -------------------------------------------------------------------------- |
-| Understand the game                     | [Introduction](Rules/introduction.md) → [Game Overview](Rules/overview.md) |
-| Set up a game                           | [Setup](Rules/setup.md)                                                    |
-| Follow a round step by step             | [Round Overview](Rules/round-overview.md)                                  |
-| Look up a card's effect                 | [Cards →](Cards/README.md)                                                 |
-| Decode a game term                      | [Glossary](Glossary.md)                                                    |
-| Understand the codebase / build the GUI | [ARCHITECTURE.md](ARCHITECTURE.md)                                         |
+| You want to… | Start here |
+| ------------ | ---------- |
+| Understand the game | [Introduction](Rules/introduction.md) → [Game Overview](Rules/overview.md) |
+| Set up a game | [Setup](Rules/setup.md) |
+| Follow a round step by step | [Round Overview](Rules/round-overview.md) |
+| Look up a card's effect | [Cards →](Cards/README.md) |
+| Decode a game term | [Glossary](Glossary.md) |
+| Build the mobile UI (uGUI) | [UI.md](UI.md) |
+| Understand project structure | [ARCHITECTURE.md](ARCHITECTURE.md) |
 
 ---
 
@@ -79,41 +80,34 @@ Quick-lookup tables for use during development and play.
 
 ## Reference Images
 
-Photography and visual reference of the physical game — 4-player table shots across all phases, component close-ups, board overheads, and card scans. Used to guide mobile UI implementation.
+UI mockups and board art used to guide the Great Year mobile implementation. Primary reference: [`_images/mockups/`](_images/mockups/README.md).
 
-- [Image index & naming conventions](_images/README.md)
+| Location | Contents |
+| -------- | -------- |
+| [`_images/mockups/`](_images/mockups/README.md) | Screen flows for all phases (Spring–Winter), combat, table layout |
+| [`_images/board/`](_images/board/) | Great Year board art asset |
 
-| Subfolder                                              | Contents                                        |
-| ------------------------------------------------------ | ----------------------------------------------- |
-| [`_images/gameplay/spring/`](_images/gameplay/spring/) | Phase 1 — dice rolls, Harvest, card layout      |
-| [`_images/gameplay/summer/`](_images/gameplay/summer/) | Phase 2 — Crafting, Duels, Gambits, Trades      |
-| [`_images/gameplay/autumn/`](_images/gameplay/autumn/) | Phase 3 — Opposition, Forge, Stasis             |
-| [`_images/gameplay/winter/`](_images/gameplay/winter/) | Phase 4 — Card Unlock, Wager, reset             |
-| [`_images/setup/`](_images/setup/)                     | Pre-game table setup                            |
-| [`_images/components/`](_images/components/)           | Dice, tokens, Stones, Meeples                   |
-| [`_images/board/`](_images/board/)                     | Great Year Board; Zodiac Wheel                  |
-| [`_images/cards/`](_images/cards/)                     | Kismeta deck and Crucible deck card photography |
-
-> Images are tracked by Git LFS. See [`_images/README.md`](_images/README.md) for the naming convention and how to add new images.
+> Images are tracked by Git LFS. See [`_images/README.md`](_images/README.md) for folder conventions.
 
 ---
 
 ## Developer / Technical Reference
 
-Documentation for developers building or extending the Unity game on top of the C# engine. For game rules, use the sections above.
+Documentation for building the Great Year Unity mobile game. UI uses **uGUI** (not UI Toolkit).
 
-| Document                           | Contents                                                                                                                                                                                                                                                                    |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Layer map, assembly dependencies, core patterns (Command/Event, GameSession, Phase Machine, Visibility Model), rule services, player controller pattern, data pipeline, bootstrap wiring, full command/event flow diagram, implementation status, and GUI integration guide |
+| Document | Contents |
+| -------- | -------- |
+| [UI.md](UI.md) | uGUI conventions, main table zone map, mockup screen catalog linked to rules |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Project layout, game/UI layering, mobile defaults, data sources |
 
 ---
 
 ## Source & tooling
 
-| Path                                                                   | Role                                    |
-| ---------------------------------------------------------------------- | --------------------------------------- |
-| [`_source/Kismeta_GameGuide.md`](_source/Kismeta_GameGuide.md)         | Canonical rules — you edit this         |
-| [`_source/Kismeta_CardReference.md`](_source/Kismeta_CardReference.md) | Canonical card data — you edit this     |
-| [`docs-split.manifest.json`](docs-split.manifest.json)                 | Maps source headings → output files     |
-| [`MAINTENANCE.md`](MAINTENANCE.md)                                     | Full editing and sync workflow          |
-| `npm run docs:sync`                                                    | Regenerates all split files from source |
+| Path | Role |
+| ---- | ---- |
+| [`_source/Kismeta_GameGuide.md`](_source/Kismeta_GameGuide.md) | Canonical rules — you edit this |
+| [`_source/Kismeta_CardReference.md`](_source/Kismeta_CardReference.md) | Canonical card data — you edit this |
+| [`docs-split.manifest.json`](docs-split.manifest.json) | Maps source headings → output files |
+| [`MAINTENANCE.md`](MAINTENANCE.md) | Full editing and sync workflow |
+| `npm run docs:sync` | Regenerates split rule/card files from source |

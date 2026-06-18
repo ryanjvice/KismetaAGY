@@ -1,8 +1,8 @@
 # Reference Images
 
-Photography and visual reference for Kismeta: Alchemists of the Great Year.
+Visual reference for the Great Year mobile game.
 
-Images here are for **documentation and development reference only** — they show the physical game in play and are used to guide the mobile UI implementation. If an image is needed as a runtime asset in the game build, copy it to `Assets/_Project/` instead.
+Images here are for **documentation and development reference only**. Copy assets needed at runtime to `Assets/Art/UI/` (or the appropriate `Assets/` subfolder).
 
 All images are tracked by Git LFS (configured in `/.gitattributes`).
 
@@ -12,53 +12,49 @@ All images are tracked by Git LFS (configured in `/.gitattributes`).
 
 ```
 _images/
-  gameplay/
-    spring/     ← Phase 1 table shots (dice rolls, Harvest, card layout)
-    summer/     ← Phase 2 table shots (Crafting, Duels, Gambits, Trades)
-    autumn/     ← Phase 3 table shots (Opposition, Forge, Stasis)
-    winter/     ← Phase 4 table shots (Card Unlock, Fateful Wager, reset)
-  setup/        ← Table before the first round (board, Codex cards, tokens)
-  components/   ← Individual component close-ups (dice, tokens, Stones, Meeples)
-  board/        ← Great Year Board full-table overheads; Zodiac Wheel detail
-  cards/        ← Card photography or scans (Kismeta deck, Crucible deck)
+  mockups/     ← Primary UI reference (screen flows, table layout, phase modals)
+  board/       ← Great Year board art asset (central wheel / zodiac)
 ```
+
+Full mockup index: [`mockups/README.md`](mockups/README.md).
+
+---
+
+## mockups/
+
+Screen mockups for every major UI flow — Spring through Winter, duel/gambit, opposition, stasis, win state, and the labeled full-table layout.
+
+When implementing a screen, start with the matching entry in [`UI.md`](../UI.md) and the row in [`mockups/README.md`](mockups/README.md).
+
+---
+
+## board/
+
+| File | Description |
+|------|-------------|
+| [`Kismeta_gameBoard_final.png`](board/Kismeta_gameBoard_final.png) | Great Year board art — zodiac wheel, transmutation path (Lead → Gold), mantle/crucible ring, corner player reference |
+
+Used by the `BoardView` prefab described in [`UI.md`](../UI.md#3-main-table-layout).
 
 ---
 
 ## Naming convention
 
-`{subject}_{detail}_{variant}.{ext}`
+New mockups should follow:
 
-| Segment | Examples |
-|---------|---------|
-| `subject` | `table`, `board`, `hand`, `spread`, `forge`, `token`, `card` |
-| `detail` | `4player`, `opposition`, `harvest`, `duel`, `stasis`, `overview` |
-| `variant` | `01`, `02`, `wide`, `close`, `red`, `blue` |
+`{phase}_{action}_{step}.png`
 
-Examples:
-- `table_4player_spring_01.jpg`
-- `board_zodiac-wheel_overview.jpg`
-- `card_fool_front_01.png`
-- `token_philosopher-stone_red.png`
-- `spread_4cards_summer_close.jpg`
+Examples: `spring_harvest.png`, `duel_roll.png`, `winter_fatefulWager_select.png`
 
 ---
 
 ## Adding images
 
-1. Drop the file into the appropriate subfolder.
-2. Follow the naming convention above.
-3. Add a one-line entry to the table in this file (below) so it's discoverable.
-4. Reference it in a doc file using a relative path, e.g.:
+1. Drop the file into `mockups/` or `board/` as appropriate.
+2. Add a row to [`mockups/README.md`](mockups/README.md) (or the board table above).
+3. Add or update the catalog entry in [`UI.md`](../UI.md).
+4. Reference in docs using a relative path, e.g.:
 
    ```markdown
-   ![4-player table during Spring phase](../../_images/gameplay/spring/table_4player_spring_01.jpg)
+   ![Spring harvest](../_images/mockups/spring_harvest.png)
    ```
-
----
-
-## Image index
-
-| File | Folder | Description |
-|------|--------|-------------|
-| _(add images here as you go)_ | | |

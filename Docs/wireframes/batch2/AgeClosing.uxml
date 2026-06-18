@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+    <engine:Style src="../USS/AgeCeremony.uss" />
+
+    <!-- ============================================================
+         AGE CLOSING — folds #45 (close ceremony) + #46 (standings recap).
+         Mirrors AgeOpening inverted: constellation setting, sigil faded.
+         NATIVE NOTE: same starfield/constellation sprite approach, dimmed.
+         ============================================================ -->
+    <engine:VisualElement name="age-close" class="screen ceremony" style="background-color: rgb(10,8,16);">
+
+        <engine:VisualElement class="ceremony-hero ceremony-hero--close">
+            <engine:Label text="the constellation sets" class="ceremony-eyebrow" style="color: rgb(138,106,170);" />
+
+            <engine:VisualElement name="age-sigil" class="ceremony-sigil ceremony-sigil--close">
+                <engine:Label text="&#9007;" class="ceremony-sigil__glyph" style="color: rgb(176,136,104);" />
+            </engine:VisualElement>
+
+            <engine:Label text="the age of" class="ceremony-prelabel" />
+            <engine:Label name="age-name" text="SCORPIO" class="ceremony-agename" style="color: rgb(201,168,74);" />
+            <engine:Label text="has passed" class="ceremony-prelabel" style="margin-top: 4px;" />
+
+            <engine:Label text="The waters recede, the stars wheel on. What was forged in this age is forged forever."
+                          class="ceremony-couplet" />
+        </engine:VisualElement>
+
+        <!-- how the age moved the board -->
+        <engine:VisualElement style="padding: 15px 16px 4px;">
+            <engine:Label text="how the age moved the board" class="eyebrow" />
+            <engine:VisualElement name="standings-list">
+                <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; margin-bottom: 6px;">
+                    <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(192,57,43); border-width: 1px; border-color: rgb(229,115,115); margin-right: 9px;" />
+                    <engine:Label text="Aurelia fired to Gold" style="flex-grow: 1; font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="5 &#8594; 7" style="font-size: 10px; color: var(--ok-text);" />
+                </engine:VisualElement>
+                <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; margin-bottom: 6px;">
+                    <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(46,109,164); border-width: 1px; border-color: rgb(111,168,212); margin-right: 9px;" />
+                    <engine:Label text="Iolanthe held at Gold, defended twice" style="flex-grow: 1; font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="7" style="font-size: 10px; color: var(--muted);" />
+                </engine:VisualElement>
+                <engine:VisualElement class="panel" style="flex-direction: row; align-items: center;">
+                    <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(31,110,74); border-width: 1px; border-color: rgb(93,202,165); margin-right: 9px;" />
+                    <engine:Label text="Severin opposed to stasis" style="flex-grow: 1; font-size: 11px; color: var(--ink);" />
+                    <engine:Label text="5 &#8594; &#10052;" style="font-size: 10px; color: var(--danger-text);" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- key passes -->
+        <engine:VisualElement class="intro-tip tip--arcanum" style="align-items: center;">
+            <engine:Label name="keypass-line" text="The key passes to Aurelia. She will cast the next age — its sign is unknown until the dice fall."
+                          class="tip__text" style="color: rgb(168,176,216);" />
+        </engine:VisualElement>
+
+        <engine:VisualElement class="intro-cta">
+            <engine:Button name="next-age-btn" text="Turn the wheel · cast the next age" class="btn"
+                           style="background-color: var(--arcanum-bg); border-color: var(--arcanum-border); color: var(--arcanum-text); font-size: 14px;" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

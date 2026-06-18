@@ -1,0 +1,71 @@
+/* Kismeta — TitleScreen.uss (per-screen styling) */
+
+.title-hero {
+    padding: 30px 20px 22px;
+    align-items: center;
+    /* radial glow backdrop -> background sprite in Unity (see NATIVE NOTE) */
+    background-color: rgb(34,21,10);
+}
+
+.title-sigil {
+    width: 74px; height: 74px; border-radius: 37px;
+    background-color: var(--gold-deep);
+    border-width: 2px; border-color: var(--gold-bright);
+    align-items: center; justify-content: center;
+    margin-bottom: 14px;
+}
+.title-sigil__mark {
+    font-size: 34px; color: rgb(90,60,10);
+    -unity-font-style: bold;
+    -unity-font-definition: url("project://database/Assets/Fonts/Kismeta-Serif.asset");
+}
+
+.title-wordmark {
+    font-size: 34px; color: var(--gold);
+    letter-spacing: 5px;
+    -unity-font-definition: url("project://database/Assets/Fonts/Kismeta-Serif.asset");
+}
+.title-tagline {
+    font-size: 11px; color: rgb(201,168,74);
+    letter-spacing: 3px;
+    margin-top: 7px;
+}
+.title-flavor {
+    font-size: 10px; color: rgb(154,138,106);
+    -unity-font-style: italic;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    max-width: 240px;
+    margin-top: 14px;
+}
+
+.title-menu {
+    padding: 14px 16px 16px;
+    background-color: rgb(20,10,24);
+}
+.title-menu__row { flex-direction: row; margin-top: 8px; }
+
+.btn--menu {
+    flex-grow: 1;
+    background-color: rgb(28,18,8);
+    border-width: 1px; border-color: rgb(106,74,26);
+    color: rgb(201,168,74);
+    border-radius: var(--radius-md);
+    padding: 11px;
+    -unity-text-align: middle-center;
+    margin-right: 8px;
+}
+.btn--menu:last-child { margin-right: 0; }
+
+.btn--menu-sm {
+    flex-grow: 1;
+    background-color: var(--panel-darker);
+    border-width: 1px; border-color: var(--border-subtle);
+    color: rgb(154,138,172);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    font-size: 11px;
+    -unity-text-align: middle-center;
+    margin-right: 8px;
+}
+.btn--menu-sm:last-child { margin-right: 0; }

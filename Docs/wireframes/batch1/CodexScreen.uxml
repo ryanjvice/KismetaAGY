@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../USS/Kismeta.uss" />
+
+    <!-- ============================================================
+         CODEX — searchable reference (how-to-play uses the same shell).
+         NATIVE NOTE: content is data-driven. Bind the search TextField
+         and populate #codex-list from a ScriptableObject/JSON of cards,
+         ages, states, and glossary terms in C#. Rows shown are samples.
+         ============================================================ -->
+    <engine:VisualElement name="codex-screen" class="screen" style="background-color: rgb(19,16,15);">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+                <engine:Label text="Codex" class="statusbar__title" style="margin-left: 4px;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 12px 16px 6px;">
+            <engine:TextField name="codex-search" style="font-size: 13px;" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 6px 16px 4px; flex-direction: row;">
+            <engine:Button name="tab-cards" text="Cards" class="codex-tab codex-tab--active" />
+            <engine:Button name="tab-ages" text="Ages" class="codex-tab" />
+            <engine:Button name="tab-states" text="States" class="codex-tab" />
+            <engine:Button name="tab-terms" text="Terms" class="codex-tab" />
+        </engine:VisualElement>
+
+        <!-- scrollable list -->
+        <engine:ScrollView name="codex-list" style="height: 360px; padding: 4px 16px 16px;">
+            <engine:VisualElement class="panel" style="margin-bottom: 7px;">
+                <engine:Label text="Minor Arcana" style="font-size: 12px; color: var(--ink);" />
+                <engine:Label text="Pip cards — rank + suit drive crafting, sets and alignment." style="font-size: 10px; color: var(--muted); white-space: normal;" />
+            </engine:VisualElement>
+            <engine:VisualElement class="panel" style="margin-bottom: 7px;">
+                <engine:Label text="Adept (Major Arcana)" style="font-size: 12px; color: var(--ink);" />
+                <engine:Label text="Active ability placed in your Arcanum; up to 2 active." style="font-size: 10px; color: var(--muted); white-space: normal;" />
+            </engine:VisualElement>
+            <engine:VisualElement class="panel" style="margin-bottom: 7px;">
+                <engine:Label text="Fate (Major Arcana)" style="font-size: 12px; color: var(--ink);" />
+                <engine:Label text="Resolves the instant it's drawn; stays face-up after." style="font-size: 10px; color: var(--muted); white-space: normal;" />
+            </engine:VisualElement>
+        </engine:ScrollView>
+
+    </engine:VisualElement>
+</engine:UXML>
