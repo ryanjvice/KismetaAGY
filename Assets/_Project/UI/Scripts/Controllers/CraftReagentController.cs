@@ -30,7 +30,7 @@ namespace Kismeta.UI.Controllers
                 Btn($"pick-{key}")?.RegisterCallback<ClickEvent>(_ => PickReagent(key));
         }
 
-        static readonly string[] ReagentKeys = { "sulphur", "vitriol", "aqua", "salt" };
+        static readonly string[] ReagentKeys = { "salt", "sulphur", "vitriol", "aqua", "quicksilver" };
 
         public void BindState(GameSession session, CommandBridge bridge)
         {
@@ -98,10 +98,12 @@ namespace Kismeta.UI.Controllers
 
             var suit = Correspondence.SuitFor(_reagent);
             var player = _session.Players[_playerId];
+            var color = CauldronNameFor(suit);
+            int need = EffectiveNeed();
             bool lit = player.IsCauldronLit(suit);
             note.text = lit
-                ? $"Discard 3 {suit} cards into the lit cauldron."
-                : $"The {Correspondence.ElementFor(suit)} cauldron must be lit first.";
+                ? $"{_reagent} needs the lit {color} cauldron — discard {need} {suit}."
+                : $"The {color} cauldron must be lit before crafting {_reagent}.";
         }
 
         void RefreshPool()
@@ -115,8 +117,13 @@ namespace Kismeta.UI.Controllers
             int need = EffectiveNeed();
             var pool = El("card-pool");
             var eyebrow = pool?.parent?.Q<Label>(className: "eyebrow");
-            if (eyebrow != null && filter.HasValue)
-                eyebrow.text = $"tap {need} {filter.Value} cards to discard";
+            if (eyebrow != null)
+            {
+                if (filter.HasValue)
+                    eyebrow.text = $"tap {need} {filter.Value} cards to discard";
+                else
+                    eyebrow.text = $"tap {need} cards to discard";
+            }
 
             SummerCardPickBindings.RebuildPool(Root, _session, cards, _selected, filter, OnCardToggle);
             RefreshForgeBtn();
@@ -159,7 +166,8 @@ namespace Kismeta.UI.Controllers
                 else
                 {
                     var suit = Correspondence.SuitFor(_reagent);
-                    contract.text = $"{need} {suit} → 1 {_reagent}";
+                    var color = CauldronNameFor(suit);
+                    contract.text = $"{need} {suit} → 1 {_reagent} into the {color} cauldron";
                 }
             }
 
@@ -191,7 +199,17 @@ namespace Kismeta.UI.Controllers
             "sulphur" => ReagentType.Sulphur,
             "vitriol" => ReagentType.Vitriol,
             "aqua" => ReagentType.AquaRegia,
+            "quicksilver" => ReagentType.Quicksilver,
             _ => ReagentType.Salt
+        };
+
+        static string CauldronNameFor(Suit suit) => suit switch
+        {
+            Suit.Wands => "Red",
+            Suit.Cups => "Blue",
+            Suit.Pentacles => "Green",
+            Suit.Swords => "Yellow",
+            _ => ""
         };
 
     }

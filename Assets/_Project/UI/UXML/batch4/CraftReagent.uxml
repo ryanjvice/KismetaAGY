@@ -28,7 +28,14 @@
         <!-- reagent picker -->
         <engine:VisualElement style="padding: 12px 14px 4px;">
             <engine:Label text="choose a reagent to forge" class="eyebrow" />
-            <engine:VisualElement name="reagent-picker" style="flex-direction: row; flex-wrap: wrap; justify-content: space-between;">
+            <engine:Button name="pick-salt" class="reagent-pick reagent-pick--salt">
+                <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 6px;" />
+                <engine:Label text="Salt (any 3)" style="font-size: 11px; color: rgb(243, 233, 210);" />
+            </engine:Button>
+            <engine:Label text="Elemental Reagents" class="eyebrow" style="margin-top: 4px;" />
+            <engine:Label text="Each Elemental Reagent requires its Cauldron to be lit in order to craft."
+                          style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 7px; white-space: normal;" />
+            <engine:VisualElement name="reagent-picker" class="reagent-picker">
                 <engine:Button name="pick-sulphur" class="reagent-pick reagent-pick--active">
                     <engine:VisualElement class="reagent-dot reagent-dot--sulphur" style="margin-right: 6px;" />
                     <engine:Label text="Sulphur" style="font-size: 11px; color: rgb(243, 233, 210);" />
@@ -41,9 +48,9 @@
                     <engine:VisualElement class="reagent-dot reagent-dot--aqua" style="margin-right: 6px;" />
                     <engine:Label text="Aqua Regia" style="font-size: 11px; color: rgb(184, 154, 110);" />
                 </engine:Button>
-                <engine:Button name="pick-salt" class="reagent-pick">
-                    <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 6px;" />
-                    <engine:Label text="Salt (any 3)" style="font-size: 11px; color: rgb(243, 233, 210);" />
+                <engine:Button name="pick-quicksilver" class="reagent-pick">
+                    <engine:VisualElement class="reagent-dot reagent-dot--quick" style="margin-right: 6px;" />
+                    <engine:Label text="Quicksilver" style="font-size: 11px; color: rgb(243, 233, 210);" />
                 </engine:Button>
             </engine:VisualElement>
             <engine:Label name="cauldron-note" text="Sulphur needs the lit Red cauldron — discard 3 Wands."

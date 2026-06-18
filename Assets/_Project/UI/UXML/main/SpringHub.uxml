@@ -35,6 +35,10 @@
                 <engine:VisualElement name="step-3" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="commune" class="step__label" /></engine:VisualElement>
                 <engine:VisualElement name="step-4" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="lock" class="step__label" /></engine:VisualElement>
             </engine:VisualElement>
+
+            <engine:VisualElement class="screen__fab-layer">
+                <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement class="dock">
@@ -47,10 +51,6 @@
 
         <engine:VisualElement class="actionbar">
             <engine:Button name="commune-btn" text="Commune" class="actionbtn btn btn--primary" />
-        </engine:VisualElement>
-
-        <engine:VisualElement class="screen__fab-layer">
-            <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

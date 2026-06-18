@@ -92,6 +92,16 @@
 }
 
 /* reagent picker chip (Craft) */
+.reagent-pick--salt {
+    width: 100%;
+}
+
+.reagent-picker {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
 .reagent-pick {
     width: 48%;
     flex-direction: row; align-items: center;

@@ -28,6 +28,10 @@
                 </engine:VisualElement>
                 <engine:Label name="hint-label" text="Your turn" style="font-size: 11px; color: rgb(243, 233, 210); margin-top: 10px;" />
             </engine:VisualElement>
+
+            <engine:VisualElement class="screen__fab-layer">
+                <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement class="dock">
@@ -44,10 +48,6 @@
             <engine:Button name="oppose-btn" text="Oppose" class="actionbtn btn btn--secondary" />
             <engine:Button name="manage-cards-btn" text="Cards" class="actionbtn btn btn--secondary" />
             <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
-        </engine:VisualElement>
-
-        <engine:VisualElement class="screen__fab-layer">
-            <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

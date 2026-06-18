@@ -147,6 +147,7 @@
     flex-shrink: 1;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
 }
 
 /* ---------- Persistent in-game frame ---------- */
@@ -309,14 +310,46 @@
     max-width: 48%;
 }
 
+.actionbar--summer {
+    flex-direction: column;
+    row-gap: 6px;
+}
+
+.actionbar__row {
+    flex-direction: row;
+    width: 100%;
+    align-items: stretch;
+}
+
+.actionbar__row--primary > .actionbtn {
+    flex-grow: 1;
+    flex-basis: 0;
+    flex-shrink: 1;
+    max-width: none;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+
+.actionbar__row--primary > .actionbtn:last-child {
+    margin-right: 0;
+}
+
+.actionbar__row--pass > .actionbtn {
+    flex-grow: 1;
+    width: 100%;
+    max-width: none;
+}
+
 .actionbtn:last-child { margin-right: 0; }
 .actionbtn__label { font-size: var(--font-body); -unity-font-style: normal; }
 
 .screen__fab-layer {
     position: absolute;
     right: var(--space-md);
-    bottom: 68px;
+    bottom: var(--space-md);
     flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .screen__fab-layer .menu-btn-fab {
@@ -347,6 +380,10 @@
 .dock__strip {
     flex-direction: row;
     flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    min-height: var(--card-chip-h);
     overflow: hidden;
 }
 
