@@ -7,10 +7,11 @@ Unity UI Toolkit assets ported from `Docs/wireframes/`. This folder is the **pro
 | Path | Contents |
 |------|----------|
 | `USS/` | Shared `Kismeta.uss` (canonical) + per-screen stylesheets |
-| `UXML/batchN/` | 35 screen layouts (batches 1–7) |
-| `UXML/shell/` | `AppShell.uxml` (fixed UIDocument root), `GameplayHud`, `WaitingHud` |
+| `UXML/batch1/` | Title, SetupSheet, Join, Resume, Codex |
+| `UXML/batchN/` | Screen layouts (batches 2–7) |
+| `UXML/shell/` | `AppShell.uxml`, `GameplayHud`, `WaitingHud` |
 | `Scripts/Framework/` | ViewportLayout, ScreenRouter, GamePresenter, CommandBridge |
-| `Scripts/Controllers/` | Title, GameplayHud, WaitingHud controllers |
+| `Scripts/Controllers/` | Title, Join, Resume, Codex, GameplayHud, WaitingHud |
 | `Scripts/Components/` | CardChipFactory, RivalStripBuilder |
 | `Scripts/Setup/` | `UiSetupConfig`, mapper to Core `GameMode` |
 | `Settings/` | `KismetaPanelSettings.asset` (380×844 **reference** only) |
@@ -44,7 +45,15 @@ flowchart TB
 
 Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `ScreenRouter`. Call `ScreenRouter.RefreshControllers()` after adding components at runtime.
 
-## Phase 1 complete — UI spine
+## Phase 2 complete — Batch 1 shell
+
+- **Title** → New game (setup sheet), **Resume**, **Join**, **How to play** (Codex → Terms), **Codex**
+- **Join** — room-code entry; back returns to title (multiplayer stub)
+- **Resume** — empty-state list; persistence stub
+- **Codex** — tabbed reference + search filter (static glossary samples)
+- **Setup sheet** — unchanged compact overlay; Begin starts the game loop
+
+## Phase 1 — UI spine (foundation)
 
 - Title → Setup sheet → gameplay placeholder HUD (`GameplayHud` / `WaitingHud`)
 - Setup sheet uses `SetupSheetState`; maps wireframe "Magnus" to `GameMode.MagnusAlchemist`
@@ -67,7 +76,7 @@ Open `Bootstrap.unity` (or your play scene with `GameBootstrap`), then:
 - GameBootstrap **Use Production Ui** = on
 - **Save the scene** (`Ctrl+S`)
 
-**Play-test:** New game → Begin → gameplay HUD; Pass works during free-action phases (Summer/Winter/Autumn).
+**Play-test:** Title → Join / Resume / Codex / How to play (back to title) → New game → Begin → gameplay HUD; Pass during free-action phases.
 
 ## Full-bleed / responsive rules
 
@@ -108,6 +117,6 @@ panel root → .kismeta-root → .app-shell → .content-layer → .screen-host 
 
 Visual tokens, components, and per-screen specs: [`Docs/wireframes/UI_styleGuide.md`](../../Docs/wireframes/UI_styleGuide.md).
 
-## Next: Phase 2 — Batch 1 Shell wiring
+## Next: Phase 3 — Main scene controllers
 
-Dedicated setup screen, Join/Resume, Codex data binding, and replacing the gameplay placeholder with real season flows.
+Port Autumn/Summer/Spring-hub/Winter-hub with real `Bind()` and replace the gameplay placeholder HUD.

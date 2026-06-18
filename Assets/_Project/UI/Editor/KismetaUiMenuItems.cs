@@ -15,6 +15,9 @@ namespace Kismeta.UI.Editor
         private const string AppShellPath = "Assets/_Project/UI/UXML/shell/AppShell.uxml";
         private const string TitleScreenPath = "Assets/_Project/UI/UXML/batch1/TitleScreen.uxml";
         private const string SetupSheetPath = "Assets/_Project/UI/UXML/batch1/SetupSheet.uxml";
+        private const string JoinScreenPath = "Assets/_Project/UI/UXML/batch1/JoinScreen.uxml";
+        private const string ResumeScreenPath = "Assets/_Project/UI/UXML/batch1/ResumeScreen.uxml";
+        private const string CodexScreenPath = "Assets/_Project/UI/UXML/batch1/CodexScreen.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
@@ -79,6 +82,9 @@ namespace Kismeta.UI.Editor
             EnsureComponent<TitleScreenController>(bootstrap.gameObject);
             EnsureComponent<GameplayHudController>(bootstrap.gameObject);
             EnsureComponent<WaitingHudController>(bootstrap.gameObject);
+            EnsureComponent<JoinScreenController>(bootstrap.gameObject);
+            EnsureComponent<ResumeScreenController>(bootstrap.gameObject);
+            EnsureComponent<CodexScreenController>(bootstrap.gameObject);
 
             var layout = bootstrap.GetComponent<ViewportLayout>();
             var layoutSo = new SerializedObject(layout);
@@ -107,6 +113,9 @@ namespace Kismeta.UI.Editor
             var gameplay = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameplayHudPath);
             var waiting = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
             var setup = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SetupSheetPath);
+            var join = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(JoinScreenPath);
+            var resume = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResumeScreenPath);
+            var codex = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CodexScreenPath);
 
             var so = new SerializedObject(bootstrap);
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
@@ -115,6 +124,9 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_gameplayHud").objectReferenceValue = gameplay;
             so.FindProperty("_waitingHud").objectReferenceValue = waiting;
             so.FindProperty("_setupSheet").objectReferenceValue = setup;
+            so.FindProperty("_joinScreen").objectReferenceValue = join;
+            so.FindProperty("_resumeScreen").objectReferenceValue = resume;
+            so.FindProperty("_codexScreen").objectReferenceValue = codex;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
 
@@ -152,6 +164,9 @@ namespace Kismeta.UI.Editor
             host.AddComponent<TitleScreenController>();
             host.AddComponent<GameplayHudController>();
             host.AddComponent<WaitingHudController>();
+            host.AddComponent<JoinScreenController>();
+            host.AddComponent<ResumeScreenController>();
+            host.AddComponent<CodexScreenController>();
             host.AddComponent<UiResponsiveTest>();
 
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
@@ -162,12 +177,17 @@ namespace Kismeta.UI.Editor
 
             var titleScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TitleScreenPath);
             var setupSheet = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SetupSheetPath);
+            var joinScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(JoinScreenPath);
+            var resumeScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResumeScreenPath);
+            var codexScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CodexScreenPath);
             var gameplayHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameplayHudPath);
             var waitingHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
             var cardModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
 
             var router = host.GetComponent<ScreenRouter>();
-            router.ConfigureScreens(titleScreen, gameplayHud, waitingHud, setupSheet);
+            router.ConfigureScreens(
+                titleScreen, gameplayHud, waitingHud, setupSheet,
+                joinScreen, resumeScreen, codexScreen);
 
             var doc = host.GetComponent<UIDocument>();
             doc.panelSettings = panelSettings;

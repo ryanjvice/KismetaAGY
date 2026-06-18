@@ -84,6 +84,8 @@ setup and troubleshooting.
 
 ## Status
 
-All of #1–6 are layout-complete with controllers. Card/age/state content in the Codex
-and the actual navigation router are left as integration work. Next: **Batch 2 —
+All of #1–6 are layout-complete. **Production wiring (Phase 2):** Title menu routes to
+setup sheet, Join, Resume, and Codex; How to play opens Codex on the Terms tab.
+Dedicated `SetupScreen.uxml` was never ported — compact sheet remains the quick-start path.
+Codex rows are static samples until card/age data binding lands. Next: **Batch 2 —
 intros & ceremonies** (#7–10, 16, 28, 37, 45–46).

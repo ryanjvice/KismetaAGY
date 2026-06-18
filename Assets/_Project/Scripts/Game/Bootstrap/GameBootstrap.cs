@@ -43,6 +43,9 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _gameplayHud;
         [SerializeField] private VisualTreeAsset _waitingHud;
         [SerializeField] private VisualTreeAsset _setupSheet;
+        [SerializeField] private VisualTreeAsset _joinScreen;
+        [SerializeField] private VisualTreeAsset _resumeScreen;
+        [SerializeField] private VisualTreeAsset _codexScreen;
 
         private CardDatabase? _db;
         private CrucibleCodexDatabase? _codexDb;
@@ -114,6 +117,9 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<TitleScreenController>();
             EnsureController<GameplayHudController>();
             EnsureController<WaitingHudController>();
+            EnsureController<JoinScreenController>();
+            EnsureController<ResumeScreenController>();
+            EnsureController<CodexScreenController>();
 
             router.RefreshControllers();
 
@@ -125,7 +131,9 @@ namespace Kismeta.Game.Bootstrap
                     return;
                 }
 
-                router.ConfigureScreens(_titleScreen, _gameplayHud, _waitingHud, _setupSheet);
+                router.ConfigureScreens(
+                    _titleScreen, _gameplayHud, _waitingHud, _setupSheet,
+                    _joinScreen, _resumeScreen, _codexScreen);
                 layout.RunWhenReady(ShowTitleScreen);
             }
             else

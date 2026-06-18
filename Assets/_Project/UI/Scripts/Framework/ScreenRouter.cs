@@ -51,14 +51,25 @@ namespace Kismeta.UI
             VisualTreeAsset title,
             VisualTreeAsset gameplayHud,
             VisualTreeAsset waitingHud,
-            VisualTreeAsset setupSheet)
+            VisualTreeAsset setupSheet,
+            VisualTreeAsset? join = null,
+            VisualTreeAsset? resume = null,
+            VisualTreeAsset? codex = null)
         {
-            _screens = new[]
+            var screens = new List<ScreenAsset>
             {
-                new ScreenAsset { Id = ScreenIds.Title, Uxml = title },
-                new ScreenAsset { Id = ScreenIds.GameplayHud, Uxml = gameplayHud },
-                new ScreenAsset { Id = ScreenIds.Waiting, Uxml = waitingHud },
+                new() { Id = ScreenIds.Title, Uxml = title },
+                new() { Id = ScreenIds.GameplayHud, Uxml = gameplayHud },
+                new() { Id = ScreenIds.Waiting, Uxml = waitingHud },
             };
+            if (join != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.Join, Uxml = join });
+            if (resume != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.Resume, Uxml = resume });
+            if (codex != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.Codex, Uxml = codex });
+
+            _screens = screens.ToArray();
             _setupSheet = setupSheet;
             RebuildRegistry();
             RefreshControllers();

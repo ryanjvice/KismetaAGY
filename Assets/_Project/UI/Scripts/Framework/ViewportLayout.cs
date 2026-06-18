@@ -107,11 +107,7 @@ namespace Kismeta.UI
             overlay.Clear();
             overlay.RemoveFromClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
-
-            var content = asset.Instantiate();
-            content.style.flexGrow = 0;
-            content.style.flexShrink = 1;
-            overlay.Add(content);
+            InstantiateOverlay(overlay, asset);
         }
 
         public void ShowBottomSheet(VisualTreeAsset asset)
@@ -123,11 +119,23 @@ namespace Kismeta.UI
             overlay.Clear();
             overlay.AddToClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
+            InstantiateOverlay(overlay, asset);
+        }
 
-            var content = asset.Instantiate();
-            content.style.flexGrow = 0;
-            content.style.flexShrink = 1;
-            overlay.Add(content);
+        /// <summary>
+        /// Clone overlay UXML into a token-scope host that is attached before cloning.
+        /// Avoids NRE from inline <c>var(--token)</c> in UXML during detached Instantiate().
+        /// </summary>
+        private static VisualElement InstantiateOverlay(VisualElement overlay, VisualTreeAsset asset)
+        {
+            var host = new VisualElement();
+            host.AddToClassList("kismeta-root");
+            host.style.flexGrow = 0;
+            host.style.flexShrink = 1;
+            host.style.flexDirection = FlexDirection.Column;
+            overlay.Add(host);
+            asset.CloneTree(host);
+            return host;
         }
 
         public void DismissOverlay()

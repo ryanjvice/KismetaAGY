@@ -7,7 +7,11 @@ namespace Kismeta.UI
         public const string Waiting = "Waiting";
         public const string GameplayHud = "GameplayHud";
         public const string SetupSheet = "SetupSheet";
-        // Batch screens (Phase 2+)
+        // Batch 1 shell
+        public const string Join = "Join";
+        public const string Resume = "Resume";
+        public const string Codex = "Codex";
+        // Batch screens (Phase 3+)
         public const string Commune = "Commune";
         public const string SummerMain = "SummerMain";
         public const string AutumnMain = "AutumnMain";

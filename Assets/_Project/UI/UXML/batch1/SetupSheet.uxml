@@ -14,8 +14,8 @@
     <engine:VisualElement name="setup-sheet" class="sheet">
 
         <engine:VisualElement class="sheet__header">
-            <engine:Label text="New game" class="statusbar__title" style="color: var(--gold);" />
-            <engine:Button name="close-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: var(--muted); font-size: 18px;" />
+            <engine:Label text="New game" class="statusbar__title" style="color: rgb(232, 185, 74);" />
+            <engine:Button name="close-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 14px 16px 6px;">
@@ -33,16 +33,16 @@
             <engine:Label text="game mode" class="eyebrow" />
             <engine:VisualElement name="mode-list">
                 <engine:Button name="mode-quickplay" class="mode-row">
-                    <engine:Label text="Quickplay" style="flex-grow: 1; font-size: 13px; color: var(--ink);" />
-                    <engine:Label text="~30 min" style="font-size: 10px; color: var(--ok-text);" />
+                    <engine:Label text="Quickplay" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="~30 min" style="font-size: 10px; color: rgb(127, 196, 168);" />
                 </engine:Button>
                 <engine:Button name="mode-standard" class="mode-row mode-row--active">
-                    <engine:Label text="Standard" style="flex-grow: 1; font-size: 13px; color: var(--ink);" />
-                    <engine:Label text="~60 min" style="font-size: 10px; color: var(--gold-deep);" />
+                    <engine:Label text="Standard" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="~60 min" style="font-size: 10px; color: rgb(201, 150, 47);" />
                 </engine:Button>
                 <engine:Button name="mode-magnus" class="mode-row">
-                    <engine:Label text="Magnus Alchemist" style="flex-grow: 1; font-size: 13px; color: var(--ink);" />
-                    <engine:Label text="~90 min" style="font-size: 10px; color: var(--arcanum-text);" />
+                    <engine:Label text="Magnus Alchemist" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="~90 min" style="font-size: 10px; color: rgb(205, 176, 224);" />
                 </engine:Button>
             </engine:VisualElement>
         </engine:VisualElement>

@@ -221,6 +221,13 @@ GameObject:
   m_Component:
   - component: {fileID: 1726667743}
   - component: {fileID: 1726667742}
+  - component: {fileID: 1726667750}
+  - component: {fileID: 1726667749}
+  - component: {fileID: 1726667748}
+  - component: {fileID: 1726667747}
+  - component: {fileID: 1726667746}
+  - component: {fileID: 1726667745}
+  - component: {fileID: 1726667744}
   m_Layer: 0
   m_Name: GameBootstrap
   m_TagString: Untagged
@@ -246,6 +253,7 @@ MonoBehaviour:
   _useProductionUi: 1
   _debugUiFallback: 0
   _panelSettings: {fileID: 11400000, guid: 2f562a8366d18d844b573c8bef474941, type: 2}
+  _appShell: {fileID: 9197481963319205126, guid: ceef0b16fa468564585f12f760e727cc, type: 3}
   _titleScreen: {fileID: 9197481963319205126, guid: b44be3fc0d0a8944a96a90543cf35210, type: 3}
   _gameplayHud: {fileID: 9197481963319205126, guid: 500f094547886df429cac57944e79ac7, type: 3}
   _waitingHud: {fileID: 9197481963319205126, guid: 23c9356e19d8a3343a869197fd22074c, type: 3}
@@ -265,6 +273,106 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1726667744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b760b6168224440a781f26198f437c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.WaitingHudController
+--- !u!114 &1726667745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 854f172a5ad20b141a737b6e7323a2e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.GameplayHudController
+--- !u!114 &1726667746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 711d160e87f27a84c92a6ce45fc56170, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.TitleScreenController
+--- !u!114 &1726667747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c25ae92dde8d9fa43ba924a46b2362d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.GamePresenter
+  _startAtTitle: 1
+--- !u!114 &1726667748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 205dcb39f1ee38b4da3f0c05760d6eb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.ScreenRouter
+  _screens: []
+  _setupSheet: {fileID: 0}
+--- !u!114 &1726667749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53a4910f92bbbc44692a205dd3548132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.ViewportLayout
+  _panelSettings: {fileID: 11400000, guid: 2f562a8366d18d844b573c8bef474941, type: 2}
+  _initialScreen: {fileID: 0}
+--- !u!114 &1726667750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 2f562a8366d18d844b573c8bef474941, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: ceef0b16fa468564585f12f760e727cc, type: 3}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

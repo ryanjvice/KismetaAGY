@@ -46,6 +46,7 @@ namespace Kismeta.UI
         public void InitializeForTitle()
         {
             WireTitleScreen();
+            WireShellScreens();
             if (_router.CurrentScreenId != ScreenIds.Title)
                 _router.GoTo(ScreenIds.Title);
         }
@@ -62,6 +63,7 @@ namespace Kismeta.UI
             loop.OnLog += OnLoopLog;
 
             WireTitleScreen();
+            WireShellScreens();
         }
 
         public void Unbind()
@@ -114,10 +116,46 @@ namespace Kismeta.UI
                     onOpened: sheet => _setupSheetState.Attach(sheet),
                     onBegin: () => NotifySetupBegin(_setupSheetState.Current));
             };
-            title.OnResume = () => Debug.Log("[UI] Resume not implemented.");
-            title.OnJoin = () => Debug.Log("[UI] Join not implemented.");
-            title.OnHowToPlay = () => Debug.Log("[UI] How to play not implemented.");
-            title.OnCodex = () => Debug.Log("[UI] Codex not implemented.");
+            title.OnResume = () => _router.GoTo(ScreenIds.Resume);
+            title.OnJoin = () => _router.GoTo(ScreenIds.Join);
+            title.OnHowToPlay = OpenHowToPlay;
+            title.OnCodex = OpenCodex;
+        }
+
+        private void WireShellScreens()
+        {
+            var join = _router.GetController<JoinScreenController>(ScreenIds.Join);
+            if (join != null)
+            {
+                join.OnBack = ReturnToTitle;
+                join.OnJoin = code =>
+                    Debug.Log($"[UI] Join room '{code}' — multiplayer not implemented.");
+            }
+
+            var resume = _router.GetController<ResumeScreenController>(ScreenIds.Resume);
+            if (resume != null)
+            {
+                resume.OnBack = ReturnToTitle;
+                resume.OnResumeGame = id =>
+                    Debug.Log($"[UI] Resume save '{id}' — persistence not implemented.");
+                resume.RebuildList();
+            }
+
+            var codex = _router.GetController<CodexScreenController>(ScreenIds.Codex);
+            if (codex != null)
+                codex.OnBack = ReturnToTitle;
+        }
+
+        private void OpenCodex()
+        {
+            _router.GoTo(ScreenIds.Codex);
+            _router.GetController<CodexScreenController>(ScreenIds.Codex)?.ShowTab(CodexTabs.Cards);
+        }
+
+        private void OpenHowToPlay()
+        {
+            _router.GoTo(ScreenIds.Codex);
+            _router.GetController<CodexScreenController>(ScreenIds.Codex)?.ShowTab(CodexTabs.Terms);
         }
 
         public void NotifySetupBegin(UiSetupConfig config)
@@ -170,6 +208,8 @@ namespace Kismeta.UI
                 hud.BindState(_session, _loop, _bridge);
             else if (controller is WaitingHudController waiting && _session != null && _loop != null)
                 waiting.BindState(_session, _loop);
+            else if (controller is ResumeScreenController resumeCtrl)
+                resumeCtrl.RebuildList();
             else
                 controller?.Refresh();
         }
