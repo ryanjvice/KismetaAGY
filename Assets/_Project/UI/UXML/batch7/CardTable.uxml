@@ -13,7 +13,7 @@
          NATIVE NOTE: build the player blocks from game state in C#; never
          emit hidden-hand cards. Stasis rows show "cannot be opposed".
          ============================================================ -->
-    <engine:VisualElement name="card-table" class="screen" style="background-color: rgb(19,16,15);">
+    <engine:VisualElement name="card-table" class="screen card-table" style="background-color: rgb(19,16,15);">
 
         <engine:VisualElement class="statusbar" style="background-color: rgb(28,22,14);">
             <engine:VisualElement class="statusbar__left">
@@ -35,7 +35,7 @@
             <engine:Button name="sort-arcanum" text="arcanum" class="table-action" style="background-color: rgb(16, 10, 18); border-color: rgb(58, 36, 64); color: rgb(184, 154, 110);" />
         </engine:VisualElement>
 
-        <engine:ScrollView name="players" style="height: 420px; padding: 0 12px 14px;">
+        <engine:ScrollView name="players" class="card-table__players">
 
             <!-- a rival (actionable) -->
             <engine:VisualElement class="player-block" style="border-left-color: rgb(46,109,164);">

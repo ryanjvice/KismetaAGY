@@ -64,6 +64,19 @@
 .stat-cell__value { font-size: 18px; -unity-font-style: bold; }
 
 /* ---------- Card table (overlay) ---------- */
+.card-table {
+    width: 100%;
+    height: 88%;
+    min-height: 520px;
+    max-height: 100%;
+    flex-grow: 1;
+    flex-direction: column;
+}
+.card-table__players {
+    flex-grow: 1;
+    min-height: 0;
+    padding: 0 12px 14px;
+}
 .player-block {
     background-color: rgb(26,20,13);
     border-width: 1px; border-color: var(--border-subtle);
@@ -90,6 +103,18 @@
     -unity-text-align: middle-center;
 }
 .table-action:last-child { margin-right: 0; }
+
+.player-block__zone {
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-height: 48px;
+    margin-bottom: 8px;
+}
+.card-chip--hidden {
+    background-color: rgb(32, 28, 36);
+    border-color: rgb(58, 48, 64);
+    opacity: 0.6;
+}
 
 /* ---------- Card modals (inspect / adept / fate) ---------- */
 .card-modal {

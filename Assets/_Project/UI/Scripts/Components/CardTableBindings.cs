@@ -97,50 +97,52 @@ namespace Kismeta.UI.Components
                 block.Add(header);
 
                 block.Add(MakeEyebrow("spread"));
-                var spreadRow = new VisualElement();
-                spreadRow.style.flexDirection = FlexDirection.Row;
-                spreadRow.style.flexWrap = Wrap.Wrap;
-                spreadRow.style.marginBottom = 8;
-
+                var spreadRow = MakeCardZone();
                 foreach (var cardId in p.Spread)
                 {
                     var inst = session.GetCard(cardId);
                     var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
                     if (def == null) continue;
                     int align = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);
-                    var chip = CardChipFactory.Create(
-                        def.Rank.ToString(), def.Suit,
-                        aligned: align > 0,
-                        instanceId: cardId,
-                        onInspect: onInspect);
-                    chip.style.width = 30;
-                    chip.style.height = 42;
-                    chip.style.marginRight = 4;
-                    spreadRow.Add(chip);
+                    spreadRow.Add(MakeChip(def, cardId, align > 0, onInspect));
                 }
                 block.Add(spreadRow);
+
+                block.Add(MakeEyebrow(isSelf ? "hand" : $"hand · {p.HandCardCount} hidden"));
+                var handRow = MakeCardZone();
+                if (isSelf)
+                {
+                    foreach (var cardId in session.Players[p.PlayerId].Hand)
+                    {
+                        var inst = session.GetCard(cardId);
+                        var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
+                        if (def == null) continue;
+                        int align = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);
+                        handRow.Add(MakeChip(def, cardId, align > 0, onInspect));
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < p.HandCardCount; i++)
+                        handRow.Add(MakeHiddenChip());
+                }
+                block.Add(handRow);
 
                 if (p.Arcanum.Count > 0)
                 {
                     block.Add(MakeEyebrow("arcanum"));
-                    var arcRow = new VisualElement();
-                    arcRow.style.flexDirection = FlexDirection.Row;
-                    arcRow.style.flexWrap = Wrap.Wrap;
-                    arcRow.style.marginBottom = 8;
+                    var arcRow = MakeCardZone();
                     foreach (var cardId in p.Arcanum)
                     {
                         var inst = session.GetCard(cardId);
                         var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
                         if (def == null) continue;
-                        var chip = CardChipFactory.Create(
-                            def.IsMajorArcana ? "★" : def.Rank.ToString(),
-                            def.Suit,
-                            instanceId: cardId,
-                            onInspect: onInspect);
-                        chip.style.width = 30;
-                        chip.style.height = 42;
-                        chip.style.marginRight = 4;
-                        arcRow.Add(chip);
+                        arcRow.Add(MakeChip(
+                            def,
+                            cardId,
+                            aligned: false,
+                            onInspect,
+                            def.IsMajorArcana ? "★" : def.Rank.ToString()));
                     }
                     block.Add(arcRow);
                 }
@@ -179,6 +181,45 @@ namespace Kismeta.UI.Components
                     .CompareTo(session.Rules?.Alignment?.CalculateAlignmentPoints(session, a.PlayerId,
                         session.Board.CosmicAgeSign) ?? 0)
             };
+        }
+
+        static VisualElement MakeCardZone()
+        {
+            var row = new VisualElement();
+            row.AddToClassList("player-block__zone");
+            return row;
+        }
+
+        static VisualElement MakeChip(CardDefinition def, string cardId, bool aligned, Action<string>? onInspect,
+            string? rankLabel = null)
+        {
+            var chip = CardChipFactory.Create(
+                rankLabel ?? def.Rank.ToString(),
+                def.Suit,
+                aligned: aligned,
+                instanceId: cardId,
+                onInspect: onInspect);
+            chip.style.width = 30;
+            chip.style.height = 42;
+            chip.style.marginRight = 4;
+            chip.style.marginBottom = 4;
+            return chip;
+        }
+
+        static VisualElement MakeHiddenChip()
+        {
+            var chip = new VisualElement();
+            chip.AddToClassList("card-chip");
+            chip.AddToClassList("card-chip--hidden");
+            chip.style.width = 30;
+            chip.style.height = 42;
+            chip.style.marginRight = 4;
+            chip.style.marginBottom = 4;
+            var rank = new Label("?");
+            rank.AddToClassList("card-chip__rank");
+            rank.style.color = new StyleColor(new Color(0.55f, 0.5f, 0.58f));
+            chip.Add(rank);
+            return chip;
         }
 
         static Label MakeEyebrow(string text)
