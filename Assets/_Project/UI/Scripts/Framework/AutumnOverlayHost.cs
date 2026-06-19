@@ -31,15 +31,7 @@ namespace Kismeta.UI
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
 
-        void Awake()
-        {
-            _layout = GetComponent<ViewportLayout>();
-            _fire = GetComponent<FireStoneController>();
-            _temper = GetComponent<TemperStoneController>();
-            _manage = GetComponent<ManageCardsController>();
-            _leaveStasisCtrl = GetComponent<LeaveStasisController>();
-            _endAutumnCtrl = GetComponent<EndAutumnController>();
-        }
+        void Awake() => EnsureControllers();
 
         public void Configure(
             VisualTreeAsset fireStone,
@@ -53,6 +45,17 @@ namespace Kismeta.UI
             _manageCards = manageCards;
             _leaveStasis = leaveStasis;
             _endAutumn = endAutumn;
+            EnsureControllers();
+        }
+
+        void EnsureControllers()
+        {
+            _layout ??= GetComponent<ViewportLayout>();
+            _fire ??= GetComponent<FireStoneController>();
+            _temper ??= GetComponent<TemperStoneController>();
+            _manage ??= GetComponent<ManageCardsController>();
+            _leaveStasisCtrl ??= GetComponent<LeaveStasisController>();
+            _endAutumnCtrl ??= GetComponent<EndAutumnController>();
         }
 
         public void BindState(GameSession session, CommandBridge bridge)
@@ -67,11 +70,11 @@ namespace Kismeta.UI
             Dismiss();
         }
 
-        public void ShowFire() => ShowOverlay(_fireStone, _fire, WireFire, ActiveOverlay.Fire);
-        public void ShowTemper() => ShowOverlay(_temperStone, _temper, WireTemper, ActiveOverlay.Temper);
-        public void ShowManageCards() => ShowOverlay(_manageCards, _manage, WireManage, ActiveOverlay.Manage);
-        public void ShowLeaveStasis() => ShowOverlay(_leaveStasis, _leaveStasisCtrl, WireLeaveStasis, ActiveOverlay.LeaveStasis);
-        public void ShowEndAutumn() => ShowOverlay(_endAutumn, _endAutumnCtrl, WireEndAutumn, ActiveOverlay.EndAutumn);
+        public void ShowFire() { EnsureControllers(); ShowOverlay(_fireStone, _fire, WireFire, ActiveOverlay.Fire); }
+        public void ShowTemper() { EnsureControllers(); ShowOverlay(_temperStone, _temper, WireTemper, ActiveOverlay.Temper); }
+        public void ShowManageCards() { EnsureControllers(); ShowOverlay(_manageCards, _manage, WireManage, ActiveOverlay.Manage); }
+        public void ShowLeaveStasis() { EnsureControllers(); ShowOverlay(_leaveStasis, _leaveStasisCtrl, WireLeaveStasis, ActiveOverlay.LeaveStasis); }
+        public void ShowEndAutumn() { EnsureControllers(); ShowOverlay(_endAutumn, _endAutumnCtrl, WireEndAutumn, ActiveOverlay.EndAutumn); }
 
         public void Dismiss()
         {
@@ -144,10 +147,7 @@ namespace Kismeta.UI
             _endAutumnCtrl.OnKeep = Dismiss;
             _endAutumnCtrl.OnConfirm = () =>
             {
-                if (_bridge == null || _session == null) return;
-                int pid = SummerActionBindings.ResolvePlayerId(_session, _bridge);
-                if (pid < 0) return;
-                if (_bridge.TrySubmit(new Core.Commands.PassCrucibleActionCommand(pid)))
+                if (_bridge?.TrySubmitPass() == true)
                     Dismiss();
             };
         }

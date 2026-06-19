@@ -35,16 +35,7 @@ namespace Kismeta.UI
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
 
-        void Awake()
-        {
-            _layout = GetComponent<ViewportLayout>();
-            _sheets = GetComponent<SummerSheetsController>();
-            _craft = GetComponent<CraftReagentController>();
-            _activate = GetComponent<ActivateCardController>();
-            _build = GetComponent<BuildHouseController>();
-            _wards = GetComponent<PlaceWardsController>();
-            _endSummerCtrl = GetComponent<EndSummerController>();
-        }
+        void Awake() => EnsureControllers();
 
         public void Configure(
             VisualTreeAsset summerSheets,
@@ -60,6 +51,18 @@ namespace Kismeta.UI
             _buildHouse = buildHouse;
             _placeWards = placeWards;
             _endSummer = endSummer;
+            EnsureControllers();
+        }
+
+        void EnsureControllers()
+        {
+            _layout ??= GetComponent<ViewportLayout>();
+            _sheets ??= GetComponent<SummerSheetsController>();
+            _craft ??= GetComponent<CraftReagentController>();
+            _activate ??= GetComponent<ActivateCardController>();
+            _build ??= GetComponent<BuildHouseController>();
+            _wards ??= GetComponent<PlaceWardsController>();
+            _endSummerCtrl ??= GetComponent<EndSummerController>();
         }
 
         public void BindState(GameSession session, CommandBridge bridge)
@@ -110,6 +113,7 @@ namespace Kismeta.UI
 
         public void ShowEndSummer()
         {
+            EnsureControllers();
             if (!ShowModal(_endSummer, _endSummerCtrl)) return;
             WireEndSummer();
             RefreshOpenOverlay();
@@ -247,10 +251,7 @@ namespace Kismeta.UI
             _endSummerCtrl.OnKeep = Dismiss;
             _endSummerCtrl.OnConfirm = () =>
             {
-                if (_bridge == null || _session == null) return;
-                int pid = SummerActionBindings.ResolvePlayerId(_session, _bridge);
-                if (pid < 0) return;
-                if (_bridge.TrySubmit(new Core.Commands.PassCrucibleActionCommand(pid)))
+                if (_bridge?.TrySubmitPass() == true)
                     Dismiss();
             };
         }

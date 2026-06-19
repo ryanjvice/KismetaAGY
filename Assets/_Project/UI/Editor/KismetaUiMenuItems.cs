@@ -145,12 +145,12 @@ namespace Kismeta.UI.Editor
             EnsureComponent<DuelController>(bootstrap.gameObject);
             EnsureComponent<GambitController>(bootstrap.gameObject);
             EnsureComponent<OppositionController>(bootstrap.gameObject);
-            EnsureComponent<AutumnOverlayHost>(bootstrap.gameObject);
             EnsureComponent<FireStoneController>(bootstrap.gameObject);
             EnsureComponent<TemperStoneController>(bootstrap.gameObject);
             EnsureComponent<ManageCardsController>(bootstrap.gameObject);
             EnsureComponent<LeaveStasisController>(bootstrap.gameObject);
             EnsureComponent<EndAutumnController>(bootstrap.gameObject);
+            EnsureComponent<AutumnOverlayHost>(bootstrap.gameObject);
 
             var layout = bootstrap.GetComponent<ViewportLayout>();
             var layoutSo = new SerializedObject(layout);
@@ -325,12 +325,12 @@ namespace Kismeta.UI.Editor
             host.AddComponent<DuelController>();
             host.AddComponent<GambitController>();
             host.AddComponent<OppositionController>();
-            host.AddComponent<AutumnOverlayHost>();
             host.AddComponent<FireStoneController>();
             host.AddComponent<TemperStoneController>();
             host.AddComponent<ManageCardsController>();
             host.AddComponent<LeaveStasisController>();
             host.AddComponent<EndAutumnController>();
+            host.AddComponent<AutumnOverlayHost>();
             host.AddComponent<UiResponsiveTest>();
 
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);

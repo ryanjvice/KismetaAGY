@@ -30,14 +30,13 @@ namespace Kismeta.UI
             return true;
         }
 
-        public void SubmitPass()
+        public bool TrySubmitPass()
         {
             var hs = PendingController;
-            if (hs == null) return;
+            if (hs == null) return false;
 
             int pid = hs.Slot.Index;
-            var hint = PendingHint;
-            IGameCommand cmd = hint switch
+            IGameCommand cmd = PendingHint switch
             {
                 ActionHint.SummerAction => new PassCrucibleActionCommand(pid),
                 ActionHint.WinterAction => new PassActionCommand(pid),
@@ -45,6 +44,12 @@ namespace Kismeta.UI
                 _ => new PassActionCommand(pid)
             };
             hs.SubmitCommand(cmd);
+            return true;
+        }
+
+        public void SubmitPass()
+        {
+            TrySubmitPass();
         }
     }
 }

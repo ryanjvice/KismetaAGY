@@ -181,12 +181,12 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<DuelController>();
             EnsureController<GambitController>();
             EnsureController<OppositionController>();
-            EnsureController<AutumnOverlayHost>();
             EnsureController<FireStoneController>();
             EnsureController<TemperStoneController>();
             EnsureController<ManageCardsController>();
             EnsureController<LeaveStasisController>();
             EnsureController<EndAutumnController>();
+            EnsureController<AutumnOverlayHost>();
 
             router.RefreshControllers();
 

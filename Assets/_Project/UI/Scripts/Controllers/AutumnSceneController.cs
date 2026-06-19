@@ -28,12 +28,24 @@ namespace Kismeta.UI.Controllers
 
         protected override void Wire()
         {
-            Btn("fire-btn")!.clicked += OnFireClicked;
-            Btn("temper-btn")!.clicked += OnTemperClicked;
-            Btn("oppose-btn")!.clicked += OnOpposeClicked;
-            Btn("manage-cards-btn")!.clicked += OnManageCardsClicked;
-            Btn("menu-btn")!.clicked += () => Debug.Log("[UI] Card table — Batch 7");
-            Btn("pass-btn")!.clicked += OnPassClicked;
+            WireBtn("fire-btn", OnFireClicked);
+            WireBtn("temper-btn", OnTemperClicked);
+            WireBtn("oppose-btn", OnOpposeClicked);
+            WireBtn("manage-cards-btn", OnManageCardsClicked);
+            WireBtn("pass-btn", OnPassClicked);
+            Btn("menu-btn")?.RegisterCallback<ClickEvent>(_ =>
+                Debug.Log("[UI] Card table — Batch 7"));
+        }
+
+        void WireBtn(string name, Action handler)
+        {
+            var btn = Btn(name);
+            if (btn == null)
+            {
+                Debug.LogWarning($"[UI] AutumnMain missing button '{name}'.");
+                return;
+            }
+            btn.clicked += () => handler();
         }
 
         void OnFireClicked()

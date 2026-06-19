@@ -74,6 +74,8 @@ namespace Kismeta.UI
             session.OnEvent += OnSessionEvent;
             loop.OnLog += OnLoopLog;
 
+            EnsureOverlayHosts();
+
             WireTitleScreen();
             WireShellScreens();
             WireAgekeeperContest();
@@ -136,6 +138,7 @@ namespace Kismeta.UI
                 _lastHint = hint;
                 _lastSeason = season;
                 RouteGameplay();
+                RefreshActiveScreen();
                 return;
             }
 
@@ -166,6 +169,7 @@ namespace Kismeta.UI
                 return;
 
             RouteGameplay();
+            RefreshActiveScreen();
         }
 
         private void WireTitleScreen()
@@ -337,13 +341,17 @@ namespace Kismeta.UI
             _summerOverlays.OnGambit = () => { _summerOverlays.Dismiss(); _contestOverlays.ShowGambit(); };
 
             var autumn = _router.GetController<AutumnSceneController>(ScreenIds.AutumnMain);
-            if (autumn != null)
+            if (autumn != null && autumn.OnOppose == null)
                 autumn.OnOppose = () => _contestOverlays.ShowOpposition();
         }
 
         private void WireAutumnNavigation()
         {
-            if (_autumnOverlays == null) return;
+            if (_autumnOverlays == null)
+            {
+                Debug.LogWarning("[UI] AutumnOverlayHost missing — autumn action buttons will not open overlays.");
+                return;
+            }
 
             var autumn = _router.GetController<AutumnSceneController>(ScreenIds.AutumnMain);
             if (autumn == null) return;
@@ -353,6 +361,14 @@ namespace Kismeta.UI
             autumn.OnManageCards = () => _autumnOverlays.ShowManageCards();
             autumn.OnLeaveStasis = () => _autumnOverlays.ShowLeaveStasis();
             autumn.OnPass = () => _autumnOverlays.ShowEndAutumn();
+            autumn.OnOppose = () => _contestOverlays?.ShowOpposition();
+        }
+
+        private void EnsureOverlayHosts()
+        {
+            _summerOverlays = GetComponent<SummerOverlayHost>();
+            _contestOverlays = GetComponent<ContestOverlayHost>();
+            _autumnOverlays = GetComponent<AutumnOverlayHost>();
         }
 
         private static string MapCeremonyScreen(CeremonyStep step) => step switch
