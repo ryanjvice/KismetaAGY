@@ -20,6 +20,7 @@ namespace Kismeta.UI.Controllers
         public Action OnActivate;
         public Action OnPass;
         public Action OnOpenCardTable;
+        public Action<string> OnInspectCard;
 
         CommandBridge? _bridge;
         int _localPlayerId;
@@ -90,7 +91,9 @@ namespace Kismeta.UI.Controllers
                 if (inst == null || db == null) continue;
                 var def = db.GetById(inst.DefinitionId);
                 if (def == null) continue;
-                strip.Add(CardChipFactory.CreateFromDefinition(def.Rank.ToString(), def.Id, db));
+                strip.Add(CardChipFactory.CreateFromDefinition(
+                    def.Rank.ToString(), def.Id, db,
+                    instanceId: cardId, onInspect: OnInspectCard));
             }
         }
     }

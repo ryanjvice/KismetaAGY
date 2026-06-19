@@ -12,6 +12,7 @@ namespace Kismeta.UI.Controllers
         CommandBridge? _bridge;
         int _playerId = -1;
         int _rivalId = -1;
+        int? _preselectedRival;
         readonly HashSet<string> _give = new();
         readonly HashSet<string> _get = new();
 
@@ -24,12 +25,15 @@ namespace Kismeta.UI.Controllers
             Btn("propose-btn")!.clicked += OnCompleteTrade;
         }
 
+        public void SetPreselectedRival(int? rivalId) => _preselectedRival = rivalId;
+
         public void BindState(GameSession session, CommandBridge bridge)
         {
             _session = session;
             _bridge = bridge;
             _playerId = SummerActionBindings.ResolvePlayerId(session, bridge);
-            _rivalId = -1;
+            _rivalId = _preselectedRival ?? -1;
+            _preselectedRival = null;
             _give.Clear();
             _get.Clear();
 

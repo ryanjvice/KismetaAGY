@@ -70,7 +70,9 @@ namespace Kismeta.UI
             VisualTreeAsset? commune = null,
             VisualTreeAsset? winterUnlock = null,
             VisualTreeAsset? fatefulWager = null,
-            VisualTreeAsset? cardLimits = null)
+            VisualTreeAsset? cardLimits = null,
+            VisualTreeAsset? victory = null,
+            VisualTreeAsset? chronicle = null)
         {
             var screens = new List<ScreenAsset>
             {
@@ -116,6 +118,10 @@ namespace Kismeta.UI
                 screens.Add(new ScreenAsset { Id = ScreenIds.FatefulWager, Uxml = fatefulWager });
             if (cardLimits != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.CardLimits, Uxml = cardLimits });
+            if (victory != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.Victory, Uxml = victory });
+            if (chronicle != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.Chronicle, Uxml = chronicle });
 
             _screens = screens.ToArray();
             _setupSheet = setupSheet;

@@ -53,7 +53,7 @@
                 <engine:Label text="[ race line chart — render in C# (Painter2D / VectorGraphics) ]"
                               style="font-size: 10px; color: rgb(184, 154, 110); white-space: normal; -unity-text-align: middle-center;" />
             </engine:VisualElement>
-            <engine:VisualElement style="flex-direction: row; justify-content: center;">
+            <engine:VisualElement name="chart-legend" style="flex-direction: row; justify-content: center;">
                 <engine:Label text="● Aurelia" style="font-size: 10px; color: rgb(240,144,138); margin-right: 12px;" />
                 <engine:Label text="■ Iolanthe" style="font-size: 10px; color: rgb(168,205,240); margin-right: 12px;" />
                 <engine:Label text="▲ Severin" style="font-size: 10px; color: rgb(159,225,203);" />

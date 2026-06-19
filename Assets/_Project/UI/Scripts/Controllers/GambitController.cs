@@ -16,6 +16,7 @@ namespace Kismeta.UI.Controllers
         CommandBridge? _bridge;
         int _playerId = -1;
         int _rivalId = -1;
+        int? _preselectedRival;
         readonly HashSet<string> _stake = new();
         bool _rolling;
 
@@ -31,20 +32,42 @@ namespace Kismeta.UI.Controllers
             Btn("g-roll-btn")!.clicked += () => { if (!_rolling) StartCoroutine(DoRoll()); };
         }
 
+        public void SetPreselectedRival(int? rivalId) => _preselectedRival = rivalId;
+
         public void BindState(GameSession session, CommandBridge bridge)
         {
             _session = session;
             _bridge = bridge;
             _playerId = SummerActionBindings.ResolvePlayerId(session, bridge);
-            _rivalId = -1;
+            _rivalId = _preselectedRival ?? -1;
+            _preselectedRival = null;
             _stake.Clear();
             _rolling = false;
 
             if (Root == null || _playerId < 0) return;
 
-            ShowStep("step-target", Panels);
-            SetWizard("wg", 4, 1);
-            RefreshTargetStep();
+            if (_rivalId >= 0)
+            {
+                int wards = _session.Players[_rivalId].StoneWardCount;
+                if (wards > 0)
+                {
+                    ShowStep("step-fee", Panels);
+                    SetWizard("wg", 4, 2);
+                    RefreshFeeStep(wards);
+                }
+                else
+                {
+                    ShowStep("step-stake", Panels);
+                    SetWizard("wg", 4, 3);
+                    RefreshStakeStep();
+                }
+            }
+            else
+            {
+                ShowStep("step-target", Panels);
+                SetWizard("wg", 4, 1);
+                RefreshTargetStep();
+            }
         }
 
         void RefreshTargetStep()

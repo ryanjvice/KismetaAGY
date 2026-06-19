@@ -3,6 +3,7 @@ using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
+using Kismeta.UI.Chronicle;
 using Kismeta.UI.Controllers;
 using Kismeta.UI.Setup;
 using UnityEngine;
@@ -26,22 +27,26 @@ namespace Kismeta.UI
         private SummerOverlayHost? _summerOverlays;
         private ContestOverlayHost? _contestOverlays;
         private AutumnOverlayHost? _autumnOverlays;
+        private EndOverlayHost? _endOverlays;
         private readonly CommandBridge _bridge = new();
         private GameSession? _session;
         private GameLoop? _loop;
         private CeremonyGate? _ceremonyGate;
+        private GameChronicle? _chronicle;
 
         private bool _inGame;
         private bool _humanPending;
         private ActionHint _lastHint = ActionHint.None;
         private Season _lastSeason = Season.Spring;
         private CeremonyStep? _lastCeremonyStep;
+        private bool _adeptModalOpen;
 
         public CommandBridge Bridge => _bridge;
         public bool IsInGame => _inGame;
         public CeremonyGate? CeremonyGate => _ceremonyGate;
 
         public event Action<UiSetupConfig>? SetupBeginRequested;
+        public event Action? NewGameRequested;
 
         private void Awake()
         {
@@ -50,6 +55,7 @@ namespace Kismeta.UI
             _summerOverlays = GetComponent<SummerOverlayHost>();
             _contestOverlays = GetComponent<ContestOverlayHost>();
             _autumnOverlays = GetComponent<AutumnOverlayHost>();
+            _endOverlays = GetComponent<EndOverlayHost>();
         }
 
         /// <summary>Wire title menu and show the title screen before a session exists.</summary>
@@ -62,13 +68,15 @@ namespace Kismeta.UI
                 _router.GoTo(ScreenIds.Title);
         }
 
-        public void Bind(GameSession session, GameLoop loop, CeremonyGate? ceremonyGate = null)
+        public void Bind(GameSession session, GameLoop loop, CeremonyGate? ceremonyGate = null,
+            GameChronicle? chronicle = null)
         {
             Unbind();
 
             _session = session;
             _loop = loop;
             _ceremonyGate = ceremonyGate;
+            _chronicle = chronicle;
             _bridge.Bind(loop);
 
             session.OnEvent += OnSessionEvent;
@@ -83,6 +91,8 @@ namespace Kismeta.UI
             WireSummerNavigation();
             WireContestNavigation();
             WireAutumnNavigation();
+            WireEndNavigation();
+            WireCardOverlays();
         }
 
         public void Unbind()
@@ -94,8 +104,20 @@ namespace Kismeta.UI
             _session = null;
             _loop = null;
             _ceremonyGate = null;
+            _chronicle = null;
             _inGame = false;
             _lastCeremonyStep = null;
+            _adeptModalOpen = false;
+            DismissAllOverlays();
+        }
+
+        public void ShowNewGameSetup()
+        {
+            _inGame = false;
+            _setupSheetState.Detach();
+            _router.ShowSetupSheet(
+                onOpened: sheet => _setupSheetState.Attach(sheet),
+                onBegin: BeginAgekeeperContest);
         }
 
         private void Update()
@@ -121,16 +143,17 @@ namespace Kismeta.UI
                 return;
             }
 
-            var humanPending = _loop.PendingHumanController != null;
-            var hint = _loop.PendingHint;
-            var season = _session.Phase.CurrentSeason;
-
             if (_session.IsOver)
             {
-                RouteIfNeeded(ResolveSeasonMainScreen(_session.Phase.CurrentSeason));
+                DismissAllOverlays();
+                RouteIfNeeded(ScreenIds.Victory);
                 RefreshActiveScreen();
                 return;
             }
+
+            var humanPending = _loop.PendingHumanController != null;
+            var hint = _loop.PendingHint;
+            var season = _session.Phase.CurrentSeason;
 
             if (humanPending)
             {
@@ -138,6 +161,7 @@ namespace Kismeta.UI
                 _lastHint = hint;
                 _lastSeason = season;
                 RouteGameplay();
+                TryOpenAdeptModal(hint);
                 RefreshActiveScreen();
                 return;
             }
@@ -151,25 +175,70 @@ namespace Kismeta.UI
             }
         }
 
-        private void OnSessionEvent(IGameEvent _) => RefreshActiveScreenIfNeeded();
+        private void OnSessionEvent(IGameEvent evt)
+        {
+            if (evt is GameEndedEvent)
+            {
+                DismissAllOverlays();
+                RouteIfNeeded(ScreenIds.Victory);
+                RefreshActiveScreen();
+                return;
+            }
+
+            if (evt is FateResolvedEvent fate && _session != null && _endOverlays != null)
+            {
+                int localId = _bridge.ActivePlayerId;
+                if (localId < 0 && _loop?.PendingHumanController != null)
+                    localId = _bridge.PendingController?.Slot.Index ?? -1;
+                if (fate.PlayerId == localId)
+                    _endOverlays.ShowFate(fate.FateCardId, fate.ArcanaNum);
+            }
+
+            RefreshActiveScreenIfNeeded();
+        }
+
         private void OnLoopLog(string _) => RefreshActiveScreenIfNeeded();
 
         private void RefreshActiveScreenIfNeeded()
         {
             if (_session == null || _loop == null) return;
 
+            if (_session.IsOver)
+            {
+                if (!_layout.IsOverlayVisible)
+                {
+                    RouteIfNeeded(ScreenIds.Victory);
+                    RefreshActiveScreen();
+                }
+                return;
+            }
+
             if (_layout.IsOverlayVisible)
                 return;
 
-            // Step screens bind via ActivePlayerId; skip refresh while the loop clears it post-submit.
             var activeId = _router.CurrentScreenId;
             if (_loop.PendingHumanController == null && _loop.ActivePlayerId < 0
                 && activeId is ScreenIds.Commune or ScreenIds.WinterUnlock
                     or ScreenIds.FatefulWager or ScreenIds.CardLimits)
                 return;
 
+            if (activeId is ScreenIds.Victory or ScreenIds.Chronicle)
+                return;
+
             RouteGameplay();
             RefreshActiveScreen();
+        }
+
+        private void TryOpenAdeptModal(ActionHint hint)
+        {
+            if (hint != ActionHint.AdeptDecision || _endOverlays == null || _loop == null) return;
+            if (_adeptModalOpen && _endOverlays.IsOpen) return;
+
+            var adeptId = _loop.PendingCardId;
+            if (string.IsNullOrEmpty(adeptId)) return;
+
+            _adeptModalOpen = true;
+            _endOverlays.ShowAdept(adeptId);
         }
 
         private void WireTitleScreen()
@@ -255,6 +324,7 @@ namespace Kismeta.UI
             _humanPending = false;
             _lastHint = ActionHint.None;
             _lastCeremonyStep = null;
+            _adeptModalOpen = false;
             RouteGameplay();
         }
 
@@ -269,7 +339,8 @@ namespace Kismeta.UI
         {
             if (_session!.IsOver)
             {
-                RouteIfNeeded(ResolveSeasonMainScreen(_session.Phase.CurrentSeason));
+                DismissAllOverlays();
+                RouteIfNeeded(ScreenIds.Victory);
                 RefreshActiveScreen();
                 return;
             }
@@ -279,6 +350,8 @@ namespace Kismeta.UI
                 _summerOverlays?.DismissIfNotHumanTurn();
                 _contestOverlays?.DismissIfNotHumanTurn();
                 _autumnOverlays?.DismissIfNotHumanTurn();
+                _endOverlays?.DismissIfNotHumanTurn();
+                _adeptModalOpen = false;
                 RouteIfNeeded(ScreenIds.Waiting);
                 RefreshActiveScreen();
                 return;
@@ -328,8 +401,8 @@ namespace Kismeta.UI
             summer.OnConsort = () => _summerOverlays.ShowConsortSheet();
             summer.OnActivate = () => _summerOverlays.ShowActivate();
             summer.OnPass = () => _summerOverlays.ShowEndSummer();
-            summer.OnOpenCardTable = () =>
-                Debug.Log("[UI] Card table — Batch 7");
+            summer.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+            summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
         }
 
         private void WireContestNavigation()
@@ -362,6 +435,49 @@ namespace Kismeta.UI
             autumn.OnLeaveStasis = () => _autumnOverlays.ShowLeaveStasis();
             autumn.OnPass = () => _autumnOverlays.ShowEndAutumn();
             autumn.OnOppose = () => _contestOverlays?.ShowOpposition();
+            autumn.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+            autumn.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+        }
+
+        private void WireEndNavigation()
+        {
+            var victory = _router.GetController<VictoryController>(ScreenIds.Victory);
+            if (victory != null)
+            {
+                victory.OnChronicle = () => _router.GoTo(ScreenIds.Chronicle);
+                victory.OnNewGame = () => NewGameRequested?.Invoke();
+            }
+
+            var chronicle = _router.GetController<ChronicleController>(ScreenIds.Chronicle);
+            if (chronicle != null)
+            {
+                chronicle.OnBack = () => _router.GoTo(ScreenIds.Victory);
+                chronicle.OnNewGame = () => NewGameRequested?.Invoke();
+            }
+        }
+
+        private void WireCardOverlays()
+        {
+            if (_endOverlays == null || _contestOverlays == null) return;
+
+            _endOverlays.OnDuelFromTable = id => _contestOverlays.ShowDuel(id);
+            _endOverlays.OnGambitFromTable = id => _contestOverlays.ShowGambit(id);
+            _endOverlays.OnTradeFromTable = id => _contestOverlays.ShowTrade(id);
+            _endOverlays.OnOverlayDismissed = () => _adeptModalOpen = false;
+
+            var spring = _router.GetController<SpringHubController>(ScreenIds.SpringHub);
+            if (spring != null)
+            {
+                spring.OnOpenCardTable = () => _endOverlays.ShowCardTable();
+                spring.OnInspectCard = id => _endOverlays.ShowInspect(id);
+            }
+
+            var winter = _router.GetController<WinterHubController>(ScreenIds.WinterHub);
+            if (winter != null)
+            {
+                winter.OnOpenCardTable = () => _endOverlays.ShowCardTable();
+                winter.OnInspectCard = id => _endOverlays.ShowInspect(id);
+            }
         }
 
         private void EnsureOverlayHosts()
@@ -369,6 +485,16 @@ namespace Kismeta.UI
             _summerOverlays = GetComponent<SummerOverlayHost>();
             _contestOverlays = GetComponent<ContestOverlayHost>();
             _autumnOverlays = GetComponent<AutumnOverlayHost>();
+            _endOverlays = GetComponent<EndOverlayHost>();
+        }
+
+        private void DismissAllOverlays()
+        {
+            _summerOverlays?.Dismiss();
+            _contestOverlays?.Dismiss();
+            _autumnOverlays?.Dismiss();
+            _endOverlays?.Dismiss();
+            _adeptModalOpen = false;
         }
 
         private static string MapCeremonyScreen(CeremonyStep step) => step switch
@@ -394,9 +520,20 @@ namespace Kismeta.UI
 
         private void RouteIfNeeded(string screenId)
         {
-            if (_router.CurrentScreenId != screenId)
-                _router.GoTo(screenId);
+            if (_router.CurrentScreenId == screenId)
+                return;
+
+            if (screenId == ScreenIds.WinterHub && IsWinterHubSubScreen(_router.CurrentScreenId))
+                return;
+
+            if (screenId == ScreenIds.Victory && _router.CurrentScreenId == ScreenIds.Chronicle)
+                return;
+
+            _router.GoTo(screenId);
         }
+
+        private static bool IsWinterHubSubScreen(string? screenId) =>
+            screenId is ScreenIds.WinterUnlock or ScreenIds.FatefulWager;
 
         private void RefreshActiveScreen()
         {
@@ -423,21 +560,29 @@ namespace Kismeta.UI
             }
 
             if (controller is SpringHubController spring)
+            {
                 spring.BindState(_session, _loop, _bridge);
+                _endOverlays?.BindState(_session, _loop, _bridge);
+            }
             else if (controller is SummerSceneController summer)
             {
                 summer.BindState(_session, _loop, _bridge);
                 _summerOverlays?.BindState(_session, _bridge);
                 _contestOverlays?.BindState(_session, _bridge);
+                _endOverlays?.BindState(_session, _loop, _bridge);
             }
             else if (controller is AutumnSceneController autumn)
             {
                 autumn.BindState(_session, _loop, _bridge);
                 _autumnOverlays?.BindState(_session, _bridge);
                 _contestOverlays?.BindState(_session, _bridge);
+                _endOverlays?.BindState(_session, _loop, _bridge);
             }
             else if (controller is WinterHubController winter)
+            {
                 winter.BindState(_session, _loop, _bridge);
+                _endOverlays?.BindState(_session, _loop, _bridge);
+            }
             else if (controller is CommuneController commune)
                 commune.BindState(_session, _bridge);
             else if (controller is WinterUnlockController winterUnlock)
@@ -446,6 +591,10 @@ namespace Kismeta.UI
                 fatefulWager.BindState(_session, _bridge);
             else if (controller is CardLimitsController cardLimits)
                 cardLimits.BindState(_session, _bridge);
+            else if (controller is VictoryController victory && _chronicle != null)
+                victory.BindState(_session, _chronicle);
+            else if (controller is ChronicleController chronicleCtrl && _chronicle != null)
+                chronicleCtrl.BindState(_session, _chronicle);
             else if (controller is GameplayHudController hud)
                 hud.BindState(_session, _loop, _bridge);
             else if (controller is WaitingHudController waiting)

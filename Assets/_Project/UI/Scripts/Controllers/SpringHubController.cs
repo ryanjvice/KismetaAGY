@@ -1,4 +1,3 @@
-using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
@@ -16,6 +15,8 @@ namespace Kismeta.UI.Controllers
         public override string ScreenId => ScreenIds.SpringHub;
 
         public System.Action? OnOpenCommune;
+        public System.Action? OnOpenCardTable;
+        public System.Action<string>? OnInspectCard;
 
         GameSession? _session;
         GameLoop? _loop;
@@ -25,7 +26,7 @@ namespace Kismeta.UI.Controllers
         protected override void Wire()
         {
             Btn("commune-btn")!.clicked += OnPrimaryAction;
-            Btn("menu-btn")!.clicked += () => Debug.Log("[UI] Card table — future work");
+            Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -75,21 +76,7 @@ namespace Kismeta.UI.Controllers
                 case ActionHint.Commune:
                     OnOpenCommune?.Invoke();
                     break;
-                case ActionHint.AdeptDecision:
-                    SubmitDeclineAdept();
-                    break;
             }
-        }
-
-        void SubmitDeclineAdept()
-        {
-            if (_bridge == null || _loop == null) return;
-            var adeptId = _loop.PendingCardId;
-            if (string.IsNullOrEmpty(adeptId)) return;
-
-            int pid = _bridge.PendingController?.Slot.Index ?? _localPlayerId;
-            if (pid < 0) return;
-            _bridge.TrySubmit(new DeclineAdeptCommand(pid, adeptId));
         }
 
         void BindSpringCta(CommandBridge bridge, GameLoop loop)
@@ -113,12 +100,6 @@ namespace Kismeta.UI.Controllers
                     btn.text = "Commune";
                     btn.SetEnabled(true);
                     btn.EnableInClassList("btn--disabled", false);
-                    break;
-                case ActionHint.AdeptDecision:
-                    btn.style.display = DisplayStyle.Flex;
-                    btn.text = "Decline Adept";
-                    btn.SetEnabled(!string.IsNullOrEmpty(loop.PendingCardId));
-                    btn.EnableInClassList("btn--disabled", string.IsNullOrEmpty(loop.PendingCardId));
                     break;
                 default:
                     btn.style.display = DisplayStyle.None;
@@ -198,7 +179,8 @@ namespace Kismeta.UI.Controllers
                 var def = db.GetById(inst.DefinitionId);
                 if (def == null) continue;
                 strip.Add(CardChipFactory.CreateFromDefinition(
-                    def.Rank.ToString(), def.Id, db));
+                    def.Rank.ToString(), def.Id, db,
+                    instanceId: cardId, onInspect: OnInspectCard));
             }
         }
     }

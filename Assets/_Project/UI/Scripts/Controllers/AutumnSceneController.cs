@@ -20,6 +20,8 @@ namespace Kismeta.UI.Controllers
         public Action? OnPass;
         public Action? OnLeaveStasis;
         public Action? OnOppose;
+        public Action? OnOpenCardTable;
+        public Action<string>? OnInspectCard;
 
         CommandBridge? _bridge;
         GameSession? _session;
@@ -33,8 +35,7 @@ namespace Kismeta.UI.Controllers
             WireBtn("oppose-btn", OnOpposeClicked);
             WireBtn("manage-cards-btn", OnManageCardsClicked);
             WireBtn("pass-btn", OnPassClicked);
-            Btn("menu-btn")?.RegisterCallback<ClickEvent>(_ =>
-                Debug.Log("[UI] Card table — Batch 7"));
+            Btn("menu-btn")?.RegisterCallback<ClickEvent>(_ => OnOpenCardTable?.Invoke());
         }
 
         void WireBtn(string name, Action handler)
@@ -149,7 +150,9 @@ namespace Kismeta.UI.Controllers
                 if (inst == null || db == null) continue;
                 var def = db.GetById(inst.DefinitionId);
                 if (def == null) continue;
-                strip.Add(CardChipFactory.CreateFromDefinition(def.Rank.ToString(), def.Id, db));
+                strip.Add(CardChipFactory.CreateFromDefinition(
+                    def.Rank.ToString(), def.Id, db,
+                    instanceId: cardId, onInspect: OnInspectCard));
             }
         }
     }

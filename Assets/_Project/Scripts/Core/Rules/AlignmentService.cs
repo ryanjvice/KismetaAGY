@@ -80,6 +80,10 @@ namespace Kismeta.Core.Rules
             return 0;
         }
 
+        /// <summary>Alignment points for a single minor-arcana card vs a reference sign.</summary>
+        public static int ScoreCard(Suit suit, Planet planet, ZodiacSign reference) =>
+            CardScore(suit, planet, reference);
+
         private static int CardScore(Suit suit, Planet planet, ZodiacSign reference)
         {
             // Planet match (+2)

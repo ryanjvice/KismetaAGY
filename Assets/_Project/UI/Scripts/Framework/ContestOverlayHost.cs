@@ -24,6 +24,10 @@ namespace Kismeta.UI
         GambitController? _gambitCtrl;
         OppositionController? _oppositionCtrl;
 
+        int? _pendingDuelRival;
+        int? _pendingGambitRival;
+        int? _pendingTradeRival;
+
         enum ActiveContest { None, Trade, Duel, Gambit, Opposition }
         ActiveContest _active = ActiveContest.None;
 
@@ -62,9 +66,9 @@ namespace Kismeta.UI
             Dismiss();
         }
 
-        public void ShowTrade() => ShowContest(_trade, _tradeCtrl, WireTrade, ActiveContest.Trade);
-        public void ShowDuel() => ShowContest(_duel, _duelCtrl, WireDuel, ActiveContest.Duel);
-        public void ShowGambit() => ShowContest(_gambit, _gambitCtrl, WireGambit, ActiveContest.Gambit);
+        public void ShowTrade(int? rivalId = null) { _pendingTradeRival = rivalId; ShowContest(_trade, _tradeCtrl, WireTrade, ActiveContest.Trade); }
+        public void ShowDuel(int? rivalId = null) { _pendingDuelRival = rivalId; ShowContest(_duel, _duelCtrl, WireDuel, ActiveContest.Duel); }
+        public void ShowGambit(int? rivalId = null) { _pendingGambitRival = rivalId; ShowContest(_gambit, _gambitCtrl, WireGambit, ActiveContest.Gambit); }
         public void ShowOpposition() => ShowContest(_opposition, _oppositionCtrl, WireOpposition, ActiveContest.Opposition);
 
         public void Dismiss()
@@ -95,9 +99,21 @@ namespace Kismeta.UI
             if (_session == null || _bridge == null) return;
             switch (_active)
             {
-                case ActiveContest.Trade: _tradeCtrl?.BindState(_session, _bridge); break;
-                case ActiveContest.Duel: _duelCtrl?.BindState(_session, _bridge); break;
-                case ActiveContest.Gambit: _gambitCtrl?.BindState(_session, _bridge); break;
+                case ActiveContest.Trade:
+                    _tradeCtrl?.SetPreselectedRival(_pendingTradeRival);
+                    _pendingTradeRival = null;
+                    _tradeCtrl?.BindState(_session, _bridge);
+                    break;
+                case ActiveContest.Duel:
+                    _duelCtrl?.SetPreselectedRival(_pendingDuelRival);
+                    _pendingDuelRival = null;
+                    _duelCtrl?.BindState(_session, _bridge);
+                    break;
+                case ActiveContest.Gambit:
+                    _gambitCtrl?.SetPreselectedRival(_pendingGambitRival);
+                    _pendingGambitRival = null;
+                    _gambitCtrl?.BindState(_session, _bridge);
+                    break;
                 case ActiveContest.Opposition: _oppositionCtrl?.BindState(_session, _bridge); break;
             }
         }

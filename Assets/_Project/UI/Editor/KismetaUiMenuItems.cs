@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Kismeta.Game.Bootstrap;
+using Kismeta.UI.Chronicle;
 using Kismeta.UI;
 using Kismeta.UI.Controllers;
 using UnityEditor;
@@ -50,6 +51,9 @@ namespace Kismeta.UI.Editor
         private const string ManageCardsPath = "Assets/_Project/UI/UXML/batch6/ManageCards.uxml";
         private const string LeaveStasisPath = "Assets/_Project/UI/UXML/batch6/LeaveStasis.uxml";
         private const string EndAutumnPath = "Assets/_Project/UI/UXML/batch6/EndAutumn.uxml";
+        private const string VictoryPath = "Assets/_Project/UI/UXML/batch7/Victory.uxml";
+        private const string ChroniclePath = "Assets/_Project/UI/UXML/batch7/Chronicle.uxml";
+        private const string CardTablePath = "Assets/_Project/UI/UXML/batch7/CardTable.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
@@ -151,6 +155,12 @@ namespace Kismeta.UI.Editor
             EnsureComponent<LeaveStasisController>(bootstrap.gameObject);
             EnsureComponent<EndAutumnController>(bootstrap.gameObject);
             EnsureComponent<AutumnOverlayHost>(bootstrap.gameObject);
+            EnsureComponent<VictoryController>(bootstrap.gameObject);
+            EnsureComponent<ChronicleController>(bootstrap.gameObject);
+            EnsureComponent<CardTableController>(bootstrap.gameObject);
+            EnsureComponent<CardModalsController>(bootstrap.gameObject);
+            EnsureComponent<EndOverlayHost>(bootstrap.gameObject);
+            EnsureComponent<GameChronicle>(bootstrap.gameObject);
 
             var layout = bootstrap.GetComponent<ViewportLayout>();
             var layoutSo = new SerializedObject(layout);
@@ -213,6 +223,10 @@ namespace Kismeta.UI.Editor
             var manageCards = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ManageCardsPath);
             var leaveStasis = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(LeaveStasisPath);
             var endAutumn = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(EndAutumnPath);
+            var victory = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(VictoryPath);
+            var chronicle = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ChroniclePath);
+            var cardTable = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardTablePath);
+            var cardModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
 
             var so = new SerializedObject(bootstrap);
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
@@ -255,6 +269,10 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_manageCards").objectReferenceValue = manageCards;
             so.FindProperty("_leaveStasis").objectReferenceValue = leaveStasis;
             so.FindProperty("_endAutumn").objectReferenceValue = endAutumn;
+            so.FindProperty("_victory").objectReferenceValue = victory;
+            so.FindProperty("_chronicle").objectReferenceValue = chronicle;
+            so.FindProperty("_cardTable").objectReferenceValue = cardTable;
+            so.FindProperty("_cardModals").objectReferenceValue = cardModals;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
 

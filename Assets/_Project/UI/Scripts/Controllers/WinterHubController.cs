@@ -15,6 +15,8 @@ namespace Kismeta.UI.Controllers
 
         public System.Action? OnOpenUnlock;
         public System.Action? OnOpenWager;
+        public System.Action? OnOpenCardTable;
+        public System.Action<string>? OnInspectCard;
 
         CommandBridge? _bridge;
         int _localPlayerId;
@@ -23,7 +25,7 @@ namespace Kismeta.UI.Controllers
         {
             Btn("continue-btn")!.clicked += () => OnOpenUnlock?.Invoke();
             Btn("wager-btn")!.clicked += () => OnOpenWager?.Invoke();
-            Btn("menu-btn")!.clicked += () => Debug.Log("[UI] Card table — future work");
+            Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
             Btn("pass-btn")!.clicked += OnPass;
         }
 

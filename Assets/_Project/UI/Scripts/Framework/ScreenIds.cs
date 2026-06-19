@@ -30,6 +30,8 @@ namespace Kismeta.UI
         public const string WinterUnlock = "WinterUnlock";
         public const string FatefulWager = "FatefulWager";
         public const string CardLimits = "CardLimits";
+        // Batch 7 end screens (Phase 9)
         public const string Victory = "Victory";
+        public const string Chronicle = "Chronicle";
     }
 }

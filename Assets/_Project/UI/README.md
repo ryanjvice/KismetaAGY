@@ -217,4 +217,37 @@ Autumn Oppose button  ──► ContestOverlayHost (Opposition)
 
 Reach Autumn → **Fire** (mantle + alignment + cost) → **Temper** (after full forging round) → **Oppose** (Batch 5) → **Cards** review → enter **Stasis** (via opposition loss) → **Leave Stasis** (2 Salt) → **Pass** → End Autumn confirm → Winter intro.
 
-Victory coronation on Altar temper is deferred to Batch 7; `session.IsOver` dismisses overlays and the main scene shows the game-over hint until the Victory screen exists.
+## Phase 9 — Batch 7: End and overlays
+
+Victory, Chronicle, Card Table, and Card Modals complete the 55-screen flow map (#50–55).
+
+```
+IsOver / GameEndedEvent ──► Victory (ScreenRouter)
+Victory ──► Chronicle (sub-screen)
+Season menu-btn ──► EndOverlayHost (CardTable / CardModals)
+CardTable rival actions ──► ContestOverlayHost (preselected rival)
+Spread chip tap ──► CardModals inspect
+AdeptDecision hint ──► CardModals adept (payment picker)
+```
+
+| Screen | Host | Notes |
+|--------|------|-------|
+| Victory (#50) | `ScreenRouter` | Standings by stone position; New Great Year resets session |
+| Chronicle (#51) | `ScreenRouter` | `GameChronicle` journal + Painter2D race chart + contest W/L |
+| Card table (#52) | `EndOverlayHost` | Public cards only; Summer duel/gambit/trade launchers |
+| Inspect (#53) | `EndOverlayHost` | Tap any spread chip; alignment vs cosmic age |
+| Adept (#54) | `EndOverlayHost` | 3-card payment + optional Arcanum swap |
+| Fate (#55) | `EndOverlayHost` | Informational on `FateResolvedEvent` (auto fates only) |
+
+### Play-test checklist
+
+**Game end:** Temper winning move at Gold → **Victory** → **View Chronicle** (chart + contest record) → **New Great Year** (setup sheet).
+
+**Card table:** Summer menu → survey rivals → tap spread chip (inspect) → **duel** rival (skips target step).
+
+**Adept:** Draw Adept in Spring harvest → adept modal opens → select 3 payment cards → Place or Hold.
+
+### Caveats
+
+- Async Fate UIs (Moon, Fool, Lovers) are not in production UI yet; use `_debugUiFallback` or AI resolution.
+- Tarot art sprites and Victory halo remain USS/icon placeholders.

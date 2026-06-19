@@ -8,6 +8,7 @@ using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
 using Kismeta.Data.Loaders;
+using Kismeta.UI.Chronicle;
 using Kismeta.UI;
 using Kismeta.UI.Controllers;
 using Kismeta.UI.Setup;
@@ -77,6 +78,10 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _manageCards;
         [SerializeField] private VisualTreeAsset _leaveStasis;
         [SerializeField] private VisualTreeAsset _endAutumn;
+        [SerializeField] private VisualTreeAsset _victory;
+        [SerializeField] private VisualTreeAsset _chronicle;
+        [SerializeField] private VisualTreeAsset _cardTable;
+        [SerializeField] private VisualTreeAsset _cardModals;
 
         private CardDatabase? _db;
         private CrucibleCodexDatabase? _codexDb;
@@ -86,6 +91,7 @@ namespace Kismeta.Game.Bootstrap
         private List<IPlayerController>? _controllers;
         private GameDebugUI? _ui;
         private GamePresenter? _presenter;
+        private GameChronicle? _chronicleTracker;
         private CancellationTokenSource _cts = new();
         private bool _loopStarted;
 
@@ -106,6 +112,7 @@ namespace Kismeta.Game.Bootstrap
                 {
                     EnsureProductionUi();
                     _presenter!.SetupBeginRequested += OnSetupBegin;
+                    _presenter.NewGameRequested += RequestNewGame;
                 }
                 else
                 {
@@ -124,7 +131,10 @@ namespace Kismeta.Game.Bootstrap
         private void OnDestroy()
         {
             if (_presenter != null)
+            {
                 _presenter.SetupBeginRequested -= OnSetupBegin;
+                _presenter.NewGameRequested -= RequestNewGame;
+            }
             _cts.Cancel();
             _cts.Dispose();
         }
@@ -187,8 +197,16 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<LeaveStasisController>();
             EnsureController<EndAutumnController>();
             EnsureController<AutumnOverlayHost>();
+            EnsureController<VictoryController>();
+            EnsureController<ChronicleController>();
+            EnsureController<CardTableController>();
+            EnsureController<CardModalsController>();
+            EnsureController<EndOverlayHost>();
+            EnsureController<GameChronicle>();
 
             router.RefreshControllers();
+
+            _chronicleTracker = GetComponent<GameChronicle>();
 
             var summerOverlays = GetComponent<SummerOverlayHost>();
             summerOverlays?.Configure(
@@ -201,6 +219,9 @@ namespace Kismeta.Game.Bootstrap
             var autumnOverlays = GetComponent<AutumnOverlayHost>();
             autumnOverlays?.Configure(
                 _fireStone, _temperStone, _manageCards, _leaveStasis, _endAutumn);
+
+            var endOverlays = GetComponent<EndOverlayHost>();
+            endOverlays?.Configure(_cardTable, _cardModals);
 
             if (_titleScreen != null && _gameplayHud != null && _waitingHud != null)
             {
@@ -216,7 +237,8 @@ namespace Kismeta.Game.Bootstrap
                     _springHub, _summerMain, _autumnMain, _winterHub,
                     _roundOpen, _ageOpening, _springIntro, _summerIntro,
                     _autumnIntro, _winterIntro, _ageClosing,
-                    _commune, _winterUnlock, _fatefulWager, _cardLimits);
+                    _commune, _winterUnlock, _fatefulWager, _cardLimits,
+                    _victory, _chronicle);
                 layout.RunWhenReady(ShowTitleScreen);
             }
             else
@@ -246,7 +268,8 @@ namespace Kismeta.Game.Bootstrap
             int humans = Mathf.Clamp(_humanPlayers, 0, count);
             BuildSession(count, humans, mode, crucibleBuild, config.FirstAgekeeperPlayerId);
 
-            _presenter!.Bind(_session!, _loop!, _ceremonyGate);
+            _chronicleTracker?.Attach(_session!);
+            _presenter!.Bind(_session!, _loop!, _ceremonyGate, _chronicleTracker);
 
             if (_debugUiFallback)
             {
@@ -256,6 +279,29 @@ namespace Kismeta.Game.Bootstrap
 
             _loopStarted = true;
             _ = StartLoopAsync(_cts.Token);
+        }
+
+        public void RequestNewGame()
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+            _cts = new CancellationTokenSource();
+
+            _chronicleTracker?.Detach(_session);
+            _chronicleTracker?.Reset();
+            _presenter?.Unbind();
+
+            _session = null;
+            _loop = null;
+            _loopStarted = false;
+
+            if (_ui != null)
+            {
+                Destroy(_ui);
+                _ui = null;
+            }
+
+            _presenter?.ShowNewGameSetup();
         }
 
         private void BuildSession(int totalPlayers, int humanPlayers, GameMode mode,
