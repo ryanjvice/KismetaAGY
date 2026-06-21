@@ -198,18 +198,6 @@ namespace Kismeta.UI.Controllers
             RebuildFormulaChips(formula, db, player);
             RefreshFormulaStatus(formula, db);
             RefreshActivateBtn(formula, db, slot);
-            ScrollToFormulaDetail();
-        }
-
-        void ScrollToFormulaDetail()
-        {
-            var detail = El("formula-detail");
-            if (detail == null || detail.style.display == DisplayStyle.None) return;
-
-            var scroll = Root?.Q<ScrollView>("activate-scroll");
-            if (scroll == null) return;
-
-            scroll.schedule.Execute(() => scroll.ScrollTo(detail)).StartingIn(0);
         }
 
         void RefreshFormulaStatus(CodexFormulaDefinition formula, ICardDatabase db)
