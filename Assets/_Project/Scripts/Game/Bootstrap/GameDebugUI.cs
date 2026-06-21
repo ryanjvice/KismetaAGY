@@ -216,7 +216,15 @@ namespace Kismeta.Game.Bootstrap
                 GUI.contentColor = prevColor;
             }
 
-            if (hint == ActionHint.Commune)
+            if (hint == ActionHint.RollZodiac)
+            {
+                DrawRollZodiacPanel(hs, pid, player);
+            }
+            else if (hint == ActionHint.AcknowledgeSign)
+            {
+                DrawAcknowledgeSignPanel(hs, pid, player);
+            }
+            else if (hint == ActionHint.Commune)
             {
                 DrawCommunePanel(hs, pid, player, colH);
             }
@@ -454,6 +462,44 @@ namespace Kismeta.Game.Bootstrap
         }
 
         // ── Commune panel ────────────────────────────────────────────────────────
+
+        private void DrawAcknowledgeSignPanel(HotSeatController hs, int pid, PlayerState player)
+        {
+            GUILayout.Label($"── SIGN SET — {player.CurrentSign} ──");
+            if (GUILayout.Button("Gather harvest · continue", GUILayout.Height(40f)))
+            {
+                try
+                {
+                    hs.SubmitCommand(new PassActionCommand(pid));
+                }
+                catch (System.Exception ex)
+                {
+                    ShowError(ex.Message);
+                }
+            }
+        }
+
+        private void DrawRollZodiacPanel(HotSeatController hs, int pid, PlayerState player)
+        {
+            var cosmic = _session!.Board.CosmicAgeSign;
+            GUILayout.Label($"── ROLL ZODIAC — Cosmic Age: {cosmic} ──");
+            if (player.CurrentSign != ZodiacSign.None)
+                GUILayout.Label($"Current sign: {player.CurrentSign}");
+            else
+                GUILayout.Label("Roll your Zodiac Die to claim a sign.");
+
+            if (GUILayout.Button("Roll Zodiac Die", GUILayout.Height(40f)))
+            {
+                try
+                {
+                    hs.SubmitCommand(new RollZodiacCommand(pid));
+                }
+                catch (System.Exception ex)
+                {
+                    ShowError(ex.Message);
+                }
+            }
+        }
 
         private void DrawCommunePanel(HotSeatController hs, int pid, PlayerState player, float colH)
         {

@@ -113,7 +113,16 @@ namespace Kismeta.Core.Players
 
             Log("Spring — Step 2: Zodiac rolls");
             foreach (var player in _session.Players)
-                Apply(new RollZodiacCommand(player.PlayerId));
+            {
+                var rollCmd = await RequestAsync(player.PlayerId, ActionHint.RollZodiac, ct);
+                Apply(rollCmd);
+
+                if (_controllers[player.PlayerId] is HotSeatController)
+                {
+                    var ackCmd = await RequestAsync(player.PlayerId, ActionHint.AcknowledgeSign, ct);
+                    Apply(ackCmd);
+                }
+            }
 
             Log("Spring — Step 3: Harvest");
             foreach (var player in _session.Players)
@@ -489,6 +498,10 @@ namespace Kismeta.Core.Players
     public enum ActionHint
     {
         None,
+        /// <summary>Player rolls their Zodiac Die to determine their sign for the round.</summary>
+        RollZodiac,
+        /// <summary>Player reviews their rolled sign before harvest continues.</summary>
+        AcknowledgeSign,
         Commune,
         SummerAction,
         AutumnAction,

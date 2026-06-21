@@ -30,6 +30,8 @@ namespace Kismeta.Core.Players
         {
             IGameCommand action = context.Hint switch
             {
+                ActionHint.RollZodiac        => new RollZodiacCommand(Slot.Index),
+                ActionHint.AcknowledgeSign   => new PassActionCommand(Slot.Index),
                 ActionHint.Commune           => DecideCommune(context),
                 ActionHint.SummerAction      => DecideSummer(context),
                 ActionHint.AutumnAction      => DecideAutumn(context),

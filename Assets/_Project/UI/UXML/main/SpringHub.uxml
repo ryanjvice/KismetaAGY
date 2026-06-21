@@ -20,13 +20,31 @@
             <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
         </engine:VisualElement>
 
+        <engine:Label name="scene-subtitle" text="roll your zodiac die to claim a sign" class="spring-hub__subtitle" />
+
+        <engine:VisualElement name="cosmic-age-banner" class="cosmic-age-banner">
+            <engine:VisualElement class="cosmic-age-banner__sigil" />
+            <engine:VisualElement class="cosmic-age-banner__body">
+                <engine:Label text="cosmic age · set by agekeeper" class="eyebrow cosmic-age-banner__eyebrow" />
+                <engine:VisualElement class="cosmic-age-banner__row">
+                    <engine:Label name="age-sign" text="Scorpio" class="cosmic-age-banner__sign" />
+                    <engine:Label text="·" class="cosmic-age-banner__sep" />
+                    <engine:Label name="age-planet" text="Mars" class="cosmic-age-banner__planet" />
+                    <engine:Label text="·" class="cosmic-age-banner__sep" />
+                    <engine:Label name="age-element" text="Water" class="cosmic-age-banner__element" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
         <engine:VisualElement name="rivals" class="rivals" />
 
         <engine:VisualElement class="screen__body">
-            <engine:VisualElement class="stage" style="align-items: center;">
-                <engine:VisualElement name="wheel-host" style="width: 120px; height: 120px; border-radius: 60px; border-width: 1px; border-color: rgb(43, 106, 74); background-color: rgb(19, 32, 26); margin-bottom: 12px;" />
-                <engine:Label name="harvest-count" text="0 cards harvested" style="font-size: 13px; color: rgb(127, 196, 168);" />
-                <engine:Label name="hint-label" text="Your turn" style="font-size: 11px; color: rgb(184, 154, 110); margin-top: 8px;" />
+            <engine:VisualElement class="stage spring-hub__stage">
+                <engine:VisualElement name="wheel-host" class="roll-host spring-hub__wheel" />
+                <engine:Label name="rolled-sign" text="" class="spring-hub__rolled-sign" />
+                <engine:Label name="sign-match" text="" class="spring-hub__sign-match" />
+                <engine:Label name="harvest-count" text="Awaiting your roll" class="spring-hub__harvest-count" />
+                <engine:Label name="hint-label" text="Your turn" class="spring-hub__hint" />
             </engine:VisualElement>
 
             <engine:VisualElement name="step-rail" class="steprail" style="padding-left: 12px; padding-right: 12px;">

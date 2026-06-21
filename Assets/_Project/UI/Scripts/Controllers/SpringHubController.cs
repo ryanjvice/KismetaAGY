@@ -1,3 +1,4 @@
+using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
@@ -22,6 +23,12 @@ namespace Kismeta.UI.Controllers
         GameLoop? _loop;
         CommandBridge? _bridge;
         int _localPlayerId;
+        int _wheelBindKey = int.MinValue;
+
+        protected override void Unwire()
+        {
+            _wheelBindKey = int.MinValue;
+        }
 
         protected override void Wire()
         {
@@ -34,17 +41,25 @@ namespace Kismeta.UI.Controllers
             _session = session;
             _loop = loop;
             _bridge = bridge;
-            _localPlayerId = ResolveLocalPlayerId(session, loop, bridge);
+            int resolvedPlayerId = ResolveLocalPlayerId(session, loop, bridge);
+            if (resolvedPlayerId != _localPlayerId)
+                _wheelBindKey = int.MinValue;
+            _localPlayerId = resolvedPlayerId;
             if (Root == null) return;
 
             var view = GamePublicView.From(session);
+            var player = session.Players[_localPlayerId];
+            var hint = bridge.PendingHint;
+
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             MainSceneBindings.BindStatusBar(Root, session, loop);
             MainSceneBindings.BindStepRail(
-                El("step-rail"), session.Phase.CurrentStepIndex, 5, "step__dot--active");
+                El("step-rail"), ResolveStepIndex(session, player, hint), 5, "step__dot--active");
 
-            var player = session.Players[_localPlayerId];
-            BindWheelAndHarvest(session, player);
+            BindCosmicAgeBanner(session);
+            BindSceneSubtitle(hint, player);
+            BindWheelAndHarvest(session, player, hint);
+            BindHintLabel(hint, bridge, player);
             BindSpringCta(bridge, loop);
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
@@ -67,12 +82,79 @@ namespace Kismeta.UI.Controllers
             return 0;
         }
 
+        static int ResolveStepIndex(GameSession session, PlayerState player, ActionHint hint)
+        {
+            if (hint == ActionHint.RollZodiac)
+                return 1;
+            if (hint == ActionHint.AcknowledgeSign)
+                return 2;
+            if (hint == ActionHint.Commune)
+                return 3;
+            if (player.CurrentSign != ZodiacSign.None)
+            {
+                int harvestCount = player.Spread.Count + player.Hand.Count;
+                if (harvestCount > 0)
+                    return 3;
+                return 2;
+            }
+            return session.Phase.CurrentStepIndex;
+        }
+
+        void BindCosmicAgeBanner(GameSession session)
+        {
+            var sign = session.Board.CosmicAgeSign;
+            if (Lbl("age-sign") != null)
+                Lbl("age-sign")!.text = sign == ZodiacSign.None ? "—" : sign.ToString();
+            if (Lbl("age-planet") != null)
+                Lbl("age-planet")!.text = Correspondence.PlanetFor(sign).ToString();
+            if (Lbl("age-element") != null)
+                Lbl("age-element")!.text = Correspondence.ElementFor(sign).ToString();
+        }
+
+        void BindSceneSubtitle(ActionHint hint, PlayerState player)
+        {
+            var subtitle = Lbl("scene-subtitle");
+            if (subtitle == null) return;
+
+            if (hint == ActionHint.RollZodiac && player.CurrentSign == ZodiacSign.None)
+                subtitle.text = "roll your zodiac die to claim a sign";
+            else if (hint == ActionHint.AcknowledgeSign)
+                subtitle.text = "your sign is set — gather your harvest next";
+            else if (player.CurrentSign != ZodiacSign.None)
+                subtitle.text = "your sign is set — harvest and commune follow";
+            else
+                subtitle.text = "spring — set your sign, gather, commune";
+        }
+
+        void BindHintLabel(ActionHint hint, CommandBridge bridge, PlayerState player)
+        {
+            var label = Lbl("hint-label");
+            if (label == null) return;
+
+            if (hint == ActionHint.RollZodiac && bridge.CanSubmit)
+                label.text = "Your turn — roll your zodiac die";
+            else if (hint == ActionHint.AcknowledgeSign && bridge.CanSubmit)
+                label.text = "Review your sign — continue when ready";
+            else if (hint == ActionHint.Commune && bridge.CanSubmit)
+                label.text = "Your turn — commune when ready";
+            else
+                label.text = "Your turn";
+        }
+
         void OnPrimaryAction()
         {
             if (_bridge == null) return;
 
             switch (_bridge.PendingHint)
             {
+                case ActionHint.RollZodiac:
+                    if (_bridge.ActivePlayerId >= 0)
+                        _bridge.TrySubmit(new RollZodiacCommand(_bridge.ActivePlayerId));
+                    break;
+                case ActionHint.AcknowledgeSign:
+                    if (_bridge.ActivePlayerId >= 0)
+                        _bridge.TrySubmit(new PassActionCommand(_bridge.ActivePlayerId));
+                    break;
                 case ActionHint.Commune:
                     OnOpenCommune?.Invoke();
                     break;
@@ -95,6 +177,18 @@ namespace Kismeta.UI.Controllers
 
             switch (hint)
             {
+                case ActionHint.RollZodiac:
+                    btn.style.display = DisplayStyle.Flex;
+                    btn.text = "Roll your zodiac die";
+                    btn.SetEnabled(true);
+                    btn.EnableInClassList("btn--disabled", false);
+                    break;
+                case ActionHint.AcknowledgeSign:
+                    btn.style.display = DisplayStyle.Flex;
+                    btn.text = "Gather your harvest";
+                    btn.SetEnabled(true);
+                    btn.EnableInClassList("btn--disabled", false);
+                    break;
                 case ActionHint.Commune:
                     btn.style.display = DisplayStyle.Flex;
                     btn.text = "Commune";
@@ -107,36 +201,116 @@ namespace Kismeta.UI.Controllers
             }
         }
 
-        void BindWheelAndHarvest(GameSession session, PlayerState player)
+        void BindWheelAndHarvest(GameSession session, PlayerState player, ActionHint hint)
         {
             var wheel = El("wheel-host");
             if (wheel == null) return;
 
-            wheel.Clear();
             var sign = player.CurrentSign;
+            var cosmic = session.Board.CosmicAgeSign;
+            int bindKey = WheelBindKey(player.PlayerId, sign, hint);
+
+            if (bindKey == _wheelBindKey)
+            {
+                UpdateHarvestLabel(session, player, hint);
+                return;
+            }
+
+            _wheelBindKey = bindKey;
+            wheel.Clear();
+
+            if (sign == ZodiacSign.None)
+            {
+                var placeholder = new Label("?");
+                placeholder.style.fontSize = 36;
+                placeholder.style.unityTextAlign = TextAnchor.MiddleCenter;
+                placeholder.style.color = new StyleColor(new Color(0.48f, 0.6f, 0.51f));
+                placeholder.style.flexGrow = 1;
+                wheel.Add(placeholder);
+
+                SetLabelVisible("rolled-sign", false);
+                SetLabelVisible("sign-match", false);
+                UpdateHarvestLabel(session, player, hint);
+                return;
+            }
+
             var signLbl = SymbolGlyphs.CreateEmojiLabel(SymbolGlyphs.Zodiac(sign));
             signLbl.style.fontSize = 36;
             signLbl.style.unityTextAlign = TextAnchor.MiddleCenter;
             signLbl.style.flexGrow = 1;
             wheel.Add(signLbl);
 
-            UiMotion.AnimateWheelSettle(wheel, () =>
+            if (hint == ActionHint.AcknowledgeSign)
+                UiMotion.AnimateWheelSettle(wheel, () => { });
+
+            if (Lbl("rolled-sign") != null)
             {
-                if (sign != ZodiacSign.None && wheel.childCount > 0)
-                {
-                    var nameLbl = new Label(sign.ToString());
-                    nameLbl.style.fontSize = 10;
-                    nameLbl.style.unityTextAlign = TextAnchor.MiddleCenter;
-                    nameLbl.style.color = new StyleColor(new Color(0.5f, 0.77f, 0.66f));
-                    wheel.Add(nameLbl);
-                }
-            });
+                Lbl("rolled-sign")!.text = sign.ToString();
+                Lbl("rolled-sign")!.style.display = DisplayStyle.Flex;
+            }
+
+            if (Lbl("sign-match") != null)
+            {
+                Lbl("sign-match")!.text = DescribeAlignment(sign, cosmic);
+                Lbl("sign-match")!.style.display = DisplayStyle.Flex;
+            }
+
+            UpdateHarvestLabel(session, player, hint);
+        }
+
+        static int WheelBindKey(int playerId, ZodiacSign sign, ActionHint hint)
+            => playerId * 1000 + (int)sign * 10 + (int)hint;
+
+        void UpdateHarvestLabel(GameSession session, PlayerState player, ActionHint hint)
+        {
+            if (Lbl("harvest-count") == null) return;
+
+            if (player.CurrentSign == ZodiacSign.None)
+            {
+                Lbl("harvest-count")!.text = hint == ActionHint.RollZodiac
+                    ? "Awaiting your roll"
+                    : "Awaiting harvest";
+                return;
+            }
+
+            if (hint == ActionHint.AcknowledgeSign)
+            {
+                Lbl("harvest-count")!.text = "Sign locked — tap below to gather";
+                return;
+            }
 
             int harvestCount = CountMinorCards(session, player);
-            if (Lbl("harvest-count") != null)
-                Lbl("harvest-count")!.text = harvestCount > 0
-                    ? $"{harvestCount} card(s) harvested"
-                    : "Awaiting harvest";
+            Lbl("harvest-count")!.text = harvestCount > 0
+                ? $"{harvestCount} card(s) harvested"
+                : "Awaiting harvest";
+        }
+
+        void SetLabelVisible(string elementName, bool visible)
+        {
+            var lbl = Lbl(elementName);
+            if (lbl != null)
+                lbl.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        static string DescribeAlignment(ZodiacSign playerSign, ZodiacSign cosmicSign)
+        {
+            int bonus = AlignmentBonus(playerSign, cosmicSign);
+            if (bonus >= 3)
+                return $"your meeple moves to {playerSign} · sign match · +{bonus} alignment";
+            if (bonus == 2)
+                return $"your meeple moves to {playerSign} · planet match · +{bonus} alignment";
+            if (bonus == 1)
+                return $"your meeple moves to {playerSign} · element match · +{bonus} alignment";
+            return $"your meeple moves to {playerSign} · no aspect match";
+        }
+
+        static int AlignmentBonus(ZodiacSign playerSign, ZodiacSign cosmicSign)
+        {
+            if (playerSign == ZodiacSign.None || cosmicSign == ZodiacSign.None) return 0;
+            if (playerSign == cosmicSign) return 3;
+            if (Correspondence.PlanetFor(playerSign) == Correspondence.PlanetFor(cosmicSign)) return 2;
+            if (Correspondence.ElementFor(playerSign) == Correspondence.ElementFor(cosmicSign)) return 1;
+            return 0;
         }
 
         static int CountMinorCards(GameSession session, PlayerState player)
