@@ -66,9 +66,31 @@
 }
 .txn__arrow { font-size: 16px; color: var(--muted); margin: 0 10px; }
 
-/* formula slot (Activate) */
+/* formula slot (Activate) + card pick row (Craft / Build) */
 .formula {
     flex-direction: row; flex-wrap: wrap; align-items: center;
+}
+
+.card-pool {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-content: flex-start;
+    width: 100%;
+}
+
+.card-pool > .card-chip {
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.card-pool .card-chip__rank {
+    font-size: 11px;
+    -unity-text-align: middle-center;
+    overflow: hidden;
+    max-width: 100%;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 .formula-slot {
     width: 34px; height: 48px; border-radius: var(--radius-sm);

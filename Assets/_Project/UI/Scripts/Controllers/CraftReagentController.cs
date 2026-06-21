@@ -16,6 +16,7 @@ namespace Kismeta.UI.Controllers
         int _playerId = -1;
         ReagentType _reagent = ReagentType.Sulphur;
         bool _forged;
+        bool _uiInitialized;
 
         public System.Action OnBack;
         public System.Action OnDone;
@@ -36,22 +37,80 @@ namespace Kismeta.UI.Controllers
         {
             _session = session;
             _bridge = bridge;
-            _playerId = SummerActionBindings.ResolvePlayerId(session, bridge);
-            if (Root == null || _playerId < 0) return;
+            if (Root == null) return;
+
+            _playerId = SummerActionBindings.ResolvePlayerId(_session, _bridge);
+            if (_playerId < 0) return;
 
             if (_forged)
             {
-                El("forge-result")!.style.display = DisplayStyle.Flex;
+                SetPhaseVisibility(showResult: true);
                 return;
             }
 
-            El("forge-result")!.style.display = DisplayStyle.None;
-            _selected.Clear();
-            _reagent = ReagentType.Sulphur;
+            if (!_uiInitialized)
+            {
+                RefreshUi(fullInit: true);
+                return;
+            }
 
-            var player = session.Players[_playerId];
+            LockReagentPicks(_session.Players[_playerId]);
+        }
+
+        protected override void Bind()
+        {
+            _uiInitialized = false;
+            if (_session != null && _bridge != null)
+                RefreshUi(fullInit: true);
+        }
+
+        void RefreshUi(bool fullInit)
+        {
+            if (_session == null || _bridge == null || Root == null) return;
+
+            _playerId = SummerActionBindings.ResolvePlayerId(_session, _bridge);
+            if (_playerId < 0) return;
+
+            if (_forged)
+            {
+                SetPhaseVisibility(showResult: true);
+                return;
+            }
+
+            SetPhaseVisibility(showResult: false);
+
+            var player = _session.Players[_playerId];
             LockReagentPicks(player);
-            PickReagent("sulphur");
+
+            if (fullInit || !_uiInitialized)
+            {
+                _selected.Clear();
+                SelectDefaultReagent();
+                _uiInitialized = true;
+            }
+            else
+                ApplyReagentUi();
+        }
+
+        void SelectDefaultReagent()
+        {
+            if (TryPickReagent("sulphur")) return;
+            if (TryPickReagent("salt")) return;
+            foreach (var key in ReagentKeys)
+            {
+                if (key is "sulphur" or "salt") continue;
+                if (TryPickReagent(key)) return;
+            }
+
+            ApplyReagentUi();
+        }
+
+        bool TryPickReagent(string key)
+        {
+            var btn = Btn($"pick-{key}");
+            if (btn != null && btn.ClassListContains("reagent-pick--locked")) return false;
+            PickReagent(key);
+            return true;
         }
 
         void LockReagentPicks(PlayerState player)
@@ -76,9 +135,14 @@ namespace Kismeta.UI.Controllers
 
             _reagent = KeyToReagent(key);
             _selected.Clear();
+            ApplyReagentUi();
+        }
 
+        void ApplyReagentUi()
+        {
+            var activeKey = ReagentKeyFor(_reagent);
             foreach (var k in ReagentKeys)
-                Btn($"pick-{k}")?.EnableInClassList("reagent-pick--active", k == key);
+                Btn($"pick-{k}")?.EnableInClassList("reagent-pick--active", k == activeKey);
 
             UpdateCauldronNote();
             RefreshPool();
@@ -172,6 +236,7 @@ namespace Kismeta.UI.Controllers
             }
 
             bool ready = picked >= need;
+            b.SetEnabled(ready);
             b.EnableInClassList("btn--disabled", !ready);
             b.EnableInClassList("btn--primary", ready);
             b.text = ready
@@ -188,11 +253,97 @@ namespace Kismeta.UI.Controllers
             if (_bridge.TrySubmit(new CraftReagentCommand(_playerId, _reagent, ids)))
             {
                 _forged = true;
-                El("forge-result")!.style.display = DisplayStyle.Flex;
+                PopulateForgeResult(ids);
+                SetPhaseVisibility(showResult: true);
             }
         }
 
-        public void ResetForgeState() => _forged = false;
+        void SetPhaseVisibility(bool showResult)
+        {
+            var pick = El("craft-pick");
+            var result = El("forge-result");
+            if (pick != null)
+                pick.style.display = showResult ? DisplayStyle.None : DisplayStyle.Flex;
+            if (result != null)
+                result.style.display = showResult ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        void PopulateForgeResult(IReadOnlyList<string> cardIds)
+        {
+            if (_session == null || Root == null) return;
+
+            var strip = El("txn-strip");
+            if (strip == null) return;
+            strip.Clear();
+
+            var db = _session.Rules?.CardDatabase;
+            if (db == null) return;
+
+            var cardsRow = new VisualElement();
+            cardsRow.style.flexDirection = FlexDirection.Row;
+
+            foreach (var cardId in cardIds)
+            {
+                var inst = _session.GetCard(cardId);
+                var def = inst != null ? db.GetById(inst.DefinitionId) : null;
+                if (def == null) continue;
+
+                var chip = CardChipFactory.Create(
+                    SummerCardPickBindings.CompactRank(def.Rank), def.Suit);
+                chip.style.width = 24;
+                chip.style.height = 34;
+                chip.style.marginLeft = cardsRow.childCount > 0 ? 3 : 0;
+                cardsRow.Add(chip);
+            }
+
+            strip.Add(cardsRow);
+
+            var arrow = new Label("→");
+            arrow.AddToClassList("txn__arrow");
+            strip.Add(arrow);
+
+            var output = new VisualElement();
+            output.style.alignItems = Align.Center;
+
+            var dot = new VisualElement();
+            dot.AddToClassList("reagent-dot");
+            dot.AddToClassList(ReagentDotClass(_reagent));
+            dot.style.width = 26;
+            dot.style.height = 26;
+            output.Add(dot);
+
+            var name = new Label(ReagentDisplayName(_reagent));
+            name.style.fontSize = 9;
+            name.style.color = new StyleColor(new UnityEngine.Color(184f / 255f, 154f / 255f, 110f / 255f));
+            name.style.marginTop = 3;
+            output.Add(name);
+            strip.Add(output);
+
+            var subtitle = Lbl("result-subtitle");
+            if (subtitle != null)
+                subtitle.text = $"Forged 1 {ReagentDisplayName(_reagent)}";
+        }
+
+        static string ReagentDisplayName(ReagentType type) => type switch
+        {
+            ReagentType.AquaRegia => "Aqua Regia",
+            _ => type.ToString()
+        };
+
+        static string ReagentDotClass(ReagentType type) => type switch
+        {
+            ReagentType.Sulphur => "reagent-dot--sulphur",
+            ReagentType.Vitriol => "reagent-dot--vitriol",
+            ReagentType.AquaRegia => "reagent-dot--aqua",
+            ReagentType.Quicksilver => "reagent-dot--quick",
+            _ => "reagent-dot--salt"
+        };
+
+        public void ResetForgeState()
+        {
+            _forged = false;
+            _uiInitialized = false;
+        }
 
         static ReagentType KeyToReagent(string key) => key switch
         {
@@ -201,6 +352,15 @@ namespace Kismeta.UI.Controllers
             "aqua" => ReagentType.AquaRegia,
             "quicksilver" => ReagentType.Quicksilver,
             _ => ReagentType.Salt
+        };
+
+        static string ReagentKeyFor(ReagentType type) => type switch
+        {
+            ReagentType.Sulphur => "sulphur",
+            ReagentType.Vitriol => "vitriol",
+            ReagentType.AquaRegia => "aqua",
+            ReagentType.Quicksilver => "quicksilver",
+            _ => "salt"
         };
 
         static string CauldronNameFor(Suit suit) => suit switch
