@@ -369,6 +369,7 @@ MonoBehaviour:
   _winterIntro: {fileID: 9197481963319205126, guid: 6542ba701070b694b89a0f0561232a31, type: 3}
   _ageClosing: {fileID: 9197481963319205126, guid: c409715823e777440a4e755e751e4376, type: 3}
   _commune: {fileID: 9197481963319205126, guid: 2e1aebe88c59536408a43118524a5c2a, type: 3}
+  _springHarvest: {fileID: 9197481963319205126, guid: d4a7bf58b31a6e0438ef56e9dedb8ffc, type: 3}
   _winterUnlock: {fileID: 9197481963319205126, guid: 2a127e9c6e2c5924db4d4e5a87389aa1, type: 3}
   _fatefulWager: {fileID: 9197481963319205126, guid: df8ecc00a3c57bd44ac1509e90459d74, type: 3}
   _cardLimits: {fileID: 9197481963319205126, guid: c0d8fbb17e40eb840aa1ddb77db097ec, type: 3}

@@ -46,7 +46,7 @@
         <engine:VisualElement style="padding: 0 14px;">
             <engine:VisualElement class="tray tray--get">
                 <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <engine:Label text="Severin gives (public cards)" style="font-size: 12px; color: rgb(127, 196, 168);" />
+                    <engine:Label name="get-tray-title" text="Rival gives (public cards)" style="font-size: 12px; color: rgb(127, 196, 168);" />
                     <engine:Label name="get-count" text="1 card" style="font-size: 10px; color: rgb(184, 154, 110);" />
                 </engine:VisualElement>
                 <engine:VisualElement name="get-cards" class="tray__cards">
@@ -56,8 +56,8 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <engine:VisualElement class="tip tip--caution">
-            <engine:Label name="ratio-line" text="Fair trade (1:1). Misaligned trades in Magnus would cost you 2:1."
+        <engine:VisualElement name="ratio-tip" class="tip tip--caution">
+            <engine:Label name="ratio-line" text="Magnus mode: misaligned trades cost 2:1. Aligned players trade 1:1."
                           class="tip__text" style="color: rgb(224,200,120);" />
         </engine:VisualElement>
 

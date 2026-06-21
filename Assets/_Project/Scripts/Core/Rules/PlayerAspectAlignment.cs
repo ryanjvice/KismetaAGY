@@ -1,0 +1,36 @@
+using Kismeta.Core.Domain;
+using Kismeta.Core.Entities;
+
+namespace Kismeta.Core.Rules
+{
+    /// <summary>
+    /// Player-to-player zodiac aspect checks used by Magnus trade ratio rules.
+    /// Aligned when both current signs share sign, planet, or element.
+    /// </summary>
+    public static class PlayerAspectAlignment
+    {
+        public static bool ShareAspect(ZodiacSign a, ZodiacSign b)
+        {
+            if (a == ZodiacSign.None || b == ZodiacSign.None) return false;
+            if (a == b) return true;
+            if (Correspondence.PlanetFor(a) == Correspondence.PlanetFor(b)) return true;
+            if (Correspondence.ElementFor(a) == Correspondence.ElementFor(b)) return true;
+            return false;
+        }
+
+        public static bool ArePlayersAlignedForTrade(GameSession session, int traderId, int rivalId)
+        {
+            if (traderId < 0 || traderId >= session.Players.Count) return true;
+            if (rivalId < 0 || rivalId >= session.Players.Count) return true;
+            return ShareAspect(session.Players[traderId].CurrentSign, session.Players[rivalId].CurrentSign);
+        }
+
+        public static bool IsMagnusTradeRatioValid(GameSession session, int initiatorId, int targetId,
+            int offerCount, int requestCount)
+        {
+            if (session.Mode != GameMode.MagnusAlchemist) return true;
+            if (ArePlayersAlignedForTrade(session, initiatorId, targetId)) return true;
+            return offerCount >= 2 * requestCount;
+        }
+    }
+}

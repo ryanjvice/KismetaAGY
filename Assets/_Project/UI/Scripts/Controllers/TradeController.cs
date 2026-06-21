@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Kismeta.Core.Commands;
+using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Components;
 using UnityEngine.UIElements;
@@ -39,6 +40,10 @@ namespace Kismeta.UI.Controllers
 
             if (Root == null || _playerId < 0) return;
 
+            if (_rivalId < 0)
+                _rivalId = ContestBindings.FirstEligibleRival(_session, _playerId,
+                    ContestBindings.RivalEligibleForSummerContest);
+
             RefreshAll();
         }
 
@@ -55,17 +60,33 @@ namespace Kismeta.UI.Controllers
                     RefreshAll();
                 });
 
+            var getTitle = Lbl("get-tray-title");
+            if (getTitle != null)
+            {
+                getTitle.text = _rivalId >= 0
+                    ? $"{ContestBindings.RivalName(_session, _rivalId)} gives (public cards)"
+                    : "Rival gives (public cards)";
+            }
+
             var player = _session.Players[_playerId];
             var giveCards = ContestBindings.MinorSpreadCards(_session, player);
-            ContestBindings.BuildCardChips(El("give-cards"), _session, giveCards, _give, true, _ => RefreshTrays());
+            ContestBindings.BuildCardChips(El("give-cards"), _session, giveCards, _give, true, _ => RefreshAll());
 
             var getCards = _rivalId >= 0
                 ? ContestBindings.PublicRivalSpread(_session, _rivalId)
                 : new List<string>();
-            ContestBindings.BuildCardChips(El("get-cards"), _session, getCards, _get, true, _ => RefreshTrays());
+            ContestBindings.BuildCardChips(El("get-cards"), _session, getCards, _get, true, _ => RefreshAll());
 
-            if (Lbl("ratio-line") != null)
-                Lbl("ratio-line")!.text = ContestBindings.TradeRatioHint(_session);
+            var tip = El("ratio-tip");
+            if (tip != null)
+            {
+                tip.style.display = _session.Mode == GameMode.MagnusAlchemist
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
+            }
+
+            if (_session.Mode == GameMode.MagnusAlchemist && Lbl("ratio-line") != null)
+                Lbl("ratio-line")!.text = ContestBindings.TradeRatioHint(_session, _playerId, _rivalId);
 
             RefreshTrays();
         }
@@ -81,7 +102,10 @@ namespace Kismeta.UI.Controllers
             if (btn != null)
             {
                 btn.text = "Complete trade";
-                bool valid = _rivalId >= 0 && (_give.Count > 0 || _get.Count > 0);
+                bool hasCards = _give.Count > 0 || _get.Count > 0;
+                bool ratioOk = _session == null || ContestBindings.IsTradeRatioValid(
+                    _session, _playerId, _rivalId, _give.Count, _get.Count);
+                bool valid = _rivalId >= 0 && hasCards && ratioOk;
                 btn.SetEnabled(valid);
             }
         }

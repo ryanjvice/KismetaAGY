@@ -141,11 +141,32 @@ namespace Kismeta.UI.Components
 
         public static bool RivalEligibleForSummerContest(PlayerState rival) => true;
 
-        public static string TradeRatioHint(GameSession session)
+        public static int FirstEligibleRival(GameSession session, int localId, Func<PlayerState, bool> eligible)
         {
-            if (session.Mode == GameMode.MagnusAlchemist)
-                return "Magnus mode: misaligned trades cost 2:1. Default fair trade is 1:1.";
-            return "Fair trade (1:1). Misaligned trades in Magnus would cost you 2:1.";
+            for (int i = 0; i < session.Players.Count; i++)
+            {
+                if (i == localId) continue;
+                if (eligible(session.Players[i])) return i;
+            }
+            return -1;
+        }
+
+        public static bool ArePlayersAlignedForTrade(GameSession session, int traderId, int rivalId) =>
+            PlayerAspectAlignment.ArePlayersAlignedForTrade(session, traderId, rivalId);
+
+        public static bool IsTradeRatioValid(GameSession session, int traderId, int rivalId,
+            int offerCount, int requestCount) =>
+            PlayerAspectAlignment.IsMagnusTradeRatioValid(session, traderId, rivalId, offerCount, requestCount);
+
+        public static string TradeRatioHint(GameSession session, int traderId, int rivalId)
+        {
+            if (rivalId < 0)
+                return "Magnus mode: misaligned trades cost 2:1. Aligned players trade 1:1.";
+
+            string rival = RivalName(session, rivalId);
+            if (ArePlayersAlignedForTrade(session, traderId, rivalId))
+                return $"You and {rival} share a zodiac aspect — trades are 1:1.";
+            return $"You and {rival} are misaligned — offer 2 cards for every 1 you receive.";
         }
     }
 }

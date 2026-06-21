@@ -67,6 +67,9 @@ namespace Kismeta.Core.Tests
             return session;
         }
 
+        private static void SetSeason(GameSession session, Season season) =>
+            session.Phase.SetSeason(season);
+
         // ─── GameSetupService tests ────────────────────────────────────────────────
 
         [Test]
@@ -303,10 +306,12 @@ namespace Kismeta.Core.Tests
             GivePlayerCards(session, 0, 7);
 
             var spreadIds = new List<string>(session.Players[0].Spread);
+            int expectedCount = spreadIds.Count;
             var result = session.Apply(new CommuneCommand(0, spreadIds, System.Array.Empty<string>()));
 
             Assert.IsTrue(result.IsOk, result.Message);
-            Assert.AreEqual(7, session.Players[0].Spread.Count);
+            Assert.AreEqual(expectedCount, session.Players[0].Spread.Count);
+            Assert.Greater(expectedCount, WinterRules.SpreadLimit);
         }
 
         [Test]
@@ -337,10 +342,12 @@ namespace Kismeta.Core.Tests
             session.Players[0].CrucibleSlots[0].Activate();
             session.Players[0].AssignedCodex = CodexVariant.A;
             GiveMarsCards(session, 0, 3);
+            SetSeason(session, Season.Summer);
 
             var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsFalse(result.IsOk, "Activating a non-Dormant slot should fail.");
+            StringAssert.Contains("Dormant", result.Message);
         }
 
         [Test]
@@ -348,9 +355,11 @@ namespace Kismeta.Core.Tests
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
             var result  = session.Apply(new ActivateCrucibleCommand(0, 0,
                 new List<string> { "x", "y" }));
             Assert.IsFalse(result.IsOk);
+            StringAssert.Contains("Spread", result.Message);
         }
 
         [Test]
@@ -361,6 +370,7 @@ namespace Kismeta.Core.Tests
             // Force Codex A so slot 0 = "Any Three Mars". Give 3 Mars cards (minor.cups.seven.1).
             session.Players[0].AssignedCodex = CodexVariant.A;
             GiveMarsCards(session, 0, 3);
+            SetSeason(session, Season.Summer);
             var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsTrue(result.IsOk, result.Message);
@@ -372,8 +382,10 @@ namespace Kismeta.Core.Tests
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Autumn);
             var result  = session.Apply(new FireStoneCommand(0, 0));
             Assert.IsFalse(result.IsOk, "Firing a Dormant slot should fail.");
+            StringAssert.Contains("Active", result.Message);
         }
 
         [Test]
@@ -383,6 +395,7 @@ namespace Kismeta.Core.Tests
             var session = SetupSession(db, codexDb);
             ActivateSlot(session, db, 0, 0);
             session.Players[0].StoneState = StoneState.Stasis;
+            SetSeason(session, Season.Autumn);
             var result = session.Apply(new FireStoneCommand(0, 0));
             Assert.IsFalse(result.IsOk);
         }
@@ -411,6 +424,7 @@ namespace Kismeta.Core.Tests
             session.Board.RoundNumber++; // current round > FiredAtRound
 
             var before = player.StonePosition;
+            SetSeason(session, Season.Autumn);
             var result = session.Apply(new TemperCommand(0));
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.AreEqual(before.Advance().Value, session.Players[0].StonePosition.Value);
@@ -423,6 +437,7 @@ namespace Kismeta.Core.Tests
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
             session.Players[1].StoneState = StoneState.Forging;
+            SetSeason(session, Season.Autumn);
             var result = session.Apply(new InitiateOppositionCommand(0, 1));
             Assert.IsTrue(result.IsOk, result.Message);
             // One of the two players must be in Stasis
@@ -481,14 +496,20 @@ namespace Kismeta.Core.Tests
         // ─── WinterRules tests ─────────────────────────────────────────────────────
 
         [Test]
-        public void EnforceLimits_Trims_Spread_To_5()
+        public void DiscardToLimit_Trims_Spread_To_5()
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
-            GivePlayerCards(session, 0, 8); // gives 8+ spread cards
-            Assert.Greater(session.Players[0].Spread.Count, 5, "Setup check: player should have >5 cards.");
-            session.Apply(new EnforceCardLimitsCommand());
-            Assert.LessOrEqual(session.Players[0].Spread.Count, 5);
+            var player  = session.Players[0];
+            player.Spread.Clear();
+            GivePlayerCards(session, 0, 8);
+            Assert.Greater(player.Spread.Count, 5, "Setup check: player should have >5 cards.");
+
+            var toDiscard = player.Spread.GetRange(0, player.Spread.Count - 5);
+            var result = session.Apply(new DiscardToLimitCommand(0, toDiscard, new List<string>()));
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(5, player.Spread.Count);
         }
 
         [Test]
@@ -573,6 +594,7 @@ namespace Kismeta.Core.Tests
             // Slot 0 = Any Three Mars, Slot 1 = Any Three Venus, etc.
             session.Players[playerId].AssignedCodex = CodexVariant.A;
             GiveMarsCards(session, playerId, 3);
+            SetSeason(session, Season.Summer);
             var spread = session.Players[playerId].Spread;
             var cards  = LastSpreadCards(session.Players[playerId], 3);
             var result = session.Apply(new ActivateCrucibleCommand(playerId, slotIdx, cards));
@@ -672,9 +694,11 @@ namespace Kismeta.Core.Tests
                 session.RegisterCard(inst);
                 session.Players[0].Spread.Add(id);
             }
+            SetSeason(session, Season.Summer);
             var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsFalse(result.IsOk, "Wrong planet cards should not satisfy the formula.");
+            StringAssert.Contains("Formula not satisfied", result.Message);
         }
 
         [Test]
@@ -686,6 +710,7 @@ namespace Kismeta.Core.Tests
             session.Players[0].AssignedCodex = CodexVariant.A;
             Assert.IsTrue(session.Players[0].CrucibleSlots[0].HasCoal, "Slot should start with coal.");
             GiveMarsCards(session, 0, 3);
+            SetSeason(session, Season.Summer);
             var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsTrue(result.IsOk, result.Message);
@@ -710,6 +735,7 @@ namespace Kismeta.Core.Tests
             }
             var spread = session.Players[0].Spread;
             var cards  = spread.GetRange(spread.Count - 3, 3);
+            SetSeason(session, Season.Summer);
             var result = session.Apply(new ActivateCrucibleCommand(0, 1, cards));
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.IsTrue(session.Players[0].IsCauldronLit(Suit.Cups),
@@ -734,6 +760,7 @@ namespace Kismeta.Core.Tests
                 session.Players[0].Spread.Add(id);
                 wandsIds.Add(id);
             }
+            SetSeason(session, Season.Summer);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, wandsIds));
             Assert.IsTrue(result.IsOk, result.Message);
         }
@@ -1165,6 +1192,115 @@ namespace Kismeta.Core.Tests
 
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.AreEqual(3, player.Spread.Count, "Spread count unchanged when already within limit.");
+        }
+
+        // ─── TradeService tests ────────────────────────────────────────────────────
+
+        static List<string> PopulateSpread(GameSession session, int playerId, int count, string prefix)
+        {
+            var ids = new List<string>();
+            var player = session.Players[playerId];
+            player.Spread.Clear();
+            for (int i = 0; i < count; i++)
+            {
+                string id = $"{prefix}-p{playerId}-{i}";
+                var c = new CardInstance(id, "minor.cups.seven.1", CardZone.Spread, playerId);
+                session.RegisterCard(c);
+                player.Spread.Add(id);
+                ids.Add(id);
+            }
+            return ids;
+        }
+
+        [Test]
+        public void Trade_MagnusMisaligned_1For1_Rejected()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, mode: GameMode.MagnusAlchemist);
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[1].CurrentSign = ZodiacSign.Gemini;
+
+            var offer = PopulateSpread(session, 0, 1, "trade");
+            var request = PopulateSpread(session, 1, 1, "trade");
+
+            var trade = new TradeService(db);
+            var result = trade.TryTrade(session, 0, 1, offer, request);
+
+            Assert.IsFalse(result.IsOk, "Misaligned Magnus 1:1 trade should be rejected.");
+        }
+
+        [Test]
+        public void Trade_MagnusMisaligned_2For1_Accepted()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, mode: GameMode.MagnusAlchemist);
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[1].CurrentSign = ZodiacSign.Gemini;
+
+            var offer = PopulateSpread(session, 0, 2, "trade");
+            var request = PopulateSpread(session, 1, 1, "trade");
+
+            var trade = new TradeService(db);
+            var result = trade.TryTrade(session, 0, 1, offer, request);
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(1, session.Players[0].Spread.Count);
+            Assert.AreEqual(2, session.Players[1].Spread.Count);
+        }
+
+        [Test]
+        public void Trade_MagnusMisaligned_GiftOnly_Accepted()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, mode: GameMode.MagnusAlchemist);
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[1].CurrentSign = ZodiacSign.Gemini;
+
+            var offer = PopulateSpread(session, 0, 2, "trade");
+            PopulateSpread(session, 1, 1, "trade");
+
+            var trade = new TradeService(db);
+            var result = trade.TryTrade(session, 0, 1, offer, new List<string>());
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(0, session.Players[0].Spread.Count);
+            Assert.AreEqual(3, session.Players[1].Spread.Count);
+        }
+
+        [Test]
+        public void Trade_MagnusAligned_1For1_Accepted()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, mode: GameMode.MagnusAlchemist);
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[1].CurrentSign = ZodiacSign.Leo;
+
+            var offer = PopulateSpread(session, 0, 1, "trade");
+            var request = PopulateSpread(session, 1, 1, "trade");
+
+            var trade = new TradeService(db);
+            var result = trade.TryTrade(session, 0, 1, offer, request);
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(1, session.Players[0].Spread.Count);
+            Assert.AreEqual(1, session.Players[1].Spread.Count);
+        }
+
+        [Test]
+        public void Trade_QuickplayMisaligned_1For1_Accepted()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, mode: GameMode.Quickplay);
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[1].CurrentSign = ZodiacSign.Gemini;
+
+            var offer = PopulateSpread(session, 0, 1, "trade");
+            var request = PopulateSpread(session, 1, 1, "trade");
+
+            var trade = new TradeService(db);
+            var result = trade.TryTrade(session, 0, 1, offer, request);
+
+            Assert.IsTrue(result.IsOk, result.Message);
         }
 
         private sealed class SeededContestRng : System.Random

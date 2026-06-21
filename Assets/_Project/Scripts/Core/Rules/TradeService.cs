@@ -62,6 +62,11 @@ namespace Kismeta.Core.Rules
                     return CommandResult.Invalid($"Card {id} is Major Arcana and cannot be traded.");
             }
 
+            if (!PlayerAspectAlignment.IsMagnusTradeRatioValid(session, initiatorId, targetId,
+                    offerCardIds.Count, requestCardIds.Count))
+                return CommandResult.Invalid(
+                    "Misaligned Magnus trade requires offering 2 cards for every 1 received.");
+
             // Execute the swap
             foreach (var id in offerCardIds)
             {
