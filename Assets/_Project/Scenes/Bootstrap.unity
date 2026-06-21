@@ -286,7 +286,6 @@ GameObject:
   - component: {fileID: 1726667748}
   - component: {fileID: 1726667747}
   - component: {fileID: 1726667746}
-  - component: {fileID: 1726667745}
   - component: {fileID: 1726667744}
   - component: {fileID: 1726667754}
   - component: {fileID: 1726667753}
@@ -352,7 +351,6 @@ MonoBehaviour:
   _panelSettings: {fileID: 11400000, guid: 2f562a8366d18d844b573c8bef474941, type: 2}
   _appShell: {fileID: 9197481963319205126, guid: ceef0b16fa468564585f12f760e727cc, type: 3}
   _titleScreen: {fileID: 9197481963319205126, guid: b44be3fc0d0a8944a96a90543cf35210, type: 3}
-  _gameplayHud: {fileID: 9197481963319205126, guid: 500f094547886df429cac57944e79ac7, type: 3}
   _waitingHud: {fileID: 9197481963319205126, guid: 23c9356e19d8a3343a869197fd22074c, type: 3}
   _setupSheet: {fileID: 9197481963319205126, guid: f349b93fc3fde7647b0c740e772f9ca7, type: 3}
   _joinScreen: {fileID: 9197481963319205126, guid: 519a817f310314b48bb262c3b086169d, type: 3}
@@ -420,18 +418,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59b760b6168224440a781f26198f437c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.WaitingHudController
---- !u!114 &1726667745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1726667741}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 854f172a5ad20b141a737b6e7323a2e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.GameplayHudController
 --- !u!114 &1726667746
 MonoBehaviour:
   m_ObjectHideFlags: 0

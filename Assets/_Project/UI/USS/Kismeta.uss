@@ -387,11 +387,23 @@
     overflow: hidden;
 }
 
+/* ---------- Accessibility ---------- */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0.01;
+    margin: 0;
+    padding: 0;
+}
+
 /* ---------- Cards ---------- */
 .card-chip {
     width: var(--card-chip-w);
     height: var(--card-chip-h);
     flex-shrink: 0;
+    position: relative;
     border-radius: var(--radius-sm);
     border-width: 1px;
     border-color: var(--gold-deep);
@@ -400,6 +412,15 @@
 }
 
 .card-chip--selected { border-width: 2px; border-color: var(--gold-bright); }
+.card-chip__align-dot {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    width: 5px;
+    height: 5px;
+    border-radius: 3px;
+    background-color: var(--gold-bright);
+}
 .card-chip--wands { background-color: var(--suit-wands); }
 .card-chip--cups { background-color: var(--suit-cups); }
 .card-chip--pentacles { background-color: var(--suit-pentacles); }

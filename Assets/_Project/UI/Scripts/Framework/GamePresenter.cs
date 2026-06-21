@@ -40,6 +40,7 @@ namespace Kismeta.UI
         private Season _lastSeason = Season.Spring;
         private CeremonyStep? _lastCeremonyStep;
         private bool _adeptModalOpen;
+        private bool _fateModalOpen;
 
         public CommandBridge Bridge => _bridge;
         public bool IsInGame => _inGame;
@@ -108,6 +109,7 @@ namespace Kismeta.UI
             _inGame = false;
             _lastCeremonyStep = null;
             _adeptModalOpen = false;
+            _fateModalOpen = false;
             DismissAllOverlays();
         }
 
@@ -162,6 +164,7 @@ namespace Kismeta.UI
                 _lastSeason = season;
                 RouteGameplay();
                 TryOpenAdeptModal(hint);
+                TryOpenFateModal(hint);
                 RefreshActiveScreen();
                 return;
             }
@@ -171,6 +174,8 @@ namespace Kismeta.UI
                 _humanPending = false;
                 _lastHint = hint;
                 _lastSeason = season;
+                if (!IsFateDecisionHint(hint))
+                    _fateModalOpen = false;
                 RouteGameplay();
             }
         }
@@ -227,6 +232,53 @@ namespace Kismeta.UI
 
             RouteGameplay();
             RefreshActiveScreen();
+        }
+
+        private void TryOpenFateModal(ActionHint hint)
+        {
+            if (_endOverlays == null || _session == null) return;
+            if (!IsFateDecisionHint(hint)) return;
+            if (_fateModalOpen && _endOverlays.IsOpen) return;
+
+            _fateModalOpen = true;
+            switch (hint)
+            {
+                case ActionHint.FateMoonDecision:
+                    _endOverlays.ShowMoonDecision();
+                    break;
+                case ActionHint.FateReagentChoice:
+                    _endOverlays.ShowFateReagentChoice();
+                    break;
+                case ActionHint.FateLoversTargetPick:
+                    _endOverlays.ShowLoversTargetPick();
+                    break;
+                case ActionHint.FateLoversChoice:
+                    var fateId = _loop?.PendingCardId;
+                    int drawerId = FindFateDrawerId(fateId);
+                    _endOverlays.ShowLoversChoice(drawerId >= 0 ? drawerId : 0);
+                    break;
+            }
+        }
+
+        static bool IsFateDecisionHint(ActionHint hint) => hint switch
+        {
+            ActionHint.FateMoonDecision or ActionHint.FateReagentChoice
+                or ActionHint.FateLoversTargetPick or ActionHint.FateLoversChoice => true,
+            _ => false
+        };
+
+        int FindFateDrawerId(string? fateCardId)
+        {
+            if (_session == null || string.IsNullOrEmpty(fateCardId)) return -1;
+            foreach (var p in _session.Players)
+            {
+                foreach (var id in p.Arcanum)
+                {
+                    if (id == fateCardId)
+                        return p.PlayerId;
+                }
+            }
+            return -1;
         }
 
         private void TryOpenAdeptModal(ActionHint hint)
@@ -325,6 +377,7 @@ namespace Kismeta.UI
             _lastHint = ActionHint.None;
             _lastCeremonyStep = null;
             _adeptModalOpen = false;
+            _fateModalOpen = false;
             RouteGameplay();
         }
 
@@ -463,7 +516,11 @@ namespace Kismeta.UI
             _endOverlays.OnDuelFromTable = id => _contestOverlays.ShowDuel(id);
             _endOverlays.OnGambitFromTable = id => _contestOverlays.ShowGambit(id);
             _endOverlays.OnTradeFromTable = id => _contestOverlays.ShowTrade(id);
-            _endOverlays.OnOverlayDismissed = () => _adeptModalOpen = false;
+            _endOverlays.OnOverlayDismissed = () =>
+            {
+                _adeptModalOpen = false;
+                _fateModalOpen = false;
+            };
 
             var spring = _router.GetController<SpringHubController>(ScreenIds.SpringHub);
             if (spring != null)
@@ -495,6 +552,7 @@ namespace Kismeta.UI
             _autumnOverlays?.Dismiss();
             _endOverlays?.Dismiss();
             _adeptModalOpen = false;
+            _fateModalOpen = false;
         }
 
         private static string MapCeremonyScreen(CeremonyStep step) => step switch
@@ -595,8 +653,6 @@ namespace Kismeta.UI
                 victory.BindState(_session, _chronicle);
             else if (controller is ChronicleController chronicleCtrl && _chronicle != null)
                 chronicleCtrl.BindState(_session, _chronicle);
-            else if (controller is GameplayHudController hud)
-                hud.BindState(_session, _loop, _bridge);
             else if (controller is WaitingHudController waiting)
                 waiting.BindState(_session, _loop);
             else if (controller is ResumeScreenController resumeCtrl)

@@ -13,6 +13,7 @@
          background sprite + glow on .victory-hero. Serif font for the title.
          ============================================================ -->
     <engine:VisualElement name="victory" class="screen" style="background-color: rgb(24,16,4);">
+        <engine:Label text="Victory — winner coronation and final standings by stone position." class="sr-only" />
 
         <engine:VisualElement class="victory-hero">
             <engine:VisualElement class="victory-sigil">

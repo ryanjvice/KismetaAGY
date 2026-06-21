@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Entities;
+using Kismeta.UI.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -36,15 +37,10 @@ namespace Kismeta.UI
         }
 
         /// <summary>Animate a die label through random faces, settling on <paramref name="result"/>.</summary>
-        protected IEnumerator RollDie(Label? pip, int result, int frames = 12, float step = 0.07f)
+        protected IEnumerator RollDie(Label? pip, int result, int frames = DieAnimator.DefaultFrames,
+            float step = DieAnimator.DefaultStepSec)
         {
-            if (pip == null) yield break;
-            for (int i = 0; i < frames; i++)
-            {
-                pip.text = UnityEngine.Random.Range(1, 13).ToString();
-                yield return new WaitForSeconds(step);
-            }
-            pip.text = result.ToString();
+            yield return DieAnimator.RollLabel(pip, result, frames, step);
         }
 
         protected IEnumerator WaitForEvent<T>(GameSession session, Action<T> onReceived, float timeout = 3f)

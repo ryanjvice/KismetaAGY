@@ -125,7 +125,7 @@ namespace Kismeta.UI.Controllers
             if (resolved != null)
             {
                 yield return RollDie(Lbl("die-you-pip"), resolved.AttackRoll);
-                yield return RollDie(Lbl("die-foe-pip"), resolved.DefendRoll, 8);
+                yield return RollDie(Lbl("die-foe-pip"), resolved.DefendRoll);
                 bool won = resolved.WinnerId == _playerId;
                 var outcome = Lbl("roll-outcome");
                 if (outcome != null)

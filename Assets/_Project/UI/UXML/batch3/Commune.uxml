@@ -16,6 +16,7 @@
          (not shown here — they are not movable).
          ============================================================ -->
     <engine:VisualElement name="commune" class="screen screen--spring">
+        <engine:Label text="Commune — arrange cards between spread and hand before the age lock." class="sr-only" />
 
         <engine:VisualElement class="statusbar">
             <engine:VisualElement class="statusbar__left">

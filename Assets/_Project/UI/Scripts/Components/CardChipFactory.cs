@@ -17,6 +17,13 @@ namespace Kismeta.UI.Components
             if (selected || aligned)
                 chip.AddToClassList("card-chip--selected");
 
+            if (aligned)
+            {
+                var dot = new VisualElement();
+                dot.AddToClassList("card-chip__align-dot");
+                chip.Add(dot);
+            }
+
             var rank = new Label(rankLabel);
             rank.AddToClassList("card-chip__rank");
             chip.Add(rank);

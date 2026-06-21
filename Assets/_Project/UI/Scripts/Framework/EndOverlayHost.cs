@@ -98,6 +98,42 @@ namespace Kismeta.UI
                 _modals?.BindFate(_session, fateInstanceId, arcanaNum);
         }
 
+        public void ShowMoonDecision()
+        {
+            EnsureControllers();
+            _reopenCardTableAfterInspect = false;
+            ShowOverlay(_cardModals, _modals, WireModals, ActiveOverlay.CardModals);
+            if (_session != null && _bridge != null)
+                _modals?.BindMoonDecision(_session, _bridge);
+        }
+
+        public void ShowFateReagentChoice()
+        {
+            EnsureControllers();
+            _reopenCardTableAfterInspect = false;
+            ShowOverlay(_cardModals, _modals, WireModals, ActiveOverlay.CardModals);
+            if (_session != null && _bridge != null)
+                _modals?.BindReagentChoice(_session, _bridge);
+        }
+
+        public void ShowLoversTargetPick()
+        {
+            EnsureControllers();
+            _reopenCardTableAfterInspect = false;
+            ShowOverlay(_cardModals, _modals, WireModals, ActiveOverlay.CardModals);
+            if (_session != null && _bridge != null)
+                _modals?.BindLoversTarget(_session, _bridge);
+        }
+
+        public void ShowLoversChoice(int drawerId)
+        {
+            EnsureControllers();
+            _reopenCardTableAfterInspect = false;
+            ShowOverlay(_cardModals, _modals, WireModals, ActiveOverlay.CardModals);
+            if (_session != null && _bridge != null)
+                _modals?.BindLoversChoice(_session, _bridge, drawerId);
+        }
+
         public void Dismiss()
         {
             _active = ActiveOverlay.None;
@@ -142,6 +178,7 @@ namespace Kismeta.UI
             _modals.OnInspectDone = OnModalDone;
             _modals.OnAdeptCompleted = OnModalDone;
             _modals.OnFateAccept = OnModalDone;
+            _modals.OnFateDecisionCompleted = OnModalDone;
         }
 
         void OnModalDone()

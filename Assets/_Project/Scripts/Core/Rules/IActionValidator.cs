@@ -5,7 +5,7 @@ namespace Kismeta.Core.Rules
 {
     /// <summary>
     /// Gate that checks whether a command is currently legal given the session state,
-    /// without executing it. Used by PlayerDirector before applying commands.
+    /// Used by command validation before applying player actions.
     /// </summary>
     public interface IActionValidator
     {

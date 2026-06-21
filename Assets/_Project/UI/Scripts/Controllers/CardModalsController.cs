@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
 using Kismeta.UI;
 using Kismeta.UI.Components;
@@ -12,19 +13,32 @@ namespace Kismeta.UI.Controllers
 {
     public sealed class CardModalsController : OverlayController
     {
-        public enum Modal { Inspect, Adept, Fate }
+        public enum Modal
+        {
+            Inspect, Adept, Fate,
+            Moon, ReagentChoice, LoversTarget, LoversChoice
+        }
+
+        static readonly string[] AllModalRoots =
+        {
+            "inspect-modal", "adept-modal", "fate-modal",
+            "moon-modal", "fate-reagent-modal", "lovers-target-modal", "lovers-choice-modal"
+        };
 
         GameSession? _session;
         CommandBridge? _bridge;
         string? _inspectCardId;
         string? _adeptCardId;
         readonly HashSet<string> _payment = new();
+        readonly HashSet<string> _moonKeep = new();
         string? _swapOutAdeptId;
         int _playerId = -1;
+        int _loversDrawerId = -1;
 
         public Action? OnInspectDone;
         public Action? OnAdeptCompleted;
         public Action? OnFateAccept;
+        public Action? OnFateDecisionCompleted;
 
         protected override void Wire()
         {
@@ -33,14 +47,30 @@ namespace Kismeta.UI.Controllers
             Btn("adept-place")!.clicked += OnAdeptPlace;
             Btn("adept-hold")!.clicked += OnAdeptHold;
             Btn("fate-accept")!.clicked += () => OnFateAccept?.Invoke();
+            Btn("moon-confirm")!.clicked += OnMoonConfirm;
+            Btn("lovers-draw-btn")!.clicked += OnLoversDraw;
         }
 
         public void Show(Modal which)
         {
             if (Root == null) return;
-            El("inspect-modal")!.style.display = which == Modal.Inspect ? DisplayStyle.Flex : DisplayStyle.None;
-            El("adept-modal")!.style.display = which == Modal.Adept ? DisplayStyle.Flex : DisplayStyle.None;
-            El("fate-modal")!.style.display = which == Modal.Fate ? DisplayStyle.Flex : DisplayStyle.None;
+            string active = which switch
+            {
+                Modal.Inspect => "inspect-modal",
+                Modal.Adept => "adept-modal",
+                Modal.Fate => "fate-modal",
+                Modal.Moon => "moon-modal",
+                Modal.ReagentChoice => "fate-reagent-modal",
+                Modal.LoversTarget => "lovers-target-modal",
+                Modal.LoversChoice => "lovers-choice-modal",
+                _ => "inspect-modal"
+            };
+            foreach (var name in AllModalRoots)
+            {
+                var el = El(name);
+                if (el != null)
+                    el.style.display = name == active ? DisplayStyle.Flex : DisplayStyle.None;
+            }
         }
 
         public void BindInspect(GameSession session, string cardInstanceId)
@@ -57,7 +87,7 @@ namespace Kismeta.UI.Controllers
             _session = session;
             _bridge = bridge;
             _adeptCardId = adeptInstanceId;
-            _playerId = SummerActionBindings.ResolvePlayerId(session, bridge);
+            _playerId = ResolvePlayerId(session, bridge);
             _payment.Clear();
             _swapOutAdeptId = null;
             Show(Modal.Adept);
@@ -98,6 +128,110 @@ namespace Kismeta.UI.Controllers
                 row.Add(new Label(def.EffectText) { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal } });
                 effectsHost.Add(row);
             }
+        }
+
+        public void BindMoonDecision(GameSession session, CommandBridge bridge)
+        {
+            _session = session;
+            _bridge = bridge;
+            _playerId = ResolvePlayerId(session, bridge);
+            _moonKeep.Clear();
+            Show(Modal.Moon);
+            RefreshMoonUi();
+        }
+
+        public void BindReagentChoice(GameSession session, CommandBridge bridge)
+        {
+            _session = session;
+            _bridge = bridge;
+            _playerId = ResolvePlayerId(session, bridge);
+            Show(Modal.ReagentChoice);
+
+            var host = El("reagent-buttons");
+            if (host == null) return;
+            FateDecisionBindings.PopulateReagentButtons(host, type =>
+            {
+                if (_bridge != null && _playerId >= 0
+                    && _bridge.TrySubmit(new FateReagentChoiceCommand(_playerId, type)))
+                    OnFateDecisionCompleted?.Invoke();
+            });
+        }
+
+        public void BindLoversTarget(GameSession session, CommandBridge bridge)
+        {
+            _session = session;
+            _bridge = bridge;
+            _playerId = ResolvePlayerId(session, bridge);
+            Show(Modal.LoversTarget);
+
+            var host = El("lovers-target-buttons");
+            if (host == null) return;
+            FateDecisionBindings.PopulateLoversTargetButtons(host, session, _playerId, targetId =>
+            {
+                if (_bridge != null && _playerId >= 0
+                    && _bridge.TrySubmit(new FateLoversTargetCommand(_playerId, targetId)))
+                    OnFateDecisionCompleted?.Invoke();
+            });
+        }
+
+        public void BindLoversChoice(GameSession session, CommandBridge bridge, int drawerId)
+        {
+            _session = session;
+            _bridge = bridge;
+            _playerId = ResolvePlayerId(session, bridge);
+            _loversDrawerId = drawerId;
+            Show(Modal.LoversChoice);
+
+            if (Lbl("lovers-choice-sub") != null)
+                Lbl("lovers-choice-sub")!.text =
+                    $"Reward for {PlayerUiNames.ShortName(drawerId)}";
+
+            var host = El("lovers-reagent-buttons");
+            if (host == null) return;
+            FateDecisionBindings.PopulateReagentButtons(host, type =>
+            {
+                if (_bridge != null && _playerId >= 0
+                    && _bridge.TrySubmit(new FateLoversChoiceCommand(_playerId, false, type)))
+                    OnFateDecisionCompleted?.Invoke();
+            });
+        }
+
+        void RefreshMoonUi()
+        {
+            if (_session == null) return;
+            var host = El("moon-cards");
+            if (host == null) return;
+            FateDecisionBindings.PopulateMoonCards(host, _session, _moonKeep, RefreshMoonUi);
+            if (Lbl("moon-count") != null)
+                Lbl("moon-count")!.text = $"Keeping: {_moonKeep.Count} / 2";
+            Btn("moon-confirm")?.SetEnabled(_moonKeep.Count == 2);
+        }
+
+        void OnMoonConfirm()
+        {
+            if (_bridge == null || _playerId < 0 || _moonKeep.Count != 2) return;
+            var keep = new List<string>(_moonKeep);
+            if (_bridge.TrySubmit(new FateMoonDecisionCommand(_playerId, keep)))
+            {
+                _moonKeep.Clear();
+                OnFateDecisionCompleted?.Invoke();
+            }
+        }
+
+        void OnLoversDraw()
+        {
+            if (_bridge == null || _playerId < 0) return;
+            if (_bridge.TrySubmit(new FateLoversChoiceCommand(_playerId, true)))
+                OnFateDecisionCompleted?.Invoke();
+        }
+
+        static int ResolvePlayerId(GameSession session, CommandBridge bridge)
+        {
+            if (bridge.PendingController != null)
+                return bridge.PendingController.Slot.Index;
+            if (bridge.ActivePlayerId >= 0)
+                return bridge.ActivePlayerId;
+            return session.Players.Count > 0 ? session.Players[0].PlayerId : 0;
         }
 
         void RebuildAdeptPaymentUi()

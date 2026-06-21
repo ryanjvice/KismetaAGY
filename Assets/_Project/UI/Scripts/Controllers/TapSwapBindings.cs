@@ -57,7 +57,11 @@ namespace Kismeta.UI.Controllers
                 chip.Add(tag);
             }
 
-            chip.RegisterCallback<ClickEvent>(_ => onTap(cardId, fromSpread));
+            chip.RegisterCallback<ClickEvent>(_ =>
+            {
+                UiMotion.PulseChip(chip);
+                onTap(cardId, fromSpread);
+            });
             return chip;
         }
 

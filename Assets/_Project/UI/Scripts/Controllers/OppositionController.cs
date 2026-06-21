@@ -208,7 +208,7 @@ namespace Kismeta.UI.Controllers
             if (_session != null)
             {
                 var cosmic = _session.Board.CosmicAgeSign;
-                yield return RollDie(Lbl("die-set-pip"), UnityEngine.Random.Range(1, 13), 10);
+                yield return RollDie(Lbl("die-set-pip"), UnityEngine.Random.Range(1, 13));
                 if (Lbl("set-sign") != null)
                 {
                     Lbl("set-sign")!.style.display = DisplayStyle.Flex;

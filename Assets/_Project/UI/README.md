@@ -11,10 +11,10 @@ Unity UI Toolkit assets ported from `Docs/wireframes/`. This folder is the **pro
 | `UXML/main/` | Season main scenes: SpringHub, SummerMain, AutumnMain, WinterHub |
 | `UXML/batch2/` | Ceremony screens: RoundOpen, AgeOpening, season intros, AgeClosing |
 | `UXML/batch3/` | Spring/Winter step screens: Commune, WinterUnlock, FatefulWager, CardLimits |
-| `UXML/shell/` | `AppShell.uxml`, `GameplayHud` (dev fallback), `WaitingHud` |
+| `UXML/shell/` | `AppShell.uxml`, `WaitingHud` |
 | `Scripts/Framework/` | ViewportLayout, ScreenRouter, GamePresenter, CommandBridge |
 | `Scripts/Controllers/` | Shell + season main scene controllers |
-| `Scripts/Components/` | CardChipFactory, RivalStripBuilder |
+| `Scripts/Components/` | CardChipFactory, DieAnimator, UiMotion, FateDecisionBindings, RivalStripBuilder |
 | `Scripts/Setup/` | `UiSetupConfig`, mapper to Core `GameMode` |
 | `Settings/` | `KismetaPanelSettings.asset` (380×844 **reference** only) |
 | `Editor/` | Menu items under **Kismeta → UI** |
@@ -52,7 +52,7 @@ Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `
 - **Overlay architecture:** Summer sub-flows use `ViewportLayout` overlays (`SummerOverlayHost`) while `SummerMain` stays the active `ScreenRouter` screen.
 - **Hub:** Craft / Consort sheets, direct Activate, Pass → End Summer confirm modal.
 - **Commands:** `CraftReagentCommand`, `ActivateCrucibleCommand`, `BuildAstralHouseCommand`, `PlaceCardWardCommand`, `PassCrucibleActionCommand` (Summer pass fix in `CommandBridge`).
-- **Deferred:** Trade / Duel / Gambit (Consort rows disabled); Card Table stub.
+- **Consort sheet** links to Trade / Duel / Gambit via `ContestOverlayHost` (Batch 5).
 
 | Screen | Controller | Command |
 |--------|------------|---------|
@@ -90,8 +90,7 @@ Title → setup → agekeeper → RoundOpen → AgeOpening → SpringIntro → *
 - **Routing:** `GamePresenter` maps `Season` → `SpringHub` / `SummerMain` / `AutumnMain` / `WinterHub` on human turns; `WaitingHud` while AI decides.
 - **Bind:** Status bar, rivals strip, spread dock, step rails (Spring/Winter), cauldrons (Summer), stone label (Autumn) from `GamePublicView`.
 - **Pass:** Summer, Autumn, and Winter main scenes wire **Pass** via `CommandBridge` during free-action phases.
-- **Stubs:** Craft/fire actions and card table log until later batches.
-- **`GameplayHud`** remains registered for dev fallback but is no longer used in normal play routing.
+- **Card table** opens from season menu buttons via `EndOverlayHost` (Batch 7).
 
 ## Phase 2 complete — Batch 1 shell
 
@@ -106,7 +105,7 @@ Title → setup → agekeeper → RoundOpen → AgeOpening → SpringIntro → *
 
 - Title → setup → agekeeper → season main scenes / `WaitingHud`
 - Setup sheet uses `SetupSheetState`; maps wireframe "Magnus" to `GameMode.MagnusAlchemist`
-- IMGUI `GameDebugUI` remains available via **Debug Ui Fallback** on `GameBootstrap`
+- **`GameDebugUI`** (IMGUI) is **editor/dev-build only** — optional via `_debugUiFallback` on `GameBootstrap`
 
 ## Bootstrap setup
 
@@ -237,7 +236,7 @@ AdeptDecision hint ──► CardModals adept (payment picker)
 | Card table (#52) | `EndOverlayHost` | Public cards only; Summer duel/gambit/trade launchers |
 | Inspect (#53) | `EndOverlayHost` | Tap any spread chip; alignment vs cosmic age |
 | Adept (#54) | `EndOverlayHost` | 3-card payment + optional Arcanum swap |
-| Fate (#55) | `EndOverlayHost` | Informational on `FateResolvedEvent` (auto fates only) |
+| Fate (#55) | `EndOverlayHost` | Auto-resolve informational modal; async Moon/Fool/Lovers use decision modals (Phase 10) |
 
 ### Play-test checklist
 
@@ -249,5 +248,29 @@ AdeptDecision hint ──► CardModals adept (payment picker)
 
 ### Caveats
 
-- Async Fate UIs (Moon, Fool, Lovers) are not in production UI yet; use `_debugUiFallback` or AI resolution.
 - Tarot art sprites and Victory halo remain USS/icon placeholders.
+
+## Phase 10 — Cleanup
+
+Production UI integration is complete. Release builds use UI Toolkit only; no `_debugUiFallback` required.
+
+```
+PendingHint Fate* ──► EndOverlayHost (Moon / Reagent / Lovers modals)
+CommandBridge.TrySubmit ──► HotSeatController (unblocks GameLoop)
+```
+
+| Area | Notes |
+|------|-------|
+| Async Fate | Moon keep-2, Fool reagent, Lovers target/reward modals in `CardModals.uxml` |
+| Debug | `GameDebugUI` compiled only in Editor / Development builds |
+| Motion | `DieAnimator` (12×70ms); agekeeper, RoundOpen, contests; sheet rise; Spring wheel settle; Commune chip pulse |
+| Accessibility | `.sr-only` summaries on major screens; alignment corner dots on chips; chart point shapes |
+| Dead code | `PlayerDirector` removed; `GameplayHud` unregistered from router |
+
+### Play-test gate (no debug fallback)
+
+1. Full Great Year — Title → setup → play through Victory → New Great Year
+2. Human draws **Moon**, **Fool**, and **Lovers** in a 3+ player Spring (decision modals appear)
+3. Agekeeper contest + RoundOpen dice tumble before continue/submit
+4. Card table from Summer menu → inspect → duel rival
+5. `_debugUiFallback` **off** throughout

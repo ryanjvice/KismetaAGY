@@ -542,6 +542,16 @@ Fates resolve on draw and stay face-up after. Effect varies per Fate (boon / pen
 
 Tracked design questions and unbuilt screens noted during the workshop:
 
+**Shipped in production UI (Phases 1–10):**
+
+- Flow map (#1–55) — complete via `ScreenRouter` + overlay hosts
+- Codex shell — tabbed reference + search (static samples; full card DB is a content task)
+- Chronicle race chart — `ChronicleChartElement` (Painter2D)
+- Card table overlay — `EndOverlayHost` + `CardTableBindings`
+- Async Fate decision modals — Moon / Fool / Lovers in `CardModalsController`
+
+**Still future product work:**
+
 - **Court-card inspect variant** — conditional Wild Suits under certain ages.
 - **Set-awareness assist** — flag near-complete Activation/formula sets in Commune,
   Activate, and the inspect modal so players don't cannibalize them.
@@ -550,7 +560,6 @@ Tracked design questions and unbuilt screens noted during the workshop:
 - **Multiplayer turn-handoff** — pass-and-play / async "your turn" + hidden-hand
   protection between players.
 - **Tutorial / onboarding** — the guided first game ("How to play").
-- **Codex** — searchable reference for cards, the 12 ages & effects, states, glossary.
 - **Besieged Bonus state** — round-level tracking of stacking opposition-defense bonus.
 - **"No re-gambit this round"** — lock a defender after a failed gambit.
 - **Mode-awareness** — Quickplay/Magnus rule deltas must propagate to Build cost,
@@ -558,6 +567,7 @@ Tracked design questions and unbuilt screens noted during the workshop:
 - **Hub-style consistency** — align Spring (wheel + rail) and Winter (checklist)
   hub treatments if desired.
 - **Skippable intros** — a veteran toggle for the season/age ceremonies.
+- Tarot art sprites per card; Victory halo asset.
 
 ---
 

@@ -16,6 +16,7 @@
          Also resolves the pending Fateful Wager here (#9) before the reveal.
          ============================================================ -->
     <engine:VisualElement name="round-open" class="screen ceremony" style="background-color: rgb(10,8,16);">
+        <engine:Label text="Round open — Agekeeper casts the cosmic age die for this round." class="sr-only" />
 
         <engine:VisualElement class="ceremony-hero ceremony-hero--open" style="padding-bottom: 22px;">
             <engine:Label name="keeper-eyebrow" text="Iolanthe casts the age" class="ceremony-eyebrow" />

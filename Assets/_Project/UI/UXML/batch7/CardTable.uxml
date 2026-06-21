@@ -14,6 +14,7 @@
          emit hidden-hand cards. Stasis rows show "cannot be opposed".
          ============================================================ -->
     <engine:VisualElement name="card-table" class="screen card-table" style="background-color: rgb(19,16,15);">
+        <engine:Label text="Card table — survey public cards; your hand is visible; rivals show hidden counts only." class="sr-only" />
 
         <engine:VisualElement class="statusbar" style="background-color: rgb(28,22,14);">
             <engine:VisualElement class="statusbar__left">

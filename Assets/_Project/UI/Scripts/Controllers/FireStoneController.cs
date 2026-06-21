@@ -96,6 +96,7 @@ namespace Kismeta.UI.Controllers
             if (Lbl("track-target-val") != null) Lbl("track-target-val")!.text = target.ToString();
             if (Lbl("track-now-label") != null) Lbl("track-now-label")!.text = $"{player.StonePosition} · now";
             if (Lbl("track-target-label") != null) Lbl("track-target-label")!.text = "target";
+            UiMotion.PulseTrackNode(Root?.Q(className: "track-node--target"));
         }
 
         void RefreshAlignmentAndCost()

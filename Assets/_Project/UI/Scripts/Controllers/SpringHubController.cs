@@ -110,18 +110,20 @@ namespace Kismeta.UI.Controllers
         void BindWheelAndHarvest(GameSession session, PlayerState player)
         {
             var wheel = El("wheel-host");
-            if (wheel != null)
-            {
-                wheel.Clear();
-                var sign = player.CurrentSign;
-                var glyph = SignGlyph(sign);
-                var signLbl = new Label(glyph);
-                signLbl.style.fontSize = 36;
-                signLbl.style.unityTextAlign = TextAnchor.MiddleCenter;
-                signLbl.style.flexGrow = 1;
-                wheel.Add(signLbl);
+            if (wheel == null) return;
 
-                if (sign != ZodiacSign.None)
+            wheel.Clear();
+            var sign = player.CurrentSign;
+            var glyph = SignGlyph(sign);
+            var signLbl = new Label(glyph);
+            signLbl.style.fontSize = 36;
+            signLbl.style.unityTextAlign = TextAnchor.MiddleCenter;
+            signLbl.style.flexGrow = 1;
+            wheel.Add(signLbl);
+
+            UiMotion.AnimateWheelSettle(wheel, () =>
+            {
+                if (sign != ZodiacSign.None && wheel.childCount > 0)
                 {
                     var nameLbl = new Label(sign.ToString());
                     nameLbl.style.fontSize = 10;
@@ -129,7 +131,7 @@ namespace Kismeta.UI.Controllers
                     nameLbl.style.color = new StyleColor(new Color(0.5f, 0.77f, 0.66f));
                     wheel.Add(nameLbl);
                 }
-            }
+            });
 
             int harvestCount = CountMinorCards(session, player);
             if (Lbl("harvest-count") != null)

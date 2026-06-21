@@ -7,6 +7,7 @@
     <engine:Style src="../../USS/TitleScreen.uss" />
 
     <engine:VisualElement name="title-screen" class="screen" style="background-color: rgb(20,10,24);">
+        <engine:Label text="Title screen — start a new game, resume, join, or open the codex." class="sr-only" />
 
         <!-- ============================================================
              CEREMONIAL HEADER — frame broken (no status bar / dock).

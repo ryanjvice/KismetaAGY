@@ -56,7 +56,6 @@ namespace Kismeta.UI.Editor
         private const string CardTablePath = "Assets/_Project/UI/UXML/batch7/CardTable.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
-        private const string GameplayHudPath = "Assets/_Project/UI/UXML/shell/GameplayHud.uxml";
         private const string WaitingHudPath = "Assets/_Project/UI/UXML/shell/WaitingHud.uxml";
 
         [MenuItem("Kismeta/UI/Create Panel Settings")]
@@ -116,7 +115,6 @@ namespace Kismeta.UI.Editor
             EnsureComponent<ScreenRouter>(bootstrap.gameObject);
             EnsureComponent<GamePresenter>(bootstrap.gameObject);
             EnsureComponent<TitleScreenController>(bootstrap.gameObject);
-            EnsureComponent<GameplayHudController>(bootstrap.gameObject);
             EnsureComponent<WaitingHudController>(bootstrap.gameObject);
             EnsureComponent<JoinScreenController>(bootstrap.gameObject);
             EnsureComponent<ResumeScreenController>(bootstrap.gameObject);
@@ -186,7 +184,6 @@ namespace Kismeta.UI.Editor
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
             var appShell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AppShellPath);
             var title = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TitleScreenPath);
-            var gameplay = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameplayHudPath);
             var waiting = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
             var setup = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SetupSheetPath);
             var join = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(JoinScreenPath);
@@ -232,7 +229,6 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
             so.FindProperty("_appShell").objectReferenceValue = appShell;
             so.FindProperty("_titleScreen").objectReferenceValue = title;
-            so.FindProperty("_gameplayHud").objectReferenceValue = gameplay;
             so.FindProperty("_waitingHud").objectReferenceValue = waiting;
             so.FindProperty("_setupSheet").objectReferenceValue = setup;
             so.FindProperty("_joinScreen").objectReferenceValue = join;
@@ -310,7 +306,6 @@ namespace Kismeta.UI.Editor
             host.AddComponent<ScreenRouter>();
             host.AddComponent<GamePresenter>();
             host.AddComponent<TitleScreenController>();
-            host.AddComponent<GameplayHudController>();
             host.AddComponent<WaitingHudController>();
             host.AddComponent<JoinScreenController>();
             host.AddComponent<ResumeScreenController>();
@@ -378,13 +373,12 @@ namespace Kismeta.UI.Editor
             var winterUnlock = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterUnlockPath);
             var fatefulWager = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FatefulWagerPath);
             var cardLimits = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardLimitsPath);
-            var gameplayHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameplayHudPath);
             var waitingHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
             var cardModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
 
             var router = host.GetComponent<ScreenRouter>();
             router.ConfigureScreens(
-                titleScreen, gameplayHud, waitingHud, setupSheet,
+                titleScreen, null, waitingHud, setupSheet,
                 joinScreen, resumeScreen, codexScreen, agekeeperContest,
                 springHub, summerMain, autumnMain, winterHub,
                 roundOpen, ageOpening, springIntro, summerIntro,

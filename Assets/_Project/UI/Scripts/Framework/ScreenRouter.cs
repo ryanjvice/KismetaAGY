@@ -49,7 +49,7 @@ namespace Kismeta.UI
         /// <summary>Runtime wiring from <see cref="GameBootstrap"/> when assets are not set in the inspector.</summary>
         public void ConfigureScreens(
             VisualTreeAsset title,
-            VisualTreeAsset gameplayHud,
+            VisualTreeAsset? gameplayHud,
             VisualTreeAsset waitingHud,
             VisualTreeAsset setupSheet,
             VisualTreeAsset? join = null,
@@ -77,9 +77,10 @@ namespace Kismeta.UI
             var screens = new List<ScreenAsset>
             {
                 new() { Id = ScreenIds.Title, Uxml = title },
-                new() { Id = ScreenIds.GameplayHud, Uxml = gameplayHud },
                 new() { Id = ScreenIds.Waiting, Uxml = waitingHud },
             };
+            if (gameplayHud != null)
+                screens.Insert(1, new ScreenAsset { Id = ScreenIds.GameplayHud, Uxml = gameplayHud });
             if (join != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.Join, Uxml = join });
             if (resume != null)

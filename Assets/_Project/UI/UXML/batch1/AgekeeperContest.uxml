@@ -11,6 +11,7 @@
          NATIVE NOTE: animate die faces in C# (batch5 RollDie pattern).
          ============================================================ -->
     <engine:VisualElement name="agekeeper-contest" class="screen" style="background-color: rgb(12,8,18);">
+        <engine:Label text="Agekeeper contest — each alchemist rolls; highest becomes first Agekeeper." class="sr-only" />
 
         <engine:VisualElement style="padding: 28px 20px 12px; align-items: center;">
             <engine:Label text="determine the agekeeper" class="eyebrow" />

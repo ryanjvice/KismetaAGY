@@ -130,6 +130,25 @@
 .card-modal--inspect { background-color: rgb(14,10,20); border-color: rgb(90,43,43); }
 .card-modal--adept { background-color: rgb(18,10,24); border-color: rgb(90,58,122); }
 .card-modal--fate { background-color: rgb(10,14,24); border-color: rgb(58,90,138); }
+.card-modal--fate-decision { background-color: rgb(14,12,28); border-color: rgb(74,58,106); }
+
+.fate-chip-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.fate-reagent-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.fate-reagent-btn {
+    flex-grow: 1;
+    min-width: 45%;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    padding: 10px 8px;
+    font-size: 11px;
+    -unity-text-align: middle-center;
+}
 
 .card-hero {
     align-items: center;

@@ -34,6 +34,7 @@ namespace Kismeta.UI.Controllers
             BuildForgedCards();
             RefreshWinTip();
             RefreshTemperBtn();
+            UiMotion.PulseTrackNode(Root?.Q(className: "stage-node--now"));
         }
 
         void BuildForgedCards()

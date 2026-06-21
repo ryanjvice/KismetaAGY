@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Kismeta.UI.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -131,6 +132,8 @@ namespace Kismeta.UI
             overlay.AddToClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
             InstantiateOverlay(overlay, asset, _tokenStylesheet);
+            if (_overlayContentRoot != null)
+                UiMotion.AnimateSheetRise(_overlayContentRoot);
         }
 
         /// <summary>Show a programmatic overlay (no UXML asset).</summary>

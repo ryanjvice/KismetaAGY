@@ -7,6 +7,7 @@
     <engine:Style src="../../USS/SpringSteps.uss" />
 
     <engine:VisualElement name="spring-hub" class="screen screen--spring">
+        <engine:Label text="Spring hub — your sign, harvest tally, spread, and commune action." class="sr-only" />
 
         <engine:VisualElement class="statusbar">
             <engine:VisualElement class="statusbar__left">

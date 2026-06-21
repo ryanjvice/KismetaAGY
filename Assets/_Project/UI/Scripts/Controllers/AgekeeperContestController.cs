@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Rules;
 using Kismeta.UI;
+using Kismeta.UI.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -18,6 +20,8 @@ namespace Kismeta.UI.Controllers
         int _playerCount;
         int _winnerId = -1;
         bool _resolved;
+        bool _rolling;
+        AgekeeperContestService.ContestResult? _pendingResult;
 
         public void BeginContest(int playerCount)
         {
@@ -39,15 +43,29 @@ namespace Kismeta.UI.Controllers
 
         private void OnRollClicked()
         {
-            if (_resolved || _playerCount < 2) return;
+            if (_resolved || _rolling || _playerCount < 2) return;
+            _pendingResult = AgekeeperContestService.Resolve(_playerCount, new System.Random());
+            _winnerId = _pendingResult.WinnerPlayerId;
+            StartCoroutine(AnimateRolls());
+        }
 
-            var result = AgekeeperContestService.Resolve(_playerCount, new System.Random());
-            _winnerId = result.WinnerPlayerId;
+        IEnumerator AnimateRolls()
+        {
+            _rolling = true;
+            Btn("roll-btn")?.SetEnabled(false);
+            if (_pendingResult == null) yield break;
+
+            foreach (var roll in _pendingResult.FinalRolls)
+            {
+                var die = Root?.Q<Label>($"die-{roll.PlayerId}");
+                yield return DieAnimator.RollLabel(die, roll.DieValue);
+            }
+
             _resolved = true;
-
-            ShowRollResults(result);
+            _rolling = false;
+            ShowRollResults(_pendingResult);
             if (Lbl("status-line") != null)
-                Lbl("status-line").text = "The dice have spoken.";
+                Lbl("status-line")!.text = "The dice have spoken.";
 
             var winnerLine = Lbl("winner-line");
             if (winnerLine != null)

@@ -17,6 +17,7 @@
          fee and the .tally component for scoring.
          ============================================================ -->
     <engine:VisualElement name="opposition" class="screen screen--autumn">
+        <engine:Label text="Opposition — pay a fee, roll a set sign, tally alignment against the cosmic age." class="sr-only" />
 
         <engine:VisualElement class="statusbar">
             <engine:VisualElement class="statusbar__left">

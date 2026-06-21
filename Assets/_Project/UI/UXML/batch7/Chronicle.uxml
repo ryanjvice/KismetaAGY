@@ -17,6 +17,7 @@
          point shapes per series for colorblind safety (per style guide).
          ============================================================ -->
     <engine:VisualElement name="chronicle" class="screen" style="background-color: rgb(20,12,18);">
+        <engine:Label text="Chronicle — race chart, contest record, and Great Year statistics." class="sr-only" />
 
         <engine:VisualElement class="statusbar" style="background-color: rgb(36,17,8);">
             <engine:VisualElement class="statusbar__left">

@@ -37,11 +37,13 @@ namespace Kismeta.Game.Bootstrap
 
         [Header("Production UI")]
         [SerializeField] private bool _useProductionUi = true;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        [Tooltip("Editor/dev only — overlays IMGUI debug panel alongside production UI.")]
         [SerializeField] private bool _debugUiFallback;
+#endif
         [SerializeField] private PanelSettings _panelSettings;
         [SerializeField] private VisualTreeAsset _appShell;
         [SerializeField] private VisualTreeAsset _titleScreen;
-        [SerializeField] private VisualTreeAsset _gameplayHud;
         [SerializeField] private VisualTreeAsset _waitingHud;
         [SerializeField] private VisualTreeAsset _setupSheet;
         [SerializeField] private VisualTreeAsset _joinScreen;
@@ -89,7 +91,9 @@ namespace Kismeta.Game.Bootstrap
         private GameLoop? _loop;
         private CeremonyGate? _ceremonyGate;
         private List<IPlayerController>? _controllers;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         private GameDebugUI? _ui;
+#endif
         private GamePresenter? _presenter;
         private GameChronicle? _chronicleTracker;
         private CancellationTokenSource _cts = new();
@@ -116,10 +120,14 @@ namespace Kismeta.Game.Bootstrap
                 }
                 else
                 {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                     _ui = gameObject.AddComponent<GameDebugUI>();
                     BuildSession(_totalPlayers, _humanPlayers, _gameMode,
                         CrucibleBuildMode.Curated, 0);
                     _ = StartLoopAsync(_cts.Token);
+#else
+                    Debug.LogError("[GameBootstrap] Production UI is required in release builds.");
+#endif
                 }
             }
             catch (Exception ex)
@@ -158,7 +166,6 @@ namespace Kismeta.Game.Bootstrap
             _presenter = GetComponent<GamePresenter>() ?? gameObject.AddComponent<GamePresenter>();
 
             EnsureController<TitleScreenController>();
-            EnsureController<GameplayHudController>();
             EnsureController<WaitingHudController>();
             EnsureController<JoinScreenController>();
             EnsureController<ResumeScreenController>();
@@ -223,7 +230,7 @@ namespace Kismeta.Game.Bootstrap
             var endOverlays = GetComponent<EndOverlayHost>();
             endOverlays?.Configure(_cardTable, _cardModals);
 
-            if (_titleScreen != null && _gameplayHud != null && _waitingHud != null)
+            if (_titleScreen != null && _waitingHud != null)
             {
                 if (_appShell == null)
                 {
@@ -232,7 +239,7 @@ namespace Kismeta.Game.Bootstrap
                 }
 
                 router.ConfigureScreens(
-                    _titleScreen, _gameplayHud, _waitingHud, _setupSheet,
+                    _titleScreen, null, _waitingHud, _setupSheet,
                     _joinScreen, _resumeScreen, _codexScreen, _agekeeperContest,
                     _springHub, _summerMain, _autumnMain, _winterHub,
                     _roundOpen, _ageOpening, _springIntro, _summerIntro,
@@ -271,11 +278,13 @@ namespace Kismeta.Game.Bootstrap
             _chronicleTracker?.Attach(_session!);
             _presenter!.Bind(_session!, _loop!, _ceremonyGate, _chronicleTracker);
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (_debugUiFallback)
             {
                 _ui = gameObject.AddComponent<GameDebugUI>();
                 _ui.Bind(_session!, _loop!, _db!, _codexDb);
             }
+#endif
 
             _loopStarted = true;
             _ = StartLoopAsync(_cts.Token);
@@ -295,11 +304,13 @@ namespace Kismeta.Game.Bootstrap
             _loop = null;
             _loopStarted = false;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (_ui != null)
             {
                 Destroy(_ui);
                 _ui = null;
             }
+#endif
 
             _presenter?.ShowNewGameSetup();
         }

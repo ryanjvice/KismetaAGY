@@ -146,5 +146,57 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
+        <!-- ===== The Moon — keep 2 of 4 ===== -->
+        <engine:VisualElement name="moon-modal" class="card-modal card-modal--fate-decision" style="display: none;">
+            <engine:Label name="moon-sr" text="The Moon — choose two cards to keep from four drawn cards." class="sr-only" />
+            <engine:VisualElement class="card-hero" style="background-color: rgb(18,22,42);">
+                <engine:Label text="the moon" class="eyebrow" style="color: rgb(138,176,224); -unity-text-align: middle-center;" />
+                <engine:Label text="Keep 2 of 4" class="tarot__name" style="color: rgb(188,216,240); font-size: 16px;" />
+                <engine:Label text="The rest return to the bottom of the deck." style="font-size: 10px; color: rgb(127,160,196); white-space: normal; -unity-text-align: middle-center;" />
+            </engine:VisualElement>
+            <engine:ScrollView style="max-height: 200px; padding: 8px 16px;">
+                <engine:VisualElement name="moon-cards" class="fate-chip-row" />
+            </engine:ScrollView>
+            <engine:Label name="moon-count" text="Keeping: 0 / 2" style="font-size: 10px; color: rgb(184, 154, 110); padding: 4px 16px;" />
+            <engine:VisualElement style="padding: 4px 16px 16px;">
+                <engine:Button name="moon-confirm" text="Confirm keep" class="btn btn--primary" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- ===== The Fool — reagent pick ===== -->
+        <engine:VisualElement name="fate-reagent-modal" class="card-modal card-modal--fate-decision" style="display: none;">
+            <engine:Label name="reagent-sr" text="Choose one reagent to receive from the Fool fate." class="sr-only" />
+            <engine:VisualElement class="card-hero" style="background-color: rgb(18,22,42);">
+                <engine:Label text="the fool" class="eyebrow" style="color: rgb(138,176,224); -unity-text-align: middle-center;" />
+                <engine:Label text="Choose 1 Reagent" class="tarot__name" style="color: rgb(188,216,240); font-size: 16px;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="reagent-buttons" class="fate-reagent-grid" style="padding: 8px 16px 16px;" />
+        </engine:VisualElement>
+
+        <!-- ===== The Lovers — pick target ===== -->
+        <engine:VisualElement name="lovers-target-modal" class="card-modal card-modal--fate-decision" style="display: none;">
+            <engine:Label name="lovers-target-sr" text="Pick an opponent to choose your Lovers reward." class="sr-only" />
+            <engine:VisualElement class="card-hero" style="background-color: rgb(28,18,36);">
+                <engine:Label text="the lovers" class="eyebrow" style="color: rgb(176,144,208); -unity-text-align: middle-center;" />
+                <engine:Label text="Pick who chooses" class="tarot__name" style="color: rgb(224,200,240); font-size: 16px;" />
+                <engine:Label text="An opponent will decide your reward." style="font-size: 10px; color: rgb(168,144,192); white-space: normal; -unity-text-align: middle-center;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="lovers-target-buttons" style="padding: 8px 16px 16px;" />
+        </engine:VisualElement>
+
+        <!-- ===== The Lovers — target chooses reward ===== -->
+        <engine:VisualElement name="lovers-choice-modal" class="card-modal card-modal--fate-decision" style="display: none;">
+            <engine:Label name="lovers-choice-sr" text="Choose the drawer's Lovers reward — two cards or one reagent." class="sr-only" />
+            <engine:VisualElement class="card-hero" style="background-color: rgb(28,18,36);">
+                <engine:Label text="the lovers" class="eyebrow" style="color: rgb(176,144,208); -unity-text-align: middle-center;" />
+                <engine:Label name="lovers-choice-sub" text="Choose their reward" class="tarot__name" style="color: rgb(224,200,240); font-size: 16px;" />
+            </engine:VisualElement>
+            <engine:VisualElement style="padding: 8px 16px 4px;">
+                <engine:Button name="lovers-draw-btn" text="Drawer draws 2 cards" class="btn btn--secondary" style="margin-bottom: 8px;" />
+                <engine:Label text="— or one reagent —" style="font-size: 9px; color: rgb(168,144,192); -unity-text-align: middle-center; margin-bottom: 8px;" />
+                <engine:VisualElement name="lovers-reagent-buttons" class="fate-reagent-grid" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
     </engine:VisualElement>
 </engine:UXML>
