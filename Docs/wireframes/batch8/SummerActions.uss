@@ -66,31 +66,9 @@
 }
 .txn__arrow { font-size: 16px; color: var(--muted); margin: 0 10px; }
 
-/* formula slot (Activate) + card pick row (Craft / Build) */
+/* formula slot (Activate) */
 .formula {
     flex-direction: row; flex-wrap: wrap; align-items: center;
-}
-
-.card-pool {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    align-content: flex-start;
-    width: 100%;
-}
-
-.card-pool > .card-chip {
-    overflow: hidden;
-    margin-bottom: 6px;
-}
-
-.card-pool .card-chip__rank {
-    font-size: 11px;
-    -unity-text-align: middle-center;
-    overflow: hidden;
-    max-width: 100%;
-    padding-left: 1px;
-    padding-right: 1px;
 }
 .formula-slot {
     width: 34px; height: 48px; border-radius: var(--radius-sm);
@@ -114,16 +92,6 @@
 }
 
 /* reagent picker chip (Craft) */
-.reagent-pick--salt {
-    width: 100%;
-}
-
-.reagent-picker {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
 .reagent-pick {
     width: 48%;
     flex-direction: row; align-items: center;
@@ -140,54 +108,11 @@
 .reagent-pick--locked { opacity: 0.45; }
 
 /* ---------- Activate: four cauldron slots + formula reveal (#21 v2) ---------- */
-.activate-screen {
-    overflow: hidden;
-}
-
-.activate-screen__scroll {
-    flex-grow: 1;
-    flex-shrink: 1;
-    min-height: 0;
-}
-
-.activate-screen__footer {
-    flex-shrink: 0;
-    padding: 8px 14px 16px;
-}
-
-.crucible-slots {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    width: 100%;
-}
-
-/* Default: full-width stack (phones / narrow overlays). */
 .crucible-slot {
-    width: 100%;
-    max-width: 100%;
-    flex-grow: 0;
-    flex-shrink: 0;
-    flex-basis: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    margin-bottom: 8px;
     background-color: rgb(22,10,28);
     border-width: 1px; border-color: var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 8px 9px;
-    min-height: 72px;
-}
-
-/* 2×2 grid on tablet-sized viewports. */
-.viewport--tablet .crucible-slots {
-    justify-content: space-between;
-}
-
-.viewport--tablet .crucible-slot {
-    width: 48%;
-    max-width: 48%;
-    flex-basis: 48%;
+    padding: 10px 11px;
 }
 .crucible-slot--selected { border-width: 2px; }
 .crucible-slot--active { opacity: 0.55; }
@@ -201,6 +126,7 @@
 .crucible-slot__reagent { font-size: 12px; -unity-font-style: bold; color: var(--ink); margin-bottom: 4px; }
 .crucible-slot__progress { font-size: 9px; }
 
+/* cauldron-color ring borders (Red/Blue/Green/Yellow per codex) */
 .ring--red { border-color: rgb(192,57,43); }
 .ring--blue { border-color: rgb(46,109,164); }
 .ring--green { border-color: rgb(43,106,74); }
@@ -210,6 +136,7 @@
 .slot-sel--green { border-color: rgb(93,202,165); }
 .slot-sel--yellow { border-color: rgb(224,192,96); }
 
+/* the reveal panel below the slots */
 .formula-card {
     background-color: rgb(22,10,28);
     border-width: 1px; border-color: var(--border-subtle);
@@ -226,6 +153,7 @@
 }
 .formula-card__count { font-size: 15px; -unity-font-style: bold; }
 
+/* filled formula chip uses the cauldron color as fill */
 .fslot-fill--red { background-color: rgb(192,57,43); }
 .fslot-fill--blue { background-color: rgb(46,109,164); }
 .fslot-fill--green { background-color: rgb(43,106,74); }

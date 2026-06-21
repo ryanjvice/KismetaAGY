@@ -514,7 +514,14 @@
 .tip--caution { background-color: var(--caution-bg); border-width: 1px; border-color: var(--caution-border); }
 .tip--danger { background-color: var(--danger-bg); border-width: 1px; border-color: var(--danger-border); }
 .tip--arcanum { background-color: var(--arcanum-bg); border-width: 1px; border-color: var(--arcanum-border); }
-.tip__text { font-size: var(--font-label); -unity-text-align: upper-left; flex-shrink: 1; }
+.tip__text {
+    font-size: var(--font-label);
+    -unity-text-align: upper-left;
+    flex-shrink: 1;
+    flex-grow: 1;
+    min-width: 0;
+    white-space: normal;
+}
 
 .eyebrow {
     font-size: var(--font-label);

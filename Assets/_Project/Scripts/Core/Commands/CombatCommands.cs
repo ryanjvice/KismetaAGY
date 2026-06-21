@@ -3,22 +3,24 @@ using Kismeta.Core.Domain;
 namespace Kismeta.Core.Commands
 {
     /// <summary>
-    /// Initiates a Duel: attacker antes one Spread card. Dice are rolled; winner steals the ante.
-    /// If attacker wins, they take the defender's ante card.
-    /// If defender wins, they take the attacker's ante card.
+    /// Initiates a Duel: attacker names a card in the defender's Spread to steal and antes one
+    /// Spread card. Higher dice roll wins; on loss the ante returns to the Common Deck.
     /// </summary>
     public sealed class InitiateDuelCommand : IGameCommand
     {
-        public int AttackerId    { get; }
-        public int DefenderId    { get; }
+        public int AttackerId     { get; }
+        public int DefenderId     { get; }
+        /// <summary>Instance ID of the defender Spread card the attacker is targeting.</summary>
+        public string TargetCardId { get; }
         /// <summary>Instance ID of the card the attacker antes from their Spread.</summary>
-        public string AnteCardId { get; }
+        public string AnteCardId  { get; }
 
-        public InitiateDuelCommand(int attackerId, int defenderId, string anteCardId)
+        public InitiateDuelCommand(int attackerId, int defenderId, string targetCardId, string anteCardId)
         {
-            AttackerId = attackerId;
-            DefenderId = defenderId;
-            AnteCardId = anteCardId;
+            AttackerId     = attackerId;
+            DefenderId     = defenderId;
+            TargetCardId   = targetCardId;
+            AnteCardId     = anteCardId;
         }
     }
 

@@ -185,19 +185,22 @@ namespace Kismeta.Core.Commands
 
     public sealed class DuelResolvedEvent : IGameEvent
     {
-        public int AttackerId  { get; }
-        public int DefenderId  { get; }
-        public int AttackRoll  { get; }
-        public int DefendRoll  { get; }
-        public int WinnerId    { get; }
+        public int AttackerId    { get; }
+        public int DefenderId    { get; }
+        public int AttackRoll    { get; }
+        public int DefendRoll    { get; }
+        public int WinnerId      { get; }
+        public string TargetCardId { get; }
         public string AnteCardId { get; }
 
         public DuelResolvedEvent(int attackerId, int defenderId,
-            int attackRoll, int defendRoll, int winnerId, string anteCardId)
+            int attackRoll, int defendRoll, int winnerId, string targetCardId, string anteCardId)
         {
             AttackerId = attackerId; DefenderId = defenderId;
             AttackRoll = attackRoll; DefendRoll = defendRoll;
-            WinnerId   = winnerId;   AnteCardId = anteCardId;
+            WinnerId   = winnerId;
+            TargetCardId = targetCardId;
+            AnteCardId = anteCardId;
         }
     }
 

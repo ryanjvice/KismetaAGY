@@ -8,7 +8,7 @@ namespace Kismeta.Core.Rules
     /// <summary>
     /// Summer social combat: Duel and Gambit resolution, and releasing Arrested cards.
     ///
-    /// Duel   — Attacker antes a Spread card; dice roll decides who steals the ante.
+    /// Duel   — Attacker targets a Spread card and antes one of their own; dice roll decides the steal.
     /// Gambit — Attacker offers an Active Crucible or Adept card; defender pays Ward reagents to enter;
     ///          winner takes both cards (loser's card is arrested).
     /// FreeArrested — Spend 1 Salt to un-arrest a Crucible slot (during Summer only).
@@ -25,50 +25,59 @@ namespace Kismeta.Core.Rules
         // ── Duel ──────────────────────────────────────────────────────────────────
 
         public CommandResult TryDuel(GameSession session, int attackerId, int defenderId,
-            string anteCardId)
+            string targetCardId, string anteCardId)
         {
             if (attackerId == defenderId)
                 return CommandResult.Invalid("Cannot Duel yourself.");
 
+            if (attackerId < 0 || attackerId >= session.Players.Count)
+                return CommandResult.Invalid($"Invalid attacker player ID {attackerId}.");
+            if (defenderId < 0 || defenderId >= session.Players.Count)
+                return CommandResult.Invalid($"Invalid defender player ID {defenderId}.");
+
             var attacker = session.Players[attackerId];
             var defender = session.Players[defenderId];
+            var db = session.Rules?.CardDatabase;
 
+            if (!defender.Spread.Contains(targetCardId))
+                return CommandResult.Invalid("Target card must be in the defender's Spread.");
             if (!attacker.Spread.Contains(anteCardId))
                 return CommandResult.Invalid("Ante card must be in your Spread.");
+
+            if (db != null)
+            {
+                var targetInst = session.GetCard(targetCardId);
+                var targetDef = targetInst != null ? db.GetById(targetInst.DefinitionId) : null;
+                if (targetDef?.IsMajorArcana == true)
+                    return CommandResult.Invalid("Target card is Major Arcana and cannot be dueled for.");
+
+                var anteInst = session.GetCard(anteCardId);
+                var anteDef = anteInst != null ? db.GetById(anteInst.DefinitionId) : null;
+                if (anteDef?.IsMajorArcana == true)
+                    return CommandResult.Invalid("Ante card is Major Arcana and cannot be dueled with.");
+            }
 
             // Each side rolls 1–12; attacker wins ties
             int attackRoll = _rng.Next(1, 13);
             int defendRoll = _rng.Next(1, 13);
             bool attackerWins = attackRoll >= defendRoll;
-
             int winnerId = attackerWins ? attackerId : defenderId;
-            int loserId  = attackerWins ? defenderId : attackerId;
-
-            // Attacker's ante card moves to the winner's Spread
-            attacker.Spread.Remove(anteCardId);
-            session.GetCard(anteCardId)?.MoveTo(CardZone.Spread, winnerId);
 
             if (attackerWins)
             {
-                attacker.Spread.Add(anteCardId); // stays with attacker
+                defender.Spread.Remove(targetCardId);
+                attacker.Spread.Add(targetCardId);
+                session.GetCard(targetCardId)?.MoveTo(CardZone.Spread, attackerId);
             }
             else
             {
-                defender.Spread.Add(anteCardId); // defender takes it
-            }
-
-            // Defender antes their top Spread card (or nothing if empty)
-            if (defender.Spread.Count > 0 && !attackerWins)
-            {
-                // Defender loses their top Spread card to attacker
-                var defCard = defender.Spread[0];
-                defender.Spread.RemoveAt(0);
-                attacker.Spread.Add(defCard);
-                session.GetCard(defCard)?.MoveTo(CardZone.Spread, attackerId);
+                attacker.Spread.Remove(anteCardId);
+                session.Board.CommonDiscard.Add(anteCardId);
+                session.GetCard(anteCardId)?.MoveTo(CardZone.Discard, -1);
             }
 
             session.EmitEvent(new DuelResolvedEvent(
-                attackerId, defenderId, attackRoll, defendRoll, winnerId, anteCardId));
+                attackerId, defenderId, attackRoll, defendRoll, winnerId, targetCardId, anteCardId));
             return CommandResult.Ok(
                 $"Duel: P{attackerId}({attackRoll}) vs P{defenderId}({defendRoll}) → P{winnerId} wins.");
         }

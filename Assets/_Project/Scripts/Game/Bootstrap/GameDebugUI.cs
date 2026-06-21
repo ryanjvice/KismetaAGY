@@ -972,7 +972,13 @@ namespace Kismeta.Game.Bootstrap
                     if (GUILayout.Button($"Duel P{opp.PlayerId}"))
                     {
                         var anteId = selList[0];
-                        SubmitAction(hs, new InitiateDuelCommand(pid, opp.PlayerId, anteId));
+                        string? targetId = null;
+                        foreach (var id in opp.Spread)
+                        {
+                            if (IsMinorArcana(id)) { targetId = id; break; }
+                        }
+                        if (targetId != null)
+                            SubmitAction(hs, new InitiateDuelCommand(pid, opp.PlayerId, targetId, anteId));
                     }
                 }
             }

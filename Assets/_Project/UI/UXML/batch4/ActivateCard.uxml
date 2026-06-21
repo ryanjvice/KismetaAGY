@@ -7,57 +7,106 @@
     <engine:Style src="../../USS/SummerActions.uss" />
 
     <!-- ============================================================
-         ACTIVATE A CRUCIBLE CARD (#21)
-         NATIVE NOTE: pick a dormant crucible card (shown by cauldron color),
-         then the formula auto-evaluates against your Spread. Filled slots from
-         matching cards, dashed slots for what's missing. Lighting the cauldron
-         is the CONSEQUENCE shown inline. Build formula slots in C#.
+         ACTIVATE A CRUCIBLE CARD (#21) — 2×2 slot grid + formula reveal.
+         Inline styles use literal rgb (not var()) — var() in UXML NREs during clone.
          ============================================================ -->
-    <engine:VisualElement name="activate" class="screen screen--summer">
+    <engine:VisualElement name="activate" class="screen screen--summer activate-screen">
 
         <engine:VisualElement class="statusbar">
             <engine:VisualElement class="statusbar__left">
                 <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
                 <engine:VisualElement style="margin-left: 4px;">
                     <engine:Label text="Activate a Crucible card" class="statusbar__title" style="color: rgb(232, 185, 74);" />
-                    <engine:Label text="complete a formula to light its cauldron" class="statusbar__sub" />
+                    <engine:Label text="collect the formula, light its cauldron, flip it" class="statusbar__sub" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <engine:VisualElement style="padding: 12px 14px 4px;">
-            <engine:Label text="crucible card" class="eyebrow" />
-            <engine:VisualElement class="panel" style="flex-direction: row; align-items: center;">
-                <engine:VisualElement style="width: 34px; height: 48px; border-radius: 6px; background-color: rgb(58,26,14); border-width: 1px; border-color: rgb(201, 150, 47); align-items: center; justify-content: center; margin-right: 11px;">
-                    <engine:Label text="C" style="font-size: 14px; color: rgb(232, 185, 74); -unity-font-style: bold;" />
+        <engine:ScrollView name="activate-scroll" class="activate-screen__scroll">
+            <engine:VisualElement style="padding: 12px 14px 4px;">
+                <engine:Label text="1 · choose a dormant crucible card" class="eyebrow" />
+                <engine:VisualElement name="crucible-slots" class="crucible-slots">
+
+                    <engine:Button name="slot-A" class="crucible-slot">
+                        <engine:VisualElement class="crucible-slot__head">
+                            <engine:Label text="slot A" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                            <engine:VisualElement class="crucible-slot__ring ring--red">
+                                <engine:Label text="&#xec3a;" class="ti-icon" style="font-size: 13px; color: rgb(229,115,115);" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:Label name="slot-A-reagent" text="Sulphur" class="crucible-slot__reagent" />
+                        <engine:Label name="slot-A-progress" text="0 / 3 Mars" class="crucible-slot__progress" style="color: rgb(184, 154, 110);" />
+                    </engine:Button>
+
+                    <engine:Button name="slot-B" class="crucible-slot">
+                        <engine:VisualElement class="crucible-slot__head">
+                            <engine:Label text="slot B" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                            <engine:VisualElement class="crucible-slot__ring ring--blue">
+                                <engine:Label text="&#xea77;" class="ti-icon" style="font-size: 13px; color: rgb(111,168,212);" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:Label name="slot-B-reagent" text="Aqua Regia" class="crucible-slot__reagent" />
+                        <engine:Label name="slot-B-progress" text="0 / 3 Venus" class="crucible-slot__progress" style="color: rgb(184, 154, 110);" />
+                    </engine:Button>
+
+                    <engine:Button name="slot-C" class="crucible-slot">
+                        <engine:VisualElement class="crucible-slot__head">
+                            <engine:Label text="slot C" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                            <engine:VisualElement class="crucible-slot__ring ring--green">
+                                <engine:Label text="&#xea5e;" class="ti-icon" style="font-size: 13px; color: rgb(93,202,165);" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:Label name="slot-C-reagent" text="Vitriol" class="crucible-slot__reagent" />
+                        <engine:Label name="slot-C-progress" text="0 / 3 Jupiter" class="crucible-slot__progress" style="color: rgb(184, 154, 110);" />
+                    </engine:Button>
+
+                    <engine:Button name="slot-D" class="crucible-slot">
+                        <engine:VisualElement class="crucible-slot__head">
+                            <engine:Label text="slot D" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                            <engine:VisualElement class="crucible-slot__ring ring--yellow">
+                                <engine:Label text="&#xec3a;" class="ti-icon" style="font-size: 13px; color: rgb(224,192,96);" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:Label name="slot-D-reagent" text="Quicksilver" class="crucible-slot__reagent" />
+                        <engine:Label name="slot-D-progress" text="0 / 3 Saturn" class="crucible-slot__progress" style="color: rgb(184, 154, 110);" />
+                    </engine:Button>
+
                 </engine:VisualElement>
-                <engine:VisualElement style="flex-grow: 1;">
-                    <engine:Label name="formula-name" text="Crucible C — Sulphur set" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                    <engine:Label name="formula-req" text="needs 3 Wands in your Spread" style="font-size: 10px; color: rgb(184, 154, 110);" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="formula-detail" style="padding: 6px 14px 4px; display: none;">
+                <engine:Label text="2 · the formula" class="eyebrow" />
+
+                <engine:VisualElement name="formula-card-panel" class="formula-card">
+                    <engine:VisualElement class="formula-card__head">
+                        <engine:VisualElement class="formula-card__ring ring--red">
+                            <engine:Label text="&#xec3a;" class="ti-icon" style="font-size: 16px; color: rgb(229,115,115);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="flex-grow: 1;">
+                            <engine:Label name="formula-reagent" text="Sulphur" style="font-size: 14px; -unity-font-style: bold; color: rgb(243, 233, 210);" />
+                            <engine:Label name="formula-req" text="any 3 Mars · Red cauldron" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="-unity-text-align: upper-right;">
+                            <engine:Label name="formula-count" text="0/3" class="formula-card__count" style="color: rgb(232, 185, 74);" />
+                            <engine:Label text="collected" style="font-size: 7px; color: rgb(184, 154, 110);" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+
+                    <engine:VisualElement name="formula-chips" style="flex-direction: row; justify-content: center; flex-wrap: wrap;" />
+
+                    <engine:Label name="formula-status" text=""
+                                  style="font-size: 9px; color: rgb(138,122,106); -unity-text-align: middle-center; margin-top: 8px; white-space: normal;" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="tip tip--caution" style="margin: 9px 0 0;">
+                    <engine:Label name="formula-consequence" text=""
+                                  class="tip__text" style="color: rgb(212,184,122);" />
                 </engine:VisualElement>
             </engine:VisualElement>
-        </engine:VisualElement>
+        </engine:ScrollView>
 
-        <engine:VisualElement style="padding: 8px 14px 4px;">
-            <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 7px;">
-                <engine:Label text="formula" class="eyebrow" style="margin-bottom: 0;" />
-                <engine:Label name="formula-progress" text="2 / 3" style="font-size: 11px; color: rgb(232, 185, 74);" />
-            </engine:VisualElement>
-            <engine:VisualElement name="formula-slots" class="formula">
-                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="A" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="formula-slot formula-slot--empty"><engine:Label text="?" style="font-size: 14px; color: rgb(90,74,58);" /></engine:VisualElement>
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <!-- cauldron consequence -->
-        <engine:VisualElement class="tip tip--caution">
-            <engine:Label text="Activating moves the card's coal to the Red cauldron — lighting it. A lit cauldron lets you craft Sulphur."
-                          class="tip__text" style="color: rgb(224,200,120);" />
-        </engine:VisualElement>
-
-        <engine:VisualElement style="padding: 2px 14px 16px;">
-            <engine:Button name="activate-btn" text="Need 1 more Wand to activate" class="btn btn--disabled" />
+        <engine:VisualElement class="activate-screen__footer">
+            <engine:Button name="activate-btn" text="Select a card to activate" class="btn btn--disabled" />
         </engine:VisualElement>
 
     </engine:VisualElement>

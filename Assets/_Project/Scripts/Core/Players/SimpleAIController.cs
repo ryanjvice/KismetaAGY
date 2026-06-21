@@ -121,7 +121,11 @@ namespace Kismeta.Core.Players
             {
                 var target = FindDuelTarget(ctx, pid);
                 if (target >= 0)
-                    return new InitiateDuelCommand(pid, target, spreadIds[0]);
+                {
+                    var rivalSpread = ctx.PublicView.Players[target].Spread;
+                    if (rivalSpread.Count > 0)
+                        return new InitiateDuelCommand(pid, target, rivalSpread[0], spreadIds[0]);
+                }
             }
 
             // Gambit if we have an Active Crucible slot — stakes an arrested outcome

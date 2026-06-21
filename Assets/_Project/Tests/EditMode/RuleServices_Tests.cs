@@ -1303,6 +1303,73 @@ namespace Kismeta.Core.Tests
             Assert.IsTrue(result.IsOk, result.Message);
         }
 
+        // ─── CombatRules Duel tests ────────────────────────────────────────────────
+
+        static int FindDuelSeed(bool attackerWins)
+        {
+            for (int seed = 0; seed < 10000; seed++)
+            {
+                var r = new System.Random(seed);
+                if ((r.Next(1, 13) >= r.Next(1, 13)) == attackerWins)
+                    return seed;
+            }
+            Assert.Fail("Could not find duel seed.");
+            return 0;
+        }
+
+        [Test]
+        public void Duel_InvalidTarget_Rejected()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var attackerCards = PopulateSpread(session, 0, 1, "duel");
+            PopulateSpread(session, 1, 1, "duel");
+
+            var combat = new CombatRules(42);
+            var result = combat.TryDuel(session, 0, 1, "not-in-spread", attackerCards[0]);
+
+            Assert.IsFalse(result.IsOk);
+        }
+
+        [Test]
+        public void Duel_AttackerWins_StealsTarget_KeepsAnte()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var ante = PopulateSpread(session, 0, 1, "duel-ante");
+            var targets = PopulateSpread(session, 1, 2, "duel-target");
+            string targetId = targets[0];
+            string anteId = ante[0];
+
+            var combat = new CombatRules(FindDuelSeed(attackerWins: true));
+            var result = combat.TryDuel(session, 0, 1, targetId, anteId);
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(session.Players[0].Spread.Contains(anteId));
+            Assert.IsTrue(session.Players[0].Spread.Contains(targetId));
+            Assert.IsFalse(session.Players[1].Spread.Contains(targetId));
+            Assert.AreEqual(1, session.Players[1].Spread.Count);
+        }
+
+        [Test]
+        public void Duel_AttackerLoses_AnteDiscarded_TargetStays()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var ante = PopulateSpread(session, 0, 1, "duel-ante");
+            var targets = PopulateSpread(session, 1, 1, "duel-target");
+            string targetId = targets[0];
+            string anteId = ante[0];
+
+            var combat = new CombatRules(FindDuelSeed(attackerWins: false));
+            var result = combat.TryDuel(session, 0, 1, targetId, anteId);
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsFalse(session.Players[0].Spread.Contains(anteId));
+            Assert.IsTrue(session.Board.CommonDiscard.Contains(anteId));
+            Assert.IsTrue(session.Players[1].Spread.Contains(targetId));
+        }
+
         private sealed class SeededContestRng : System.Random
         {
             readonly Queue<int> _values = new();

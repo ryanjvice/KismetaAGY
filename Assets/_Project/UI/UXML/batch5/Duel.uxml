@@ -7,12 +7,10 @@
     <engine:Style src="../../USS/Contests.uss" />
 
     <!-- ============================================================
-         DUEL (#47) — 3-step wizard: target a rival's Spread card, ante your
-         own, roll off. High roll steals.
-         NATIVE NOTE: the three step panels (#step-target / #step-ante /
-         #step-roll) are stacked; show one at a time in C#. The dice animate
-         (sprite-swap or 3D). Establishes the wizard + dual-die pattern that
-         Gambit and Opposition extend.
+         DUEL (#47) — 2-step wizard: combined setup (rival + target + ante)
+         then roll off. High roll steals the targeted Spread card.
+         NATIVE NOTE: build rival strip + card pools in C#; show one panel
+         at a time (#step-setup / #step-roll).
          ============================================================ -->
     <engine:VisualElement name="duel" class="screen" style="background-color: rgb(22,12,12);">
         <engine:Label text="Duel — pick a rival spread card, ante your own, roll off; high roll wins." class="sr-only" />
@@ -20,32 +18,44 @@
         <engine:VisualElement class="statusbar" style="border-bottom-color: rgb(74,32,32);">
             <engine:VisualElement class="statusbar__left">
                 <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
-                <engine:Label name="contest-title" text="Duel · Severin" class="statusbar__title" style="color: rgb(240,176,160); margin-left: 4px;" />
+                <engine:Label name="contest-title" text="Duel · rival" class="statusbar__title" style="color: rgb(240,176,160); margin-left: 4px;" />
             </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement class="wizard-steps">
             <engine:VisualElement name="wd-1" class="wizard-dot wizard-dot--active" />
             <engine:VisualElement name="wd-2" class="wizard-dot" />
-            <engine:VisualElement name="wd-3" class="wizard-dot" />
         </engine:VisualElement>
 
-        <!-- step 1: target -->
-        <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
-            <engine:Label text="choose a rival" class="eyebrow" />
-            <engine:VisualElement name="rival-cards" class="tray__cards" />
-            <engine:Button name="target-next" text="Challenge this rival" class="btn btn--primary" style="margin-top: 12px;" />
+        <!-- combined setup: rival + target + ante -->
+        <engine:VisualElement name="step-setup" style="padding: 8px 14px 4px;">
+            <engine:VisualElement name="rival-strip" style="flex-direction: row; flex-wrap: wrap; margin-bottom: 8px;" />
+
+            <engine:VisualElement class="tray tray--get">
+                <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <engine:Label name="target-tray-title" text="Rival spread — pick a card to win" style="font-size: 12px; color: rgb(127, 196, 168);" />
+                </engine:VisualElement>
+                <engine:VisualElement name="target-cards" class="tray__cards" />
+                <engine:Label name="target-empty-msg" text=""
+                              style="font-size: 10px; color: rgb(106,122,138); margin-top: 6px; display: none;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement style="align-items: center; padding: 2px;">
+                <engine:Label text="&#8645;" style="font-size: 18px; color: rgb(184, 154, 110);" />
+            </engine:VisualElement>
+
+            <engine:VisualElement class="tray tray--give">
+                <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <engine:Label text="you ante" style="font-size: 12px; color: rgb(232, 185, 74);" />
+                </engine:VisualElement>
+                <engine:Label text="safe if you win · returns to the deck if you lose" style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 8px; white-space: normal;" />
+                <engine:VisualElement name="ante-cards" class="tray__cards" />
+            </engine:VisualElement>
+
+            <engine:Button name="setup-next" text="Ante &amp; roll" class="btn btn--primary" style="margin-top: 12px;" />
         </engine:VisualElement>
 
-        <!-- step 2: ante -->
-        <engine:VisualElement name="step-ante" style="display: none; padding: 8px 14px 4px;">
-            <engine:Label text="ante a card of your own" class="eyebrow" />
-            <engine:Label text="safe if you win · returns to the deck if you lose" style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 8px; white-space: normal;" />
-            <engine:VisualElement name="ante-cards" class="tray__cards" />
-            <engine:Button name="ante-next" text="Ante &amp; roll" class="btn btn--primary" style="margin-top: 12px;" />
-        </engine:VisualElement>
-
-        <!-- step 3: roll -->
+        <!-- roll -->
         <engine:VisualElement name="step-roll" style="display: none; padding: 8px 14px 4px;">
             <engine:VisualElement class="dice-row">
                 <engine:VisualElement style="align-items: center;">
@@ -55,7 +65,7 @@
                 <engine:Label text="vs" class="die-vs" />
                 <engine:VisualElement style="align-items: center;">
                     <engine:VisualElement name="die-foe" class="die-big die-big--foe"><engine:Label name="die-foe-pip" text="?" class="die-big__pip" style="color: rgb(184,154,192);" /></engine:VisualElement>
-                    <engine:Label text="Severin" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 4px;" />
+                    <engine:Label name="die-foe-name" text="rival" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 4px;" />
                 </engine:VisualElement>
             </engine:VisualElement>
             <engine:Button name="roll-btn" text="Roll the dice" class="btn btn--primary" />

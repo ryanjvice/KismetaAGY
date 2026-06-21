@@ -215,7 +215,7 @@ namespace Kismeta.Core.Entities
 
                 // ── Combat ────────────────────────────────────────────────────────
                 InitiateDuelCommand   cmd => _rules?.Combat is not null
-                    ? _rules.Combat.TryDuel(this, cmd.AttackerId, cmd.DefenderId, cmd.AnteCardId)
+                    ? _rules.Combat.TryDuel(this, cmd.AttackerId, cmd.DefenderId, cmd.TargetCardId, cmd.AnteCardId)
                     : CommandResult.NotImplemented(nameof(InitiateDuelCommand)),
 
                 InitiateGambitCommand cmd => _rules?.Combat is not null
