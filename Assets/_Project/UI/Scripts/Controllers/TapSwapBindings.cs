@@ -49,13 +49,19 @@ namespace Kismeta.UI.Controllers
             int align = CardAlignPoints(session, cardId, referenceSign);
             var chip = CardChipFactory.Create(def.Rank.ToString(), def.Suit, aligned: align > 0);
             chip.userData = cardId;
+            chip.pickingMode = PickingMode.Position;
+            chip.style.cursor = new StyleCursor(StyleKeyword.Auto);
 
             if (align > 0)
             {
                 var tag = new Label("+" + align);
                 tag.AddToClassList("card-chip__tag");
+                tag.pickingMode = PickingMode.Ignore;
                 chip.Add(tag);
             }
+
+            foreach (var child in chip.Children())
+                child.pickingMode = PickingMode.Ignore;
 
             chip.RegisterCallback<ClickEvent>(_ =>
             {

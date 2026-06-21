@@ -21,12 +21,24 @@ namespace Kismeta.UI.Controllers
         CommandBridge? _bridge;
         int _playerId = -1;
         bool _initialized;
+        bool _zonesBuilt;
+        VisualElement? _builtForRoot;
 
         protected override void Wire()
         {
             var lockBtn = Btn("lock-btn");
             if (lockBtn != null)
                 lockBtn.clicked += OnLock;
+        }
+
+        protected override void Unwire()
+        {
+            var lockBtn = Btn("lock-btn");
+            if (lockBtn != null)
+                lockBtn.clicked -= OnLock;
+
+            _zonesBuilt = false;
+            _builtForRoot = null;
         }
 
         public void BindState(GameSession session, CommandBridge bridge)
@@ -41,6 +53,7 @@ namespace Kismeta.UI.Controllers
             {
                 _playerId = pid;
                 _initialized = false;
+                _zonesBuilt = false;
             }
 
             if (Root == null) return;
@@ -48,8 +61,7 @@ namespace Kismeta.UI.Controllers
             if (!_initialized)
                 SeedFromPlayer(session, pid);
 
-            TapSwapBindings.RebuildZones(Root, session, _spreadIds, _handIds,
-                session.Board.CosmicAgeSign, OnTapMove);
+            RenderZonesIfNeeded();
             UpdateLockButton();
         }
 
@@ -76,18 +88,30 @@ namespace Kismeta.UI.Controllers
             foreach (var id in player.Hand)
                 if (TapSwapBindings.IsMinorArcana(session, id)) _spreadIds.Add(id);
             _initialized = true;
+            _zonesBuilt = false;
+        }
+
+        void RenderZonesIfNeeded()
+        {
+            if (Root == null || _session == null) return;
+            if (_zonesBuilt && ReferenceEquals(Root, _builtForRoot)) return;
+
+            TapSwapBindings.RebuildZones(Root, _session, _spreadIds, _handIds,
+                _session.Board.CosmicAgeSign, OnTapMove);
+            _zonesBuilt = true;
+            _builtForRoot = Root;
         }
 
         void OnTapMove(string cardId, bool fromSpread)
         {
             if (fromSpread)
             {
-                _spreadIds.Remove(cardId);
+                if (!_spreadIds.Remove(cardId)) return;
                 _handIds.Add(cardId);
             }
             else
             {
-                _handIds.Remove(cardId);
+                if (!_handIds.Remove(cardId)) return;
                 _spreadIds.Add(cardId);
             }
 
@@ -95,6 +119,8 @@ namespace Kismeta.UI.Controllers
             {
                 TapSwapBindings.RebuildZones(Root, _session, _spreadIds, _handIds,
                     _session.Board.CosmicAgeSign, OnTapMove);
+                _zonesBuilt = true;
+                _builtForRoot = Root;
                 UpdateLockButton();
             }
         }

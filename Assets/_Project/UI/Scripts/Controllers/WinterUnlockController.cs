@@ -18,12 +18,22 @@ namespace Kismeta.UI.Controllers
         GameSession? _session;
         CommandBridge? _bridge;
         int _playerId = -1;
+        bool _zonesBuilt;
+        VisualElement? _builtForRoot;
+        string _lastLayoutKey = "";
 
         protected override void Wire()
         {
             var doneBtn = Btn("unlock-done-btn");
             if (doneBtn != null)
                 doneBtn.clicked += () => OnDone?.Invoke();
+        }
+
+        protected override void Unwire()
+        {
+            _zonesBuilt = false;
+            _builtForRoot = null;
+            _lastLayoutKey = "";
         }
 
         public void BindState(GameSession session, CommandBridge bridge)
@@ -37,8 +47,7 @@ namespace Kismeta.UI.Controllers
             var spread = CollectMinor(session, player.Spread);
             var hand = CollectMinor(session, player.Hand);
 
-            TapSwapBindings.RebuildZones(Root, session, spread, hand,
-                session.Board.CosmicAgeSign, OnTapMove);
+            RenderZonesIfNeeded(spread, hand);
         }
 
         static List<string> CollectMinor(GameSession session, IEnumerable<string> ids)
@@ -48,6 +57,24 @@ namespace Kismeta.UI.Controllers
                 if (TapSwapBindings.IsMinorArcana(session, id)) list.Add(id);
             return list;
         }
+
+        void RenderZonesIfNeeded(IReadOnlyList<string> spread, IReadOnlyList<string> hand)
+        {
+            if (Root == null || _session == null) return;
+
+            var layoutKey = LayoutKey(spread, hand);
+            if (_zonesBuilt && ReferenceEquals(Root, _builtForRoot) && layoutKey == _lastLayoutKey)
+                return;
+
+            TapSwapBindings.RebuildZones(Root, _session, spread, hand,
+                _session.Board.CosmicAgeSign, OnTapMove);
+            _zonesBuilt = true;
+            _builtForRoot = Root;
+            _lastLayoutKey = layoutKey;
+        }
+
+        static string LayoutKey(IReadOnlyList<string> spread, IReadOnlyList<string> hand)
+            => string.Join(",", spread) + "|" + string.Join(",", hand);
 
         void OnTapMove(string cardId, bool fromSpread)
         {

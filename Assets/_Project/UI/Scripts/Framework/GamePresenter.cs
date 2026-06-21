@@ -585,6 +585,9 @@ namespace Kismeta.UI
             if (screenId == ScreenIds.WinterHub && IsWinterHubSubScreen(_router.CurrentScreenId))
                 return;
 
+            if (screenId == ScreenIds.SpringHub && IsSpringHubSubScreen(_router.CurrentScreenId))
+                return;
+
             if (screenId == ScreenIds.Victory && _router.CurrentScreenId == ScreenIds.Chronicle)
                 return;
 
@@ -593,6 +596,9 @@ namespace Kismeta.UI
 
         private static bool IsWinterHubSubScreen(string? screenId) =>
             screenId is ScreenIds.WinterUnlock or ScreenIds.FatefulWager;
+
+        private static bool IsSpringHubSubScreen(string? screenId) =>
+            screenId is ScreenIds.Commune or ScreenIds.SpringHarvest;
 
         private void RefreshActiveScreen()
         {
