@@ -77,6 +77,15 @@ namespace Kismeta.UI.Controllers
                 : new List<string>();
             ContestBindings.BuildCardChips(El("get-cards"), _session, getCards, _get, true, _ => RefreshAll());
 
+            var emptyMsg = Lbl("get-empty-msg");
+            if (emptyMsg != null)
+            {
+                bool showEmpty = _rivalId >= 0 && _rivalId < _session.Players.Count && getCards.Count == 0;
+                emptyMsg.style.display = showEmpty ? DisplayStyle.Flex : DisplayStyle.None;
+                if (showEmpty)
+                    emptyMsg.text = $"{ContestBindings.RivalName(_session, _rivalId)} has no public spread cards.";
+            }
+
             var tip = El("ratio-tip");
             if (tip != null)
             {

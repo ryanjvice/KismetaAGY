@@ -51,7 +51,10 @@ namespace Kismeta.UI.Components
                     chip.SetEnabled(false);
                 }
                 else
-                    chip.clicked += () => onSelect(i);
+                {
+                    int rivalIndex = i;
+                    chip.clicked += () => onSelect(rivalIndex);
+                }
 
                 host.Add(chip);
             }

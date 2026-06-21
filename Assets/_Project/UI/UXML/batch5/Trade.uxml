@@ -52,6 +52,8 @@
                 <engine:VisualElement name="get-cards" class="tray__cards">
                     <engine:VisualElement class="card-chip card-chip--cups card-chip--selected"><engine:Label text="Q" class="card-chip__rank" /></engine:VisualElement>
                 </engine:VisualElement>
+                <engine:Label name="get-empty-msg" text=""
+                              style="font-size: 10px; color: rgb(106,122,138); margin-top: 6px; display: none;" />
                 <engine:Label text="hidden Hand cannot be requested" style="font-size: 9px; color: rgb(106,122,138); margin-top: 6px;" />
             </engine:VisualElement>
         </engine:VisualElement>
