@@ -32,6 +32,7 @@ namespace Kismeta.Core.Players
             {
                 ActionHint.RollZodiac        => new RollZodiacCommand(Slot.Index),
                 ActionHint.AcknowledgeSign   => new PassActionCommand(Slot.Index),
+                ActionHint.ConfirmHarvest    => new HarvestCommand(Slot.Index, 0),
                 ActionHint.Commune           => DecideCommune(context),
                 ActionHint.SummerAction      => DecideSummer(context),
                 ActionHint.AutumnAction      => DecideAutumn(context),

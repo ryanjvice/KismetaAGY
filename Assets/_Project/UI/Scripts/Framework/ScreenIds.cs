@@ -27,6 +27,7 @@ namespace Kismeta.UI
         public const string AgeClosing = "AgeClosing";
         // Batch 3 step screens (Phase 5)
         public const string Commune = "Commune";
+        public const string SpringHarvest = "SpringHarvest";
         public const string WinterUnlock = "WinterUnlock";
         public const string FatefulWager = "FatefulWager";
         public const string CardLimits = "CardLimits";

@@ -126,7 +126,10 @@ namespace Kismeta.Core.Players
 
             Log("Spring — Step 3: Harvest");
             foreach (var player in _session.Players)
-                Apply(new HarvestCommand(player.PlayerId, 0));
+            {
+                var cmd = await RequestAsync(player.PlayerId, ActionHint.ConfirmHarvest, ct);
+                Apply(cmd);
+            }
 
             // Resolve Fate cards that were drawn (auto + async)
             await ResolvePendingFatesAsync(ct);
@@ -502,6 +505,8 @@ namespace Kismeta.Core.Players
         RollZodiac,
         /// <summary>Player reviews their rolled sign before harvest continues.</summary>
         AcknowledgeSign,
+        /// <summary>Player reviews harvest breakdown and confirms the deal.</summary>
+        ConfirmHarvest,
         Commune,
         SummerAction,
         AutumnAction,

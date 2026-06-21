@@ -68,6 +68,7 @@ namespace Kismeta.UI
             VisualTreeAsset? winterIntro = null,
             VisualTreeAsset? ageClosing = null,
             VisualTreeAsset? commune = null,
+            VisualTreeAsset? springHarvest = null,
             VisualTreeAsset? winterUnlock = null,
             VisualTreeAsset? fatefulWager = null,
             VisualTreeAsset? cardLimits = null,
@@ -113,6 +114,8 @@ namespace Kismeta.UI
                 screens.Add(new ScreenAsset { Id = ScreenIds.AgeClosing, Uxml = ageClosing });
             if (commune != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.Commune, Uxml = commune });
+            if (springHarvest != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.SpringHarvest, Uxml = springHarvest });
             if (winterUnlock != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.WinterUnlock, Uxml = winterUnlock });
             if (fatefulWager != null)

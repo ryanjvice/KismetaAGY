@@ -224,6 +224,10 @@ namespace Kismeta.Game.Bootstrap
             {
                 DrawAcknowledgeSignPanel(hs, pid, player);
             }
+            else if (hint == ActionHint.ConfirmHarvest)
+            {
+                DrawConfirmHarvestPanel(hs, pid, _session!);
+            }
             else if (hint == ActionHint.Commune)
             {
                 DrawCommunePanel(hs, pid, player, colH);
@@ -462,6 +466,30 @@ namespace Kismeta.Game.Bootstrap
         }
 
         // ── Commune panel ────────────────────────────────────────────────────────
+
+        private void DrawConfirmHarvestPanel(HotSeatController hs, int pid, GameSession session)
+        {
+            var breakdown = HarvestBreakdownService.Build(session, pid);
+            GUILayout.Label($"── HARVEST PREVIEW — {breakdown.Total} cards ──");
+            GUILayout.Label($"BASE {breakdown.Base} + BONUS {breakdown.BonusSubtotal} + BOON {breakdown.Boon}");
+            foreach (var row in breakdown.Sources)
+            {
+                string pts = row.ShowDash ? "—" : $"+{row.Points}";
+                GUILayout.Label($"  {row.Title} · {row.Subtitle} · {pts}");
+            }
+
+            if (GUILayout.Button($"Deal {breakdown.Total} harvest", GUILayout.Height(40f)))
+            {
+                try
+                {
+                    hs.SubmitCommand(new HarvestCommand(pid, 0));
+                }
+                catch (System.Exception ex)
+                {
+                    ShowError(ex.Message);
+                }
+            }
+        }
 
         private void DrawAcknowledgeSignPanel(HotSeatController hs, int pid, PlayerState player)
         {

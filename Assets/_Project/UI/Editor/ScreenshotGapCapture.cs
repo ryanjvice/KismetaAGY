@@ -29,6 +29,7 @@ namespace Kismeta.UI.Editor
         static readonly (string filename, System.Action capture)[] Captures =
         {
             ("spring_hub_roll.png", () => CaptureHelpers.Go(ScreenIds.SpringHub)),
+            ("spring_harvest.png", () => CaptureHelpers.Go(ScreenIds.SpringHarvest)),
             ("summer_main_default.png", () => CaptureHelpers.Go(ScreenIds.SummerMain)),
             ("summer_consortSheet.png", () => { CaptureHelpers.Go(ScreenIds.SummerMain); CaptureHelpers.Overlay<SummerOverlayHost>(h => h.ShowConsortSheet()); }),
             ("summer_craftReagent_result.png", () => { CaptureHelpers.Go(ScreenIds.SummerMain); CaptureHelpers.Overlay<SummerOverlayHost>(h => h.ShowCraftReagent()); }),

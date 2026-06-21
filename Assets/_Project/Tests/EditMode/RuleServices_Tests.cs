@@ -258,6 +258,23 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
+        public void HarvestBreakdown_Total_Matches_CalculateHarvestCount()
+        {
+            var db      = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Apply(new RollCosmicAgeCommand(0));
+            session.Apply(new RollZodiacCommand(0));
+
+            var breakdown = HarvestBreakdownService.Build(session, 0);
+            int expected  = session.Rules!.Harvest.CalculateHarvestCount(session, 0);
+
+            Assert.AreEqual(expected, breakdown.Total);
+            Assert.AreEqual(HarvestBreakdownService.BaseDraw + breakdown.BonusSubtotal + breakdown.Boon,
+                breakdown.Total);
+        }
+
+        [Test]
         public void Commune_Moves_Cards_To_Correct_Zones()
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();

@@ -417,6 +417,7 @@ namespace Kismeta.UI
         private static string ResolveGameplayScreen(Season season, ActionHint hint) => hint switch
         {
             ActionHint.Commune => ScreenIds.Commune,
+            ActionHint.ConfirmHarvest => ScreenIds.SpringHarvest,
             ActionHint.DiscardToLimit => ScreenIds.CardLimits,
             _ => ResolveSeasonMainScreen(season)
         };
@@ -643,6 +644,8 @@ namespace Kismeta.UI
             }
             else if (controller is CommuneController commune)
                 commune.BindState(_session, _bridge);
+            else if (controller is SpringHarvestController springHarvest)
+                springHarvest.BindState(_session, _bridge);
             else if (controller is WinterUnlockController winterUnlock)
                 winterUnlock.BindState(_session, _bridge);
             else if (controller is FatefulWagerController fatefulWager)

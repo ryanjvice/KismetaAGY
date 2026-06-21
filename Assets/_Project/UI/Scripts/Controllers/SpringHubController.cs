@@ -185,7 +185,7 @@ namespace Kismeta.UI.Controllers
                     break;
                 case ActionHint.AcknowledgeSign:
                     btn.style.display = DisplayStyle.Flex;
-                    btn.text = "Gather your harvest";
+                    btn.text = "Continue";
                     btn.SetEnabled(true);
                     btn.EnableInClassList("btn--disabled", false);
                     break;
