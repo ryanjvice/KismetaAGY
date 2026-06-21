@@ -81,5 +81,5 @@
 .verdict-title {
     font-size: 22px;
     letter-spacing: 2px;
-    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
+    -unity-font: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.ttf");
 }

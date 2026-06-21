@@ -67,6 +67,42 @@
     --card-chip-h: 48px;
 }
 
+/* ---------- Typography (Assets/_Project/UI/Fonts) ---------- */
+/* Default body: Futura Book. Override with utility classes below. */
+.kismeta-root,
+.screen,
+.sheet,
+.modal {
+    -unity-font: url("project://database/Assets/_Project/UI/Fonts/FuturaCyrillicBook.ttf");
+}
+
+.font-display,
+.h1 {
+    -unity-font: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.ttf");
+}
+
+.font-heading,
+.h2,
+.h3 {
+    -unity-font: url("project://database/Assets/_Project/UI/Fonts/GermaniaOne-Regular.ttf");
+}
+
+.font-ui,
+.h4,
+.h5,
+.h6 {
+    -unity-font: url("project://database/Assets/_Project/UI/Fonts/FuturaCyrillicDemi.ttf");
+}
+
+.font-lore,
+.p-lore {
+    -unity-font: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.ttf");
+}
+
+.font-emoji {
+    -unity-font: url("project://database/Assets/_Project/UI/Fonts/NotoColorEmoji-Regular.ttf");
+}
+
 /* ---------- App shell (ViewportLayout) ---------- */
 .kismeta-root {
     width: 100%;
@@ -185,6 +221,7 @@
     color: var(--gold);
     flex-shrink: 1;
     overflow: hidden;
+    -unity-font: url("project://database/Assets/_Project/UI/Fonts/GermaniaOne-Regular.ttf");
 }
 .statusbar__sub { font-size: var(--font-label); color: var(--muted); flex-shrink: 0; }
 
@@ -426,6 +463,12 @@
 .card-chip--pentacles { background-color: var(--suit-pentacles); }
 .card-chip--swords { background-color: var(--suit-swords); }
 .card-chip__rank { font-size: var(--font-body); color: white; -unity-font-style: bold; }
+.card-chip__suit {
+    position: absolute;
+    left: 2px;
+    bottom: 1px;
+    font-size: var(--font-micro);
+}
 
 .reagent-dot { width: 16px; height: 16px; border-radius: 8px; border-width: 1px; }
 .reagent-dot--salt { background-color: var(--reagent-salt); border-color: white; }

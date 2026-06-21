@@ -58,6 +58,35 @@ namespace Kismeta.UI.Editor
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string WaitingHudPath = "Assets/_Project/UI/UXML/shell/WaitingHud.uxml";
 
+        [MenuItem("Kismeta/UI/Verify Font Imports")]
+        public static void VerifyFontImports()
+        {
+            string[] fontPaths =
+            {
+                "Assets/_Project/UI/Fonts/Amarante-Regular.ttf",
+                "Assets/_Project/UI/Fonts/GermaniaOne-Regular.ttf",
+                "Assets/_Project/UI/Fonts/FuturaCyrillicDemi.ttf",
+                "Assets/_Project/UI/Fonts/FuturaCyrillicBook.ttf",
+                "Assets/_Project/UI/Fonts/NotoColorEmoji-Regular.ttf",
+            };
+
+            var missing = 0;
+            foreach (var path in fontPaths)
+            {
+                var font = AssetDatabase.LoadAssetAtPath<Font>(path);
+                if (font == null)
+                {
+                    Debug.LogWarning($"[Kismeta.UI] Font not imported: {path}");
+                    missing++;
+                }
+            }
+
+            if (missing == 0)
+                Debug.Log("[Kismeta.UI] All five UI fonts imported and loadable.");
+            else
+                Debug.LogWarning($"[Kismeta.UI] {missing} font(s) missing — focus Unity so AssetDatabase can import TTFs.");
+        }
+
         [MenuItem("Kismeta/UI/Create Panel Settings")]
         public static void CreatePanelSettings()
         {

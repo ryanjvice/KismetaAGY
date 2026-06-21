@@ -211,10 +211,20 @@ namespace Kismeta.UI.Controllers
                 yield return RollDie(Lbl("die-set-pip"), UnityEngine.Random.Range(1, 13));
                 if (Lbl("set-sign") != null)
                 {
-                    Lbl("set-sign")!.style.display = DisplayStyle.Flex;
-                    Lbl("set-sign")!.text = cosmic == ZodiacSign.None
-                        ? "Cosmic age sign pending"
-                        : $"Age sign: {cosmic}";
+                    var signLbl = Lbl("set-sign")!;
+                    signLbl.style.display = DisplayStyle.Flex;
+                    if (cosmic == ZodiacSign.None)
+                    {
+                        signLbl.RemoveFromClassList(SymbolGlyphs.EmojiFontClass);
+                        signLbl.text = "Cosmic age sign pending";
+                        signLbl.style.fontSize = 13;
+                    }
+                    else
+                    {
+                        SymbolGlyphs.TagEmoji(signLbl);
+                        signLbl.text = SymbolGlyphs.Zodiac(cosmic);
+                        signLbl.style.fontSize = 24;
+                    }
                 }
             }
 

@@ -28,6 +28,12 @@ namespace Kismeta.UI.Components
             rank.AddToClassList("card-chip__rank");
             chip.Add(rank);
 
+            if (suit != Suit.None)
+            {
+                var suitGlyph = SymbolGlyphs.CreateEmojiLabel(SymbolGlyphs.SuitGlyph(suit), "card-chip__suit");
+                chip.Add(suitGlyph);
+            }
+
             if (onInspect != null && !string.IsNullOrEmpty(instanceId))
             {
                 chip.RegisterCallback<ClickEvent>(_ => onInspect(instanceId));

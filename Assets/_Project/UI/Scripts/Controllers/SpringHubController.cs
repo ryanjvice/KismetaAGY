@@ -114,8 +114,7 @@ namespace Kismeta.UI.Controllers
 
             wheel.Clear();
             var sign = player.CurrentSign;
-            var glyph = SignGlyph(sign);
-            var signLbl = new Label(glyph);
+            var signLbl = SymbolGlyphs.CreateEmojiLabel(SymbolGlyphs.Zodiac(sign));
             signLbl.style.fontSize = 36;
             signLbl.style.unityTextAlign = TextAnchor.MiddleCenter;
             signLbl.style.flexGrow = 1;
@@ -149,23 +148,6 @@ namespace Kismeta.UI.Controllers
                 if (TapSwapBindings.IsMinorArcana(session, id)) count++;
             return count;
         }
-
-        static string SignGlyph(ZodiacSign sign) => sign switch
-        {
-            ZodiacSign.Aries => "\u2648",
-            ZodiacSign.Taurus => "\u2649",
-            ZodiacSign.Gemini => "\u264A",
-            ZodiacSign.Cancer => "\u264B",
-            ZodiacSign.Leo => "\u264C",
-            ZodiacSign.Virgo => "\u264D",
-            ZodiacSign.Libra => "\u264E",
-            ZodiacSign.Scorpio => "\u264F",
-            ZodiacSign.Sagittarius => "\u2650",
-            ZodiacSign.Capricorn => "\u2651",
-            ZodiacSign.Aquarius => "\u2652",
-            ZodiacSign.Pisces => "\u2653",
-            _ => "?"
-        };
 
         void PopulateSpreadStrip(GameSession session, PublicPlayerView? local)
         {
