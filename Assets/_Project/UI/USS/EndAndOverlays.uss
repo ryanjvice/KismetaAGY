@@ -20,7 +20,7 @@
     letter-spacing: 2px;
     -unity-text-align: middle-center;
     white-space: normal;
-    -unity-font: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.ttf");
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
 }
 .win-condition {
     flex-direction: row; align-items: center;
@@ -163,7 +163,7 @@
 .tarot--big { width: 108px; height: 150px; }
 .tarot__name {
     font-size: 19px;
-    -unity-font: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.ttf");
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
     margin-top: 12px;
 }
 

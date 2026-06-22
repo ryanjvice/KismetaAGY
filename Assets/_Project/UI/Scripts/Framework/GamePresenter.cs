@@ -68,6 +68,23 @@ namespace Kismeta.UI
             _playerHud = GetComponent<PlayerHudController>();
         }
 
+        private void Start()
+        {
+            if (!_startAtTitle || _layout == null)
+                return;
+
+            // Fallback when ScreenRouter already has assets but bootstrap did not navigate yet.
+            _layout.RunWhenReady(EnsureTitleScreenVisible);
+        }
+
+        private void EnsureTitleScreenVisible()
+        {
+            if (!string.IsNullOrEmpty(_router.CurrentScreenId))
+                return;
+
+            InitializeForTitle();
+        }
+
         /// <summary>Wire title menu and show the title screen before a session exists.</summary>
         public void InitializeForTitle()
         {

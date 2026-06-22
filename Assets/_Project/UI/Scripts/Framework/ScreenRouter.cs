@@ -35,8 +35,25 @@ namespace Kismeta.UI
         public void RefreshControllers()
         {
             _controllers.Clear();
-            foreach (var controller in GetComponents<ScreenController>())
-                _controllers[controller.ScreenId] = controller;
+
+            var components = GetComponents<Component>();
+            for (var i = 0; i < components.Length; i++)
+            {
+                var component = components[i];
+                // Missing scripts and destroyed components appear as null or Unity-fake-null.
+                if (component == null)
+                    continue;
+                if (component is not ScreenController controller)
+                    continue;
+                if (!controller)
+                    continue;
+
+                var id = controller.ScreenId;
+                if (string.IsNullOrEmpty(id))
+                    continue;
+
+                _controllers[id] = controller;
+            }
         }
 
         private void Awake()

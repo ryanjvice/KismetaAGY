@@ -117,7 +117,9 @@ Production UI uses a six-face stack under `Assets/_Project/UI/Fonts/`. Size and 
 | UI headings | Futura Cyrillic Demi | `.font-ui`, `.h4`–`.h6` | Smaller headings, labels, buttons, data chrome |
 | Body | Futura Cyrillic Book | default on `.kismeta-root`, `.font-body`, `.p` | Instructional body, rules, lists, normal paragraphs |
 | Symbols | Noto Color Emoji | `.font-emoji` | Zodiac glyphs, suit emojis (via `SymbolGlyphs`) |
-| Icons | Tabler Icons (`tabler-icons.ttf`) | `.ti-icon` | Tabler PUA codepoints in Labels across screens |
+| Icons | Tabler Icons (`tabler-icons.asset`) | `.ti-icon` | Tabler PUA codepoints in Labels across screens |
+
+Unity 6 applies a default theme **FontAsset** to all labels via `-unity-font-definition`, which overrides legacy `-unity-font` TTF rules. Production USS must reference the generated `.asset` FontAssets (see **Kismeta → UI → Create UI Font Assets**).
 
 Tabler icons (`.ti-icon`) use Unicode codepoints in Labels backed by `tabler-icons.asset`. Ceremonial screens (title, age open/close, season intros, victory) add per-screen Amarante overrides in their USS files.
 

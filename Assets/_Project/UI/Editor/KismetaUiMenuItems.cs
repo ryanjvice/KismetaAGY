@@ -6,6 +6,7 @@ using Kismeta.UI.Controllers;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Editor
@@ -71,6 +72,16 @@ namespace Kismeta.UI.Editor
             TablerTtfPath,
         };
 
+        private static readonly string[] FontAssetPaths =
+        {
+            "Assets/_Project/UI/Fonts/Amarante-Regular.asset",
+            "Assets/_Project/UI/Fonts/GermaniaOne-Regular.asset",
+            "Assets/_Project/UI/Fonts/FuturaCyrillicDemi.asset",
+            "Assets/_Project/UI/Fonts/FuturaCyrillicBook.asset",
+            "Assets/_Project/UI/Fonts/NotoColorEmoji-Regular.asset",
+            "Assets/_Project/UI/Fonts/tabler-icons.asset",
+        };
+
         [MenuItem("Kismeta/UI/Verify Font Imports")]
         public static void VerifyFontImports()
         {
@@ -85,10 +96,20 @@ namespace Kismeta.UI.Editor
                 }
             }
 
+            foreach (var path in FontAssetPaths)
+            {
+                var asset = AssetDatabase.LoadAssetAtPath<UnityEngine.TextCore.Text.FontAsset>(path);
+                if (asset == null || asset.atlasTextures == null || asset.atlasTextures.Length == 0 || asset.atlasTextures[0] == null)
+                {
+                    Debug.LogWarning($"[Kismeta.UI] FontAsset missing or has no atlas: {path} — run Kismeta → UI → Create UI Font Assets");
+                    missing++;
+                }
+            }
+
             if (missing == 0)
-                Debug.Log("[Kismeta.UI] All six UI font TTFs imported and loadable.");
+                Debug.Log("[Kismeta.UI] All six UI font TTFs and FontAssets imported and loadable.");
             else
-                Debug.LogWarning($"[Kismeta.UI] {missing} font asset(s) missing — focus Unity so AssetDatabase can import TTFs.");
+                Debug.LogWarning($"[Kismeta.UI] {missing} font asset(s) missing — run Kismeta → UI → Create UI Font Assets.");
         }
 
         [MenuItem("Kismeta/UI/Create Panel Settings")]
@@ -216,6 +237,8 @@ namespace Kismeta.UI.Editor
                 return;
             }
 
+            RemoveMissingScripts(bootstrap.gameObject);
+
             var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
             var appShell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AppShellPath);
             var title = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TitleScreenPath);
@@ -326,9 +349,24 @@ namespace Kismeta.UI.Editor
                 layoutSo.ApplyModifiedPropertiesWithoutUndo();
             }
 
+            var router = bootstrap.GetComponent<ScreenRouter>();
+            if (router != null)
+            {
+                router.ConfigureScreens(
+                    title, null, waiting, setup,
+                    join, resume, codex, agekeeperContest,
+                    springHub, summerMain, summerHub, autumnMain, autumnHub, winterHub,
+                    roundOpen, springIntro, summerIntro,
+                    autumnIntro, winterIntro, ageClosing,
+                    springHarvest, winterUnlock, fatefulWager, craftReagent, cardLimits,
+                    victory, chronicle);
+                EditorUtility.SetDirty(router);
+            }
+
             EditorUtility.SetDirty(bootstrap);
             EditorUtility.SetDirty(doc);
-            Debug.Log("[Kismeta.UI] Wired GameBootstrap UI references (AppShell + screens).");
+            EditorSceneManager.MarkSceneDirty(bootstrap.gameObject.scene);
+            Debug.Log("[Kismeta.UI] Wired GameBootstrap UI references (AppShell + ScreenRouter screens).");
         }
 
         [MenuItem("Kismeta/UI/Create UI Test Scene")]
@@ -452,6 +490,30 @@ namespace Kismeta.UI.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(UiTestScenePath)!);
             EditorSceneManager.SaveScene(scene, UiTestScenePath);
             Debug.Log($"[Kismeta.UI] UI test scene at {UiTestScenePath}. Play: full-bleed Title; New game = sheet; Codex = inspect modal.");
+        }
+
+        [MenuItem("Kismeta/UI/Clean Bootstrap Missing Scripts")]
+        public static void CleanBootstrapMissingScripts()
+        {
+            var bootstrap = Object.FindFirstObjectByType<GameBootstrap>();
+            if (bootstrap == null)
+            {
+                Debug.LogWarning("[Kismeta.UI] No GameBootstrap in the open scene.");
+                return;
+            }
+
+            RemoveMissingScripts(bootstrap.gameObject);
+            EditorSceneManager.MarkSceneDirty(bootstrap.gameObject.scene);
+        }
+
+        static void RemoveMissingScripts(GameObject host)
+        {
+            var removed = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(host);
+            if (removed <= 0)
+                return;
+
+            GameObjectUtility.RemoveMonoBehavioursWithMissingScript(host);
+            Debug.LogWarning($"[Kismeta.UI] Removed {removed} missing script slot(s) from '{host.name}'.");
         }
 
         private static T EnsureComponent<T>(GameObject go) where T : Component
