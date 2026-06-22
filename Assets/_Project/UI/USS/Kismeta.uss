@@ -305,6 +305,11 @@
 }
 
 .rival:last-child { margin-right: 0; }
+.rival--active {
+    border-color: rgb(240, 176, 96);
+    background-color: rgba(46, 28, 10, 0.85);
+}
+.rival--active .rival__name { color: rgb(243, 233, 210); }
 .rival__dot { width: 18px; height: 18px; border-radius: 9px; border-width: 1px; margin-right: 6px; }
 .rival__name { font-size: var(--font-body); }
 .rival__stat { font-size: var(--font-label); color: var(--muted); }

@@ -8,7 +8,7 @@ Unity UI Toolkit assets ported from `Docs/wireframes/`. This folder is the **pro
 |------|----------|
 | `USS/` | Shared `Kismeta.uss` (canonical) + per-screen stylesheets |
 | `UXML/batch1/` | Title, SetupSheet, Join, Resume, Codex, AgekeeperContest |
-| `UXML/main/` | Season main scenes: SpringHub, SummerMain, AutumnMain, WinterHub |
+| `UXML/main/` | Season main scenes: SpringHub, SummerMain, **SummerHub**, AutumnMain, **AutumnHub**, WinterHub |
 | `UXML/batch2/` | Ceremony screens: RoundOpen, AgeOpening, season intros, AgeClosing |
 | `UXML/batch3/` | Spring/Winter step screens: Commune, WinterUnlock, FatefulWager, CardLimits |
 | `UXML/shell/` | `AppShell.uxml`, `WaitingHud` |
@@ -50,7 +50,7 @@ Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `
 ## Phase 6 complete — Batch 4 Summer actions
 
 - **Overlay architecture:** Summer sub-flows use `ViewportLayout` overlays (`SummerOverlayHost`) while `SummerMain` stays the active `ScreenRouter` screen.
-- **Hub:** Craft / Consort sheets, direct Activate, Pass → End Summer confirm modal.
+- **Hub:** Craft / Consort sheets, direct Activate, Pass → pass-turn confirm modal (summer ends when all players pass in a row).
 - **Commands:** `CraftReagentCommand`, `ActivateCrucibleCommand`, `BuildAstralHouseCommand`, `PlaceCardWardCommand`, `PassCrucibleActionCommand` (Summer pass fix in `CommandBridge`).
 - **Consort sheet** links to Trade / Duel / Gambit via `ContestOverlayHost` (Batch 5).
 
@@ -65,7 +65,7 @@ Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `
 
 **Summer play-test path:**
 
-Reach Summer → **Craft** sheet → craft reagent → **Activate** crucible → **Craft** → build house → place ward → **Pass** → End Summer confirm → Autumn intro.
+Reach Summer → **Craft** sheet → craft reagent → **Activate** crucible → **Craft** → build house → place ward → **Pass** → pass-turn confirm → **SummerHub** (while rivals act) → your turn returns to **SummerMain** → Autumn intro.
 
 ## Phase 5 complete — Batch 3 Spring & Winter steps
 
@@ -87,7 +87,7 @@ Title → setup → agekeeper → RoundOpen → AgeOpening → SpringIntro → *
 
 ## Phase 3 complete — Season main scenes
 
-- **Routing:** `GamePresenter` maps `Season` → `SpringHub` / `SummerMain` / `AutumnMain` / `WinterHub` on human turns; `WaitingHud` while AI decides.
+- **Routing:** `GamePresenter` maps `Season` → `SpringHub` / `SummerMain` / `AutumnMain` / `WinterHub` on human turns; **SummerHub** / **AutumnHub** while rivals act in free-action phases; generic `WaitingHud` elsewhere.
 - **Bind:** Status bar, rivals strip, spread dock, step rails (Spring/Winter), cauldrons (Summer), stone label (Autumn) from `GamePublicView`.
 - **Pass:** Summer, Autumn, and Winter main scenes wire **Pass** via `CommandBridge` during free-action phases.
 - **Card table** opens from season menu buttons via `EndOverlayHost` (Batch 7).

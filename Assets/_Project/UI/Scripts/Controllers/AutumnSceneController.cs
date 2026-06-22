@@ -100,7 +100,7 @@ namespace Kismeta.UI.Controllers
         {
             _session = session;
             _bridge = bridge;
-            _localPlayerId = bridge.ActivePlayerId;
+            _localPlayerId = MainSceneBindings.ResolveLocalPlayerId(session, loop, bridge);
             if (Root == null) return;
 
             var view = GamePublicView.From(session);
@@ -148,7 +148,7 @@ namespace Kismeta.UI.Controllers
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             MainSceneBindings.SetHandFabActive(Root, _showHand);
             MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
-            RivalStripBuilder.Populate(El("rivals"), view, _localPlayerId);
+            RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
         }
     }
 }

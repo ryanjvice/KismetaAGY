@@ -64,23 +64,11 @@ namespace Kismeta.UI.Controllers
             if (_hudRoot == null)
                 return;
 
-            int playerId = ResolveLocalPlayerId(session, loop, bridge);
+            int playerId = MainSceneBindings.ResolveLocalPlayerId(session, loop, bridge);
             if (playerId < 0 || playerId >= session.Players.Count)
                 return;
 
             PlayerHudBindings.Bind(_hudRoot, session.Players[playerId]);
-        }
-
-        static int ResolveLocalPlayerId(GameSession session, GameLoop loop, CommandBridge bridge)
-        {
-            if (bridge.ActivePlayerId >= 0 && bridge.ActivePlayerId < session.Players.Count)
-                return bridge.ActivePlayerId;
-            if (loop.ActivePlayerId >= 0 && loop.ActivePlayerId < session.Players.Count)
-                return loop.ActivePlayerId;
-            var hs = bridge.PendingController;
-            if (hs != null && hs.Slot.Index >= 0 && hs.Slot.Index < session.Players.Count)
-                return hs.Slot.Index;
-            return 0;
         }
 
         static void ApplyAssetStylesheets(VisualElement target, VisualTreeAsset asset)

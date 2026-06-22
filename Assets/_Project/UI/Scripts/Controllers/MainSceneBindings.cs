@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
+using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
@@ -142,6 +143,64 @@ namespace Kismeta.UI.Controllers
                 }
                 else
                     dot.AddToClassList("step__dot--locked");
+            }
+        }
+
+        public static int ResolveLocalPlayerId(GameSession session, GameLoop loop, CommandBridge bridge)
+        {
+            int humanId = loop.LocalHumanPlayerId;
+            if (humanId >= 0 && humanId < session.Players.Count)
+                return humanId;
+
+            var hs = bridge.PendingController;
+            if (hs != null && hs.Slot.Index >= 0 && hs.Slot.Index < session.Players.Count)
+                return hs.Slot.Index;
+
+            return 0;
+        }
+
+        public static void BindSpectatorTurnBanner(
+            VisualElement? root,
+            GameSession session,
+            GameLoop loop,
+            string locationPhrase)
+        {
+            if (root == null) return;
+
+            int activeId = loop.ActivePlayerId;
+            var banner = root.Q<Label>("turn-banner");
+            var hint = root.Q<Label>("hint-label");
+
+            if (activeId >= 0 && activeId < session.Players.Count
+                && activeId != loop.LocalHumanPlayerId)
+            {
+                var name = CeremonyBindings.PlayerName(session, activeId);
+                if (banner != null)
+                    banner.text = $"{name} is {locationPhrase}";
+            }
+            else if (banner != null)
+            {
+                banner.text = "Rivals are taking their turns…";
+            }
+
+            if (hint != null)
+                hint.text = "Review your board while you wait";
+        }
+
+        public static void BindCauldrons(VisualElement? root, PublicPlayerView? local)
+        {
+            if (root == null) return;
+
+            var ids = new[] { "cauldron-n", "cauldron-e", "cauldron-s", "cauldron-w" };
+            for (int i = 0; i < ids.Length; i++)
+            {
+                var el = root.Q<VisualElement>(ids[i]);
+                if (el == null) continue;
+
+                bool lit = local != null && i < local.CrucibleSlots.Count &&
+                    local.CrucibleSlots[i].State >= CrucibleCardState.Active;
+                el.EnableInClassList("cauldron--lit", lit);
+                el.EnableInClassList("cauldron--dormant", !lit);
             }
         }
 

@@ -6,23 +6,17 @@ using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
 {
-    public sealed class SummerSceneController : ScreenController
+    public sealed class SummerHubController : ScreenController
     {
-        public override string ScreenId => ScreenIds.SummerMain;
+        public override string ScreenId => ScreenIds.SummerHub;
 
-        public Action OnCraftBuild;
-        public Action OnConsort;
-        public Action OnActivate;
-        public Action OnPass;
-        public Action OnOpenCardTable;
-        public Action<string> OnInspectCard;
+        public Action? OnOpenCardTable;
+        public Action<string>? OnInspectCard;
 
-        CommandBridge? _bridge;
         GameSession? _session;
         int _localPlayerId;
         bool _showHand;
@@ -34,10 +28,6 @@ namespace Kismeta.UI.Controllers
 
         protected override void Wire()
         {
-            Btn("craftbuild-btn")!.clicked += () => OnCraftBuild?.Invoke();
-            Btn("consort-btn")!.clicked += () => OnConsort?.Invoke();
-            Btn("activate-btn")!.clicked += () => OnActivate?.Invoke();
-            Btn("pass-btn")!.clicked += () => OnPass?.Invoke();
             Btn("hand-btn")!.clicked += OnHandToggle;
             Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
         }
@@ -53,7 +43,6 @@ namespace Kismeta.UI.Controllers
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
         {
             _session = session;
-            _bridge = bridge;
             _localPlayerId = MainSceneBindings.ResolveLocalPlayerId(session, loop, bridge);
             if (Root == null) return;
 
@@ -61,7 +50,7 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             MainSceneBindings.BindStatusBar(Root, session, loop);
             MainSceneBindings.BindCosmicAgeBanner(Root, session);
-            MainSceneBindings.BindPassButton(Root, session, bridge);
+            MainSceneBindings.BindSpectatorTurnBanner(Root, session, loop, "working in the workshop");
             MainSceneBindings.SetHandFabActive(Root, _showHand);
             MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
 
@@ -76,7 +65,8 @@ namespace Kismeta.UI.Controllers
                 Lbl("codex-label")!.text = $"codex · {active} active";
             }
 
-            RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
+            RivalStripBuilder.Populate(
+                El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, Season.Summer);
         }
     }
 }

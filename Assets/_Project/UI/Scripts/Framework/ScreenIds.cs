@@ -15,7 +15,9 @@ namespace Kismeta.UI
         // Season main scenes (Phase 3)
         public const string SpringHub = "SpringHub";
         public const string SummerMain = "SummerMain";
+        public const string SummerHub = "SummerHub";
         public const string AutumnMain = "AutumnMain";
+        public const string AutumnHub = "AutumnHub";
         public const string WinterHub = "WinterHub";
         // Batch 2 ceremonies (Phase 4)
         public const string RoundOpen = "RoundOpen";

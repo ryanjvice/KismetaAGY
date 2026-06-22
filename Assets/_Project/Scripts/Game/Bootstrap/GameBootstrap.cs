@@ -53,7 +53,9 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _agekeeperContest;
         [SerializeField] private VisualTreeAsset _springHub;
         [SerializeField] private VisualTreeAsset _summerMain;
+        [SerializeField] private VisualTreeAsset _summerHub;
         [SerializeField] private VisualTreeAsset _autumnMain;
+        [SerializeField] private VisualTreeAsset _autumnHub;
         [SerializeField] private VisualTreeAsset _winterHub;
         [SerializeField] private VisualTreeAsset _roundOpen;
         [SerializeField] private VisualTreeAsset _springIntro;
@@ -175,7 +177,9 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<AgekeeperContestController>();
             EnsureController<SpringHubController>();
             EnsureController<SummerSceneController>();
+            EnsureController<SummerHubController>();
             EnsureController<AutumnSceneController>();
+            EnsureController<AutumnHubController>();
             EnsureController<WinterHubController>();
             EnsureController<RoundOpenController>();
             EnsureController<AgeClosingController>();
@@ -245,7 +249,7 @@ namespace Kismeta.Game.Bootstrap
                 router.ConfigureScreens(
                     _titleScreen, null, _waitingHud, _setupSheet,
                     _joinScreen, _resumeScreen, _codexScreen, _agekeeperContest,
-                    _springHub, _summerMain, _autumnMain, _winterHub,
+                    _springHub, _summerMain, _summerHub, _autumnMain, _autumnHub, _winterHub,
                     _roundOpen, _springIntro, _summerIntro,
                     _autumnIntro, _winterIntro, _ageClosing,
                     _commune, _springHarvest, _winterUnlock, _fatefulWager, _craftReagent, _cardLimits,

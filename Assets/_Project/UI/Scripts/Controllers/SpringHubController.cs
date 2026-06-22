@@ -52,7 +52,7 @@ namespace Kismeta.UI.Controllers
             _session = session;
             _loop = loop;
             _bridge = bridge;
-            int resolvedPlayerId = ResolveLocalPlayerId(session, loop, bridge);
+            int resolvedPlayerId = MainSceneBindings.ResolveLocalPlayerId(session, loop, bridge);
             if (resolvedPlayerId != _localPlayerId)
                 _wheelBindKey = int.MinValue;
             _localPlayerId = resolvedPlayerId;
@@ -76,19 +76,7 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.SetHandFabActive(Root, _showHand);
             MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
 
-            RivalStripBuilder.Populate(El("rivals"), view, _localPlayerId);
-        }
-
-        static int ResolveLocalPlayerId(GameSession session, GameLoop loop, CommandBridge bridge)
-        {
-            if (bridge.ActivePlayerId >= 0 && bridge.ActivePlayerId < session.Players.Count)
-                return bridge.ActivePlayerId;
-            if (loop.ActivePlayerId >= 0 && loop.ActivePlayerId < session.Players.Count)
-                return loop.ActivePlayerId;
-            var hs = bridge.PendingController;
-            if (hs != null && hs.Slot.Index >= 0 && hs.Slot.Index < session.Players.Count)
-                return hs.Slot.Index;
-            return 0;
+            RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
         }
 
         static int ResolveStepIndex(GameSession session, PlayerState player, ActionHint hint)

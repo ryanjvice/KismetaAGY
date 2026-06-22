@@ -93,6 +93,7 @@ namespace Kismeta.UI
             WireAgekeeperContest();
             WireStepScreens();
             WireSummerNavigation();
+            WireSeasonHubNavigation();
             WireContestNavigation();
             WireAutumnNavigation();
             WireEndNavigation();
@@ -421,7 +422,7 @@ namespace Kismeta.UI
                 _autumnOverlays?.DismissIfNotHumanTurn();
                 _endOverlays?.DismissIfNotHumanTurn();
                 _adeptModalOpen = false;
-                RouteIfNeeded(ScreenIds.Waiting);
+                RouteIfNeeded(ResolveSpectatorScreen(_session.Phase.CurrentSeason));
                 RefreshActiveScreen();
                 return;
             }
@@ -474,6 +475,23 @@ namespace Kismeta.UI
             summer.OnPass = () => _summerOverlays.ShowEndSummer();
             summer.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
             summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+        }
+
+        private void WireSeasonHubNavigation()
+        {
+            var summerHub = _router.GetController<SummerHubController>(ScreenIds.SummerHub);
+            if (summerHub != null)
+            {
+                summerHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                summerHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+            }
+
+            var autumnHub = _router.GetController<AutumnHubController>(ScreenIds.AutumnHub);
+            if (autumnHub != null)
+            {
+                autumnHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                autumnHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+            }
         }
 
         private void WireContestNavigation()
@@ -584,6 +602,13 @@ namespace Kismeta.UI
             _ => ScreenIds.Waiting
         };
 
+        private static string ResolveSpectatorScreen(Season season) => season switch
+        {
+            Season.Summer => ScreenIds.SummerHub,
+            Season.Autumn => ScreenIds.AutumnHub,
+            _ => ScreenIds.Waiting
+        };
+
         private static string ResolveSeasonMainScreen(Season season) => season switch
         {
             Season.Spring => ScreenIds.SpringHub,
@@ -666,11 +691,21 @@ namespace Kismeta.UI
                 _contestOverlays?.BindState(_session, _bridge);
                 _endOverlays?.BindState(_session, _loop, _bridge);
             }
+            else if (controller is SummerHubController summerHub)
+            {
+                summerHub.BindState(_session, _loop, _bridge);
+                _endOverlays?.BindState(_session, _loop, _bridge);
+            }
             else if (controller is AutumnSceneController autumn)
             {
                 autumn.BindState(_session, _loop, _bridge);
                 _autumnOverlays?.BindState(_session, _bridge);
                 _contestOverlays?.BindState(_session, _bridge);
+                _endOverlays?.BindState(_session, _loop, _bridge);
+            }
+            else if (controller is AutumnHubController autumnHub)
+            {
+                autumnHub.BindState(_session, _loop, _bridge);
                 _endOverlays?.BindState(_session, _loop, _bridge);
             }
             else if (controller is WinterHubController winter)

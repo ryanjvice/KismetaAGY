@@ -36,6 +36,20 @@ namespace Kismeta.Core.Players
         /// <summary>0-based index of the player the loop is currently asking to act.</summary>
         public int ActivePlayerId { get; private set; } = -1;
 
+        /// <summary>First hot-seat player index, or 0 when no human is seated.</summary>
+        public int LocalHumanPlayerId
+        {
+            get
+            {
+                for (int i = 0; i < _controllers.Count; i++)
+                {
+                    if (_controllers[i] is HotSeatController)
+                        return i;
+                }
+                return 0;
+            }
+        }
+
         /// <summary>
         /// When PendingHint is AdeptDecision or a Fate decision, this holds the card instance ID
         /// the player must decide on.
