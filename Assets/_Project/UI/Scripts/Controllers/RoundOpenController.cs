@@ -4,7 +4,6 @@ using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI;
 using Kismeta.UI.Components;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -36,11 +35,14 @@ namespace Kismeta.UI.Controllers
             _rolling = true;
             Btn("roll-btn")?.SetEnabled(false);
 
-            var face = Lbl("die-face");
-            yield return DieAnimator.RollLabel(face, Random.Range(1, 13));
-
             int keeperId = CeremonyBindings.FindAgekeeperId(_session);
-            _gate.CompleteWithCommand(new RollCosmicAgeCommand(keeperId));
+            _session.Apply(new RollCosmicAgeCommand(keeperId));
+            var sign = _session.Board.CosmicAgeSign;
+
+            var face = Lbl("die-face");
+            yield return DieAnimator.RollZodiacLabel(face, sign);
+
+            _gate.Complete();
             _rolling = false;
         }
     }

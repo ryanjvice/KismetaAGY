@@ -8,6 +8,13 @@ namespace Kismeta.UI.Components
     {
         public const string EmojiFontClass = "font-emoji";
 
+        public static readonly ZodiacSign[] AllSigns =
+        {
+            ZodiacSign.Aries, ZodiacSign.Taurus, ZodiacSign.Gemini, ZodiacSign.Cancer,
+            ZodiacSign.Leo, ZodiacSign.Virgo, ZodiacSign.Libra, ZodiacSign.Scorpio,
+            ZodiacSign.Sagittarius, ZodiacSign.Capricorn, ZodiacSign.Aquarius, ZodiacSign.Pisces
+        };
+
         public static void TagEmoji(VisualElement element) => element.AddToClassList(EmojiFontClass);
 
         public static Label CreateEmojiLabel(string glyph, string? ussClass = null)

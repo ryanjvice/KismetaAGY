@@ -2,6 +2,7 @@ using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
+using Kismeta.UI.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -63,6 +64,7 @@ namespace Kismeta.UI.Controllers
             SetLabel(root, "effect-desc", effectDesc);
             SetLabel(root, "agekeeper-line",
                 $"{PlayerName(session, keeperId)} serves as Agekeeper — they cast the age and hold the key this round.");
+            BindSigilGlyph(root, sign);
         }
 
         public static void BindAgeClosing(VisualElement? root, GameSession session)
@@ -74,6 +76,7 @@ namespace Kismeta.UI.Controllers
             SetLabel(root, "age-name", sign.ToString().ToUpperInvariant());
             SetLabel(root, "keypass-line",
                 $"The key passes to {PlayerName(session, nextKeeper)}. They will cast the next age — its sign is unknown until the dice fall.");
+            BindSigilGlyph(root, sign);
 
             var list = root.Q<VisualElement>("standings-list");
             if (list == null) return;
@@ -140,6 +143,9 @@ namespace Kismeta.UI.Controllers
             }
 
             SetLabel(root, "die-face", "?");
+            var dieFace = root.Q<Label>("die-face");
+            if (dieFace != null)
+                SymbolGlyphs.TagEmoji(dieFace);
         }
 
         public static void ApplySeasonIntroClass(VisualElement? root, Season season)
@@ -177,6 +183,14 @@ namespace Kismeta.UI.Controllers
             PlayerColor.White => new Color(0.72f, 0.72f, 0.72f),
             _ => new Color(0.5f, 0.5f, 0.5f)
         };
+
+        static void BindSigilGlyph(VisualElement root, ZodiacSign sign)
+        {
+            var glyph = root.Q<Label>(className: "ceremony-sigil__glyph");
+            if (glyph == null) return;
+            SymbolGlyphs.TagEmoji(glyph);
+            glyph.text = SymbolGlyphs.Zodiac(sign);
+        }
 
         static void SetLabel(VisualElement root, string name, string text)
         {

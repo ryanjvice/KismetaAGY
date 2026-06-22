@@ -286,7 +286,7 @@ namespace Kismeta.Core.Players
                 var result = await _ceremonyGate.WaitAsync(CeremonyStep.RoundOpen, ct);
                 if (result.Command is RollCosmicAgeCommand roll)
                     Apply(roll);
-                else
+                else if (_session.Board.CosmicAgeSign == ZodiacSign.None)
                     Apply(new RollCosmicAgeCommand(keeperId));
             }
             else

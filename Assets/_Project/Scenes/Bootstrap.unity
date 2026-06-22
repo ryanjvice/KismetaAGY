@@ -324,6 +324,7 @@ GameObject:
   - component: {fileID: 1726667784}
   - component: {fileID: 1726667783}
   - component: {fileID: 1726667782}
+  - component: {fileID: 1726667788}
   m_Layer: 0
   m_Name: GameBootstrap
   m_TagString: Untagged
@@ -352,6 +353,7 @@ MonoBehaviour:
   _appShell: {fileID: 9197481963319205126, guid: ceef0b16fa468564585f12f760e727cc, type: 3}
   _titleScreen: {fileID: 9197481963319205126, guid: b44be3fc0d0a8944a96a90543cf35210, type: 3}
   _waitingHud: {fileID: 9197481963319205126, guid: 23c9356e19d8a3343a869197fd22074c, type: 3}
+  _playerHud: {fileID: 9197481963319205126, guid: 08f3468a0c4dd6744923c105139055aa, type: 3}
   _setupSheet: {fileID: 9197481963319205126, guid: f349b93fc3fde7647b0c740e772f9ca7, type: 3}
   _joinScreen: {fileID: 9197481963319205126, guid: 519a817f310314b48bb262c3b086169d, type: 3}
   _resumeScreen: {fileID: 9197481963319205126, guid: 26748abde5aa099428c318a8600db94a, type: 3}
@@ -940,6 +942,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 159caf813f8f12d4ca25465c6bf97032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.FireStoneController
+--- !u!114 &1726667788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d415311ecb7ffab4ebaf052ca9d5a540, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.PlayerHudController
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

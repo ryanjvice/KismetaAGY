@@ -23,7 +23,7 @@
 
             <!-- die host: animate in C# -->
             <engine:VisualElement name="age-die" style="width: 88px; height: 88px; border-radius: 14px; background-color: rgb(36,20,52); border-width: 2px; border-color: rgb(106, 74, 138); align-items: center; justify-content: center; margin-bottom: 14px;">
-                <engine:Label name="die-face" text="?" style="font-size: 40px; color: rgb(205, 176, 224);" />
+                <engine:Label name="die-face" text="?" class="font-emoji" style="font-size: 40px; color: rgb(205, 176, 224);" />
             </engine:VisualElement>
 
             <engine:Label text="the cosmic age die" class="ceremony-prelabel" />

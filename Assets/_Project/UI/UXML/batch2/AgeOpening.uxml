@@ -20,7 +20,7 @@
             <engine:Label text="the heavens turn · an age dawns" class="ceremony-eyebrow" />
 
             <engine:VisualElement name="age-sigil" class="ceremony-sigil ceremony-sigil--open">
-                <engine:Label text="&#9007;" class="ceremony-sigil__glyph" />
+                <engine:Label text="?" class="ceremony-sigil__glyph font-emoji" />
             </engine:VisualElement>
 
             <engine:Label text="the age of" class="ceremony-prelabel" />
