@@ -17,6 +17,7 @@ Unity UI Toolkit assets ported from `Docs/wireframes/`. This folder is the **pro
 | `Scripts/Components/` | CardChipFactory, DieAnimator, UiMotion, FateDecisionBindings, RivalStripBuilder |
 | `Scripts/Setup/` | `UiSetupConfig`, mapper to Core `GameMode` |
 | `Settings/` | `KismetaPanelSettings.asset` (380×844 **reference** only) |
+| `Fonts/` | Production TTFs + Tabler icon font asset — see `Fonts/README.md` |
 | `Editor/` | Menu items under **Kismeta → UI** |
 
 ## Architecture (single-host model)

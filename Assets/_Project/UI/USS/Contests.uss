@@ -81,4 +81,5 @@
 .verdict-title {
     font-size: 22px;
     letter-spacing: 2px;
+    -unity-font: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.ttf");
 }

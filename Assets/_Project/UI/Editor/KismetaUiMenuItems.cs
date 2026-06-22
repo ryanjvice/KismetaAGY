@@ -59,6 +59,37 @@ namespace Kismeta.UI.Editor
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string WaitingHudPath = "Assets/_Project/UI/UXML/shell/WaitingHud.uxml";
         private const string PlayerHudPath = "Assets/_Project/UI/UXML/shell/PlayerHud.uxml";
+        private const string TablerTtfPath = "Assets/_Project/UI/Fonts/tabler-icons.ttf";
+
+        private static readonly string[] FontTtfPaths =
+        {
+            "Assets/_Project/UI/Fonts/Amarante-Regular.ttf",
+            "Assets/_Project/UI/Fonts/GermaniaOne-Regular.ttf",
+            "Assets/_Project/UI/Fonts/FuturaCyrillicDemi.ttf",
+            "Assets/_Project/UI/Fonts/FuturaCyrillicBook.ttf",
+            "Assets/_Project/UI/Fonts/NotoColorEmoji-Regular.ttf",
+            TablerTtfPath,
+        };
+
+        [MenuItem("Kismeta/UI/Verify Font Imports")]
+        public static void VerifyFontImports()
+        {
+            var missing = 0;
+            foreach (var path in FontTtfPaths)
+            {
+                var font = AssetDatabase.LoadAssetAtPath<Font>(path);
+                if (font == null)
+                {
+                    Debug.LogWarning($"[Kismeta.UI] Font not imported: {path}");
+                    missing++;
+                }
+            }
+
+            if (missing == 0)
+                Debug.Log("[Kismeta.UI] All six UI font TTFs imported and loadable.");
+            else
+                Debug.LogWarning($"[Kismeta.UI] {missing} font asset(s) missing — focus Unity so AssetDatabase can import TTFs.");
+        }
 
         [MenuItem("Kismeta/UI/Create Panel Settings")]
         public static void CreatePanelSettings()

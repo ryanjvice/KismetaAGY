@@ -108,17 +108,18 @@ turning year; a player can tell the season from color alone.
 
 ## 3. Typography
 
-Production UI uses Unity's default UI Toolkit font. Size and weight are controlled via USS tokens (`--font-body`, `--font-display`, etc.) and utility classes (`.font-display`, `.font-heading`, `.h1`–`.h6`) for semantic styling hooks — not custom font assets.
+Production UI uses a six-face stack under `Assets/_Project/UI/Fonts/`. Size and weight are controlled via USS tokens (`--font-body`, `--font-display`, etc.) and utility classes bound in `Kismeta.uss`. See [`Assets/_Project/UI/Fonts/README.md`](../../Assets/_Project/UI/Fonts/README.md) for import steps.
 
-| Role | USS hook | Use for |
-|---|---|---|
-| Display / lore | `.font-display`, `.font-lore`, `.h1` | Titles, wordmarks, ceremonial names, immersive lore |
-| Section headings | `.font-heading`, `.h2`, `.h3` | Screen section titles, season taglines, modal headings |
-| UI headings | `.font-ui`, `.h4`–`.h6` | Smaller headings, labels, buttons, data chrome |
-| Body | default / `.font-body`, `.p` | Instructional body, rules, lists, normal paragraphs |
-| Symbols | `.font-emoji` | Zodiac glyphs, suit emojis (via `SymbolGlyphs`) |
+| Role | Typeface | USS hook | Use for |
+|---|---|---|---|
+| Display / lore | Amarante | `.font-display`, `.font-lore`, `.h1` | Titles, wordmarks, ceremonial names, immersive lore |
+| Section headings | Germania One | `.font-heading`, `.h2`, `.h3` | Screen section titles, season taglines, modal headings |
+| UI headings | Futura Cyrillic Demi | `.font-ui`, `.h4`–`.h6` | Smaller headings, labels, buttons, data chrome |
+| Body | Futura Cyrillic Book | default on `.kismeta-root`, `.font-body`, `.p` | Instructional body, rules, lists, normal paragraphs |
+| Symbols | Noto Color Emoji | `.font-emoji` | Zodiac glyphs, suit emojis (via `SymbolGlyphs`) |
+| Icons | Tabler Icons (`tabler-icons.ttf`) | `.ti-icon` | Tabler PUA codepoints in Labels across screens |
 
-Tabler icons (`.ti-icon`) use Unicode codepoints in Labels; replace with `Image` + sprite if icon font assets are not used.
+Tabler icons (`.ti-icon`) use Unicode codepoints in Labels backed by `tabler-icons.asset`. Ceremonial screens (title, age open/close, season intros, victory) add per-screen Amarante overrides in their USS files.
 
 ### Type scale (baseline at 380×844)
 
