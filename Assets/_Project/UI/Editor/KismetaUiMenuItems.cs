@@ -407,6 +407,7 @@ namespace Kismeta.UI.Editor
             var springHarvest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHarvestPath);
             var winterUnlock = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterUnlockPath);
             var fatefulWager = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FatefulWagerPath);
+            var craftReagent = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CraftReagentPath);
             var cardLimits = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardLimitsPath);
             var waitingHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
             var cardModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
@@ -418,7 +419,7 @@ namespace Kismeta.UI.Editor
                 springHub, summerMain, autumnMain, winterHub,
                 roundOpen, ageOpening, springIntro, summerIntro,
                 autumnIntro, winterIntro, ageClosing,
-                commune, springHarvest, winterUnlock, fatefulWager, cardLimits);
+                commune, springHarvest, winterUnlock, fatefulWager, craftReagent, cardLimits);
 
             var doc = host.GetComponent<UIDocument>();
             doc.panelSettings = panelSettings;

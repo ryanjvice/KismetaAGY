@@ -2,13 +2,15 @@ using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.UI;
 using Kismeta.UI.Components;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
 {
-    public sealed class CraftReagentController : OverlayController
+    public sealed class CraftReagentController : ScreenController
     {
+        public override string ScreenId => ScreenIds.CraftReagent;
         readonly HashSet<string> _selected = new();
 
         GameSession? _session;
@@ -27,11 +29,9 @@ namespace Kismeta.UI.Controllers
             Btn("forge-btn")!.clicked += OnForge;
             Btn("result-done-btn")!.clicked += () => OnDone?.Invoke();
 
-            foreach (var key in ReagentKeys)
+            foreach (var key in CraftReagentPanelBindings.ReagentKeys)
                 Btn($"pick-{key}")?.RegisterCallback<ClickEvent>(_ => PickReagent(key));
         }
-
-        static readonly string[] ReagentKeys = { "salt", "sulphur", "vitriol", "aqua", "quicksilver" };
 
         public void BindState(GameSession session, CommandBridge bridge)
         {
@@ -54,7 +54,7 @@ namespace Kismeta.UI.Controllers
                 return;
             }
 
-            LockReagentPicks(_session.Players[_playerId]);
+            CraftReagentPanelBindings.LockReagentPicks(Root, _session.Players[_playerId]);
         }
 
         protected override void Bind()
@@ -71,6 +71,9 @@ namespace Kismeta.UI.Controllers
             _playerId = SummerActionBindings.ResolvePlayerId(_session, _bridge);
             if (_playerId < 0) return;
 
+            MainSceneBindings.ApplySeasonClass(Root, _session.Phase.CurrentSeason);
+            UpdateResultDoneLabel();
+
             if (_forged)
             {
                 SetPhaseVisibility(showResult: true);
@@ -80,7 +83,7 @@ namespace Kismeta.UI.Controllers
             SetPhaseVisibility(showResult: false);
 
             var player = _session.Players[_playerId];
-            LockReagentPicks(player);
+            CraftReagentPanelBindings.LockReagentPicks(Root, player);
 
             if (fullInit || !_uiInitialized)
             {
@@ -96,7 +99,7 @@ namespace Kismeta.UI.Controllers
         {
             if (TryPickReagent("sulphur")) return;
             if (TryPickReagent("salt")) return;
-            foreach (var key in ReagentKeys)
+            foreach (var key in CraftReagentPanelBindings.ReagentKeys)
             {
                 if (key is "sulphur" or "salt") continue;
                 if (TryPickReagent(key)) return;
@@ -107,43 +110,23 @@ namespace Kismeta.UI.Controllers
 
         bool TryPickReagent(string key)
         {
-            var btn = Btn($"pick-{key}");
-            if (btn != null && btn.ClassListContains("reagent-pick--locked")) return false;
+            if (CraftReagentPanelBindings.IsReagentPickLocked(Root!, key)) return false;
             PickReagent(key);
             return true;
         }
 
-        void LockReagentPicks(PlayerState player)
-        {
-            foreach (var key in ReagentKeys)
-            {
-                var btn = Btn($"pick-{key}");
-                if (btn == null) continue;
-
-                var type = KeyToReagent(key);
-                bool locked = type != ReagentType.Salt
-                    && !player.IsCauldronLit(Correspondence.SuitFor(type));
-                btn.EnableInClassList("reagent-pick--locked", locked);
-                btn.SetEnabled(!locked);
-            }
-        }
-
         void PickReagent(string key)
         {
-            var btn = Btn($"pick-{key}");
-            if (btn != null && btn.ClassListContains("reagent-pick--locked")) return;
+            if (Root != null && CraftReagentPanelBindings.IsReagentPickLocked(Root, key)) return;
 
-            _reagent = KeyToReagent(key);
+            _reagent = CraftReagentPanelBindings.KeyToReagent(key);
             _selected.Clear();
             ApplyReagentUi();
         }
 
         void ApplyReagentUi()
         {
-            var activeKey = ReagentKeyFor(_reagent);
-            foreach (var k in ReagentKeys)
-                Btn($"pick-{k}")?.EnableInClassList("reagent-pick--active", k == activeKey);
-
+            CraftReagentPanelBindings.SetActiveReagentPick(Root!, _reagent);
             UpdateCauldronNote();
             RefreshPool();
             RefreshForgeBtn();
@@ -151,23 +134,8 @@ namespace Kismeta.UI.Controllers
 
         void UpdateCauldronNote()
         {
-            var note = Lbl("cauldron-note");
-            if (note == null || _session == null || _playerId < 0) return;
-
-            if (_reagent == ReagentType.Salt)
-            {
-                note.text = "Salt accepts any 3 cards from your spread or hand.";
-                return;
-            }
-
-            var suit = Correspondence.SuitFor(_reagent);
-            var player = _session.Players[_playerId];
-            var color = CauldronNameFor(suit);
-            int need = EffectiveNeed();
-            bool lit = player.IsCauldronLit(suit);
-            note.text = lit
-                ? $"{_reagent} needs the lit {color} cauldron — discard {need} {suit}."
-                : $"The {color} cauldron must be lit before crafting {_reagent}.";
+            if (_session == null || _playerId < 0 || Root == null) return;
+            CraftReagentPanelBindings.UpdateCauldronNote(Root, _session, _session.Players[_playerId], _reagent);
         }
 
         void RefreshPool()
@@ -209,39 +177,14 @@ namespace Kismeta.UI.Controllers
         int EffectiveNeed()
         {
             if (_session == null || _playerId < 0) return 3;
-            return SummerActionBindings.CraftEffectiveCost(_session, _session.Players[_playerId], _reagent);
+            return CraftReagentPanelBindings.EffectiveCost(_session, _session.Players[_playerId], _reagent);
         }
 
         void RefreshForgeBtn()
         {
-            var b = Btn("forge-btn");
-            var countLbl = Lbl("pick-count");
-            if (b == null) return;
-
-            int need = EffectiveNeed();
-            int picked = _selected.Count;
-            if (countLbl != null) countLbl.text = $"{picked} / {need}";
-
-            var contract = Lbl("contract-line");
-            if (contract != null)
-            {
-                if (_reagent == ReagentType.Salt)
-                    contract.text = $"{need} cards → 1 Salt";
-                else
-                {
-                    var suit = Correspondence.SuitFor(_reagent);
-                    var color = CauldronNameFor(suit);
-                    contract.text = $"{need} {suit} → 1 {_reagent} into the {color} cauldron";
-                }
-            }
-
-            bool ready = picked >= need;
-            b.SetEnabled(ready);
-            b.EnableInClassList("btn--disabled", !ready);
-            b.EnableInClassList("btn--primary", ready);
-            b.text = ready
-                ? "Forge the reagent"
-                : $"Forge — needs {need - picked} more card{(need - picked == 1 ? "" : "s")}";
+            if (_session == null || _playerId < 0 || Root == null) return;
+            CraftReagentPanelBindings.RefreshForgeButton(Root, _session, _session.Players[_playerId],
+                _reagent, _selected.Count);
         }
 
         void OnForge()
@@ -307,12 +250,12 @@ namespace Kismeta.UI.Controllers
 
             var dot = new VisualElement();
             dot.AddToClassList("reagent-dot");
-            dot.AddToClassList(ReagentDotClass(_reagent));
+            dot.AddToClassList(CraftReagentPanelBindings.ReagentDotClass(_reagent));
             dot.style.width = 26;
             dot.style.height = 26;
             output.Add(dot);
 
-            var name = new Label(ReagentDisplayName(_reagent));
+            var name = new Label(CraftReagentPanelBindings.ReagentDisplayName(_reagent));
             name.style.fontSize = 9;
             name.style.color = new StyleColor(new UnityEngine.Color(184f / 255f, 154f / 255f, 110f / 255f));
             name.style.marginTop = 3;
@@ -321,56 +264,22 @@ namespace Kismeta.UI.Controllers
 
             var subtitle = Lbl("result-subtitle");
             if (subtitle != null)
-                subtitle.text = $"Forged 1 {ReagentDisplayName(_reagent)}";
+                subtitle.text = $"Forged 1 {CraftReagentPanelBindings.ReagentDisplayName(_reagent)}";
         }
 
-        static string ReagentDisplayName(ReagentType type) => type switch
+        void UpdateResultDoneLabel()
         {
-            ReagentType.AquaRegia => "Aqua Regia",
-            _ => type.ToString()
-        };
-
-        static string ReagentDotClass(ReagentType type) => type switch
-        {
-            ReagentType.Sulphur => "reagent-dot--sulphur",
-            ReagentType.Vitriol => "reagent-dot--vitriol",
-            ReagentType.AquaRegia => "reagent-dot--aqua",
-            ReagentType.Quicksilver => "reagent-dot--quick",
-            _ => "reagent-dot--salt"
-        };
+            var doneBtn = Btn("result-done-btn");
+            if (doneBtn == null || _session == null) return;
+            doneBtn.text = _session.Phase.CurrentSeason == Season.Winter
+                ? "Back to winter rites"
+                : "Back to the workshop";
+        }
 
         public void ResetForgeState()
         {
             _forged = false;
             _uiInitialized = false;
         }
-
-        static ReagentType KeyToReagent(string key) => key switch
-        {
-            "sulphur" => ReagentType.Sulphur,
-            "vitriol" => ReagentType.Vitriol,
-            "aqua" => ReagentType.AquaRegia,
-            "quicksilver" => ReagentType.Quicksilver,
-            _ => ReagentType.Salt
-        };
-
-        static string ReagentKeyFor(ReagentType type) => type switch
-        {
-            ReagentType.Sulphur => "sulphur",
-            ReagentType.Vitriol => "vitriol",
-            ReagentType.AquaRegia => "aqua",
-            ReagentType.Quicksilver => "quicksilver",
-            _ => "salt"
-        };
-
-        static string CauldronNameFor(Suit suit) => suit switch
-        {
-            Suit.Wands => "Red",
-            Suit.Cups => "Blue",
-            Suit.Pentacles => "Green",
-            Suit.Swords => "Yellow",
-            _ => ""
-        };
-
     }
 }

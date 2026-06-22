@@ -1194,6 +1194,72 @@ namespace Kismeta.Core.Tests
             Assert.AreEqual(3, player.Spread.Count, "Spread count unchanged when already within limit.");
         }
 
+        [Test]
+        public void DiscardToLimit_MoveThenNoDiscardNeeded()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+            player.Spread.Clear();
+            player.Hand.Clear();
+
+            for (int i = 0; i < 4; i++)
+            {
+                var c = new CardInstance($"mv-sp-0{i}", "minor.cups.seven.1", CardZone.Spread, 0);
+                session.RegisterCard(c);
+                player.Spread.Add(c.InstanceId);
+            }
+            for (int i = 0; i < 6; i++)
+            {
+                var c = new CardInstance($"mv-hd-0{i}", "minor.wands.two.1", CardZone.Hand, 0);
+                session.RegisterCard(c);
+                player.Hand.Add(c.InstanceId);
+            }
+
+            var moveCard = player.Hand[0];
+            var moveResult = session.Apply(new WinterMoveCardCommand(0, moveCard, toSpread: true));
+            Assert.IsTrue(moveResult.IsOk, moveResult.Message);
+            Assert.AreEqual(5, player.Spread.Count);
+            Assert.AreEqual(5, player.Hand.Count);
+
+            var discardResult = session.Apply(new DiscardToLimitCommand(0,
+                new List<string>(), new List<string>()));
+            Assert.IsTrue(discardResult.IsOk, discardResult.Message);
+            Assert.AreEqual(5, player.Spread.Count);
+            Assert.AreEqual(5, player.Hand.Count);
+        }
+
+        [Test]
+        public void DiscardToLimit_CraftSaltThenDiscardRest()
+        {
+            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player  = session.Players[0];
+            player.Spread.Clear();
+            player.Hand.Clear();
+
+            for (int i = 0; i < 7; i++)
+            {
+                var c = new CardInstance($"cr-sp-0{i}", "minor.cups.seven.1", CardZone.Spread, 0);
+                session.RegisterCard(c);
+                player.Spread.Add(c.InstanceId);
+            }
+
+            int saltBefore = player.GetReagent(ReagentType.Salt);
+            var craftCards = player.Spread.GetRange(0, 3);
+            var craftResult = session.Apply(new CraftReagentCommand(0, ReagentType.Salt, craftCards));
+            Assert.IsTrue(craftResult.IsOk, craftResult.Message);
+            Assert.AreEqual(saltBefore + 1, player.GetReagent(ReagentType.Salt));
+            Assert.AreEqual(4, player.Spread.Count);
+
+            var discardResult = session.Apply(new DiscardToLimitCommand(0,
+                new List<string>(), new List<string>()));
+            Assert.IsTrue(discardResult.IsOk, discardResult.Message);
+            Assert.AreEqual(4, player.Spread.Count);
+            foreach (var id in craftCards)
+                Assert.IsTrue(session.Board.CommonDiscard.Contains(id));
+        }
+
         // ─── TradeService tests ────────────────────────────────────────────────────
 
         static List<string> PopulateSpread(GameSession session, int playerId, int count, string prefix)

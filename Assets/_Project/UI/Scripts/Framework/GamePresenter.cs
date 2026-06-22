@@ -79,6 +79,7 @@ namespace Kismeta.UI
             _ceremonyGate = ceremonyGate;
             _chronicle = chronicle;
             _bridge.Bind(loop);
+            _bridge.OnSideEffectApplied = RefreshActiveScreen;
 
             session.OnEvent += OnSessionEvent;
             loop.OnLog += OnLoopLog;
@@ -102,6 +103,7 @@ namespace Kismeta.UI
                 _session.OnEvent -= OnSessionEvent;
             if (_loop != null)
                 _loop.OnLog -= OnLoopLog;
+            _bridge.OnSideEffectApplied = null;
             _session = null;
             _loop = null;
             _ceremonyGate = null;
@@ -224,7 +226,7 @@ namespace Kismeta.UI
             var activeId = _router.CurrentScreenId;
             if (_loop.PendingHumanController == null && _loop.ActivePlayerId < 0
                 && activeId is ScreenIds.Commune or ScreenIds.WinterUnlock
-                    or ScreenIds.FatefulWager or ScreenIds.CardLimits)
+                    or ScreenIds.FatefulWager or ScreenIds.CraftReagent or ScreenIds.CardLimits)
                 return;
 
             if (activeId is ScreenIds.Victory or ScreenIds.Chronicle)
@@ -432,6 +434,7 @@ namespace Kismeta.UI
             if (winter != null)
             {
                 winter.OnOpenUnlock = () => _router.GoTo(ScreenIds.WinterUnlock);
+                winter.OnOpenCraft = OpenWinterCraft;
                 winter.OnOpenWager = () => _router.GoTo(ScreenIds.FatefulWager);
             }
 
@@ -595,7 +598,23 @@ namespace Kismeta.UI
         }
 
         private static bool IsWinterHubSubScreen(string? screenId) =>
-            screenId is ScreenIds.WinterUnlock or ScreenIds.FatefulWager;
+            screenId is ScreenIds.WinterUnlock or ScreenIds.FatefulWager or ScreenIds.CraftReagent;
+
+        void OpenWinterCraft()
+        {
+            var craft = _router.GetController<CraftReagentController>(ScreenIds.CraftReagent);
+            if (craft != null)
+            {
+                craft.ResetForgeState();
+                craft.OnBack = () => _router.GoTo(ScreenIds.WinterHub);
+                craft.OnDone = () =>
+                {
+                    craft.ResetForgeState();
+                    _router.GoTo(ScreenIds.WinterHub);
+                };
+            }
+            _router.GoTo(ScreenIds.CraftReagent);
+        }
 
         private static bool IsSpringHubSubScreen(string? screenId) =>
             screenId is ScreenIds.Commune or ScreenIds.SpringHarvest;
@@ -656,6 +675,8 @@ namespace Kismeta.UI
                 winterUnlock.BindState(_session, _bridge);
             else if (controller is FatefulWagerController fatefulWager)
                 fatefulWager.BindState(_session, _bridge);
+            else if (controller is CraftReagentController craftReagent)
+                craftReagent.BindState(_session, _bridge);
             else if (controller is CardLimitsController cardLimits)
                 cardLimits.BindState(_session, _bridge);
             else if (controller is VictoryController victory && _chronicle != null)

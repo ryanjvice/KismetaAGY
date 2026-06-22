@@ -433,7 +433,6 @@ namespace Kismeta.Core.Players
             var formula = ctx.CodexDatabase.GetFormula(codex, slotIndex);
             if (formula == null) return null;
 
-            // Resolve all spread card definitions.
             var cardMap = ctx.PublicView.CardInstanceToDefinition;
             var spreadDefs = new List<(string id, CardDefinition def)>();
             foreach (var id in spreadIds)
@@ -443,48 +442,7 @@ namespace Kismeta.Core.Players
                 if (def != null) spreadDefs.Add((id, def));
             }
 
-            if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
-            {
-                // Find exactly 3 cards matching the required planet.
-                var matching = new List<string>();
-                foreach (var (id, def) in spreadDefs)
-                    if (def.Planet == formula.RequiredPlanet)
-                        matching.Add(id);
-
-                return matching.Count >= 3 ? matching.GetRange(0, 3) : null;
-            }
-            else if (formula.FormulaType == CodexFormulaType.RankSum)
-            {
-                // Find cards of the required suit with combined rank sum >= minRankSum.
-                var matching = new List<(string id, CardDefinition def)>();
-                foreach (var (id, def) in spreadDefs)
-                    if (def.Suit == formula.RequiredSuit)
-                        matching.Add((id, def));
-
-                if (matching.Count == 0) return null;
-
-                // Greedy: sort by rank descending (Aces as 15), pick until sum >= threshold.
-                matching.Sort((a, b) =>
-                {
-                    int ra = a.def.Rank == Rank.Ace ? 15 : (int)a.def.Rank;
-                    int rb = b.def.Rank == Rank.Ace ? 15 : (int)b.def.Rank;
-                    return rb.CompareTo(ra);
-                });
-
-                var chosen  = new List<string>();
-                int running = 0;
-                foreach (var (id, def) in matching)
-                {
-                    chosen.Add(id);
-                    running += def.Rank == Rank.Ace ? 15 : (int)def.Rank;
-                    if (running >= formula.MinRankSum)
-                        return chosen;
-                }
-
-                return null; // Couldn't reach the threshold.
-            }
-
-            return null;
+            return ActivationCardSuggester.SuggestActivationCards(spreadDefs, formula, ctx.CardDatabase);
         }
     }
 }

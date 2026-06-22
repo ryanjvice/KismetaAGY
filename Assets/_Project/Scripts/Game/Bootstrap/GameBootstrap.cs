@@ -246,7 +246,7 @@ namespace Kismeta.Game.Bootstrap
                     _springHub, _summerMain, _autumnMain, _winterHub,
                     _roundOpen, _ageOpening, _springIntro, _summerIntro,
                     _autumnIntro, _winterIntro, _ageClosing,
-                    _commune, _springHarvest, _winterUnlock, _fatefulWager, _cardLimits,
+                    _commune, _springHarvest, _winterUnlock, _fatefulWager, _craftReagent, _cardLimits,
                     _victory, _chronicle);
                 layout.RunWhenReady(ShowTitleScreen);
             }

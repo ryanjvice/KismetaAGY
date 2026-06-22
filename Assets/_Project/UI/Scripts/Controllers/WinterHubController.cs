@@ -14,6 +14,7 @@ namespace Kismeta.UI.Controllers
         public override string ScreenId => ScreenIds.WinterHub;
 
         public System.Action? OnOpenUnlock;
+        public System.Action? OnOpenCraft;
         public System.Action? OnOpenWager;
         public System.Action? OnOpenCardTable;
         public System.Action<string>? OnInspectCard;
@@ -24,6 +25,7 @@ namespace Kismeta.UI.Controllers
         protected override void Wire()
         {
             Btn("continue-btn")!.clicked += () => OnOpenUnlock?.Invoke();
+            Btn("craft-btn")!.clicked += () => OnOpenCraft?.Invoke();
             Btn("wager-btn")!.clicked += () => OnOpenWager?.Invoke();
             Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
             Btn("pass-btn")!.clicked += OnPass;
@@ -60,6 +62,7 @@ namespace Kismeta.UI.Controllers
             bool canWager = winterAction && player.FatefulWagerSign == ZodiacSign.None;
 
             SetCtaVisible("continue-btn", winterAction);
+            SetCtaVisible("craft-btn", winterAction);
             SetCtaVisible("wager-btn", canWager);
             SetCtaVisible("limits-btn", false);
             SetCtaVisible("transit-btn", false);

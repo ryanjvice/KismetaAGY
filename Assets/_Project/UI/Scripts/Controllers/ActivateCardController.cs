@@ -14,6 +14,10 @@ namespace Kismeta.UI.Controllers
         static readonly string[] SlotIds = { "A", "B", "C", "D" };
         static readonly string[] ColorKeys = { "red", "blue", "green", "yellow" };
 
+        static readonly Color CountReadyColor = new(232f / 255f, 185f / 255f, 74f / 255f);
+        static readonly Color CountMutedColor = new(184f / 255f, 154f / 255f, 110f / 255f);
+        static readonly Color ProgressReadyColor = new(93f / 255f, 202f / 255f, 165f / 255f);
+
         readonly HashSet<string> _selected = new();
 
         GameSession? _session;
@@ -128,8 +132,8 @@ namespace Kismeta.UI.Controllers
                 var (progressText, ready) = SlotProgressText(formula, spreadCards);
                 progressLbl.text = progressText;
                 progressLbl.style.color = ready
-                    ? new StyleColor(new Color(93f / 255f, 202f / 255f, 165f / 255f))
-                    : new StyleColor(new Color(184f / 255f, 154f / 255f, 110f / 255f));
+                    ? new StyleColor(ProgressReadyColor)
+                    : new StyleColor(CountMutedColor);
             }
         }
 
@@ -196,38 +200,38 @@ namespace Kismeta.UI.Controllers
             }
 
             RebuildFormulaChips(formula, db, player);
-            RefreshFormulaStatus(formula, db);
-            RefreshActivateBtn(formula, db, slot);
+            RefreshFormulaStatus(formula, db, player);
+            RefreshActivateBtn(formula, db, slot, player);
         }
 
-        void RefreshFormulaStatus(CodexFormulaDefinition formula, ICardDatabase db)
+        void RefreshFormulaStatus(CodexFormulaDefinition formula, ICardDatabase db, PlayerState player)
         {
             var statusLbl = Lbl("formula-status");
             if (statusLbl == null) return;
 
+            var spreadCards = CollectSpreadCards(db, player);
+
+            if (IsActivationReady(formula, spreadCards, db))
+            {
+                statusLbl.text = $"formula complete — ready to light the {formula.Cauldron} cauldron";
+                return;
+            }
+
             if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
             {
-                int selected = _selected.Count;
-                if (IsFormulaReady(formula, db))
-                {
-                    statusLbl.text = $"formula complete — ready to light the {formula.Cauldron} cauldron";
-                    return;
-                }
-
-                int missing = 3 - selected;
+                int have = _selected.Count > 0
+                    ? _selected.Count
+                    : CountMatchingPlanet(spreadCards, formula.RequiredPlanet);
+                int missing = 3 - have;
                 statusLbl.text = missing <= 0
                     ? $"select 3 {formula.RequiredPlanet} cards from your spread"
                     : $"need {missing} more {formula.RequiredPlanet} card{(missing > 1 ? "s" : "")} from your spread";
             }
             else
             {
-                int sum = RankSum(_selected, db);
-                if (IsFormulaReady(formula, db))
-                {
-                    statusLbl.text = $"formula complete — ready to light the {formula.Cauldron} cauldron";
-                    return;
-                }
-
+                int sum = _selected.Count > 0
+                    ? BestEffectiveRankSumForSelection(db)
+                    : ActivationCardSuggester.BestRankSumFromSpread(spreadCards, formula.RequiredSuit);
                 int missing = formula.MinRankSum - sum;
                 statusLbl.text = missing > 0
                     ? $"need {missing} more rank points from your spread"
@@ -243,6 +247,7 @@ namespace Kismeta.UI.Controllers
 
             var spreadCards = CollectSpreadCards(db, player);
             var colorKey = ColorKey(formula.Cauldron);
+            bool ready = IsActivationReady(formula, spreadCards, db);
 
             if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
             {
@@ -281,12 +286,11 @@ namespace Kismeta.UI.Controllers
                 }
             }
 
-            if (Lbl("formula-count") != null)
+            var countLbl = Lbl("formula-count");
+            if (countLbl != null)
             {
-                if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
-                    Lbl("formula-count")!.text = $"{_selected.Count}/3";
-                else
-                    Lbl("formula-count")!.text = $"{RankSum(_selected, db)}/{formula.MinRankSum}";
+                countLbl.text = FormulaCountText(formula, spreadCards, db);
+                countLbl.style.color = new StyleColor(ready ? CountReadyColor : CountMutedColor);
             }
         }
 
@@ -334,12 +338,13 @@ namespace Kismeta.UI.Controllers
             var db = _session.Rules?.CardDatabase;
             if (db == null) return;
             var slot = _session.Players[_playerId].CrucibleSlots[_slotIndex];
-            RebuildFormulaChips(formula, db, _session.Players[_playerId]);
-            RefreshFormulaStatus(formula, db);
-            RefreshActivateBtn(formula, db, slot);
+            var player = _session.Players[_playerId];
+            RebuildFormulaChips(formula, db, player);
+            RefreshFormulaStatus(formula, db, player);
+            RefreshActivateBtn(formula, db, slot, player);
         }
 
-        void RefreshActivateBtn(CodexFormulaDefinition formula, ICardDatabase db, PlayerCrucibleSlot slot)
+        void RefreshActivateBtn(CodexFormulaDefinition formula, ICardDatabase db, PlayerCrucibleSlot slot, PlayerState player)
         {
             var btn = Btn("activate-btn");
             if (btn == null) return;
@@ -358,7 +363,8 @@ namespace Kismeta.UI.Controllers
                 return;
             }
 
-            bool ready = IsFormulaReady(formula, db);
+            var spreadCards = CollectSpreadCards(db, player);
+            bool ready = IsActivationReady(formula, spreadCards, db);
             btn.EnableInClassList("btn--disabled", !ready);
             btn.EnableInClassList("btn--primary", ready);
 
@@ -366,14 +372,19 @@ namespace Kismeta.UI.Controllers
                 btn.text = $"Activate · light the {formula.Cauldron} cauldron";
             else if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
             {
-                int missing = 3 - _selected.Count;
+                int have = _selected.Count > 0
+                    ? _selected.Count
+                    : CountMatchingPlanet(spreadCards, formula.RequiredPlanet);
+                int missing = 3 - have;
                 btn.text = missing > 0
                     ? $"Need {missing} more {formula.RequiredPlanet} to activate"
                     : $"Select 3 {formula.RequiredPlanet} cards to activate";
             }
             else
             {
-                int sum = RankSum(_selected, db);
+                int sum = _selected.Count > 0
+                    ? BestEffectiveRankSumForSelection(db)
+                    : ActivationCardSuggester.BestRankSumFromSpread(spreadCards, formula.RequiredSuit);
                 int missing = formula.MinRankSum - sum;
                 btn.text = missing > 0
                     ? $"Need {missing} more rank points to activate"
@@ -400,19 +411,76 @@ namespace Kismeta.UI.Controllers
             _ => "Cannot activate this slot"
         };
 
-        bool IsFormulaReady(CodexFormulaDefinition formula, ICardDatabase db)
+        bool IsSelectedSetValid(CodexFormulaDefinition formula, ICardDatabase db) =>
+            ActivationCardSuggester.IsSelectedSetValid(CollectSelectedDefs(db), formula, db);
+
+        bool IsActivationReady(
+            CodexFormulaDefinition formula,
+            List<(string id, CardDefinition def)> spreadCards,
+            ICardDatabase db) =>
+            ActivationCardSuggester.CanSpreadSatisfyFormula(spreadCards, formula)
+            || IsSelectedSetValid(formula, db);
+
+        string FormulaCountText(
+            CodexFormulaDefinition formula,
+            List<(string id, CardDefinition def)> spreadCards,
+            ICardDatabase db)
         {
-            if (_selected.Count == 0) return false;
+            if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
+            {
+                int have = _selected.Count > 0
+                    ? _selected.Count
+                    : CountMatchingPlanet(spreadCards, formula.RequiredPlanet);
+                return $"{System.Math.Min(have, 3)}/3";
+            }
+
+            int sum = _selected.Count > 0
+                ? BestEffectiveRankSumForSelection(db)
+                : ActivationCardSuggester.BestRankSumFromSpread(spreadCards, formula.RequiredSuit);
+            return $"{System.Math.Min(sum, formula.MinRankSum)}/{formula.MinRankSum}";
+        }
+
+        static int CountMatchingPlanet(
+            List<(string id, CardDefinition def)> spreadCards,
+            Planet planet)
+        {
+            int count = 0;
+            foreach (var (_, def) in spreadCards)
+            {
+                if (def.Planet == planet)
+                    count++;
+            }
+            return count;
+        }
+
+        List<CardDefinition> CollectSelectedDefs(ICardDatabase db)
+        {
             var defs = new List<CardDefinition>();
             foreach (var id in _selected)
             {
                 var inst = _session?.GetCard(id);
                 var def = inst != null ? db.GetById(inst.DefinitionId) : null;
-                if (def != null) defs.Add(def);
+                if (def != null)
+                    defs.Add(def);
             }
+            return defs;
+        }
 
-            var validator = new CodexFormulaValidator(db);
-            return validator.ValidateDefs(defs, formula).ok;
+        int BestEffectiveRankSumForSelection(ICardDatabase db) =>
+            ActivationCardSuggester.BestEffectiveRankSum(CollectSelectedDefs(db));
+
+        List<string>? ResolveActivationIds(
+            CodexFormulaDefinition formula,
+            List<(string id, CardDefinition def)> spreadCards,
+            ICardDatabase db)
+        {
+            if (IsSelectedSetValid(formula, db))
+                return new List<string>(_selected);
+
+            if (ActivationCardSuggester.CanSpreadSatisfyFormula(spreadCards, formula))
+                return ActivationCardSuggester.SuggestActivationCards(spreadCards, formula, db);
+
+            return null;
         }
 
         List<(string id, CardDefinition def)> CollectSpreadCards(ICardDatabase db, PlayerState player)
@@ -433,58 +501,12 @@ namespace Kismeta.UI.Controllers
         {
             if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
             {
-                int count = 0;
-                foreach (var (_, def) in spreadCards)
-                {
-                    if (def.Planet == formula.RequiredPlanet)
-                        count++;
-                }
+                int count = CountMatchingPlanet(spreadCards, formula.RequiredPlanet);
                 return ($"{count} / 3 {formula.RequiredPlanet}", count >= 3);
             }
 
-            int best = BestRankSum(spreadCards, formula.RequiredSuit);
+            int best = ActivationCardSuggester.BestRankSumFromSpread(spreadCards, formula.RequiredSuit);
             return ($"{best} / {formula.MinRankSum} {formula.RequiredSuit}", best >= formula.MinRankSum);
-        }
-
-        static int BestRankSum(List<(string id, CardDefinition def)> spreadCards, Suit suit)
-        {
-            int baseSum = 0;
-            int aceCount = 0;
-            foreach (var (_, def) in spreadCards)
-            {
-                if (def.Suit != suit) continue;
-                if (def.Rank == Rank.Ace)
-                    aceCount++;
-                else
-                    baseSum += (int)def.Rank;
-            }
-
-            if (aceCount == 0)
-                return baseSum;
-
-            int best = baseSum;
-            int combos = 1 << aceCount;
-            for (int mask = 0; mask < combos; mask++)
-            {
-                int total = baseSum;
-                for (int bit = 0; bit < aceCount; bit++)
-                    total += ((mask >> bit) & 1) == 1 ? 15 : 1;
-                if (total > best) best = total;
-            }
-            return best;
-        }
-
-        int RankSum(HashSet<string> ids, ICardDatabase db)
-        {
-            int sum = 0;
-            foreach (var id in ids)
-            {
-                var inst = _session?.GetCard(id);
-                var def = inst != null ? db.GetById(inst.DefinitionId) : null;
-                if (def == null) continue;
-                sum += def.Rank == Rank.Ace ? 15 : (int)def.Rank;
-            }
-            return sum;
         }
 
         void OnActivate()
@@ -499,9 +521,12 @@ namespace Kismeta.UI.Controllers
             if (!CanActivateSlot(slot)) return;
 
             var formula = codexDb.GetFormula(player.AssignedCodex, _slotIndex);
-            if (formula == null || !IsFormulaReady(formula, db)) return;
+            if (formula == null) return;
 
-            var ids = new List<string>(_selected);
+            var spreadCards = CollectSpreadCards(db, player);
+            var ids = ResolveActivationIds(formula, spreadCards, db);
+            if (ids == null || ids.Count == 0) return;
+
             if (_bridge.TrySubmit(new ActivateCrucibleCommand(_playerId, _slotIndex, ids)))
                 OnCompleted?.Invoke();
         }

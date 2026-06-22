@@ -183,7 +183,7 @@ namespace Kismeta.UI
             RefreshOpenOverlay();
         }
 
-        bool ShowModal<T>(VisualTreeAsset? asset, T? controller) where T : OverlayController
+        bool ShowModal<T>(VisualTreeAsset? asset, T? controller) where T : class, IVisualRootController
         {
             if (_layout == null || asset == null || controller == null) return false;
             _layout.ShowModal(asset);

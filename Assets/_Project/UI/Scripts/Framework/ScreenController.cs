@@ -8,7 +8,7 @@ namespace Kismeta.UI
     /// Controllers live on the UI host GameObject; the router calls <see cref="AttachTo"/>
     /// when a screen UXML is loaded into the content layer.
     /// </summary>
-    public abstract class ScreenController : MonoBehaviour
+    public abstract class ScreenController : MonoBehaviour, IVisualRootController
     {
         protected VisualElement Root { get; private set; }
         protected bool IsAttached => Root != null;

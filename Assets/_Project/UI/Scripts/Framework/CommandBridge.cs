@@ -21,6 +21,9 @@ namespace Kismeta.UI
 
         public ActionHint PendingHint => _loop?.PendingHint ?? ActionHint.None;
 
+        /// <summary>Fired after a successful side-effect apply (Card Limits rearrange/craft).</summary>
+        public System.Action? OnSideEffectApplied;
+
         public bool TrySubmit(IGameCommand command)
         {
             var hs = _loop?.PendingHumanController;
@@ -28,6 +31,31 @@ namespace Kismeta.UI
                 return false;
             hs.SubmitCommand(command);
             return true;
+        }
+
+        /// <summary>
+        /// Applies rearrange/craft during Card Limits without completing the pending discard request.
+        /// </summary>
+        public bool TryApplySideEffect(IGameCommand command)
+        {
+            if (_loop == null || PendingHint != ActionHint.DiscardToLimit)
+                return false;
+
+            int pid = ActivePlayerId;
+            if (pid < 0) return false;
+
+            bool allowed = command switch
+            {
+                WinterMoveCardCommand move => move.PlayerId == pid,
+                CraftReagentCommand craft => craft.PlayerId == pid,
+                _ => false
+            };
+            if (!allowed) return false;
+
+            var result = _loop.ApplySideEffect(command);
+            if (result.IsOk)
+                OnSideEffectApplied?.Invoke();
+            return result.IsOk;
         }
 
         public bool TrySubmitPass()

@@ -7,7 +7,7 @@ namespace Kismeta.UI
     /// Base for controllers attached to overlay UXML (bottom sheets / modals).
     /// Unlike <see cref="ScreenController"/>, these are not routed via <see cref="ScreenRouter"/>.
     /// </summary>
-    public abstract class OverlayController : MonoBehaviour
+    public abstract class OverlayController : MonoBehaviour, IVisualRootController
     {
         protected VisualElement Root { get; private set; }
         protected bool IsAttached => Root != null;

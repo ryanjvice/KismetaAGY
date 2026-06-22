@@ -71,6 +71,7 @@ namespace Kismeta.UI
             VisualTreeAsset? springHarvest = null,
             VisualTreeAsset? winterUnlock = null,
             VisualTreeAsset? fatefulWager = null,
+            VisualTreeAsset? craftReagent = null,
             VisualTreeAsset? cardLimits = null,
             VisualTreeAsset? victory = null,
             VisualTreeAsset? chronicle = null)
@@ -120,6 +121,8 @@ namespace Kismeta.UI
                 screens.Add(new ScreenAsset { Id = ScreenIds.WinterUnlock, Uxml = winterUnlock });
             if (fatefulWager != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.FatefulWager, Uxml = fatefulWager });
+            if (craftReagent != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.CraftReagent, Uxml = craftReagent });
             if (cardLimits != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.CardLimits, Uxml = cardLimits });
             if (victory != null)

@@ -444,6 +444,12 @@ namespace Kismeta.Core.Players
 
         // ─── Helpers ──────────────────────────────────────────────────────────────
 
+        /// <summary>
+        /// Applies a command without completing the pending hot-seat request.
+        /// Used during Card Limits for rearrange/craft side effects.
+        /// </summary>
+        public CommandResult ApplySideEffect(IGameCommand cmd) => Apply(cmd);
+
         private CommandResult Apply(IGameCommand cmd)
         {
             var result = _session.Apply(cmd);

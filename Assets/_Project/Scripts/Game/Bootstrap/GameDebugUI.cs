@@ -1389,7 +1389,7 @@ namespace Kismeta.Game.Bootstrap
         {
             GUILayout.Label("── Discard to Limit ──");
             GUILayout.Label($"Spread: {player.Spread.Count}/5  Hand: {player.Hand.Count}/5");
-            GUILayout.Label("Select cards to DISCARD (click to toggle), then confirm.");
+            GUILayout.Label("Move cards between zones, craft reagents, then select discards.");
 
             // Spread cards
             GUILayout.Label("Spread:");
@@ -1402,6 +1402,12 @@ namespace Kismeta.Game.Bootstrap
                 if (GUILayout.Button(CardLabel(id)))
                 {
                     if (sel) _discardSpread.Remove(id); else _discardSpread.Add(id);
+                }
+                if (GUILayout.Button("→ Hand", GUILayout.Width(56)))
+                {
+                    ApplyDiscardSideEffect(new WinterMoveCardCommand(pid, id, toSpread: false));
+                    _discardSpread.Remove(id);
+                    _discardHand.Remove(id);
                 }
             }
             GUI.backgroundColor = Color.white;
@@ -1419,9 +1425,28 @@ namespace Kismeta.Game.Bootstrap
                 {
                     if (sel) _discardHand.Remove(id); else _discardHand.Add(id);
                 }
+                if (GUILayout.Button("→ Spread", GUILayout.Width(64)))
+                {
+                    ApplyDiscardSideEffect(new WinterMoveCardCommand(pid, id, toSpread: true));
+                    _discardSpread.Remove(id);
+                    _discardHand.Remove(id);
+                }
             }
             GUI.backgroundColor = Color.white;
             GUILayout.EndHorizontal();
+
+            int selCount = _selectedCards.Count;
+            var selList = _selectedCards.ToList();
+            GUILayout.Space(4f);
+            GUI.enabled = selCount >= 3;
+            if (GUILayout.Button($"Craft Salt ({selCount}/3 sel)"))
+            {
+                ApplyDiscardSideEffect(new CraftReagentCommand(pid, ReagentType.Salt, selList));
+                _selectedCards.Clear();
+                _discardSpread.RemoveWhere(id => selList.Contains(id));
+                _discardHand.RemoveWhere(id => selList.Contains(id));
+            }
+            GUI.enabled = true;
 
             int newSpread = player.Spread.Count - _discardSpread.Count;
             int newHand   = player.Hand.Count   - _discardHand.Count;
@@ -1438,6 +1463,14 @@ namespace Kismeta.Game.Bootstrap
                 _discardHand.Clear();
             }
             GUI.enabled = true;
+        }
+
+        private void ApplyDiscardSideEffect(IGameCommand cmd)
+        {
+            if (_loop == null) return;
+            var result = _loop.ApplySideEffect(cmd);
+            if (!result.IsOk)
+                ShowError(result.Message ?? "Side effect failed.");
         }
 
         // ─── Right column (event log) ─────────────────────────────────────────────
