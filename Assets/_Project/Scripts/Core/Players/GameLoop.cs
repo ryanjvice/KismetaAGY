@@ -230,7 +230,14 @@ namespace Kismeta.Core.Players
             if (pending.Count == 0) return;
 
             // Process a snapshot; new entries won't be added mid-resolution
-            var decisions = new List<(int PlayerId, string AdeptCardId)>(pending);
+            var decisions = new List<(int PlayerId, string AdeptCardId)>();
+            var seen = new HashSet<string>();
+            foreach (var (playerId, adeptCardId) in pending)
+            {
+                if (!seen.Add(adeptCardId)) continue;
+                if (!ShouldOfferAdeptDecision(playerId, adeptCardId)) continue;
+                decisions.Add((playerId, adeptCardId));
+            }
             pending.Clear();
 
             foreach (var (playerId, adeptCardId) in decisions)
@@ -240,6 +247,16 @@ namespace Kismeta.Core.Players
                 var cmd = await RequestAsync(playerId, ActionHint.AdeptDecision, ct, adeptCardId);
                 Apply(cmd);
             }
+        }
+
+        private bool ShouldOfferAdeptDecision(int playerId, string adeptCardId)
+        {
+            var player = _session.Players[playerId];
+            if (player.Arcanum.Contains(adeptCardId))
+                return false;
+
+            var inst = _session.GetCard(adeptCardId);
+            return inst?.Zone != CardZone.Discard;
         }
 
         // ─── Summer ───────────────────────────────────────────────────────────────

@@ -43,7 +43,9 @@ namespace Kismeta.UI
         private bool _adeptModalOpen;
         private bool _fateModalOpen;
         private string? _lastAdeptModalCardId;
+        private string? _completedAdeptModalCardId;
         private string? _lastFateModalKey;
+        private string? _completedFateModalKey;
 
         public CommandBridge Bridge => _bridge;
         public bool IsInGame => _inGame;
@@ -122,7 +124,9 @@ namespace Kismeta.UI
             _adeptModalOpen = false;
             _fateModalOpen = false;
             _lastAdeptModalCardId = null;
+            _completedAdeptModalCardId = null;
             _lastFateModalKey = null;
+            _completedFateModalKey = null;
             DismissAllOverlays();
             _playerHud?.Hide();
         }
@@ -198,6 +202,7 @@ namespace Kismeta.UI
                 {
                     _adeptModalOpen = false;
                     _lastAdeptModalCardId = null;
+                    _completedAdeptModalCardId = null;
                 }
                 RouteGameplay();
             }
@@ -276,7 +281,9 @@ namespace Kismeta.UI
             {
                 _fateModalOpen = false;
                 _lastFateModalKey = fateKey;
+                _completedFateModalKey = null;
             }
+            if (fateKey == _completedFateModalKey) return;
             if (_fateModalOpen && _endOverlays.IsOpen) return;
 
             _fateModalOpen = true;
@@ -331,7 +338,9 @@ namespace Kismeta.UI
             {
                 _adeptModalOpen = false;
                 _lastAdeptModalCardId = adeptId;
+                _completedAdeptModalCardId = null;
             }
+            if (adeptId == _completedAdeptModalCardId) return;
             if (_adeptModalOpen && _endOverlays.IsOpen) return;
 
             _adeptModalOpen = true;
@@ -607,6 +616,10 @@ namespace Kismeta.UI
             _endOverlays.OnTradeFromTable = id => _contestOverlays.ShowTrade(id);
             _endOverlays.OnOverlayDismissed = () =>
             {
+                if (_adeptModalOpen && !string.IsNullOrEmpty(_lastAdeptModalCardId))
+                    _completedAdeptModalCardId = _lastAdeptModalCardId;
+                if (_fateModalOpen && !string.IsNullOrEmpty(_lastFateModalKey))
+                    _completedFateModalKey = _lastFateModalKey;
                 _adeptModalOpen = false;
                 _fateModalOpen = false;
             };
@@ -643,7 +656,9 @@ namespace Kismeta.UI
             _adeptModalOpen = false;
             _fateModalOpen = false;
             _lastAdeptModalCardId = null;
+            _completedAdeptModalCardId = null;
             _lastFateModalKey = null;
+            _completedFateModalKey = null;
         }
 
         private static string MapCeremonyScreen(CeremonyStep step) => step switch

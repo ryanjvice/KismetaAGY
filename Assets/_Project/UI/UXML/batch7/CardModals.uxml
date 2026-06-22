@@ -82,7 +82,7 @@
                 <engine:VisualElement class="tarot card-modal--adept" style="border-color: rgb(154,122,192);">
                     <engine:Label text="&#xea8a;" class="ti-icon" style="font-size: 40px; color: rgb(224,200,240);" />
                 </engine:VisualElement>
-                <engine:Label name="adept-name" text="The Hierophant" class="tarot__name" style="color: rgb(224,200,240);" />
+                <engine:Label name="adept-name" text="Adept" class="tarot__name" style="color: rgb(224,200,240);" />
                 <engine:Label text="active adept · major arcana" style="font-size: 10px; color: rgb(168,144,192);" />
             </engine:VisualElement>
 
@@ -95,7 +95,7 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="tip tip--ok">
-                <engine:Label text="Your Arcanum has 1 open slot — placing The Hierophant fills it. You can hold up to 2 active."
+                <engine:Label name="adept-tip" text="Your Arcanum has open slots for active Adepts."
                               class="tip__text" style="color: rgb(159,196,180);" />
             </engine:VisualElement>
 

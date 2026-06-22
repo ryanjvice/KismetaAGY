@@ -96,10 +96,20 @@ namespace Kismeta.UI.Controllers
             var inst = session.GetCard(adeptInstanceId);
             var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
 
-            if (Lbl("adept-name") != null && def != null)
-                Lbl("adept-name")!.text = def.EffectText.Length > 0 ? def.EffectText.Split('\n')[0] : "Adept";
+            var displayName = !string.IsNullOrEmpty(def?.Name) ? def!.Name : "Adept";
+            if (Lbl("adept-name") != null)
+                Lbl("adept-name")!.text = displayName;
             if (Lbl("adept-power") != null && def != null)
                 Lbl("adept-power")!.text = def.EffectText;
+
+            int adeptSlots = CountAdeptsInArcanum();
+            int limit = 2;
+            if (Lbl("adept-tip") != null)
+            {
+                Lbl("adept-tip")!.text = adeptSlots >= limit
+                    ? $"Your Arcanum is full — placing {displayName} requires swapping an active Adept."
+                    : $"Your Arcanum has {limit - adeptSlots} open slot{(limit - adeptSlots == 1 ? "" : "s")} — placing {displayName} fills one. You can hold up to {limit} active.";
+            }
 
             RebuildAdeptPaymentUi();
             RefreshAdeptButtons();
@@ -115,8 +125,8 @@ namespace Kismeta.UI.Controllers
             var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
 
             if (Lbl("fate-name") != null)
-                Lbl("fate-name")!.text = !string.IsNullOrEmpty(def?.EffectText)
-                    ? def!.EffectText.Split('\n')[0]
+                Lbl("fate-name")!.text = !string.IsNullOrEmpty(def?.Name)
+                    ? def!.Name
                     : $"Fate #{arcanaNum}";
 
             var effectsHost = El("fate-effects");

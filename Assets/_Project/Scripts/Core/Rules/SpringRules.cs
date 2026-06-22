@@ -446,18 +446,18 @@ namespace Kismeta.Core.Rules
 
         static void TryQueueAdeptDecision(GameSession session, int playerId, string cardId)
         {
-            foreach (var (pid, id) in session.Board.PendingAdeptDecisions)
+            foreach (var (_, id) in session.Board.PendingAdeptDecisions)
             {
-                if (id == cardId && pid == playerId) return;
+                if (id == cardId) return;
             }
             session.Board.PendingAdeptDecisions.Add((playerId, cardId));
         }
 
         static void TryQueueFateDecision(GameSession session, int playerId, string cardId, int arcanaNumber)
         {
-            foreach (var (pid, id, _) in session.Board.PendingFateDecisions)
+            foreach (var (_, id, _) in session.Board.PendingFateDecisions)
             {
-                if (id == cardId && pid == playerId) return;
+                if (id == cardId) return;
             }
             session.Board.PendingFateDecisions.Add((playerId, cardId, arcanaNumber));
         }
