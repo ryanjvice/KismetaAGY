@@ -58,8 +58,7 @@ so far only `TitleScreen.uss` (the ceremonial hero treatment).
 ## NATIVE NOTES in this batch
 
 - **Title hero** — the radial gold glow + sacred-geometry backdrop were CSS gradients;
-  in Unity use a background sprite/Image on `#title-hero` and the serif font asset for
-  the wordmark and sigil (`-unity-font-definition` paths are placeholders).
+  in Unity use a background sprite/Image on `#title-hero` for the backdrop.
 - **Setup sheet** — present as an overlay with a dimmed scrim; animate the rise
   (translateY) in C# via `experimental.animation`.
 - **Codex** — content is data-driven; bind `#codex-search` and populate `#codex-list`

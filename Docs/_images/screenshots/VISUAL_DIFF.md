@@ -29,7 +29,7 @@ Reference: [UI_styleGuide.md](../../wireframes/UI_styleGuide.md)
 |------|-----------|------------|-----|
 | **Card chips** | Full rank + suit glyph + alignment bubble + planet chip | Text label ("Nine", "King") + tiny placeholder icon | Wire `CardChipFactory` / `SymbolGlyphs`; apply suit colors from style guide §2.2 |
 | **Sigil** | Green flower/zodiac season icon | Square-in-circle placeholder | Replace with `ti-flower` / season sigil from Spring palette |
-| **Typography** | Germania One headings, Futura body | Generic sans-serif | Apply `.font-heading` / `.font-body` USS classes |
+| **Typography** | Distinct display vs body sizing | Generic sans-serif | Apply `.font-display` / `.font-heading` / `--font-*` tokens |
 | **Verdict chip** | Color-coded verdict badge | Plain text "balanced" | Style `.verdict--balanced` semantic token |
 | **CTA copy** | "Lock the tableau · to Summer" | Same — OK | — |
 | **Viewport fill** | Cards and zones use ~70% of frame | Bottom ~30% empty | Expand spread/hand min-heights; scale card row |
@@ -89,7 +89,7 @@ Also compare pre-cast die screen: [`ageOpen_castAgeDie.png`](ageOpen_castAgeDie.
 | **Planet/element tags** | Styled pills with icons | Text-only pills — close | Add planet/element mini-icons |
 | **Cosmic effect icon** | Themed icon per effect type | Purple square placeholder | Effect-specific icon from board art set |
 | **Favors list icons** | Small themed icons per bullet | Square placeholders | Harvest/alignment/reagent icons |
-| **Typography** | Amarante "TAURUS", Germania section heads | Sans-serif throughout | Apply `.font-display` on age name, `.font-heading` on sections |
+| **Typography** | Display sizing on age name, section heads | Sans-serif throughout | Apply `.font-display` on age name, `.font-heading` on sections |
 | **Frame break** | Full-bleed ceremonial tableau, no season chrome | Correct — ceremonial screen | — |
 | **Cast die step** | Rich die animation area | `?` placeholder + sparse bottom half | Match wireframe die art; fill viewport |
 
@@ -114,7 +114,7 @@ Also compare pre-cast die screen: [`ageOpen_castAgeDie.png`](ageOpen_castAgeDie.
 
 | Area | Wireframe | Screenshot | Fix |
 |------|-----------|------------|-----|
-| **Zodiac grid** | Gold Unicode/emoji glyphs (♈♉…) | Gold symbol font in buttons — close | Verify `NotoColorEmoji` / `SymbolGlyphs` at grid size |
+| **Zodiac grid** | Gold Unicode/emoji glyphs (♈♉…) | Gold symbol font in buttons — close | Verify `SymbolGlyphs` at grid size |
 | **Selected sign** | Bright glow border on active sign | Purple border on Pisces — OK | Align glow color to `--gold-bright` |
 | **Stake cards** | Tap-to-select spread + hand cards | Single spread card shown | Show both zones; multi-select like wireframe select screen |
 | **Card chip** | Full card face in stake row | Red "Seven" mini card | Standard card chip |
@@ -127,7 +127,7 @@ Also compare pre-cast die screen: [`ageOpen_castAgeDie.png`](ageOpen_castAgeDie.
 
 1. **Placeholder iconography** — replace square-in-circle sigils with season icons, zodiac glyphs, and Tabler/suit icons
 2. **Card chip component** — unify all card surfaces through `CardChipFactory` with suit fill colors and rank typography
-3. **Typography stack** — Amarante (display), Germania One (headings), Futura Cyrillic (UI/body), Noto Color Emoji (symbols)
+3. **Typography tokens** — use `--font-*` size tokens and semantic USS classes (`.font-display`, `.font-heading`, `.font-emoji`)
 4. **Viewport density** — reduce empty lower-half dead space; wireframes target 380×844 full bleed
 5. **Semantic color tokens** — wire `--gold`, `--muted`, season accents, and success/caution boxes from `Kismeta.uss`
 

@@ -81,5 +81,4 @@
 .verdict-title {
     font-size: 22px;
     letter-spacing: 2px;
-    -unity-font-definition: url("project://database/Assets/Fonts/Kismeta-Serif.asset");
 }

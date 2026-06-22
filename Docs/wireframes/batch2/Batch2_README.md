@@ -41,8 +41,6 @@ numbered **steps**; Summer/Autumn show **action groups**), and the tip semantic 
   `.ceremony-hero` and the sigil; constellation as sprite/LineRenderer; glow via 9-slice.
 - **Season intro motes** (seeds/sun/leaves/snow) — optional particle overlay or sprite
   on `.intro-hero`; purely decorative.
-- **Serif font** — `.intro-name`, `.ceremony-agename`, `.ceremony-sigil__glyph` reference
-  a serif font asset (`-unity-font-definition` paths are placeholders).
 
 ## Controller usage
 

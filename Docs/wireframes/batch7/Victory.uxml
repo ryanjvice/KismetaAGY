@@ -10,7 +10,7 @@
          VICTORY CORONATION (#50) — frame fully broken. Reached from the
          winning Temper at Gold (Batch 6).
          NATIVE NOTE: the gold halo + crowned stone were SVG/gradient; use a
-         background sprite + glow on .victory-hero. Serif font for the title.
+         background sprite + glow on .victory-hero.
          ============================================================ -->
     <engine:VisualElement name="victory" class="screen" style="background-color: rgb(24,16,4);">
 

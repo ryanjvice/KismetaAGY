@@ -32,7 +32,7 @@
             <engine:VisualElement name="wheel-host" class="roll-host" style="width: 150px; height: 150px;">
                 <engine:Label text="[ wheel ]" style="font-size: 11px; color: rgb(122,154,130);" />
             </engine:VisualElement>
-            <engine:Label name="rolled-sign" text="Scorpio" style="font-size: 18px; color: var(--gold-bright); -unity-font-definition: url('project://database/Assets/Fonts/Kismeta-Serif.asset');" />
+            <engine:Label name="rolled-sign" text="Scorpio" style="font-size: 18px; color: var(--gold-bright);" />
             <engine:Label name="sign-match" text="matches the age · +3 alignment" style="font-size: 10px; color: rgb(154,172,146);" />
         </engine:VisualElement>
 

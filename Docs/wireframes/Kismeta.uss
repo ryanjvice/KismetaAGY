@@ -407,7 +407,6 @@
 .mode-row__radio--on { border-color: var(--gold-deep); }
 
 .ti-icon {
-    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/tabler-icons.asset");
     font-size: var(--font-title);
 }
 

@@ -29,7 +29,6 @@
 .intro-name {
     font-size: 26px;
     letter-spacing: 4px;
-    -unity-font: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.ttf");
 }
 .intro--spring .intro-name { color: var(--spring-accent); }
 .intro--summer .intro-name { color: var(--summer-accent); }
@@ -39,7 +38,6 @@
 .intro-tagline {
     font-size: 10px; letter-spacing: 3px;
     margin-top: 7px;
-    -unity-font: url("project://database/Assets/_Project/UI/Fonts/GermaniaOne-Regular.ttf");
 }
 .intro--spring .intro-tagline { color: rgb(90,154,111); }
 .intro--summer .intro-tagline { color: rgb(184,122,58); }
@@ -48,7 +46,6 @@
 
 .intro-couplet {
     font-size: 10px;
-    -unity-font: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.ttf");
     -unity-font-style: italic;
     white-space: normal;
     -unity-text-align: middle-center;

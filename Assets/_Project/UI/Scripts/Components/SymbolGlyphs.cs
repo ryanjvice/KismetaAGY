@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
 {
-    /// <summary>Unicode emoji / symbol glyphs rendered with Noto Color Emoji (<see cref="EmojiFontClass"/>).</summary>
+    /// <summary>Unicode emoji / symbol glyphs tagged with <see cref="EmojiFontClass"/> for styling hooks.</summary>
     public static class SymbolGlyphs
     {
         public const string EmojiFontClass = "font-emoji";

@@ -35,7 +35,6 @@
 }
 .ceremony-sigil__glyph {
     font-size: 48px; color: rgb(240,192,176);
-    -unity-font-definition: url("project://database/Assets/Fonts/Kismeta-Serif.asset");
 }
 .ceremony-sigil--close .ceremony-sigil__glyph { font-size: 38px; }
 
@@ -47,7 +46,6 @@
     font-size: 36px; color: var(--gold);
     letter-spacing: 2px;
     margin-top: 2px;
-    -unity-font-definition: url("project://database/Assets/Fonts/Kismeta-Serif.asset");
 }
 .ceremony-hero--close .ceremony-agename { font-size: 30px; }
 

@@ -20,7 +20,6 @@
     letter-spacing: 2px;
     -unity-text-align: middle-center;
     white-space: normal;
-    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
 }
 .win-condition {
     flex-direction: row; align-items: center;
@@ -119,7 +118,6 @@
 .tarot--big { width: 108px; height: 150px; }
 .tarot__name {
     font-size: 19px;
-    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Kismeta-Serif.asset");
     margin-top: 12px;
 }
 

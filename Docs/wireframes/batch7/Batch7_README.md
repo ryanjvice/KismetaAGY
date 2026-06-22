@@ -33,7 +33,7 @@ effect + single Accept.
   with `generateVisualContent` + `Painter2D`, a charting package, or
   `com.unity.vectorgraphics`. Y-axis = stage names (Lead..Altar); X = ages; **use distinct
   point shapes per series** (circle/square/triangle) for colorblind safety.
-- **Victory halo** — gold glow/sprite on `.victory-hero`; serif font for the title.
+- **Victory halo** — gold glow/sprite on `.victory-hero`.
 - **Card table** — build player blocks from game state in C#; show **your** hand as chips; rivals show **hidden placeholders** (`?`) matching hand count only (never rival card faces). Stasis rows show "cannot be opposed"; per-rival action buttons are named `{action}-{rival}`.
 - **Tarot art** — a sprite per card on `.tarot`; inspect alignment values computed vs the
   current age.

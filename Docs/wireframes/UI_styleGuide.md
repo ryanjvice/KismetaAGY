@@ -108,17 +108,17 @@ turning year; a player can tell the season from color alone.
 
 ## 3. Typography
 
-Four licensed/imported faces in `Assets/_Project/UI/Fonts/`. USS utility classes in `Kismeta.uss`; default body font is applied on `.kismeta-root`.
+Production UI uses Unity's default UI Toolkit font. Size and weight are controlled via USS tokens (`--font-body`, `--font-display`, etc.) and utility classes (`.font-display`, `.font-heading`, `.h1`–`.h6`) for semantic styling hooks — not custom font assets.
 
-| Face | Role | USS class | Use for |
-|---|---|---|---|
-| **Amarante** | Display / lore | `.font-display`, `.font-lore`, `.h1` | Titles, wordmarks, ceremonial names, immersive lore (non-instructional) |
-| **Germania One** | Section headings | `.font-heading`, `.h2`, `.h3` | Screen section titles, season taglines, modal headings |
-| **Futura Cyrillic Demi** | UI headings | `.font-ui`, `.h4`–`.h6` | Smaller headings, labels, buttons, data chrome |
-| **Futura Cyrillic Book** | Body | default / `.font-body`, `.p` | Instructional body, rules, lists, normal paragraphs |
-| **Noto Color Emoji** | Symbols | `.font-emoji` | Zodiac glyphs, suit emojis, other emoji (via `SymbolGlyphs`) |
+| Role | USS hook | Use for |
+|---|---|---|
+| Display / lore | `.font-display`, `.font-lore`, `.h1` | Titles, wordmarks, ceremonial names, immersive lore |
+| Section headings | `.font-heading`, `.h2`, `.h3` | Screen section titles, season taglines, modal headings |
+| UI headings | `.font-ui`, `.h4`–`.h6` | Smaller headings, labels, buttons, data chrome |
+| Body | default / `.font-body`, `.p` | Instructional body, rules, lists, normal paragraphs |
+| Symbols | `.font-emoji` | Zodiac glyphs, suit emojis (via `SymbolGlyphs`) |
 
-Amarante marks a moment as ceremonial or immersive; Futura Book keeps instructional UI readable. Tabler icons (`.ti-icon`) remain separate UI chrome icons.
+Tabler icons (`.ti-icon`) use Unicode codepoints in Labels; replace with `Image` + sprite if icon font assets are not used.
 
 ### Type scale (baseline at 380×844)
 
@@ -128,9 +128,9 @@ does not write USS variables at runtime (Unity API is read-only for custom prope
 
 | Role | Baseline size | Weight | Notes |
 |---|---|---|---|
-| Ceremony title | 26–36 | 600 | Amarante; letter-spacing .06–.14em; uses `--font-display` |
-| Screen/modal title | 14 | 500 | Germania One; with icon; `--font-title` |
-| Card proper name | 19 | 600 | Amarante |
+| Ceremony title | 26–36 | 600 | letter-spacing .06–.14em; uses `--font-display` |
+| Screen/modal title | 14 | 500 | with icon; `--font-title` |
+| Card proper name | 19 | 600 | display styling |
 | Section value / stat | 15–18 | bold | numbers, counts |
 | Body | 11–13 | 400–500 | `--font-body` |
 | Label / eyebrow | 9–10 | 400–500 | uppercase, letter-spacing .06–.10em, `--muted-dim`; `--font-label` |

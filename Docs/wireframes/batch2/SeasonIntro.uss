@@ -29,7 +29,6 @@
 .intro-name {
     font-size: 26px;
     letter-spacing: 4px;
-    -unity-font-definition: url("project://database/Assets/Fonts/Kismeta-Serif.asset");
 }
 .intro--spring .intro-name { color: var(--spring-accent); }
 .intro--summer .intro-name { color: var(--summer-accent); }

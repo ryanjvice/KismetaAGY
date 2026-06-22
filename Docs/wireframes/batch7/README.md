@@ -67,7 +67,7 @@ So these parts are stubbed with placeholder hosts and flagged inline:
 | **Four cauldrons** (Summer) | `#cauldron-stage` | Can be pure USS: four `.cauldron` circles positioned N/E/S/W, toggle `.cauldron--lit` / `.cauldron--dormant` in C#. No painting needed. |
 | **Dice roll-off** (contests) | (not in these screens) | Animate via `experimental.animation` or a coroutine swapping pip layouts; settle on a value from your RNG. |
 | **Radial gradient backgrounds** (`.stage`, ceremonies) | flat fill | Flat color is fine; for the glow, use a 9-slice sprite or a subtle background `Image`. |
-| **Tabler icons** | `.ti-icon` Labels with `&#x....;` codepoints | Import the Tabler TTF as a Font asset, assign via `-unity-font-definition` (see USS §8), **or** replace each with an `Image` + sprite. |
+| **Tabler icons** | `.ti-icon` Labels with `&#x....;` codepoints | Replace each with an `Image` + sprite, or use Unicode fallback glyphs. |
 | **All interactivity** (`onclick`, game logic) | named Buttons (`#fire-btn`, etc.) | Query by name in C# (`root.Q<Button>("fire-btn")`) and wire `.clicked += ...`. |
 
 ## Wiring buttons in C# (pattern)
