@@ -102,10 +102,7 @@ namespace Kismeta.Core.Players
         {
             SetPhase(Season.Spring);
 
-            await RunRoundOpenCeremonyAsync(ct);
-            if (_session.IsOver || ct.IsCancellationRequested) return;
-
-            await WaitCeremonyUiAsync(CeremonyStep.AgeOpening, ct);
+            await RunAgeOpenCeremonyAsync(ct);
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
             await WaitCeremonyUiAsync(CeremonyStep.SpringIntro, ct);
@@ -276,12 +273,15 @@ namespace Kismeta.Core.Players
             await RunAgeClosingCeremonyAsync(ct);
         }
 
-        private async Task RunRoundOpenCeremonyAsync(CancellationToken ct)
+        private async Task RunAgeOpenCeremonyAsync(CancellationToken ct)
         {
             int keeperId = FindAgekeeperId();
-            Log("Spring — Step 1: Cosmic Age roll");
+            Log("Spring — Step 1: Cosmic Age");
 
-            if (IsHumanPlayer(keeperId) && _ceremonyGate != null)
+            if (!IsHumanPlayer(keeperId))
+                Apply(new RollCosmicAgeCommand(keeperId));
+
+            if (_ceremonyGate != null && HasAnyHumanPlayer())
             {
                 var result = await _ceremonyGate.WaitAsync(CeremonyStep.RoundOpen, ct);
                 if (result.Command is RollCosmicAgeCommand roll)
@@ -289,7 +289,7 @@ namespace Kismeta.Core.Players
                 else if (_session.Board.CosmicAgeSign == ZodiacSign.None)
                     Apply(new RollCosmicAgeCommand(keeperId));
             }
-            else
+            else if (_session.Board.CosmicAgeSign == ZodiacSign.None)
             {
                 Apply(new RollCosmicAgeCommand(keeperId));
             }

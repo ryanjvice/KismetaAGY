@@ -186,7 +186,62 @@
     position: relative;
 }
 
+.screen__chrome {
+    flex-shrink: 0;
+    flex-direction: column;
+}
+
+.screen__inventory {
+    flex-shrink: 0;
+    flex-direction: column;
+    border-top-width: 1px;
+    border-top-color: var(--border-subtle);
+}
+
 /* ---------- Persistent in-game frame ---------- */
+.cosmic-age-banner {
+    flex-direction: row;
+    align-items: center;
+    margin-top: var(--space-sm);
+    margin-left: var(--space-md);
+    margin-right: var(--space-md);
+    margin-bottom: var(--space-sm);
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    border-width: 1px;
+    border-color: rgb(184, 154, 110);
+    background-color: rgb(22, 16, 28);
+}
+.cosmic-age-banner__sigil {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    border-width: 1px;
+    border-color: rgb(184, 154, 110);
+    background-color: rgb(36, 28, 18);
+    margin-right: 10px;
+}
+.cosmic-age-banner__body { flex-grow: 1; }
+.cosmic-age-banner__eyebrow {
+    font-size: 8px;
+    color: rgb(184, 154, 110);
+    margin-bottom: 2px;
+}
+.cosmic-age-banner__row { flex-direction: row; align-items: center; }
+.cosmic-age-banner__sign {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(244, 211, 94);
+}
+.cosmic-age-banner__planet { font-size: 12px; color: rgb(224, 128, 96); }
+.cosmic-age-banner__element { font-size: 12px; color: rgb(127, 196, 168); }
+.cosmic-age-banner__sep {
+    font-size: 12px;
+    color: rgb(122, 154, 130);
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
 .statusbar {
     flex-direction: row;
     align-items: center;
@@ -381,13 +436,15 @@
 .actionbtn__label { font-size: var(--font-body); -unity-font-style: normal; }
 
 .screen__fab-layer {
-    position: absolute;
-    left: var(--space-md);
-    right: var(--space-md);
-    bottom: var(--space-md);
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    flex-shrink: 0;
+    padding: var(--space-sm) var(--space-md);
+}
+
+.screen__inventory .dock {
+    border-top-width: 0;
 }
 
 .screen__fab-layer .menu-btn-fab {

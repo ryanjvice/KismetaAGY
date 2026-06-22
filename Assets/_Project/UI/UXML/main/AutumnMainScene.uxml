@@ -8,15 +8,31 @@
 
     <engine:VisualElement name="autumn-main" class="screen screen--autumn">
 
-        <engine:VisualElement class="statusbar">
-            <engine:VisualElement class="statusbar__left">
-                <engine:VisualElement class="statusbar__sigil" />
-                <engine:VisualElement>
-                    <engine:Label name="status-season" text="Autumn" class="statusbar__title" />
-                    <engine:Label name="status-step" text="—" class="statusbar__sub" />
+        <engine:VisualElement class="screen__chrome">
+            <engine:VisualElement name="cosmic-age-banner" class="cosmic-age-banner">
+                <engine:VisualElement class="cosmic-age-banner__sigil" />
+                <engine:VisualElement class="cosmic-age-banner__body">
+                    <engine:Label text="cosmic age · set by agekeeper" class="eyebrow cosmic-age-banner__eyebrow" />
+                    <engine:VisualElement class="cosmic-age-banner__row">
+                        <engine:Label name="age-sign" text="Scorpio" class="cosmic-age-banner__sign" />
+                        <engine:Label text="·" class="cosmic-age-banner__sep" />
+                        <engine:Label name="age-planet" text="Mars" class="cosmic-age-banner__planet" />
+                        <engine:Label text="·" class="cosmic-age-banner__sep" />
+                        <engine:Label name="age-element" text="Water" class="cosmic-age-banner__element" />
+                    </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
-            <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
+
+            <engine:VisualElement class="statusbar">
+                <engine:VisualElement class="statusbar__left">
+                    <engine:VisualElement class="statusbar__sigil" />
+                    <engine:VisualElement>
+                        <engine:Label name="status-season" text="Autumn" class="statusbar__title" />
+                        <engine:Label name="status-step" text="—" class="statusbar__sub" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement name="rivals" class="rivals" />
@@ -28,19 +44,21 @@
                 </engine:VisualElement>
                 <engine:Label name="hint-label" text="Your turn" style="font-size: 11px; color: rgb(243, 233, 210); margin-top: 10px;" />
             </engine:VisualElement>
+        </engine:VisualElement>
 
+        <engine:VisualElement class="screen__inventory">
             <engine:VisualElement class="screen__fab-layer">
                 <engine:Button name="hand-btn" text="Hand" class="menu-btn-fab btn btn--secondary" />
                 <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
             </engine:VisualElement>
-        </engine:VisualElement>
 
-        <engine:VisualElement class="dock">
-            <engine:VisualElement class="dock__header">
-                <engine:Label name="dock-zone-label" text="spread" class="eyebrow" style="margin-bottom: 0;" />
-                <engine:Label name="spread-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
+            <engine:VisualElement class="dock">
+                <engine:VisualElement class="dock__header">
+                    <engine:Label name="dock-zone-label" text="spread" class="eyebrow" style="margin-bottom: 0;" />
+                    <engine:Label name="spread-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                </engine:VisualElement>
+                <engine:VisualElement name="spread-strip" class="dock__strip" />
             </engine:VisualElement>
-            <engine:VisualElement name="spread-strip" class="dock__strip" />
         </engine:VisualElement>
 
         <engine:VisualElement class="actionbar actionbar--summer">

@@ -9,32 +9,34 @@
     <engine:VisualElement name="spring-hub" class="screen screen--spring">
         <engine:Label text="Spring hub — your sign, harvest tally, spread, and commune action." class="sr-only" />
 
-        <engine:VisualElement class="statusbar">
-            <engine:VisualElement class="statusbar__left">
-                <engine:VisualElement class="statusbar__sigil" />
-                <engine:VisualElement>
-                    <engine:Label name="status-season" text="Spring" class="statusbar__title" />
-                    <engine:Label name="status-step" text="—" class="statusbar__sub" />
+        <engine:VisualElement class="screen__chrome">
+            <engine:VisualElement name="cosmic-age-banner" class="cosmic-age-banner">
+                <engine:VisualElement class="cosmic-age-banner__sigil" />
+                <engine:VisualElement class="cosmic-age-banner__body">
+                    <engine:Label text="cosmic age · set by agekeeper" class="eyebrow cosmic-age-banner__eyebrow" />
+                    <engine:VisualElement class="cosmic-age-banner__row">
+                        <engine:Label name="age-sign" text="Scorpio" class="cosmic-age-banner__sign" />
+                        <engine:Label text="·" class="cosmic-age-banner__sep" />
+                        <engine:Label name="age-planet" text="Mars" class="cosmic-age-banner__planet" />
+                        <engine:Label text="·" class="cosmic-age-banner__sep" />
+                        <engine:Label name="age-element" text="Water" class="cosmic-age-banner__element" />
+                    </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
-            <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
+
+            <engine:VisualElement class="statusbar">
+                <engine:VisualElement class="statusbar__left">
+                    <engine:VisualElement class="statusbar__sigil" />
+                    <engine:VisualElement>
+                        <engine:Label name="status-season" text="Spring" class="statusbar__title" />
+                        <engine:Label name="status-step" text="—" class="statusbar__sub" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:Label name="scene-subtitle" text="roll your zodiac die to claim a sign" class="spring-hub__subtitle" />
-
-        <engine:VisualElement name="cosmic-age-banner" class="cosmic-age-banner">
-            <engine:VisualElement class="cosmic-age-banner__sigil" />
-            <engine:VisualElement class="cosmic-age-banner__body">
-                <engine:Label text="cosmic age · set by agekeeper" class="eyebrow cosmic-age-banner__eyebrow" />
-                <engine:VisualElement class="cosmic-age-banner__row">
-                    <engine:Label name="age-sign" text="Scorpio" class="cosmic-age-banner__sign" />
-                    <engine:Label text="·" class="cosmic-age-banner__sep" />
-                    <engine:Label name="age-planet" text="Mars" class="cosmic-age-banner__planet" />
-                    <engine:Label text="·" class="cosmic-age-banner__sep" />
-                    <engine:Label name="age-element" text="Water" class="cosmic-age-banner__element" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-        </engine:VisualElement>
 
         <engine:VisualElement name="rivals" class="rivals" />
 
@@ -54,19 +56,21 @@
                 <engine:VisualElement name="step-3" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="commune" class="step__label" /></engine:VisualElement>
                 <engine:VisualElement name="step-4" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="lock" class="step__label" /></engine:VisualElement>
             </engine:VisualElement>
+        </engine:VisualElement>
 
+        <engine:VisualElement class="screen__inventory">
             <engine:VisualElement class="screen__fab-layer">
                 <engine:Button name="hand-btn" text="Hand" class="menu-btn-fab btn btn--secondary" />
                 <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
             </engine:VisualElement>
-        </engine:VisualElement>
 
-        <engine:VisualElement class="dock">
-            <engine:VisualElement class="dock__header">
-                <engine:Label name="dock-zone-label" text="spread" class="eyebrow" style="margin-bottom: 0;" />
-                <engine:Label name="spread-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
+            <engine:VisualElement class="dock">
+                <engine:VisualElement class="dock__header">
+                    <engine:Label name="dock-zone-label" text="spread" class="eyebrow" style="margin-bottom: 0;" />
+                    <engine:Label name="spread-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                </engine:VisualElement>
+                <engine:VisualElement name="spread-strip" class="dock__strip" />
             </engine:VisualElement>
-            <engine:VisualElement name="spread-strip" class="dock__strip" />
         </engine:VisualElement>
 
         <engine:VisualElement class="actionbar">

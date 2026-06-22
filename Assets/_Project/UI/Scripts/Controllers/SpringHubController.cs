@@ -64,10 +64,10 @@ namespace Kismeta.UI.Controllers
 
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             MainSceneBindings.BindStatusBar(Root, session, loop);
+            MainSceneBindings.BindCosmicAgeBanner(Root, session);
             MainSceneBindings.BindStepRail(
                 El("step-rail"), ResolveStepIndex(session, player, hint), 5, "step__dot--active");
 
-            BindCosmicAgeBanner(session);
             BindSceneSubtitle(hint, player);
             BindWheelAndHarvest(session, player, hint);
             BindHintLabel(hint, bridge, player);
@@ -107,17 +107,6 @@ namespace Kismeta.UI.Controllers
                 return 2;
             }
             return session.Phase.CurrentStepIndex;
-        }
-
-        void BindCosmicAgeBanner(GameSession session)
-        {
-            var sign = session.Board.CosmicAgeSign;
-            if (Lbl("age-sign") != null)
-                Lbl("age-sign")!.text = sign == ZodiacSign.None ? "—" : sign.ToString();
-            if (Lbl("age-planet") != null)
-                Lbl("age-planet")!.text = Correspondence.PlanetFor(sign).ToString();
-            if (Lbl("age-element") != null)
-                Lbl("age-element")!.text = Correspondence.ElementFor(sign).ToString();
         }
 
         void BindSceneSubtitle(ActionHint hint, PlayerState player)

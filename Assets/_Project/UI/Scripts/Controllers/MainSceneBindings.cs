@@ -37,7 +37,7 @@ namespace Kismeta.UI.Controllers
 
             var roundLbl = root.Q<Label>("status-round");
             if (roundLbl != null)
-                roundLbl.text = $"Round {session.Board.RoundNumber} · {session.Board.CosmicAgeSign}";
+                roundLbl.text = $"Round {session.Board.RoundNumber}";
 
             var hintLbl = root.Q<Label>("hint-label");
             if (hintLbl != null)
@@ -46,6 +46,24 @@ namespace Kismeta.UI.Controllers
                     ? $"Game over — winner P{session.WinnerPlayerId}"
                     : FormatTurnHint(loop);
             }
+        }
+
+        public static void BindCosmicAgeBanner(VisualElement? root, GameSession session)
+        {
+            if (root == null) return;
+
+            var sign = session.Board.CosmicAgeSign;
+            var signLbl = root.Q<Label>("age-sign");
+            if (signLbl != null)
+                signLbl.text = sign == ZodiacSign.None ? "—" : sign.ToString();
+
+            var planetLbl = root.Q<Label>("age-planet");
+            if (planetLbl != null)
+                planetLbl.text = Correspondence.PlanetFor(sign).ToString();
+
+            var elementLbl = root.Q<Label>("age-element");
+            if (elementLbl != null)
+                elementLbl.text = Correspondence.ElementFor(sign).ToString();
         }
 
         static string FormatTurnHint(GameLoop loop)

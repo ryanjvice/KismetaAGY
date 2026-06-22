@@ -568,7 +568,6 @@ namespace Kismeta.UI
         private static string MapCeremonyScreen(CeremonyStep step) => step switch
         {
             CeremonyStep.RoundOpen => ScreenIds.RoundOpen,
-            CeremonyStep.AgeOpening => ScreenIds.AgeOpening,
             CeremonyStep.SpringIntro => ScreenIds.SpringIntro,
             CeremonyStep.SummerIntro => ScreenIds.SummerIntro,
             CeremonyStep.AutumnIntro => ScreenIds.AutumnIntro,
@@ -635,8 +634,6 @@ namespace Kismeta.UI
             {
                 if (controller is RoundOpenController roundOpen)
                     roundOpen.BindState(_session, gate);
-                else if (controller is AgeOpeningController ageOpening)
-                    ageOpening.BindState(_session, gate);
                 else if (controller is AgeClosingController ageClosing)
                     ageClosing.BindState(_session, gate);
                 else if (controller is SpringIntroController springIntro)

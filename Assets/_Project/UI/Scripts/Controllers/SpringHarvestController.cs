@@ -35,7 +35,7 @@ namespace Kismeta.UI.Controllers
             if (Root == null || _playerId < 0) return;
 
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
-            BindCosmicAgeBanner(session);
+            MainSceneBindings.BindCosmicAgeBanner(Root, session);
 
             int bindKey = ComputeBindKey(session, _playerId);
             if (bindKey == _bindKey) return;
@@ -82,17 +82,6 @@ namespace Kismeta.UI.Controllers
                    + (int)session.Board.CosmicAgeSign * 10
                    + (int)player.CurrentSign
                    + spreadHash;
-        }
-
-        void BindCosmicAgeBanner(GameSession session)
-        {
-            var sign = session.Board.CosmicAgeSign;
-            if (Lbl("age-sign") != null)
-                Lbl("age-sign")!.text = sign == ZodiacSign.None ? "—" : sign.ToString();
-            if (Lbl("age-planet") != null)
-                Lbl("age-planet")!.text = Correspondence.PlanetFor(sign).ToString();
-            if (Lbl("age-element") != null)
-                Lbl("age-element")!.text = Correspondence.ElementFor(sign).ToString();
         }
 
         void OnDeal()

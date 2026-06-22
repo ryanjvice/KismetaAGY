@@ -26,7 +26,6 @@ namespace Kismeta.UI.Editor
         private const string AutumnMainPath = "Assets/_Project/UI/UXML/main/AutumnMainScene.uxml";
         private const string WinterHubPath = "Assets/_Project/UI/UXML/main/WinterHub.uxml";
         private const string RoundOpenPath = "Assets/_Project/UI/UXML/batch2/RoundOpen.uxml";
-        private const string AgeOpeningPath = "Assets/_Project/UI/UXML/batch2/AgeOpening.uxml";
         private const string SpringIntroPath = "Assets/_Project/UI/UXML/batch2/SpringIntro.uxml";
         private const string SummerIntroPath = "Assets/_Project/UI/UXML/batch2/SummerIntro.uxml";
         private const string AutumnIntroPath = "Assets/_Project/UI/UXML/batch2/AutumnIntro.uxml";
@@ -157,7 +156,6 @@ namespace Kismeta.UI.Editor
             EnsureComponent<AutumnSceneController>(bootstrap.gameObject);
             EnsureComponent<WinterHubController>(bootstrap.gameObject);
             EnsureComponent<RoundOpenController>(bootstrap.gameObject);
-            EnsureComponent<AgeOpeningController>(bootstrap.gameObject);
             EnsureComponent<AgeClosingController>(bootstrap.gameObject);
             EnsureComponent<SpringIntroController>(bootstrap.gameObject);
             EnsureComponent<SummerIntroController>(bootstrap.gameObject);
@@ -229,7 +227,6 @@ namespace Kismeta.UI.Editor
             var autumnMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnMainPath);
             var winterHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterHubPath);
             var roundOpen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(RoundOpenPath);
-            var ageOpening = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeOpeningPath);
             var springIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringIntroPath);
             var summerIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerIntroPath);
             var autumnIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnIntroPath);
@@ -276,7 +273,6 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_autumnMain").objectReferenceValue = autumnMain;
             so.FindProperty("_winterHub").objectReferenceValue = winterHub;
             so.FindProperty("_roundOpen").objectReferenceValue = roundOpen;
-            so.FindProperty("_ageOpening").objectReferenceValue = ageOpening;
             so.FindProperty("_springIntro").objectReferenceValue = springIntro;
             so.FindProperty("_summerIntro").objectReferenceValue = summerIntro;
             so.FindProperty("_autumnIntro").objectReferenceValue = autumnIntro;
@@ -353,7 +349,6 @@ namespace Kismeta.UI.Editor
             host.AddComponent<AutumnSceneController>();
             host.AddComponent<WinterHubController>();
             host.AddComponent<RoundOpenController>();
-            host.AddComponent<AgeOpeningController>();
             host.AddComponent<AgeClosingController>();
             host.AddComponent<SpringIntroController>();
             host.AddComponent<SummerIntroController>();
@@ -401,7 +396,6 @@ namespace Kismeta.UI.Editor
             var autumnMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnMainPath);
             var winterHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterHubPath);
             var roundOpen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(RoundOpenPath);
-            var ageOpening = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeOpeningPath);
             var springIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringIntroPath);
             var summerIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerIntroPath);
             var autumnIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnIntroPath);
@@ -421,7 +415,7 @@ namespace Kismeta.UI.Editor
                 titleScreen, null, waitingHud, setupSheet,
                 joinScreen, resumeScreen, codexScreen, agekeeperContest,
                 springHub, summerMain, autumnMain, winterHub,
-                roundOpen, ageOpening, springIntro, summerIntro,
+                roundOpen, springIntro, summerIntro,
                 autumnIntro, winterIntro, ageClosing,
                 commune, springHarvest, winterUnlock, fatefulWager, craftReagent, cardLimits);
 

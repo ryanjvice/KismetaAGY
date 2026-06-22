@@ -142,10 +142,13 @@ namespace Kismeta.UI.Controllers
                     $"You staked {player!.FatefulWagerCards.Count} card(s) on {player.FatefulWagerSign} last Winter — it resolves when the die lands.");
             }
 
-            SetLabel(root, "die-face", "?");
             var dieFace = root.Q<Label>("die-face");
             if (dieFace != null)
+            {
                 SymbolGlyphs.TagEmoji(dieFace);
+                if (session.Board.CosmicAgeSign == ZodiacSign.None)
+                    dieFace.text = "?";
+            }
         }
 
         public static void ApplySeasonIntroClass(VisualElement? root, Season season)

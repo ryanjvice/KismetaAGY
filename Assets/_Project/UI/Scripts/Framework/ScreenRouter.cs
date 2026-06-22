@@ -61,7 +61,6 @@ namespace Kismeta.UI
             VisualTreeAsset? autumnMain = null,
             VisualTreeAsset? winterHub = null,
             VisualTreeAsset? roundOpen = null,
-            VisualTreeAsset? ageOpening = null,
             VisualTreeAsset? springIntro = null,
             VisualTreeAsset? summerIntro = null,
             VisualTreeAsset? autumnIntro = null,
@@ -101,8 +100,6 @@ namespace Kismeta.UI
                 screens.Add(new ScreenAsset { Id = ScreenIds.WinterHub, Uxml = winterHub });
             if (roundOpen != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.RoundOpen, Uxml = roundOpen });
-            if (ageOpening != null)
-                screens.Add(new ScreenAsset { Id = ScreenIds.AgeOpening, Uxml = ageOpening });
             if (springIntro != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.SpringIntro, Uxml = springIntro });
             if (summerIntro != null)

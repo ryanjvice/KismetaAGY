@@ -57,6 +57,7 @@ namespace Kismeta.UI.Controllers
             var view = GamePublicView.From(session);
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             MainSceneBindings.BindStatusBar(Root, session, loop);
+            MainSceneBindings.BindCosmicAgeBanner(Root, session);
             MainSceneBindings.BindPassButton(Root, session, bridge);
             MainSceneBindings.BindStepRail(
                 El("step-rail"), session.Phase.CurrentStepIndex, 4, "step__dot--active");

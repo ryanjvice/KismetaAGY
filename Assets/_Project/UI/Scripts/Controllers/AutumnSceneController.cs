@@ -106,6 +106,7 @@ namespace Kismeta.UI.Controllers
             var view = GamePublicView.From(session);
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             MainSceneBindings.BindStatusBar(Root, session, loop);
+            MainSceneBindings.BindCosmicAgeBanner(Root, session);
             MainSceneBindings.BindPassButton(Root, session, bridge);
 
             var player = session.Players[_localPlayerId];
