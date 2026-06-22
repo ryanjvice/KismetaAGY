@@ -124,6 +124,27 @@
     margin-top: 8px;
 }
 
+/* Commune panel embedded in Spring hub center stage */
+.commune-stage {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-direction: column;
+    overflow: hidden;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-bottom: 4px;
+}
+.commune-stage--hidden { display: none; }
+.spring-hub__stage--hidden { display: none; }
+.screen__inventory--hidden { display: none; }
+.commune-stage__readout-wrap { flex-shrink: 0; padding-top: 4px; }
+.commune-stage__zone-wrap { flex-shrink: 0; }
+.commune-stage__tip {
+    flex-shrink: 0;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
 /* Spring harvest tally screen */
 .harvest-hero {
     align-items: center;

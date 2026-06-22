@@ -71,16 +71,18 @@ namespace Kismeta.UI.Controllers
             return chip;
         }
 
-        public static void RebuildZones(VisualElement root, GameSession session,
+        public static void RebuildZones(VisualElement scope, GameSession session,
             IReadOnlyList<string> spreadIds, IReadOnlyList<string> handIds,
-            ZodiacSign referenceSign, Action<string, bool> onTap)
+            ZodiacSign referenceSign, Action<string, bool> onTap,
+            string spreadCountName = "spread-count",
+            string handCountName = "hand-count")
         {
-            RebuildZone(root, "spread-cards", spreadIds, session, referenceSign, onTap, fromSpread: true);
-            RebuildZone(root, "hand-cards", handIds, session, referenceSign, onTap, fromSpread: false);
+            RebuildZone(scope, "spread-cards", spreadIds, session, referenceSign, onTap, fromSpread: true);
+            RebuildZone(scope, "hand-cards", handIds, session, referenceSign, onTap, fromSpread: false);
 
-            SetLabel(root, "spread-count", spreadIds.Count.ToString());
-            SetLabel(root, "hand-count", handIds.Count.ToString());
-            UpdateReadout(root, session, spreadIds, handIds, referenceSign);
+            SetLabel(scope, spreadCountName, spreadIds.Count.ToString());
+            SetLabel(scope, handCountName, handIds.Count.ToString());
+            UpdateReadout(scope, session, spreadIds, handIds, referenceSign);
         }
 
         static void RebuildZone(VisualElement root, string containerName, IReadOnlyList<string> cardIds,

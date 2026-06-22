@@ -231,7 +231,8 @@ namespace Kismeta.Core.Rules
                     {
                         player.Arcanum.RemoveAt(i);
                         inst!.MoveTo(CardZone.Discard, -1);
-                        session.Board.CommonDiscard.Add(id);
+                        if (!session.Board.CommonDiscard.Contains(id))
+                            session.Board.CommonDiscard.Add(id);
                     }
                 }
             }
@@ -284,7 +285,7 @@ namespace Kismeta.Core.Rules
             var board = session.Board;
             if (board.CommonDiscard.Count == 0) return;
 
-            var allCards = new List<string>(board.CommonDiscard);
+            var allCards = DedupeDiscardIds(board.CommonDiscard);
             board.CommonDiscard.Clear();
 
             // Push in shuffled order
@@ -295,6 +296,18 @@ namespace Kismeta.Core.Rules
                 if (session.GetCard(id) is { } card)
                     card.MoveTo(Domain.CardZone.Deck, -1);
             }
+        }
+
+        static List<string> DedupeDiscardIds(IReadOnlyList<string> discard)
+        {
+            var cards = new List<string>(discard.Count);
+            var seen = new HashSet<string>();
+            foreach (var id in discard)
+            {
+                if (seen.Add(id))
+                    cards.Add(id);
+            }
+            return cards;
         }
 
         private static int RotateAgekeeper(GameSession session)

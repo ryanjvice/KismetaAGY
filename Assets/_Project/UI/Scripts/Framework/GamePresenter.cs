@@ -42,6 +42,8 @@ namespace Kismeta.UI
         private CeremonyStep? _lastCeremonyStep;
         private bool _adeptModalOpen;
         private bool _fateModalOpen;
+        private string? _lastAdeptModalCardId;
+        private string? _lastFateModalKey;
 
         public CommandBridge Bridge => _bridge;
         public bool IsInGame => _inGame;
@@ -119,6 +121,8 @@ namespace Kismeta.UI
             _lastCeremonyStep = null;
             _adeptModalOpen = false;
             _fateModalOpen = false;
+            _lastAdeptModalCardId = null;
+            _lastFateModalKey = null;
             DismissAllOverlays();
             _playerHud?.Hide();
         }
@@ -186,7 +190,15 @@ namespace Kismeta.UI
                 _lastHint = hint;
                 _lastSeason = season;
                 if (!IsFateDecisionHint(hint))
+                {
                     _fateModalOpen = false;
+                    _lastFateModalKey = null;
+                }
+                if (hint != ActionHint.AdeptDecision)
+                {
+                    _adeptModalOpen = false;
+                    _lastAdeptModalCardId = null;
+                }
                 RouteGameplay();
             }
         }
@@ -243,7 +255,7 @@ namespace Kismeta.UI
 
             var activeId = _router.CurrentScreenId;
             if (_loop.PendingHumanController == null && _loop.ActivePlayerId < 0
-                && activeId is ScreenIds.Commune or ScreenIds.WinterUnlock
+                && activeId is ScreenIds.WinterUnlock
                     or ScreenIds.FatefulWager or ScreenIds.CraftReagent or ScreenIds.CardLimits)
                 return;
 
@@ -258,6 +270,13 @@ namespace Kismeta.UI
         {
             if (_endOverlays == null || _session == null) return;
             if (!IsFateDecisionHint(hint)) return;
+
+            var fateKey = $"{hint}:{_loop?.PendingCardId ?? ""}";
+            if (fateKey != _lastFateModalKey)
+            {
+                _fateModalOpen = false;
+                _lastFateModalKey = fateKey;
+            }
             if (_fateModalOpen && _endOverlays.IsOpen) return;
 
             _fateModalOpen = true;
@@ -304,10 +323,16 @@ namespace Kismeta.UI
         private void TryOpenAdeptModal(ActionHint hint)
         {
             if (hint != ActionHint.AdeptDecision || _endOverlays == null || _loop == null) return;
-            if (_adeptModalOpen && _endOverlays.IsOpen) return;
 
             var adeptId = _loop.PendingCardId;
             if (string.IsNullOrEmpty(adeptId)) return;
+
+            if (adeptId != _lastAdeptModalCardId)
+            {
+                _adeptModalOpen = false;
+                _lastAdeptModalCardId = adeptId;
+            }
+            if (_adeptModalOpen && _endOverlays.IsOpen) return;
 
             _adeptModalOpen = true;
             _endOverlays.ShowAdept(adeptId);
@@ -399,6 +424,8 @@ namespace Kismeta.UI
             _lastCeremonyStep = null;
             _adeptModalOpen = false;
             _fateModalOpen = false;
+            _lastAdeptModalCardId = null;
+            _lastFateModalKey = null;
             RouteGameplay();
         }
 
@@ -438,7 +465,7 @@ namespace Kismeta.UI
 
         private static string ResolveGameplayScreen(Season season, ActionHint hint) => hint switch
         {
-            ActionHint.Commune => ScreenIds.Commune,
+            ActionHint.Commune => ScreenIds.SpringHub,
             ActionHint.ConfirmHarvest => ScreenIds.SpringHarvest,
             ActionHint.DiscardToLimit => ScreenIds.CardLimits,
             _ => ResolveSeasonMainScreen(season)
@@ -446,10 +473,6 @@ namespace Kismeta.UI
 
         private void WireStepScreens()
         {
-            var spring = _router.GetController<SpringHubController>(ScreenIds.SpringHub);
-            if (spring != null)
-                spring.OnOpenCommune = () => _router.GoTo(ScreenIds.Commune);
-
             var winter = _router.GetController<WinterHubController>(ScreenIds.WinterHub);
             if (winter != null)
             {
@@ -619,6 +642,8 @@ namespace Kismeta.UI
             _endOverlays?.Dismiss();
             _adeptModalOpen = false;
             _fateModalOpen = false;
+            _lastAdeptModalCardId = null;
+            _lastFateModalKey = null;
         }
 
         private static string MapCeremonyScreen(CeremonyStep step) => step switch
@@ -685,7 +710,7 @@ namespace Kismeta.UI
         }
 
         private static bool IsSpringHubSubScreen(string? screenId) =>
-            screenId is ScreenIds.Commune or ScreenIds.SpringHarvest;
+            screenId is ScreenIds.SpringHarvest;
 
         private void RefreshActiveScreen()
         {
@@ -743,8 +768,6 @@ namespace Kismeta.UI
                 winter.BindState(_session, _loop, _bridge);
                 _endOverlays?.BindState(_session, _loop, _bridge);
             }
-            else if (controller is CommuneController commune)
-                commune.BindState(_session, _bridge);
             else if (controller is SpringHarvestController springHarvest)
                 springHarvest.BindState(_session, _loop, _bridge);
             else if (controller is WinterUnlockController winterUnlock)

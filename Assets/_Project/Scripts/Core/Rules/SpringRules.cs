@@ -144,6 +144,12 @@ namespace Kismeta.Core.Rules
 
             if (def?.MajorArcanaType == MajorArcanaType.Fate)
             {
+                if (IsMajorAlreadyCommitted(session, cardId))
+                {
+                    DiscardDuplicateMajor(session, cardId, inst);
+                    return false;
+                }
+
                 // Fate cards go directly to Arcanum, face-up; never enter Hand or Spread
                 inst.MoveTo(CardZone.Arcanum, playerId);
                 player.Arcanum.Add(cardId);
@@ -152,20 +158,26 @@ namespace Kismeta.Core.Rules
                 {
                     bool resolved = _fateResolver.Resolve(session, playerId, cardId, def.ArcanaNumber);
                     if (!resolved)
-                        session.Board.PendingFateDecisions.Add((playerId, cardId, def.ArcanaNumber));
+                        TryQueueFateDecision(session, playerId, cardId, def.ArcanaNumber);
                 }
                 else
                 {
-                    session.Board.PendingFateDecisions.Add((playerId, cardId, def.ArcanaNumber));
+                    TryQueueFateDecision(session, playerId, cardId, def.ArcanaNumber);
                 }
                 return false;
             }
 
             if (def?.MajorArcanaType == MajorArcanaType.Adept)
             {
+                if (IsMajorAlreadyCommitted(session, cardId))
+                {
+                    DiscardDuplicateMajor(session, cardId, inst);
+                    return false;
+                }
+
                 // Adept sits in limbo until the player buys or declines; never enters Hand or Spread
                 inst.MoveTo(CardZone.Deck, -1);
-                session.Board.PendingAdeptDecisions.Add((playerId, cardId));
+                TryQueueAdeptDecision(session, playerId, cardId);
                 return false;
             }
 
@@ -241,9 +253,10 @@ namespace Kismeta.Core.Rules
 
         public CommandResult HandleDeclineAdept(GameSession session, int playerId, string adeptCardId)
         {
-            // Discard the Adept back to the Common Discard pile
+            // Discard the Adept back to the Common Discard pile (once per instance)
             session.GetCard(adeptCardId)?.MoveTo(CardZone.Discard, -1);
-            session.Board.CommonDiscard.Add(adeptCardId);
+            if (!session.Board.CommonDiscard.Contains(adeptCardId))
+                session.Board.CommonDiscard.Add(adeptCardId);
             session.EmitEvent(new AdeptDeclinedEvent(playerId, adeptCardId));
             return CommandResult.Ok("Adept declined.");
         }
@@ -403,7 +416,7 @@ namespace Kismeta.Core.Rules
         private static void ReshuffleDiscard(GameSession session)
         {
             if (session.Board.CommonDiscard.Count == 0) return;
-            var cards = new List<string>(session.Board.CommonDiscard);
+            var cards = DedupeDiscardPile(session.Board.CommonDiscard);
             session.Board.CommonDiscard.Clear();
             var rng = new Random();
             for (int i = cards.Count - 1; i > 0; i--)
@@ -416,6 +429,56 @@ namespace Kismeta.Core.Rules
                 session.Board.CommonDeck.Push(id);
                 session.GetCard(id)?.MoveTo(CardZone.Deck, -1);
             }
+        }
+
+        static bool IsMajorAlreadyCommitted(GameSession session, string cardId)
+        {
+            foreach (var (_, id) in session.Board.PendingAdeptDecisions)
+                if (id == cardId) return true;
+            foreach (var (_, id, _) in session.Board.PendingFateDecisions)
+                if (id == cardId) return true;
+            foreach (var player in session.Players)
+            {
+                if (player.Arcanum.Contains(cardId)) return true;
+            }
+            return false;
+        }
+
+        static void TryQueueAdeptDecision(GameSession session, int playerId, string cardId)
+        {
+            foreach (var (pid, id) in session.Board.PendingAdeptDecisions)
+            {
+                if (id == cardId && pid == playerId) return;
+            }
+            session.Board.PendingAdeptDecisions.Add((playerId, cardId));
+        }
+
+        static void TryQueueFateDecision(GameSession session, int playerId, string cardId, int arcanaNumber)
+        {
+            foreach (var (pid, id, _) in session.Board.PendingFateDecisions)
+            {
+                if (id == cardId && pid == playerId) return;
+            }
+            session.Board.PendingFateDecisions.Add((playerId, cardId, arcanaNumber));
+        }
+
+        static void DiscardDuplicateMajor(GameSession session, string cardId, CardInstance inst)
+        {
+            if (!session.Board.CommonDiscard.Contains(cardId))
+                session.Board.CommonDiscard.Add(cardId);
+            inst.MoveTo(CardZone.Discard, -1);
+        }
+
+        static List<string> DedupeDiscardPile(IReadOnlyList<string> discard)
+        {
+            var cards = new List<string>(discard.Count);
+            var seen = new HashSet<string>();
+            foreach (var id in discard)
+            {
+                if (seen.Add(id))
+                    cards.Add(id);
+            }
+            return cards;
         }
     }
 }

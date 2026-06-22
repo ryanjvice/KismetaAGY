@@ -33,7 +33,6 @@ namespace Kismeta.UI.Editor
         private const string AutumnIntroPath = "Assets/_Project/UI/UXML/batch2/AutumnIntro.uxml";
         private const string WinterIntroPath = "Assets/_Project/UI/UXML/batch2/WinterIntro.uxml";
         private const string AgeClosingPath = "Assets/_Project/UI/UXML/batch2/AgeClosing.uxml";
-        private const string CommunePath = "Assets/_Project/UI/UXML/batch3/Commune.uxml";
         private const string SpringHarvestPath = "Assets/_Project/UI/UXML/batch3/SpringHarvest.uxml";
         private const string WinterUnlockPath = "Assets/_Project/UI/UXML/batch3/WinterUnlock.uxml";
         private const string FatefulWagerPath = "Assets/_Project/UI/UXML/batch3/FatefulWager.uxml";
@@ -165,7 +164,6 @@ namespace Kismeta.UI.Editor
             EnsureComponent<SummerIntroController>(bootstrap.gameObject);
             EnsureComponent<AutumnIntroController>(bootstrap.gameObject);
             EnsureComponent<WinterIntroController>(bootstrap.gameObject);
-            EnsureComponent<CommuneController>(bootstrap.gameObject);
             EnsureComponent<SpringHarvestController>(bootstrap.gameObject);
             EnsureComponent<WinterUnlockController>(bootstrap.gameObject);
             EnsureComponent<FatefulWagerController>(bootstrap.gameObject);
@@ -238,7 +236,6 @@ namespace Kismeta.UI.Editor
             var autumnIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnIntroPath);
             var winterIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterIntroPath);
             var ageClosing = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeClosingPath);
-            var commune = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommunePath);
             var springHarvest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHarvestPath);
             var winterUnlock = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterUnlockPath);
             var fatefulWager = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FatefulWagerPath);
@@ -286,7 +283,6 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_autumnIntro").objectReferenceValue = autumnIntro;
             so.FindProperty("_winterIntro").objectReferenceValue = winterIntro;
             so.FindProperty("_ageClosing").objectReferenceValue = ageClosing;
-            so.FindProperty("_commune").objectReferenceValue = commune;
             so.FindProperty("_springHarvest").objectReferenceValue = springHarvest;
             so.FindProperty("_winterUnlock").objectReferenceValue = winterUnlock;
             so.FindProperty("_fatefulWager").objectReferenceValue = fatefulWager;
@@ -364,7 +360,6 @@ namespace Kismeta.UI.Editor
             host.AddComponent<SummerIntroController>();
             host.AddComponent<AutumnIntroController>();
             host.AddComponent<WinterIntroController>();
-            host.AddComponent<CommuneController>();
             host.AddComponent<SpringHarvestController>();
             host.AddComponent<WinterUnlockController>();
             host.AddComponent<FatefulWagerController>();
@@ -413,7 +408,6 @@ namespace Kismeta.UI.Editor
             var autumnIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnIntroPath);
             var winterIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterIntroPath);
             var ageClosing = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeClosingPath);
-            var commune = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommunePath);
             var springHarvest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHarvestPath);
             var winterUnlock = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterUnlockPath);
             var fatefulWager = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FatefulWagerPath);
@@ -429,7 +423,7 @@ namespace Kismeta.UI.Editor
                 springHub, summerMain, summerHub, autumnMain, autumnHub, winterHub,
                 roundOpen, springIntro, summerIntro,
                 autumnIntro, winterIntro, ageClosing,
-                commune, springHarvest, winterUnlock, fatefulWager, craftReagent, cardLimits);
+                springHarvest, winterUnlock, fatefulWager, craftReagent, cardLimits);
 
             var doc = host.GetComponent<UIDocument>();
             doc.panelSettings = panelSettings;
