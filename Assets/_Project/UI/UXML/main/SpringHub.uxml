@@ -24,15 +24,23 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement class="statusbar">
-                <engine:VisualElement class="statusbar__left">
-                    <engine:VisualElement class="statusbar__sigil" />
-                    <engine:VisualElement>
-                        <engine:Label name="status-season" text="Spring" class="statusbar__title" />
-                        <engine:Label name="status-step" text="—" class="statusbar__sub" />
+            <engine:VisualElement class="phase-header">
+                <engine:VisualElement class="statusbar">
+                    <engine:VisualElement class="statusbar__left">
+                        <engine:VisualElement class="statusbar__sigil" />
+                        <engine:VisualElement>
+                            <engine:Label name="status-season" text="Spring" class="statusbar__title" />
+                        </engine:VisualElement>
                     </engine:VisualElement>
+                    <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
                 </engine:VisualElement>
-                <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
+                <engine:VisualElement name="step-rail" class="steprail steprail--phase">
+                    <engine:VisualElement name="step-0" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="age" class="step__label" /></engine:VisualElement>
+                    <engine:VisualElement name="step-1" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="sign" class="step__label" /></engine:VisualElement>
+                    <engine:VisualElement name="step-2" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="harvest" class="step__label" /></engine:VisualElement>
+                    <engine:VisualElement name="step-3" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="commune" class="step__label" /></engine:VisualElement>
+                    <engine:VisualElement name="step-4" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="lock" class="step__label" /></engine:VisualElement>
+                </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
 
@@ -49,14 +57,6 @@
                 <engine:Label name="sign-match" text="" class="spring-hub__sign-match" />
                 <engine:Label name="harvest-count" text="Awaiting your roll" class="spring-hub__harvest-count" />
                 <engine:Label name="hint-label" text="Your turn" class="spring-hub__hint" />
-            </engine:VisualElement>
-
-            <engine:VisualElement name="step-rail" class="steprail" style="padding-left: 12px; padding-right: 12px;">
-                <engine:VisualElement name="step-0" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="age" class="step__label" /></engine:VisualElement>
-                <engine:VisualElement name="step-1" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="sign" class="step__label" /></engine:VisualElement>
-                <engine:VisualElement name="step-2" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="harvest" class="step__label" /></engine:VisualElement>
-                <engine:VisualElement name="step-3" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="commune" class="step__label" /></engine:VisualElement>
-                <engine:VisualElement name="step-4" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="lock" class="step__label" /></engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
 

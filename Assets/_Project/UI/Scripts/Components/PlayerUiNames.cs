@@ -25,5 +25,14 @@ namespace Kismeta.UI.Components
             3 => new Color(0.96f, 0.83f, 0.37f),
             _ => new Color(0.7f, 0.7f, 0.7f)
         };
+
+        /// <summary>Roster tag for pre-game screens (e.g. agekeeper contest).</summary>
+        public static string RoleSuffix(int playerId, int humanPlayerCount)
+        {
+            int humans = System.Math.Clamp(humanPlayerCount, 0, ColorNames.Length);
+            if (playerId < humans)
+                return playerId == 0 ? " (you)" : "";
+            return " (AI)";
+        }
     }
 }

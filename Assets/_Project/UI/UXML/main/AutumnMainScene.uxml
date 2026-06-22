@@ -23,15 +23,21 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement class="statusbar">
-                <engine:VisualElement class="statusbar__left">
-                    <engine:VisualElement class="statusbar__sigil" />
-                    <engine:VisualElement>
-                        <engine:Label name="status-season" text="Autumn" class="statusbar__title" />
-                        <engine:Label name="status-step" text="—" class="statusbar__sub" />
+            <engine:VisualElement class="phase-header">
+                <engine:VisualElement class="statusbar">
+                    <engine:VisualElement class="statusbar__left">
+                        <engine:VisualElement class="statusbar__sigil" />
+                        <engine:VisualElement>
+                            <engine:Label name="status-season" text="Autumn" class="statusbar__title" />
+                        </engine:VisualElement>
                     </engine:VisualElement>
+                    <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
                 </engine:VisualElement>
-                <engine:Label name="status-round" text="Round 1" class="statusbar__sub" />
+                <engine:VisualElement name="step-rail" class="steprail steprail--phase">
+                    <engine:VisualElement name="step-0" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="fire" class="step__label" /></engine:VisualElement>
+                    <engine:VisualElement name="step-1" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="temper" class="step__label" /></engine:VisualElement>
+                    <engine:VisualElement name="step-2" class="step"><engine:VisualElement class="step__dot" /><engine:Label text="oppose" class="step__label" /></engine:VisualElement>
+                </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
 

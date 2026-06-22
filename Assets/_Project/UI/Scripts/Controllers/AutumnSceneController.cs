@@ -28,6 +28,14 @@ namespace Kismeta.UI.Controllers
         int _localPlayerId;
         bool _inStasis;
         bool _showHand;
+        AutumnOverlayHost? _autumnOverlays;
+        ContestOverlayHost? _contestOverlays;
+
+        public void ConfigureOverlays(AutumnOverlayHost? autumn, ContestOverlayHost? contest)
+        {
+            _autumnOverlays = autumn;
+            _contestOverlays = contest;
+        }
 
         protected override void Unwire()
         {
@@ -108,6 +116,7 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindStatusBar(Root, session, loop);
             MainSceneBindings.BindCosmicAgeBanner(Root, session);
             MainSceneBindings.BindPassButton(Root, session, bridge);
+            RefreshActionGroupRail();
 
             var player = session.Players[_localPlayerId];
             bool autumnAction = bridge.CanSubmit && bridge.PendingHint == ActionHint.AutumnAction;
@@ -149,6 +158,13 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.SetHandFabActive(Root, _showHand);
             MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
             RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
+        }
+
+        public void RefreshActionGroupRail()
+        {
+            MainSceneBindings.BindActionGroupRail(
+                El("step-rail"), 3,
+                ActionGroupRailBindings.ResolveAutumnActiveGroup(_autumnOverlays, _contestOverlays));
         }
     }
 }

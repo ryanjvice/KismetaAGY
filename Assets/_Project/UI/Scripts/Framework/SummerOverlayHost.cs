@@ -29,11 +29,36 @@ namespace Kismeta.UI
         PlaceWardsController? _wards;
         EndSummerController? _endSummerCtrl;
 
+        enum ActiveOverlay
+        {
+            None,
+            CraftBuildSheet,
+            ConsortSheet,
+            CraftReagent,
+            BuildHouse,
+            PlaceWards,
+            Activate,
+            EndSummer,
+            LightTip
+        }
+
+        ActiveOverlay _active = ActiveOverlay.None;
+
         public Action OnTrade;
         public Action OnDuel;
         public Action OnGambit;
+        public Action? OverlayChanged;
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
+
+        public int? ActiveActionGroupIndex => _active switch
+        {
+            ActiveOverlay.CraftBuildSheet or ActiveOverlay.CraftReagent or ActiveOverlay.BuildHouse
+                or ActiveOverlay.PlaceWards or ActiveOverlay.LightTip => 0,
+            ActiveOverlay.ConsortSheet => 1,
+            ActiveOverlay.Activate => 2,
+            _ => null
+        };
 
         void Awake() => EnsureControllers();
 
@@ -85,28 +110,28 @@ namespace Kismeta.UI
 
         public void ShowCraftReagent()
         {
-            if (!ShowModal(_craftReagent, _craft)) return;
+            if (!ShowModal(_craftReagent, _craft, ActiveOverlay.CraftReagent)) return;
             WireCraft();
             RefreshOpenOverlay();
         }
 
         public void ShowActivate()
         {
-            if (!ShowModal(_activateCard, _activate)) return;
+            if (!ShowModal(_activateCard, _activate, ActiveOverlay.Activate)) return;
             WireActivate();
             RefreshOpenOverlay();
         }
 
         public void ShowBuildHouse()
         {
-            if (!ShowModal(_buildHouse, _build)) return;
+            if (!ShowModal(_buildHouse, _build, ActiveOverlay.BuildHouse)) return;
             WireBuild();
             RefreshOpenOverlay();
         }
 
         public void ShowPlaceWards()
         {
-            if (!ShowModal(_placeWards, _wards)) return;
+            if (!ShowModal(_placeWards, _wards, ActiveOverlay.PlaceWards)) return;
             WireWards();
             RefreshOpenOverlay();
         }
@@ -114,7 +139,7 @@ namespace Kismeta.UI
         public void ShowEndSummer()
         {
             EnsureControllers();
-            if (!ShowModal(_endSummer, _endSummerCtrl)) return;
+            if (!ShowModal(_endSummer, _endSummerCtrl, ActiveOverlay.EndSummer)) return;
             WireEndSummer();
             RefreshOpenOverlay();
         }
@@ -150,16 +175,14 @@ namespace Kismeta.UI
             close.clicked += Dismiss;
             tip.Add(close);
 
-            ShowProgrammaticOverlay(tip);
-        }
-
-        void ShowProgrammaticOverlay(VisualElement content)
-        {
-            _layout?.ShowOverlayElement(content);
+            _active = ActiveOverlay.LightTip;
+            _layout.ShowOverlayElement(tip);
+            NotifyOverlayChanged();
         }
 
         public void Dismiss()
         {
+            _active = ActiveOverlay.None;
             _craft?.ResetForgeState();
             _craft?.Detach();
             _sheets?.Detach();
@@ -168,6 +191,7 @@ namespace Kismeta.UI
             _wards?.Detach();
             _endSummerCtrl?.Detach();
             _layout?.DismissOverlay();
+            NotifyOverlayChanged();
         }
 
         void ShowSheet(bool craftBuild)
@@ -179,19 +203,26 @@ namespace Kismeta.UI
 
             _sheets.AttachTo(root);
             _sheets.ShowCraftBuild(craftBuild);
+            _active = craftBuild ? ActiveOverlay.CraftBuildSheet : ActiveOverlay.ConsortSheet;
             WireSheets();
             RefreshOpenOverlay();
+            NotifyOverlayChanged();
         }
 
-        bool ShowModal<T>(VisualTreeAsset? asset, T? controller) where T : class, IVisualRootController
+        bool ShowModal<T>(VisualTreeAsset? asset, T? controller, ActiveOverlay kind)
+            where T : class, IVisualRootController
         {
             if (_layout == null || asset == null || controller == null) return false;
             _layout.ShowModal(asset);
             var root = _layout.OverlayContentRoot;
             if (root == null) return false;
             controller.AttachTo(root);
+            _active = kind;
+            NotifyOverlayChanged();
             return true;
         }
+
+        void NotifyOverlayChanged() => OverlayChanged?.Invoke();
 
         void RefreshOpenOverlay()
         {

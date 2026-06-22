@@ -50,6 +50,9 @@ namespace Kismeta.UI
         public event Action<UiSetupConfig>? SetupBeginRequested;
         public event Action? NewGameRequested;
 
+        /// <summary>Supplied by bootstrap to resolve human vs AI seats before a session exists.</summary>
+        public Func<int>? ResolveHumanPlayerCount;
+
         private void Awake()
         {
             _router = GetComponent<ScreenRouter>();
@@ -96,6 +99,7 @@ namespace Kismeta.UI
             WireSeasonHubNavigation();
             WireContestNavigation();
             WireAutumnNavigation();
+            WireActionGroupRailRefresh();
             WireEndNavigation();
             WireCardOverlays();
         }
@@ -379,9 +383,10 @@ namespace Kismeta.UI
         {
             _pendingSetupConfig = _setupSheetState.Current;
             _setupSheetState.Detach();
+            int humanPlayers = ResolveHumanPlayerCount?.Invoke() ?? 1;
             _router.GoTo(ScreenIds.AgekeeperContest);
             _router.GetController<AgekeeperContestController>(ScreenIds.AgekeeperContest)
-                ?.BeginContest(_pendingSetupConfig.Players);
+                ?.BeginContest(_pendingSetupConfig.Players, humanPlayers);
         }
 
         public void NotifySetupBegin(UiSetupConfig config)
@@ -526,6 +531,31 @@ namespace Kismeta.UI
             autumn.OnOppose = () => _contestOverlays?.ShowOpposition();
             autumn.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
             autumn.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+        }
+
+        private void WireActionGroupRailRefresh()
+        {
+            void Refresh() => RefreshActionGroupRails();
+
+            if (_summerOverlays != null)
+                _summerOverlays.OverlayChanged = Refresh;
+            if (_contestOverlays != null)
+                _contestOverlays.OverlayChanged = Refresh;
+            if (_autumnOverlays != null)
+                _autumnOverlays.OverlayChanged = Refresh;
+
+            _router.GetController<SummerSceneController>(ScreenIds.SummerMain)
+                ?.ConfigureOverlays(_summerOverlays, _contestOverlays);
+            _router.GetController<AutumnSceneController>(ScreenIds.AutumnMain)
+                ?.ConfigureOverlays(_autumnOverlays, _contestOverlays);
+        }
+
+        private void RefreshActionGroupRails()
+        {
+            _router.GetController<SummerSceneController>(ScreenIds.SummerMain)?.RefreshActionGroupRail();
+            _router.GetController<SummerHubController>(ScreenIds.SummerHub)?.RefreshActionGroupRail();
+            _router.GetController<AutumnSceneController>(ScreenIds.AutumnMain)?.RefreshActionGroupRail();
+            _router.GetController<AutumnHubController>(ScreenIds.AutumnHub)?.RefreshActionGroupRail();
         }
 
         private void WireEndNavigation()
@@ -716,7 +746,7 @@ namespace Kismeta.UI
             else if (controller is CommuneController commune)
                 commune.BindState(_session, _bridge);
             else if (controller is SpringHarvestController springHarvest)
-                springHarvest.BindState(_session, _bridge);
+                springHarvest.BindState(_session, _loop, _bridge);
             else if (controller is WinterUnlockController winterUnlock)
                 winterUnlock.BindState(_session, _bridge);
             else if (controller is FatefulWagerController fatefulWager)

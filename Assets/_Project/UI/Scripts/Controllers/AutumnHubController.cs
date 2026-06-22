@@ -51,6 +51,7 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             MainSceneBindings.BindStatusBar(Root, session, loop);
             MainSceneBindings.BindCosmicAgeBanner(Root, session);
+            RefreshActionGroupRail();
             MainSceneBindings.BindSpectatorTurnBanner(Root, session, loop, "at the forge");
             MainSceneBindings.SetHandFabActive(Root, _showHand);
             MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
@@ -60,6 +61,11 @@ namespace Kismeta.UI.Controllers
 
             RivalStripBuilder.Populate(
                 El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, Season.Autumn);
+        }
+
+        public void RefreshActionGroupRail()
+        {
+            MainSceneBindings.BindActionGroupRail(El("step-rail"), 3, null);
         }
     }
 }

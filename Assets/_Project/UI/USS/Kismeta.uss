@@ -248,6 +248,17 @@
     margin-right: 4px;
 }
 
+.phase-header {
+    flex-shrink: 0;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--border-subtle);
+}
+
+.phase-header .statusbar {
+    border-bottom-width: 0;
+    padding-bottom: 0;
+}
+
 .statusbar {
     flex-direction: row;
     align-items: center;
@@ -642,11 +653,12 @@
 
 /* ---------- Step rail ---------- */
 .steprail { flex-direction: row; align-items: center; padding: 4px 2px var(--space-sm); }
+.steprail--phase { padding: 2px var(--space-md) var(--space-sm); }
 .step { flex-grow: 1; align-items: center; }
 .step__dot {
-    width: 22px;
-    height: 22px;
-    border-radius: 11px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
     border-width: 1px;
     align-items: center;
     justify-content: center;
@@ -654,7 +666,13 @@
 
 .step__dot--done { background-color: var(--ok-bg); border-color: var(--ok-border); }
 .step__dot--active { border-width: 2px; }
+.step__dot--available {
+    background-color: var(--panel-darker);
+    border-color: var(--border-subtle);
+}
 .step__dot--locked { background-color: var(--panel-darker); border-color: rgb(58, 58, 58); }
+.screen--summer .step__dot--active { border-color: rgb(240, 176, 96); }
+.screen--autumn .step__dot--active { border-color: rgb(224, 138, 74); }
 .step__label { font-size: var(--font-micro); color: var(--muted); margin-top: 3px; }
 .step__connector { width: 12px; height: 1px; background-color: var(--border-subtle); }
 

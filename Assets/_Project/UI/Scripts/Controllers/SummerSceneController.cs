@@ -26,6 +26,14 @@ namespace Kismeta.UI.Controllers
         GameSession? _session;
         int _localPlayerId;
         bool _showHand;
+        SummerOverlayHost? _summerOverlays;
+        ContestOverlayHost? _contestOverlays;
+
+        public void ConfigureOverlays(SummerOverlayHost? summer, ContestOverlayHost? contest)
+        {
+            _summerOverlays = summer;
+            _contestOverlays = contest;
+        }
 
         protected override void Unwire()
         {
@@ -62,6 +70,7 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindStatusBar(Root, session, loop);
             MainSceneBindings.BindCosmicAgeBanner(Root, session);
             MainSceneBindings.BindPassButton(Root, session, bridge);
+            RefreshActionGroupRail();
             MainSceneBindings.SetHandFabActive(Root, _showHand);
             MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
 
@@ -77,6 +86,13 @@ namespace Kismeta.UI.Controllers
             }
 
             RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
+        }
+
+        public void RefreshActionGroupRail()
+        {
+            MainSceneBindings.BindActionGroupRail(
+                El("step-rail"), 3,
+                ActionGroupRailBindings.ResolveSummerActiveGroup(_summerOverlays, _contestOverlays));
         }
     }
 }

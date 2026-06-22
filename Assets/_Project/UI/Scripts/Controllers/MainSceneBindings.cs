@@ -146,6 +146,30 @@ namespace Kismeta.UI.Controllers
             }
         }
 
+        public static void BindActionGroupRail(VisualElement? rail, int groupCount, int? activeIndex)
+        {
+            if (rail == null) return;
+
+            for (int i = 0; i < groupCount; i++)
+            {
+                var step = rail.Q<VisualElement>($"step-{i}");
+                if (step == null) continue;
+
+                var dot = step.Q(className: "step__dot");
+                if (dot == null) continue;
+
+                dot.RemoveFromClassList("step__dot--done");
+                dot.RemoveFromClassList("step__dot--active");
+                dot.RemoveFromClassList("step__dot--locked");
+                dot.RemoveFromClassList("step__dot--available");
+
+                if (activeIndex == i)
+                    dot.AddToClassList("step__dot--active");
+                else
+                    dot.AddToClassList("step__dot--available");
+            }
+        }
+
         public static int ResolveLocalPlayerId(GameSession session, GameLoop loop, CommandBridge bridge)
         {
             int humanId = loop.LocalHumanPlayerId;

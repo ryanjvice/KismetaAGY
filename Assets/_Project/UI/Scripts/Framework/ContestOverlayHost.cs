@@ -1,3 +1,4 @@
+using System;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Controllers;
 using UnityEngine;
@@ -32,6 +33,14 @@ namespace Kismeta.UI
         ActiveContest _active = ActiveContest.None;
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
+
+        public int? ActiveSummerGroupIndex => _active is ActiveContest.Trade or ActiveContest.Duel or ActiveContest.Gambit
+            ? 1
+            : null;
+
+        public int? ActiveAutumnGroupIndex => _active == ActiveContest.Opposition ? 2 : null;
+
+        public Action? OverlayChanged;
 
         void Awake()
         {
@@ -79,6 +88,7 @@ namespace Kismeta.UI
             _gambitCtrl?.Detach();
             _oppositionCtrl?.Detach();
             _layout?.DismissOverlay();
+            NotifyOverlayChanged();
         }
 
         void ShowContest<T>(VisualTreeAsset? asset, T? controller, System.Action wire, ActiveContest kind)
@@ -92,7 +102,10 @@ namespace Kismeta.UI
             _active = kind;
             wire();
             RefreshOpenOverlay();
+            NotifyOverlayChanged();
         }
+
+        void NotifyOverlayChanged() => OverlayChanged?.Invoke();
 
         void RefreshOpenOverlay()
         {

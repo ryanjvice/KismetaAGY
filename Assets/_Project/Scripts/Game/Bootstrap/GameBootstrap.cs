@@ -167,6 +167,7 @@ namespace Kismeta.Game.Bootstrap
             var layout = GetComponent<ViewportLayout>() ?? gameObject.AddComponent<ViewportLayout>();
             var router = GetComponent<ScreenRouter>() ?? gameObject.AddComponent<ScreenRouter>();
             _presenter = GetComponent<GamePresenter>() ?? gameObject.AddComponent<GamePresenter>();
+            _presenter.ResolveHumanPlayerCount = () => _humanPlayers;
 
             EnsureController<TitleScreenController>();
             EnsureController<WaitingHudController>();

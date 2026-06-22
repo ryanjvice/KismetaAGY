@@ -19,14 +19,16 @@ namespace Kismeta.UI.Controllers
         public Action<int>? OnComplete;
 
         int _playerCount;
+        int _humanPlayerCount = 1;
         int _winnerId = -1;
         bool _resolved;
         bool _rolling;
         AgekeeperContestService.ContestResult? _pendingResult;
 
-        public void BeginContest(int playerCount)
+        public void BeginContest(int playerCount, int humanPlayerCount = 1)
         {
             _playerCount = Mathf.Clamp(playerCount, 2, 4);
+            _humanPlayerCount = Mathf.Clamp(humanPlayerCount, 0, _playerCount);
             _winnerId = -1;
             _resolved = false;
             if (!IsAttached) return;
@@ -177,10 +179,26 @@ namespace Kismeta.UI.Controllers
                 row.style.paddingLeft = 12;
                 row.style.paddingRight = 12;
 
-                var name = new Label($"{ColorNames[i]} alchemist");
-                name.style.flexGrow = 1;
+                var nameBlock = new VisualElement();
+                nameBlock.style.flexDirection = FlexDirection.Row;
+                nameBlock.style.alignItems = Align.Center;
+                nameBlock.style.flexGrow = 1;
+
+                var name = new Label(PlayerUiNames.ForPlayer(i));
                 name.style.fontSize = 12;
                 name.style.color = new StyleColor(new Color(0.95f, 0.91f, 0.82f));
+                nameBlock.Add(name);
+
+                var roleSuffix = PlayerUiNames.RoleSuffix(i, _humanPlayerCount);
+                if (!string.IsNullOrEmpty(roleSuffix))
+                {
+                    var role = new Label(roleSuffix);
+                    role.style.fontSize = 10;
+                    role.style.color = new StyleColor(i == 0 && i < _humanPlayerCount
+                        ? new Color(0.91f, 0.73f, 0.29f)
+                        : new Color(0.54f, 0.42f, 0.48f));
+                    nameBlock.Add(role);
+                }
 
                 var die = new Label("—");
                 die.name = $"die-{i}";
@@ -189,7 +207,7 @@ namespace Kismeta.UI.Controllers
                 die.style.minWidth = 36;
                 die.style.unityTextAlign = TextAnchor.MiddleCenter;
 
-                row.Add(name);
+                row.Add(nameBlock);
                 row.Add(die);
                 list.Add(row);
             }

@@ -1,3 +1,4 @@
+using System;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Controllers;
 using UnityEngine;
@@ -30,6 +31,15 @@ namespace Kismeta.UI
         ActiveOverlay _active = ActiveOverlay.None;
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
+
+        public int? ActiveActionGroupIndex => _active switch
+        {
+            ActiveOverlay.Fire or ActiveOverlay.LeaveStasis => 0,
+            ActiveOverlay.Temper => 1,
+            _ => null
+        };
+
+        public Action? OverlayChanged;
 
         void Awake() => EnsureControllers();
 
@@ -85,6 +95,7 @@ namespace Kismeta.UI
             _leaveStasisCtrl?.Detach();
             _endAutumnCtrl?.Detach();
             _layout?.DismissOverlay();
+            NotifyOverlayChanged();
         }
 
         void ShowOverlay<T>(VisualTreeAsset? asset, T? controller, System.Action wire, ActiveOverlay kind)
@@ -98,7 +109,10 @@ namespace Kismeta.UI
             _active = kind;
             wire();
             RefreshOpenOverlay();
+            NotifyOverlayChanged();
         }
+
+        void NotifyOverlayChanged() => OverlayChanged?.Invoke();
 
         void RefreshOpenOverlay()
         {

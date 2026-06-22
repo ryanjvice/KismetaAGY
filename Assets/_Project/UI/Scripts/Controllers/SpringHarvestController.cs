@@ -27,7 +27,7 @@ namespace Kismeta.UI.Controllers
             _bindKey = int.MinValue;
         }
 
-        public void BindState(GameSession session, CommandBridge bridge)
+        public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
         {
             _session = session;
             _bridge = bridge;
@@ -35,7 +35,9 @@ namespace Kismeta.UI.Controllers
             if (Root == null || _playerId < 0) return;
 
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
+            MainSceneBindings.BindStatusBar(Root, session, loop);
             MainSceneBindings.BindCosmicAgeBanner(Root, session);
+            MainSceneBindings.BindStepRail(El("step-rail"), 2, 5, "step__dot--active");
 
             int bindKey = ComputeBindKey(session, _playerId);
             if (bindKey == _bindKey) return;
