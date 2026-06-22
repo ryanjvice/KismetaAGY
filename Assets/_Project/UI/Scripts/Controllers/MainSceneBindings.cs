@@ -1,8 +1,11 @@
+using System;
+using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.Core.Views;
 using Kismeta.UI;
+using Kismeta.UI.Components;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -109,6 +112,55 @@ namespace Kismeta.UI.Controllers
                     return p;
             }
             return view.Players.Count > 0 ? view.Players[0] : null;
+        }
+
+        public static void SetHandFabActive(VisualElement? root, bool showHand)
+        {
+            var btn = root?.Q<Button>("hand-btn");
+            if (btn == null) return;
+            btn.text = showHand ? "Spread" : "Hand";
+            btn.EnableInClassList("menu-btn-fab--active", showHand);
+        }
+
+        public static void BindDockStrip(
+            VisualElement? root,
+            GameSession session,
+            int localPlayerId,
+            bool showHand,
+            Action<string>? onInspect)
+        {
+            if (root == null) return;
+
+            var zoneLbl = root.Q<Label>("dock-zone-label");
+            if (zoneLbl != null)
+                zoneLbl.text = showHand ? "hand" : "spread";
+
+            var local = LocalPlayer(GamePublicView.From(session), localPlayerId);
+            IReadOnlyList<string> cardIds = showHand
+                ? PlayerPrivateView.From(session, localPlayerId).Hand
+                : local?.Spread ?? Array.Empty<string>();
+
+            var countLbl = root.Q<Label>("spread-count");
+            if (countLbl != null)
+                countLbl.text = cardIds.Count.ToString();
+
+            var strip = root.Q<VisualElement>("spread-strip");
+            if (strip == null) return;
+            strip.Clear();
+
+            var db = session.Rules?.CardDatabase;
+            if (db == null) return;
+
+            foreach (var cardId in cardIds)
+            {
+                var inst = session.GetCard(cardId);
+                if (inst == null) continue;
+                var def = db.GetById(inst.DefinitionId);
+                if (def == null) continue;
+                strip.Add(CardChipFactory.CreateFromDefinition(
+                    def.Rank.ToString(), def.Id, db,
+                    instanceId: cardId, onInspect: onInspect));
+            }
         }
     }
 }

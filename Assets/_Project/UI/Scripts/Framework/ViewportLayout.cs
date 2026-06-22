@@ -43,6 +43,8 @@ namespace Kismeta.UI
         }
         public bool IsOverlayVisible => _overlayLayer != null && _overlayLayer.style.display == DisplayStyle.Flex;
 
+        public VisualElement? PlayerHudLayer => Root?.Q<VisualElement>("player-hud-layer");
+
         /// <summary>Root of the most recently shown overlay UXML clone.</summary>
         public VisualElement? OverlayContentRoot => _overlayContentRoot;
 
@@ -356,8 +358,32 @@ namespace Kismeta.UI
             }
 
             shell.Add(content);
+            EnsurePlayerHudLayer();
             root.Add(shell);
             EnsureOverlayLayer();
+        }
+
+        public VisualElement? EnsurePlayerHudLayer()
+        {
+            var shell = Root?.Q("app-shell");
+            if (shell == null)
+                return null;
+
+            var layer = shell.Q<VisualElement>("player-hud-layer");
+            if (layer != null)
+                return layer;
+
+            layer = new VisualElement { name = "player-hud-layer" };
+            layer.AddToClassList("player-hud-layer");
+            layer.style.display = DisplayStyle.None;
+
+            var overlay = shell.Q<VisualElement>("overlay-layer");
+            if (overlay != null)
+                shell.Insert(shell.IndexOf(overlay), layer);
+            else
+                shell.Add(layer);
+
+            return layer;
         }
 
         private VisualElement EnsureOverlayLayer()

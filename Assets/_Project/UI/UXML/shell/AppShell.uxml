@@ -8,6 +8,7 @@
     <engine:VisualElement class="kismeta-root">
         <engine:VisualElement name="app-shell" class="app-shell">
             <engine:VisualElement name="content-layer" class="content-layer" />
+            <engine:VisualElement name="player-hud-layer" class="player-hud-layer" style="display: none;" />
             <engine:VisualElement name="overlay-layer" class="overlay-layer" style="display: none;" />
         </engine:VisualElement>
     </engine:VisualElement>

@@ -45,6 +45,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _appShell;
         [SerializeField] private VisualTreeAsset _titleScreen;
         [SerializeField] private VisualTreeAsset _waitingHud;
+        [SerializeField] private VisualTreeAsset _playerHud;
         [SerializeField] private VisualTreeAsset _setupSheet;
         [SerializeField] private VisualTreeAsset _joinScreen;
         [SerializeField] private VisualTreeAsset _resumeScreen;
@@ -168,6 +169,7 @@ namespace Kismeta.Game.Bootstrap
 
             EnsureController<TitleScreenController>();
             EnsureController<WaitingHudController>();
+            EnsureController<PlayerHudController>();
             EnsureController<JoinScreenController>();
             EnsureController<ResumeScreenController>();
             EnsureController<CodexScreenController>();
@@ -231,6 +233,8 @@ namespace Kismeta.Game.Bootstrap
 
             var endOverlays = GetComponent<EndOverlayHost>();
             endOverlays?.Configure(_cardTable, _cardModals);
+
+            GetComponent<PlayerHudController>()?.Configure(_playerHud);
 
             if (_titleScreen != null && _waitingHud != null)
             {

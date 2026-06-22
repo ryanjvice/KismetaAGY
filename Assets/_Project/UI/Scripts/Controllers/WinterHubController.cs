@@ -20,19 +20,36 @@ namespace Kismeta.UI.Controllers
         public System.Action<string>? OnInspectCard;
 
         CommandBridge? _bridge;
+        GameSession? _session;
         int _localPlayerId;
+        bool _showHand;
+
+        protected override void Unwire()
+        {
+            _showHand = false;
+        }
 
         protected override void Wire()
         {
             Btn("continue-btn")!.clicked += () => OnOpenUnlock?.Invoke();
             Btn("craft-btn")!.clicked += () => OnOpenCraft?.Invoke();
             Btn("wager-btn")!.clicked += () => OnOpenWager?.Invoke();
+            Btn("hand-btn")!.clicked += OnHandToggle;
             Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
             Btn("pass-btn")!.clicked += OnPass;
         }
 
+        void OnHandToggle()
+        {
+            _showHand = !_showHand;
+            MainSceneBindings.SetHandFabActive(Root, _showHand);
+            if (_session != null)
+                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _showHand, OnInspectCard);
+        }
+
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
         {
+            _session = session;
             _bridge = bridge;
             _localPlayerId = bridge.ActivePlayerId;
             if (Root == null) return;
@@ -50,6 +67,9 @@ namespace Kismeta.UI.Controllers
                 Lbl("limits-line")!.text =
                     $"Spread {local.Spread.Count}/5 · Hand {local.HandCardCount}/5";
             }
+
+            MainSceneBindings.SetHandFabActive(Root, _showHand);
+            MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
 
             BindWinterCta(session, bridge);
             RivalStripBuilder.Populate(El("rivals"), view, _localPlayerId);

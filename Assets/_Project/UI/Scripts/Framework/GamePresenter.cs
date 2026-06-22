@@ -28,6 +28,7 @@ namespace Kismeta.UI
         private ContestOverlayHost? _contestOverlays;
         private AutumnOverlayHost? _autumnOverlays;
         private EndOverlayHost? _endOverlays;
+        private PlayerHudController? _playerHud;
         private readonly CommandBridge _bridge = new();
         private GameSession? _session;
         private GameLoop? _loop;
@@ -57,6 +58,7 @@ namespace Kismeta.UI
             _contestOverlays = GetComponent<ContestOverlayHost>();
             _autumnOverlays = GetComponent<AutumnOverlayHost>();
             _endOverlays = GetComponent<EndOverlayHost>();
+            _playerHud = GetComponent<PlayerHudController>();
         }
 
         /// <summary>Wire title menu and show the title screen before a session exists.</summary>
@@ -113,6 +115,7 @@ namespace Kismeta.UI
             _adeptModalOpen = false;
             _fateModalOpen = false;
             DismissAllOverlays();
+            _playerHud?.Hide();
         }
 
         public void ShowNewGameSetup()
@@ -209,6 +212,8 @@ namespace Kismeta.UI
         private void RefreshActiveScreenIfNeeded()
         {
             if (_session == null || _loop == null) return;
+
+            RefreshPlayerHud();
 
             if (_session.IsOver)
             {
@@ -387,6 +392,7 @@ namespace Kismeta.UI
         {
             _inGame = false;
             _setupSheetState.Detach();
+            _playerHud?.Hide();
             _router.GoTo(ScreenIds.Title);
         }
 
@@ -689,6 +695,26 @@ namespace Kismeta.UI
                 resumeCtrl.RebuildList();
             else
                 controller?.Refresh();
+
+            RefreshPlayerHud();
         }
+
+        void RefreshPlayerHud()
+        {
+            if (_playerHud == null || _session == null || _loop == null)
+                return;
+
+            bool show = _inGame && ShouldShowPlayerHud(_router.CurrentScreenId);
+            _playerHud.SetVisible(show);
+            if (show)
+                _playerHud.BindState(_session, _loop, _bridge);
+        }
+
+        static bool ShouldShowPlayerHud(string? screenId) => screenId switch
+        {
+            ScreenIds.Title or ScreenIds.Join or ScreenIds.Resume or ScreenIds.Codex
+                or ScreenIds.AgekeeperContest or ScreenIds.Victory or ScreenIds.Chronicle => false,
+            _ => true
+        };
     }
 }

@@ -148,6 +148,7 @@ namespace Kismeta.Core.Tests
             var first = AgekeeperContestService.Resolve(3, new System.Random(99));
             var again = AgekeeperContestService.Resolve(3, new System.Random(99));
             Assert.AreEqual(first.WinnerPlayerId, again.WinnerPlayerId);
+            Assert.AreEqual(1, first.Rounds.Count);
             Assert.AreEqual(3, first.FinalRolls.Count);
         }
 
@@ -157,7 +158,26 @@ namespace Kismeta.Core.Tests
             var rng = new SeededContestRng(6, 6, 3, 8, 4);
             var result = AgekeeperContestService.Resolve(3, rng);
             Assert.AreEqual(0, result.WinnerPlayerId);
+            Assert.AreEqual(2, result.Rounds.Count);
+            Assert.AreEqual(3, result.Rounds[0].Count);
+            Assert.AreEqual(2, result.Rounds[1].Count);
             Assert.AreEqual(2, result.FinalRolls.Count);
+        }
+
+        [Test]
+        public void AgekeeperContest_AllPlayersRollInFirstRound()
+        {
+            for (int playerCount = 2; playerCount <= 4; playerCount++)
+            {
+                var result = AgekeeperContestService.Resolve(playerCount, new System.Random(42 + playerCount));
+                Assert.GreaterOrEqual(result.Rounds.Count, 1);
+                Assert.AreEqual(playerCount, result.Rounds[0].Count);
+                var seen = new HashSet<int>();
+                foreach (var roll in result.Rounds[0])
+                    seen.Add(roll.PlayerId);
+                for (int id = 0; id < playerCount; id++)
+                    Assert.IsTrue(seen.Contains(id), $"Player {id} missing from round 1.");
+            }
         }
 
         [Test]

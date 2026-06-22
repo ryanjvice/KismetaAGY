@@ -27,6 +27,12 @@ namespace Kismeta.UI.Controllers
         GameSession? _session;
         int _localPlayerId;
         bool _inStasis;
+        bool _showHand;
+
+        protected override void Unwire()
+        {
+            _showHand = false;
+        }
 
         protected override void Wire()
         {
@@ -35,7 +41,16 @@ namespace Kismeta.UI.Controllers
             WireBtn("oppose-btn", OnOpposeClicked);
             WireBtn("manage-cards-btn", OnManageCardsClicked);
             WireBtn("pass-btn", OnPassClicked);
+            Btn("hand-btn")?.RegisterCallback<ClickEvent>(_ => OnHandToggle());
             Btn("menu-btn")?.RegisterCallback<ClickEvent>(_ => OnOpenCardTable?.Invoke());
+        }
+
+        void OnHandToggle()
+        {
+            _showHand = !_showHand;
+            MainSceneBindings.SetHandFabActive(Root, _showHand);
+            if (_session != null)
+                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _showHand, OnInspectCard);
         }
 
         void WireBtn(string name, Action handler)
@@ -130,30 +145,9 @@ namespace Kismeta.UI.Controllers
             }
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
-            BindSpread(session, local);
+            MainSceneBindings.SetHandFabActive(Root, _showHand);
+            MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
             RivalStripBuilder.Populate(El("rivals"), view, _localPlayerId);
-        }
-
-        void BindSpread(GameSession session, PublicPlayerView? local)
-        {
-            if (Lbl("spread-count") != null && local != null)
-                Lbl("spread-count")!.text = local.Spread.Count.ToString();
-
-            var strip = El("spread-strip");
-            if (strip == null || local == null) return;
-            strip.Clear();
-
-            var db = session.Rules?.CardDatabase;
-            foreach (var cardId in local.Spread)
-            {
-                var inst = session.GetCard(cardId);
-                if (inst == null || db == null) continue;
-                var def = db.GetById(inst.DefinitionId);
-                if (def == null) continue;
-                strip.Add(CardChipFactory.CreateFromDefinition(
-                    def.Rank.ToString(), def.Id, db,
-                    instanceId: cardId, onInspect: OnInspectCard));
-            }
         }
     }
 }

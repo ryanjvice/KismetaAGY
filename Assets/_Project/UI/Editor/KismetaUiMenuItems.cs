@@ -58,6 +58,7 @@ namespace Kismeta.UI.Editor
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string WaitingHudPath = "Assets/_Project/UI/UXML/shell/WaitingHud.uxml";
+        private const string PlayerHudPath = "Assets/_Project/UI/UXML/shell/PlayerHud.uxml";
 
         [MenuItem("Kismeta/UI/Verify Font Imports")]
         public static void VerifyFontImports()
@@ -146,6 +147,7 @@ namespace Kismeta.UI.Editor
             EnsureComponent<GamePresenter>(bootstrap.gameObject);
             EnsureComponent<TitleScreenController>(bootstrap.gameObject);
             EnsureComponent<WaitingHudController>(bootstrap.gameObject);
+            EnsureComponent<PlayerHudController>(bootstrap.gameObject);
             EnsureComponent<JoinScreenController>(bootstrap.gameObject);
             EnsureComponent<ResumeScreenController>(bootstrap.gameObject);
             EnsureComponent<CodexScreenController>(bootstrap.gameObject);
@@ -216,6 +218,7 @@ namespace Kismeta.UI.Editor
             var appShell = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AppShellPath);
             var title = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TitleScreenPath);
             var waiting = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
+            var playerHud = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PlayerHudPath);
             var setup = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SetupSheetPath);
             var join = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(JoinScreenPath);
             var resume = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResumeScreenPath);
@@ -262,6 +265,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_appShell").objectReferenceValue = appShell;
             so.FindProperty("_titleScreen").objectReferenceValue = title;
             so.FindProperty("_waitingHud").objectReferenceValue = waiting;
+            so.FindProperty("_playerHud").objectReferenceValue = playerHud;
             so.FindProperty("_setupSheet").objectReferenceValue = setup;
             so.FindProperty("_joinScreen").objectReferenceValue = join;
             so.FindProperty("_resumeScreen").objectReferenceValue = resume;

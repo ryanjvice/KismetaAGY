@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Rules;
 using Kismeta.UI;
@@ -55,10 +56,36 @@ namespace Kismeta.UI.Controllers
             Btn("roll-btn")?.SetEnabled(false);
             if (_pendingResult == null) yield break;
 
-            foreach (var roll in _pendingResult.FinalRolls)
+            var rounds = _pendingResult.Rounds;
+            for (int r = 0; r < rounds.Count; r++)
             {
-                var die = Root?.Q<Label>($"die-{roll.PlayerId}");
-                yield return DieAnimator.RollLabel(die, roll.DieValue);
+                var round = rounds[r];
+                if (r > 0)
+                {
+                    if (Lbl("status-line") != null)
+                        Lbl("status-line")!.text = FormatTieRerollMessage(round);
+                    foreach (var roll in round)
+                    {
+                        var die = Root?.Q<Label>($"die-{roll.PlayerId}");
+                        if (die != null) die.text = "—";
+                    }
+                    yield return new WaitForSeconds(0.6f);
+                }
+
+                var sorted = new List<AgekeeperContestService.RollResult>(round);
+                sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
+                foreach (var roll in sorted)
+                {
+                    var die = Root?.Q<Label>($"die-{roll.PlayerId}");
+                    yield return DieAnimator.RollLabel(die, roll.DieValue);
+                }
+            }
+
+            if (!AllPlayersRolled())
+            {
+                _rolling = false;
+                Btn("roll-btn")?.SetEnabled(true);
+                yield break;
             }
 
             _resolved = true;
@@ -78,6 +105,31 @@ namespace Kismeta.UI.Controllers
                 Btn("roll-btn").style.display = DisplayStyle.None;
             if (Btn("continue-btn") != null)
                 Btn("continue-btn").style.display = DisplayStyle.Flex;
+        }
+
+        private string FormatTieRerollMessage(IReadOnlyList<AgekeeperContestService.RollResult> round)
+        {
+            var names = new List<string>(round.Count);
+            var sorted = new List<AgekeeperContestService.RollResult>(round);
+            sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
+            foreach (var roll in sorted)
+                names.Add($"{ColorNames[roll.PlayerId]} alchemist");
+            return names.Count switch
+            {
+                1 => $"Tie — {names[0]} rerolls.",
+                2 => $"Tie — {names[0]} and {names[1]} reroll.",
+                _ => $"Tie — {string.Join(", ", names.GetRange(0, names.Count - 1))}, and {names[^1]} reroll."
+            };
+        }
+
+        private bool AllPlayersRolled()
+        {
+            for (int i = 0; i < _playerCount; i++)
+            {
+                var die = Root?.Q<Label>($"die-{i}");
+                if (die == null || die.text == "—") return false;
+            }
+            return true;
         }
 
         private void OnContinueClicked()
@@ -145,7 +197,8 @@ namespace Kismeta.UI.Controllers
 
         private void ShowRollResults(AgekeeperContestService.ContestResult result)
         {
-            foreach (var roll in result.FinalRolls)
+            var display = BuildDisplayRolls(result);
+            foreach (var roll in display)
             {
                 var die = Root?.Q<Label>($"die-{roll.PlayerId}");
                 if (die != null)
@@ -163,6 +216,23 @@ namespace Kismeta.UI.Controllers
                     row.style.borderTopWidth = row.style.borderBottomWidth =
                         row.style.borderLeftWidth = row.style.borderRightWidth = 1;
             }
+        }
+
+        private static List<AgekeeperContestService.RollResult> BuildDisplayRolls(
+            AgekeeperContestService.ContestResult result)
+        {
+            var byPlayer = new Dictionary<int, int>();
+            foreach (var round in result.Rounds)
+            {
+                foreach (var roll in round)
+                    byPlayer[roll.PlayerId] = roll.DieValue;
+            }
+
+            var display = new List<AgekeeperContestService.RollResult>(byPlayer.Count);
+            foreach (var kv in byPlayer)
+                display.Add(new AgekeeperContestService.RollResult(kv.Key, kv.Value));
+            display.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
+            return display;
         }
     }
 }

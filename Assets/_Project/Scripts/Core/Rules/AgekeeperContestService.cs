@@ -24,11 +24,15 @@ namespace Kismeta.Core.Rules
         public sealed class ContestResult
         {
             public int WinnerPlayerId { get; }
+            /// <summary>Every contest round in order; round 0 includes all players.</summary>
+            public IReadOnlyList<IReadOnlyList<RollResult>> Rounds { get; }
+            /// <summary>Rolls from the final tiebreaker round (convenience alias).</summary>
             public IReadOnlyList<RollResult> FinalRolls { get; }
-            public ContestResult(int winnerPlayerId, IReadOnlyList<RollResult> finalRolls)
+            public ContestResult(int winnerPlayerId, IReadOnlyList<IReadOnlyList<RollResult>> rounds)
             {
                 WinnerPlayerId = winnerPlayerId;
-                FinalRolls = finalRolls;
+                Rounds = rounds;
+                FinalRolls = rounds.Count > 0 ? rounds[rounds.Count - 1] : Array.Empty<RollResult>();
             }
         }
 
@@ -41,7 +45,7 @@ namespace Kismeta.Core.Rules
             for (int i = 0; i < playerCount; i++)
                 contenders.Add(i);
 
-            IReadOnlyList<RollResult> lastRolls = Array.Empty<RollResult>();
+            var rounds = new List<IReadOnlyList<RollResult>>();
             while (contenders.Count > 1)
             {
                 var rolls = new List<RollResult>(contenders.Count);
@@ -53,7 +57,7 @@ namespace Kismeta.Core.Rules
                     if (value > best) best = value;
                 }
 
-                lastRolls = rolls;
+                rounds.Add(rolls);
                 var next = new List<int>();
                 foreach (var roll in rolls)
                 {
@@ -64,7 +68,7 @@ namespace Kismeta.Core.Rules
                 contenders = next;
             }
 
-            return new ContestResult(contenders[0], lastRolls);
+            return new ContestResult(contenders[0], rounds);
         }
     }
 }

@@ -24,16 +24,27 @@ namespace Kismeta.UI.Controllers
         CommandBridge? _bridge;
         int _localPlayerId;
         int _wheelBindKey = int.MinValue;
+        bool _showHand;
 
         protected override void Unwire()
         {
             _wheelBindKey = int.MinValue;
+            _showHand = false;
         }
 
         protected override void Wire()
         {
             Btn("commune-btn")!.clicked += OnPrimaryAction;
+            Btn("hand-btn")!.clicked += OnHandToggle;
             Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
+        }
+
+        void OnHandToggle()
+        {
+            _showHand = !_showHand;
+            MainSceneBindings.SetHandFabActive(Root, _showHand);
+            if (_session != null)
+                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _showHand, OnInspectCard);
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -62,12 +73,10 @@ namespace Kismeta.UI.Controllers
             BindHintLabel(hint, bridge, player);
             BindSpringCta(bridge, loop);
 
-            var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
-            if (Lbl("spread-count") != null && local != null)
-                Lbl("spread-count")!.text = local.Spread.Count.ToString();
+            MainSceneBindings.SetHandFabActive(Root, _showHand);
+            MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
 
             RivalStripBuilder.Populate(El("rivals"), view, _localPlayerId);
-            PopulateSpreadStrip(session, local);
         }
 
         static int ResolveLocalPlayerId(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -321,25 +330,6 @@ namespace Kismeta.UI.Controllers
             foreach (var id in player.Hand)
                 if (TapSwapBindings.IsMinorArcana(session, id)) count++;
             return count;
-        }
-
-        void PopulateSpreadStrip(GameSession session, PublicPlayerView? local)
-        {
-            var strip = El("spread-strip");
-            if (strip == null || local == null) return;
-            strip.Clear();
-
-            var db = session.Rules?.CardDatabase;
-            foreach (var cardId in local.Spread)
-            {
-                var inst = session.GetCard(cardId);
-                if (inst == null || db == null) continue;
-                var def = db.GetById(inst.DefinitionId);
-                if (def == null) continue;
-                strip.Add(CardChipFactory.CreateFromDefinition(
-                    def.Rank.ToString(), def.Id, db,
-                    instanceId: cardId, onInspect: OnInspectCard));
-            }
         }
     }
 }

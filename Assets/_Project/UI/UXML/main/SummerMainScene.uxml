@@ -34,13 +34,14 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="screen__fab-layer">
+                <engine:Button name="hand-btn" text="Hand" class="menu-btn-fab btn btn--secondary" />
                 <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
             </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement class="dock">
             <engine:VisualElement class="dock__header">
-                <engine:Label text="spread" class="eyebrow" style="margin-bottom: 0;" />
+                <engine:Label name="dock-zone-label" text="spread" class="eyebrow" style="margin-bottom: 0;" />
                 <engine:Label name="spread-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
             </engine:VisualElement>
             <engine:VisualElement name="spread-strip" class="dock__strip" />

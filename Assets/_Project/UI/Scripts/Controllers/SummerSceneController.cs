@@ -23,7 +23,14 @@ namespace Kismeta.UI.Controllers
         public Action<string> OnInspectCard;
 
         CommandBridge? _bridge;
+        GameSession? _session;
         int _localPlayerId;
+        bool _showHand;
+
+        protected override void Unwire()
+        {
+            _showHand = false;
+        }
 
         protected override void Wire()
         {
@@ -31,11 +38,21 @@ namespace Kismeta.UI.Controllers
             Btn("consort-btn")!.clicked += () => OnConsort?.Invoke();
             Btn("activate-btn")!.clicked += () => OnActivate?.Invoke();
             Btn("pass-btn")!.clicked += () => OnPass?.Invoke();
+            Btn("hand-btn")!.clicked += OnHandToggle;
             Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
+        }
+
+        void OnHandToggle()
+        {
+            _showHand = !_showHand;
+            MainSceneBindings.SetHandFabActive(Root, _showHand);
+            if (_session != null)
+                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _showHand, OnInspectCard);
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
         {
+            _session = session;
             _bridge = bridge;
             _localPlayerId = bridge.ActivePlayerId;
             if (Root == null) return;
@@ -44,10 +61,11 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             MainSceneBindings.BindStatusBar(Root, session, loop);
             MainSceneBindings.BindPassButton(Root, session, bridge);
+            MainSceneBindings.SetHandFabActive(Root, _showHand);
+            MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             BindCauldrons(local);
-            BindSpread(session, local);
 
             if (Lbl("codex-label") != null && local != null)
             {
@@ -72,28 +90,6 @@ namespace Kismeta.UI.Controllers
                     local.CrucibleSlots[i].State >= CrucibleCardState.Active;
                 el.EnableInClassList("cauldron--lit", lit);
                 el.EnableInClassList("cauldron--dormant", !lit);
-            }
-        }
-
-        void BindSpread(GameSession session, PublicPlayerView? local)
-        {
-            if (Lbl("spread-count") != null && local != null)
-                Lbl("spread-count")!.text = local.Spread.Count.ToString();
-
-            var strip = El("spread-strip");
-            if (strip == null || local == null) return;
-            strip.Clear();
-
-            var db = session.Rules?.CardDatabase;
-            foreach (var cardId in local.Spread)
-            {
-                var inst = session.GetCard(cardId);
-                if (inst == null || db == null) continue;
-                var def = db.GetById(inst.DefinitionId);
-                if (def == null) continue;
-                strip.Add(CardChipFactory.CreateFromDefinition(
-                    def.Rank.ToString(), def.Id, db,
-                    instanceId: cardId, onInspect: OnInspectCard));
             }
         }
     }

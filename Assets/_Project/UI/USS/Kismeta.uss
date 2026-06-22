@@ -382,11 +382,12 @@
 
 .screen__fab-layer {
     position: absolute;
+    left: var(--space-md);
     right: var(--space-md);
     bottom: var(--space-md);
     flex-direction: row;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
 }
 
 .screen__fab-layer .menu-btn-fab {
@@ -397,6 +398,11 @@
     padding: 8px 10px;
     font-size: 11px;
     -unity-text-align: middle-center;
+}
+
+.menu-btn-fab--active {
+    border-color: var(--gold);
+    color: var(--gold-bright);
 }
 
 .dock {
@@ -422,6 +428,41 @@
     width: 100%;
     min-height: var(--card-chip-h);
     overflow: hidden;
+}
+
+/* ---------- Persistent player HUD (AppShell player-hud-layer) ---------- */
+.player-hud-layer {
+    flex-shrink: 0;
+    flex-direction: column;
+    width: 100%;
+}
+
+.player-hud {
+    flex-shrink: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-top-width: 1px;
+    border-top-color: var(--border-subtle);
+    background-color: var(--panel-darker);
+    padding: var(--space-sm) var(--space-md);
+}
+
+.player-hud__reagent {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.player-hud__reagent .reagent-dot {
+    margin-right: 3px;
+}
+
+.player-hud__reagent-count {
+    font-size: var(--font-body);
+    color: var(--ink);
+    min-width: 12px;
+    -unity-text-align: middle-left;
 }
 
 /* ---------- Accessibility ---------- */
