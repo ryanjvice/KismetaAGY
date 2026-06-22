@@ -35,7 +35,7 @@
 }
 .ceremony-sigil__glyph {
     font-size: 48px; color: rgb(240,192,176);
-    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
+    /* Zodiac glyphs use .font-emoji (Noto) — do not bind Amarante here. */
 }
 .ceremony-sigil--close .ceremony-sigil__glyph { font-size: 38px; }
 
@@ -47,6 +47,7 @@
     font-size: 36px; color: var(--gold);
     letter-spacing: 2px;
     margin-top: 2px;
+    -unity-font-style: normal;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
 }
 .ceremony-hero--close .ceremony-agename { font-size: 30px; }
@@ -54,7 +55,7 @@
 .ceremony-couplet {
     font-size: 10px;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
-    -unity-font-style: italic;
+    -unity-font-style: normal;
     white-space: normal;
     -unity-text-align: middle-center;
     max-width: 260px;

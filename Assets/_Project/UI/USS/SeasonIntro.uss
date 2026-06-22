@@ -49,7 +49,7 @@
 .intro-couplet {
     font-size: 10px;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
-    -unity-font-style: italic;
+    -unity-font-style: normal;
     white-space: normal;
     -unity-text-align: middle-center;
     max-width: 250px;

@@ -78,6 +78,7 @@
 
 .font-display,
 .h1 {
+    -unity-font-style: normal;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
 }
 

@@ -63,7 +63,7 @@
                     </engine:VisualElement>
                     <engine:VisualElement style="flex-grow: 1;">
                         <engine:Label text="the age's cosmic effect" class="eyebrow" style="color: rgb(138,106,170); margin-bottom: 1px;" />
-                        <engine:Label name="effect-name" text="Court Cups are a Wild Suit" style="font-size: 13px; color: rgb(243, 233, 210);" />
+                        <engine:Label name="effect-name" text="Court Cups are a Wild Suit" class="font-heading" style="font-size: 13px; color: rgb(243, 233, 210);" />
                         <engine:Label name="effect-desc" text="while Scorpio reigns, every Court Cup counts as any suit you need" style="font-size: 10px; color: rgb(154,138,172); white-space: normal;" />
                     </engine:VisualElement>
                 </engine:VisualElement>
