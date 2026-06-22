@@ -86,3 +86,15 @@
     background-color: var(--ok-bg);
     border-color: var(--ok-border);
 }
+
+.ceremony-callout {
+    margin: 6px 16px 0;
+}
+
+.ceremony-cta {
+    margin: 6px 16px 16px;
+}
+
+.ceremony-cta .btn {
+    width: 100%;
+}

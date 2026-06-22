@@ -146,6 +146,7 @@ namespace Kismeta.UI
 
             if (ceremony != null)
             {
+                RouteIfNeeded(MapCeremonyScreen(ceremony.Value));
                 RefreshActiveScreen();
                 return;
             }
@@ -212,6 +213,13 @@ namespace Kismeta.UI
         private void RefreshActiveScreenIfNeeded()
         {
             if (_session == null || _loop == null) return;
+
+            if (_ceremonyGate?.ActiveStep != null)
+            {
+                RouteIfNeeded(MapCeremonyScreen(_ceremonyGate.ActiveStep.Value));
+                RefreshActiveScreen();
+                return;
+            }
 
             RefreshPlayerHud();
 

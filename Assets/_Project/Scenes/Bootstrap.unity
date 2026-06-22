@@ -300,6 +300,7 @@ GameObject:
   - component: {fileID: 1726667761}
   - component: {fileID: 1726667762}
   - component: {fileID: 1726667776}
+  - component: {fileID: 1726667775}
   - component: {fileID: 1726667774}
   - component: {fileID: 1726667773}
   - component: {fileID: 1726667772}
@@ -784,6 +785,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5f6a7b8c9d061234e5f607182934a50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.AgeClosingController
+--- !u!114 &1726667775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726667741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e5f6a7b8c950123d4e5f6071829340, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.AgeOpeningController
 --- !u!114 &1726667776
 MonoBehaviour:
   m_ObjectHideFlags: 0

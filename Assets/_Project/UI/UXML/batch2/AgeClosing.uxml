@@ -29,7 +29,7 @@
         </engine:VisualElement>
 
         <!-- how the age moved the board -->
-        <engine:VisualElement style="padding: 15px 16px 4px;">
+        <engine:VisualElement style="padding: 15px 16px 0;">
             <engine:Label text="how the age moved the board" class="eyebrow" />
             <engine:VisualElement name="standings-list">
                 <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; margin-bottom: 6px;">
@@ -51,12 +51,12 @@
         </engine:VisualElement>
 
         <!-- key passes -->
-        <engine:VisualElement class="intro-tip tip--arcanum" style="align-items: center;">
+        <engine:VisualElement class="panel tip--arcanum ceremony-callout">
             <engine:Label name="keypass-line" text="The key passes to Aurelia. She will cast the next age — its sign is unknown until the dice fall."
                           class="tip__text" style="color: rgb(168,176,216);" />
         </engine:VisualElement>
 
-        <engine:VisualElement class="intro-cta">
+        <engine:VisualElement class="ceremony-cta">
             <engine:Button name="next-age-btn" text="Turn the wheel · cast the next age" class="btn"
                            style="background-color: rgb(36, 16, 40); border-color: rgb(106, 74, 138); color: rgb(205, 176, 224); font-size: 14px;" />
         </engine:VisualElement>

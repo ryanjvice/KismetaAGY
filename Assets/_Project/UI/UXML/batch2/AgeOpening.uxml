@@ -47,25 +47,25 @@
         </engine:VisualElement>
 
         <!-- this age favors -->
-        <engine:VisualElement style="padding: 8px 16px 4px;">
+        <engine:VisualElement style="padding: 8px 16px 0;">
             <engine:Label text="this age favors" class="eyebrow" />
             <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; margin-bottom: 6px;">
                 <engine:Label text="&#xea7a;" class="ti-icon" style="color: rgb(240,153,123); margin-right: 9px;" />
                 <engine:Label text="Mars &amp; Water cards harvest and align strongest" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
             </engine:VisualElement>
-            <engine:VisualElement class="panel" style="flex-direction: row; align-items: center;">
+            <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; margin-bottom: 6px;">
                 <engine:Label text="&#xec3a;" class="ti-icon" style="color: rgb(127, 196, 168); margin-right: 9px;" />
                 <engine:Label text="Aqua Regia &amp; Sulphur reagents flow freely this round" style="font-size: 11px; color: rgb(207,196,168); white-space: normal;" />
             </engine:VisualElement>
         </engine:VisualElement>
 
         <!-- agekeeper -->
-        <engine:VisualElement class="intro-tip tip--arcanum" style="align-items: center;">
+        <engine:VisualElement class="panel tip--arcanum ceremony-callout">
             <engine:Label name="agekeeper-line" text="Iolanthe serves as Agekeeper — she cast the age and holds the key this round."
                           class="tip__text" style="color: rgb(168,176,216);" />
         </engine:VisualElement>
 
-        <engine:VisualElement class="intro-cta">
+        <engine:VisualElement class="ceremony-cta">
             <engine:Button name="enter-btn" text="Enter the age · begin Spring" class="btn btn--primary" style="font-size: 14px;" />
         </engine:VisualElement>
 

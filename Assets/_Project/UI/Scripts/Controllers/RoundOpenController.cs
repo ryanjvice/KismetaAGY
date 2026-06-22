@@ -22,6 +22,8 @@ namespace Kismeta.UI.Controllers
         CeremonyGate? _gate;
         GameSession? _session;
         Phase _phase = Phase.Cast;
+        ZodiacSign _signAtCeremonyStart = ZodiacSign.None;
+        bool _capturedCeremonyStartSign;
 
         protected override void Wire()
         {
@@ -32,6 +34,8 @@ namespace Kismeta.UI.Controllers
         protected override void Unwire()
         {
             _phase = Phase.Cast;
+            _capturedCeremonyStartSign = false;
+            _signAtCeremonyStart = ZodiacSign.None;
         }
 
         public void BindState(GameSession session, CeremonyGate gate)
@@ -54,8 +58,23 @@ namespace Kismeta.UI.Controllers
         {
             if (_phase == Phase.Reveal) return;
 
+            if (!_capturedCeremonyStartSign)
+            {
+                _signAtCeremonyStart = session.Board.CosmicAgeSign;
+                _capturedCeremonyStartSign = true;
+            }
+
             int keeperId = CeremonyBindings.FindAgekeeperId(session);
             bool humanAgekeeper = keeperId == LocalPlayerId;
+
+            if (humanAgekeeper
+                && session.Board.CosmicAgeSign != ZodiacSign.None
+                && session.Board.CosmicAgeSign != _signAtCeremonyStart)
+            {
+                _phase = Phase.Reveal;
+                return;
+            }
+
             _phase = humanAgekeeper ? Phase.Cast : Phase.Reveal;
         }
 
