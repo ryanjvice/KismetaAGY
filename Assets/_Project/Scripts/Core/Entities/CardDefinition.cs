@@ -25,6 +25,7 @@ namespace Kismeta.Core.Entities
         public ZodiacSign Sign { get; }
 
         // Shared
+        public string Name { get; }
         public Planet Planet { get; }
         public string EffectType { get; }
         public string EffectText { get; }
@@ -51,6 +52,7 @@ namespace Kismeta.Core.Entities
             int arcanaNumber,
             ZodiacSign sign,
             Planet planet,
+            string name,
             string effectType,
             string effectText,
             int wildcardArcanaNumber,
@@ -67,6 +69,7 @@ namespace Kismeta.Core.Entities
             ArcanaNumber = arcanaNumber;
             Sign = sign;
             Planet = planet;
+            Name = name;
             EffectType = effectType;
             EffectText = effectText;
             WildcardArcanaNumber = wildcardArcanaNumber;

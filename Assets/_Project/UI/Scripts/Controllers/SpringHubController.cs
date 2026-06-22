@@ -159,6 +159,13 @@ namespace Kismeta.UI.Controllers
             var communeStage = El("commune-stage");
             if (communeStage == null) return;
             if (_communeZonesBuilt && ReferenceEquals(communeStage, _communeBuiltForRoot)) return;
+            RefreshCommuneZones(session);
+        }
+
+        void RefreshCommuneZones(GameSession session)
+        {
+            var communeStage = El("commune-stage");
+            if (communeStage == null) return;
 
             TapSwapBindings.RebuildZones(communeStage, session, _spreadIds, _handIds,
                 session.Board.CosmicAgeSign, OnCommuneTapMove,
@@ -182,7 +189,7 @@ namespace Kismeta.UI.Controllers
 
             if (_session != null)
             {
-                RenderCommuneZonesIfNeeded(_session);
+                RefreshCommuneZones(_session);
                 BindSpringCta(_bridge!, _loop!);
             }
         }

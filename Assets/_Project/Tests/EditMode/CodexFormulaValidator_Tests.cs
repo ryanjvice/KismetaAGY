@@ -56,6 +56,7 @@ namespace Kismeta.Core.Tests
                 arcanaNumber: -1,
                 sign: ZodiacSign.None,
                 planet: planet,
+                name: "",
                 effectType: "", effectText: "",
                 wildcardArcanaNumber: -1,
                 crucibleGroup: CrucibleGroup.None,

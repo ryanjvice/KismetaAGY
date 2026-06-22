@@ -112,6 +112,7 @@ namespace Kismeta.Data.Loaders
                 arcanaNumber:        d.arcanaNumber,
                 sign:                sign,
                 planet:              planet,
+                name:                d.name ?? "",
                 effectType:          d.effectType ?? "",
                 effectText:          d.effectText ?? "",
                 wildcardArcanaNumber:d.wildcardArcanaNumber,
