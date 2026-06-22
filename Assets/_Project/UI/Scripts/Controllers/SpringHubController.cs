@@ -208,6 +208,8 @@ namespace Kismeta.UI.Controllers
             var cosmic = session.Board.CosmicAgeSign;
             int bindKey = WheelBindKey(player.PlayerId, sign, hint);
 
+            BindWheelGlyph(sign);
+
             if (bindKey == _wheelBindKey)
             {
                 UpdateHarvestLabel(session, player, hint);
@@ -215,28 +217,14 @@ namespace Kismeta.UI.Controllers
             }
 
             _wheelBindKey = bindKey;
-            wheel.Clear();
 
             if (sign == ZodiacSign.None)
             {
-                var placeholder = new Label("?");
-                placeholder.style.fontSize = 36;
-                placeholder.style.unityTextAlign = TextAnchor.MiddleCenter;
-                placeholder.style.color = new StyleColor(new Color(0.48f, 0.6f, 0.51f));
-                placeholder.style.flexGrow = 1;
-                wheel.Add(placeholder);
-
                 SetLabelVisible("rolled-sign", false);
                 SetLabelVisible("sign-match", false);
                 UpdateHarvestLabel(session, player, hint);
                 return;
             }
-
-            var signLbl = SymbolGlyphs.CreateEmojiLabel(SymbolGlyphs.Zodiac(sign));
-            signLbl.style.fontSize = 36;
-            signLbl.style.unityTextAlign = TextAnchor.MiddleCenter;
-            signLbl.style.flexGrow = 1;
-            wheel.Add(signLbl);
 
             if (hint == ActionHint.AcknowledgeSign)
                 UiMotion.AnimateWheelSettle(wheel, () => { });
@@ -254,6 +242,15 @@ namespace Kismeta.UI.Controllers
             }
 
             UpdateHarvestLabel(session, player, hint);
+        }
+
+        void BindWheelGlyph(ZodiacSign sign)
+        {
+            var glyph = Lbl("wheel-glyph");
+            if (glyph == null) return;
+            SymbolGlyphs.TagEmoji(glyph);
+            glyph.text = sign == ZodiacSign.None ? "?" : SymbolGlyphs.Zodiac(sign);
+            glyph.style.display = DisplayStyle.Flex;
         }
 
         static int WheelBindKey(int playerId, ZodiacSign sign, ActionHint hint)

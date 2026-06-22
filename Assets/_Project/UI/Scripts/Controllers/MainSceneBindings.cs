@@ -64,6 +64,29 @@ namespace Kismeta.UI.Controllers
             var elementLbl = root.Q<Label>("age-element");
             if (elementLbl != null)
                 elementLbl.text = Correspondence.ElementFor(sign).ToString();
+
+            BindCosmicAgeSigil(root, sign);
+        }
+
+        static void BindCosmicAgeSigil(VisualElement root, ZodiacSign sign)
+        {
+            var sigil = root.Q(className: "cosmic-age-banner__sigil");
+            if (sigil == null) return;
+
+            var glyph = sigil.Q<Label>("cosmic-age-glyph");
+            if (glyph == null)
+            {
+                glyph = SymbolGlyphs.CreateEmojiLabel(
+                    sign == ZodiacSign.None ? "?" : SymbolGlyphs.Zodiac(sign),
+                    "cosmic-age-banner__glyph");
+                glyph.name = "cosmic-age-glyph";
+                sigil.Clear();
+                sigil.Add(glyph);
+                return;
+            }
+
+            SymbolGlyphs.TagEmoji(glyph);
+            glyph.text = sign == ZodiacSign.None ? "?" : SymbolGlyphs.Zodiac(sign);
         }
 
         static string FormatTurnHint(GameLoop loop)

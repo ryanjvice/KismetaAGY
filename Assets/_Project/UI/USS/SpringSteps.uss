@@ -94,6 +94,13 @@
     border-color: rgb(43, 106, 74);
     background-color: rgb(19, 32, 26);
     margin-bottom: 8px;
+    align-items: center;
+    justify-content: center;
+}
+.spring-hub__wheel-glyph {
+    font-size: 40px;
+    color: rgb(244, 211, 94);
+    -unity-text-align: middle-center;
 }
 .spring-hub__rolled-sign {
     font-size: 18px;

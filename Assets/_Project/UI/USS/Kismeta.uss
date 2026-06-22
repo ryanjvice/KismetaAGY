@@ -220,6 +220,12 @@
     border-color: rgb(184, 154, 110);
     background-color: rgb(36, 28, 18);
     margin-right: 10px;
+    align-items: center;
+    justify-content: center;
+}
+.cosmic-age-banner__glyph {
+    font-size: 16px;
+    -unity-text-align: middle-center;
 }
 .cosmic-age-banner__body { flex-grow: 1; }
 .cosmic-age-banner__eyebrow {
