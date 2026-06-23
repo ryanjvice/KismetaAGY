@@ -27,7 +27,7 @@ namespace Kismeta.UI.Components
             float stepSec = DefaultStepSec)
         {
             if (face == null) yield break;
-            SymbolGlyphs.TagEmoji(face);
+            SymbolGlyphs.TagZodiac(face);
             var signs = SymbolGlyphs.AllSigns;
             for (int i = 0; i < frames; i++)
             {

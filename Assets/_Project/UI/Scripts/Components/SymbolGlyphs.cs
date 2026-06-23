@@ -3,10 +3,11 @@ using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
 {
-    /// <summary>Unicode emoji / symbol glyphs tagged with <see cref="EmojiFontClass"/> for styling hooks.</summary>
+    /// <summary>Unicode symbol glyphs — zodiac via Amarante, suit icons via Noto Color Emoji.</summary>
     public static class SymbolGlyphs
     {
         public const string EmojiFontClass = "font-emoji";
+        public const string ZodiacFontClass = "font-zodiac";
 
         public static readonly ZodiacSign[] AllSigns =
         {
@@ -17,10 +18,25 @@ namespace Kismeta.UI.Components
 
         public static void TagEmoji(VisualElement element) => element.AddToClassList(EmojiFontClass);
 
+        public static void TagZodiac(VisualElement element)
+        {
+            element.RemoveFromClassList(EmojiFontClass);
+            element.AddToClassList(ZodiacFontClass);
+        }
+
         public static Label CreateEmojiLabel(string glyph, string? ussClass = null)
         {
             var label = new Label(glyph);
             TagEmoji(label);
+            if (ussClass != null)
+                label.AddToClassList(ussClass);
+            return label;
+        }
+
+        public static Label CreateZodiacLabel(string glyph, string? ussClass = null)
+        {
+            var label = new Label(glyph);
+            TagZodiac(label);
             if (ussClass != null)
                 label.AddToClassList(ussClass);
             return label;

@@ -100,6 +100,11 @@
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
 }
 
+.font-zodiac {
+    -unity-font-style: normal;
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
+}
+
 .font-emoji {
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/NotoColorEmoji-Regular.asset");
 }

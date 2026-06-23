@@ -362,7 +362,7 @@ namespace Kismeta.UI.Controllers
         {
             var glyph = Lbl("wheel-glyph");
             if (glyph == null) return;
-            SymbolGlyphs.TagEmoji(glyph);
+            SymbolGlyphs.TagZodiac(glyph);
             glyph.text = sign == ZodiacSign.None ? "?" : SymbolGlyphs.Zodiac(sign);
             glyph.style.display = DisplayStyle.Flex;
         }

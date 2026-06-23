@@ -17,14 +17,15 @@ namespace Kismeta.UI.Editor
         private const int AtlasPadding = 4;
         private const int AtlasSize = 1024;
 
-        // Latin display copy + zodiac names + common punctuation used in UI copy.
+        private const string ZodiacSymbolCharset = "♈♉♊♋♌♍♎♏♐♑♒♓";
+
+        // Latin display copy + zodiac names + astrological symbols + common punctuation.
         private const string CommonUiCharset =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" +
             " .,!?'\"-:;·—–()&" +
             "ARIES TAURUS GEMINI CANCER LEO VIRGO LIBRA SCORPIO SAGITTARIUS CAPRICORN AQUARIUS PISCES" +
-            "KISMETAAlchemists of the Great Year";
-
-        private const string ZodiacEmojiCharset = "♈♉♊♋♌♍♎♏♐♑♒♓";
+            "KISMETAAlchemists of the Great Year" +
+            ZodiacSymbolCharset;
 
         [MenuItem("Kismeta/UI/Create UI Font Assets")]
         public static void CreateAllFontAssets()
@@ -35,7 +36,7 @@ namespace Kismeta.UI.Editor
             created += CreateFontAsset("FuturaCyrillicDemi.ttf") ? 1 : 0;
             created += CreateFontAsset("Amarante-Regular.ttf") ? 1 : 0;
             created += CreateFontAsset("GermaniaOne-Regular.ttf") ? 1 : 0;
-            created += CreateFontAsset("NotoColorEmoji-Regular.ttf", ZodiacEmojiCharset) ? 1 : 0;
+            created += CreateFontAsset("NotoColorEmoji-Regular.ttf", ZodiacSymbolCharset) ? 1 : 0;
             created += CreateFontAsset("tabler-icons.ttf") ? 1 : 0;
 
             AssetDatabase.SaveAssets();

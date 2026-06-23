@@ -145,7 +145,7 @@ namespace Kismeta.UI.Controllers
             var dieFace = root.Q<Label>("die-face");
             if (dieFace != null)
             {
-                SymbolGlyphs.TagEmoji(dieFace);
+                SymbolGlyphs.TagZodiac(dieFace);
                 if (session.Board.CosmicAgeSign == ZodiacSign.None)
                     dieFace.text = "?";
             }
@@ -191,7 +191,7 @@ namespace Kismeta.UI.Controllers
         {
             var glyph = root.Q<Label>(className: "ceremony-sigil__glyph");
             if (glyph == null) return;
-            SymbolGlyphs.TagEmoji(glyph);
+            SymbolGlyphs.TagZodiac(glyph);
             glyph.text = SymbolGlyphs.Zodiac(sign);
         }
 

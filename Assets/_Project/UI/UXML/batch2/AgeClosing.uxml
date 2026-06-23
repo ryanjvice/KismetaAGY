@@ -17,7 +17,7 @@
             <engine:Label text="the constellation sets" class="ceremony-eyebrow" style="color: rgb(138,106,170);" />
 
             <engine:VisualElement name="age-sigil" class="ceremony-sigil ceremony-sigil--close">
-                <engine:Label text="?" class="ceremony-sigil__glyph font-emoji" style="color: rgb(176,136,104);" />
+                <engine:Label text="?" class="ceremony-sigil__glyph font-zodiac" style="color: rgb(176,136,104);" />
             </engine:VisualElement>
 
             <engine:Label text="the age of" class="ceremony-prelabel" />

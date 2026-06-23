@@ -53,7 +53,7 @@
         <engine:VisualElement class="screen__body">
             <engine:VisualElement name="wheel-stage" class="stage spring-hub__stage">
                 <engine:VisualElement name="wheel-host" class="roll-host spring-hub__wheel">
-                    <engine:Label name="wheel-glyph" text="?" class="font-emoji spring-hub__wheel-glyph" />
+                    <engine:Label name="wheel-glyph" text="?" class="font-zodiac spring-hub__wheel-glyph" />
                 </engine:VisualElement>
                 <engine:Label name="rolled-sign" text="" class="spring-hub__rolled-sign" />
                 <engine:Label name="sign-match" text="" class="spring-hub__sign-match" />

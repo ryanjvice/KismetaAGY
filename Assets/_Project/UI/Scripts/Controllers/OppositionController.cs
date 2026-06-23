@@ -221,7 +221,7 @@ namespace Kismeta.UI.Controllers
                     }
                     else
                     {
-                        SymbolGlyphs.TagEmoji(signLbl);
+                        SymbolGlyphs.TagZodiac(signLbl);
                         signLbl.text = SymbolGlyphs.Zodiac(cosmic);
                         signLbl.style.fontSize = 24;
                     }

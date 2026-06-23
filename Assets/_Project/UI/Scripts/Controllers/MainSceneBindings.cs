@@ -77,7 +77,7 @@ namespace Kismeta.UI.Controllers
             var glyph = sigil.Q<Label>("cosmic-age-glyph");
             if (glyph == null)
             {
-                glyph = SymbolGlyphs.CreateEmojiLabel(
+                glyph = SymbolGlyphs.CreateZodiacLabel(
                     sign == ZodiacSign.None ? "?" : SymbolGlyphs.Zodiac(sign),
                     "cosmic-age-banner__glyph");
                 glyph.name = "cosmic-age-glyph";
@@ -86,7 +86,7 @@ namespace Kismeta.UI.Controllers
                 return;
             }
 
-            SymbolGlyphs.TagEmoji(glyph);
+            SymbolGlyphs.TagZodiac(glyph);
             glyph.text = sign == ZodiacSign.None ? "?" : SymbolGlyphs.Zodiac(sign);
         }
 

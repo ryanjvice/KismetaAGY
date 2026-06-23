@@ -18,7 +18,7 @@
                 <engine:Label name="keeper-eyebrow" text="Iolanthe casts the age" class="ceremony-eyebrow" />
 
                 <engine:VisualElement name="age-die" style="width: 88px; height: 88px; border-radius: 14px; background-color: rgb(36,20,52); border-width: 2px; border-color: rgb(106, 74, 138); align-items: center; justify-content: center; margin-bottom: 14px;">
-                    <engine:Label name="die-face" text="?" class="font-emoji" style="font-size: 40px; color: rgb(205, 176, 224);" />
+                    <engine:Label name="die-face" text="?" class="font-zodiac" style="font-size: 40px; color: rgb(205, 176, 224);" />
                 </engine:VisualElement>
 
                 <engine:Label text="the cosmic age die" class="ceremony-prelabel" />
@@ -44,7 +44,7 @@
                 <engine:Label text="the heavens turn · an age dawns" class="ceremony-eyebrow" />
 
                 <engine:VisualElement name="age-sigil" class="ceremony-sigil ceremony-sigil--open">
-                    <engine:Label text="?" class="ceremony-sigil__glyph font-emoji" />
+                    <engine:Label text="?" class="ceremony-sigil__glyph font-zodiac" />
                 </engine:VisualElement>
 
                 <engine:Label text="the age of" class="ceremony-prelabel" />
