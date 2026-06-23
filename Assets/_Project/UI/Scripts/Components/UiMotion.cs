@@ -5,7 +5,7 @@ namespace Kismeta.UI.Components
 {
     public static class UiMotion
     {
-        const float SheetRisePx = 48f;
+        const float SheetRisePx = 24f;
         const float SheetRiseSec = 0.26f;
 
         public static void AnimateSheetRise(VisualElement? sheetRoot)

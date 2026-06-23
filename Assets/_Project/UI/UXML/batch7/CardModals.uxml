@@ -21,7 +21,7 @@
                 <engine:Button name="inspect-close" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
             </engine:VisualElement>
 
-            <engine:VisualElement class="card-hero" style="background-color: rgb(36,16,16);">
+            <engine:VisualElement class="card-modal__hero card-modal__hero--inspect">
                 <engine:VisualElement class="tarot tarot--big card-chip--wands" style="border-color: rgb(201, 150, 47);">
                     <engine:Label text="&#xee7e;" class="ti-icon" style="font-size: 46px; color: rgb(244,216,192);" />
                 </engine:VisualElement>
@@ -29,9 +29,9 @@
                 <engine:Label text="minor arcana · rank 7" style="font-size: 10px; color: rgb(208,144,128);" />
             </engine:VisualElement>
 
-            <engine:VisualElement style="padding: 13px 16px 4px;">
+            <engine:VisualElement class="card-modal__body">
                 <engine:Label text="aspects" class="eyebrow" />
-                <engine:VisualElement style="flex-direction: row;">
+                <engine:VisualElement style="flex-direction: row; margin-bottom: 10px;">
                     <engine:VisualElement class="aspect-tile">
                         <engine:Label text="&#xec3a;" class="ti-icon" style="color: rgb(240,153,123);" />
                         <engine:Label text="Fire" style="font-size: 11px; color: rgb(243, 233, 210);" />
@@ -48,36 +48,30 @@
                         <engine:Label text="suit" style="font-size: 8px; color: rgb(184, 154, 110);" />
                     </engine:VisualElement>
                 </engine:VisualElement>
-            </engine:VisualElement>
 
-            <engine:VisualElement style="padding: 10px 16px 4px;">
                 <engine:Label text="alignment this age" class="eyebrow" />
-                <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; border-color: rgb(106,80,32);">
+                <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; border-color: rgb(106,80,32); margin-bottom: 10px;">
                     <engine:VisualElement style="flex-grow: 1;">
                         <engine:Label name="inspect-align-age" text="Age of Scorpio · Mars · Water" style="font-size: 11px; color: rgb(243, 233, 210);" />
                         <engine:Label name="inspect-align-why" text="its Mars matches the age's planet" style="font-size: 10px; color: rgb(184, 154, 110);" />
                     </engine:VisualElement>
                     <engine:Label name="inspect-align-pts" text="+2" style="font-size: 17px; color: rgb(240,153,123); -unity-font-style: bold;" />
                 </engine:VisualElement>
-            </engine:VisualElement>
 
-            <engine:VisualElement style="padding: 10px 16px 4px;">
                 <engine:Label text="good for" class="eyebrow" />
-                <engine:VisualElement style="flex-direction: row; flex-wrap: wrap;">
+                <engine:VisualElement style="flex-direction: row; flex-wrap: wrap; margin-bottom: 10px;">
                     <engine:Label text="crafting Sulphur" style="font-size: 10px; color: rgb(240,176,160); background-color: rgb(42,18,18); border-radius: 6px; padding: 4px 9px; margin-right: 6px; margin-bottom: 6px;" />
                     <engine:Label text="Mars sets" style="font-size: 10px; color: rgb(224,200,120); background-color: rgb(42,35,14); border-radius: 6px; padding: 4px 9px; margin-right: 6px; margin-bottom: 6px;" />
                     <engine:Label text="alignment +2" style="font-size: 10px; color: rgb(127, 196, 168); background-color: rgb(19,36,26); border-radius: 6px; padding: 4px 9px;" />
                 </engine:VisualElement>
-            </engine:VisualElement>
 
-            <engine:VisualElement style="padding: 8px 16px 16px;">
                 <engine:Button name="inspect-done" text="Done" class="btn btn--secondary" style="color: rgb(240,176,160);" />
             </engine:VisualElement>
         </engine:VisualElement>
 
         <!-- ===== #54 Adept received ===== -->
         <engine:VisualElement name="adept-modal" class="card-modal card-modal--adept" style="display: none;">
-            <engine:VisualElement class="card-hero" style="background-color: rgb(46,26,68);">
+            <engine:VisualElement class="card-modal__hero card-modal__hero--adept">
                 <engine:Label text="you drew an adept" class="eyebrow" style="color: rgb(176,144,208); -unity-text-align: middle-center;" />
                 <engine:VisualElement class="tarot tarot--adept">
                     <engine:Label text="&#xea8a;" class="ti-icon" style="font-size: 40px; color: rgb(224,200,240);" />
@@ -86,28 +80,28 @@
                 <engine:Label text="active adept · major arcana" style="font-size: 10px; color: rgb(168,144,192);" />
             </engine:VisualElement>
 
-            <engine:VisualElement style="padding: 13px 16px 4px;">
-                <engine:VisualElement class="panel" style="border-color: rgb(74,58,106);">
+            <engine:VisualElement class="card-modal__body">
+                <engine:VisualElement class="panel" style="border-color: rgb(74,58,106); margin-bottom: 10px;">
                     <engine:Label text="its power" class="eyebrow" style="color: rgb(138,106,170);" />
                     <engine:Label name="adept-power" text="Counts as a Sign alignment toward the Cosmic Age — adding to your Harvest and every Opposition while active."
                                   style="font-size: 12px; color: rgb(243, 233, 210); white-space: normal;" />
                 </engine:VisualElement>
-            </engine:VisualElement>
 
-            <engine:VisualElement class="tip tip--ok">
-                <engine:Label name="adept-tip" text="Your Arcanum has open slots for active Adepts."
-                              class="tip__text" style="color: rgb(159,196,180);" />
-            </engine:VisualElement>
+                <engine:VisualElement class="tip tip--ok" style="margin-bottom: 10px; margin-left: 0; margin-right: 0;">
+                    <engine:Label name="adept-tip" text="Your Arcanum has open slots for active Adepts."
+                                  class="tip__text" style="color: rgb(159,196,180);" />
+                </engine:VisualElement>
 
-            <engine:VisualElement style="padding: 4px 16px 16px; flex-direction: row;">
-                <engine:Button name="adept-hold" text="Hold inactive" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
-                <engine:Button name="adept-place" text="Place active" class="btn" style="flex-grow: 1.4; background-color: rgb(46,26,68); border-color: rgb(154,122,192); color: rgb(224,200,240);" />
+                <engine:VisualElement name="adept-actions" style="flex-direction: row;">
+                    <engine:Button name="adept-hold" text="Hold inactive" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
+                    <engine:Button name="adept-place" text="Place active" class="btn" style="flex-grow: 1.4; background-color: rgb(46,26,68); border-color: rgb(154,122,192); color: rgb(224,200,240);" />
+                </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
 
         <!-- ===== #55 Fate received ===== -->
         <engine:VisualElement name="fate-modal" class="card-modal card-modal--fate" style="display: none;">
-            <engine:VisualElement class="card-hero" style="background-color: rgb(22,51,90);">
+            <engine:VisualElement class="card-modal__hero card-modal__hero--fate">
                 <engine:Label text="the fates intervene" class="eyebrow" style="color: rgb(138,176,224); -unity-text-align: middle-center;" />
                 <engine:VisualElement class="tarot tarot--fate">
                     <engine:Label text="&#xed1d;" class="ti-icon" style="font-size: 40px; color: rgb(188,216,240);" />
@@ -116,9 +110,9 @@
                 <engine:Label text="fate · resolves at once" style="font-size: 10px; color: rgb(127,160,196);" />
             </engine:VisualElement>
 
-            <engine:VisualElement style="padding: 13px 16px 4px;">
+            <engine:VisualElement class="card-modal__body">
                 <engine:Label text="the wheel turns — now" class="eyebrow" style="-unity-text-align: middle-center; color: rgb(127,160,196);" />
-                <engine:VisualElement name="fate-effects">
+                <engine:VisualElement name="fate-effects" style="margin-bottom: 10px;">
                     <engine:VisualElement class="effect-row effect-row--gain">
                         <engine:VisualElement style="flex-grow: 1;">
                             <engine:Label text="Fortune favors you" style="font-size: 12px; color: rgb(159,225,203);" />
@@ -134,14 +128,12 @@
                         <engine:Label text="&#8722;1" style="font-size: 13px; color: rgb(240, 144, 138); -unity-font-style: bold;" />
                     </engine:VisualElement>
                 </engine:VisualElement>
-            </engine:VisualElement>
 
-            <engine:VisualElement class="tip" style="background-color: rgb(26,32,48); border-width: 1px; border-color: rgb(58,74,106); margin: 10px 16px;">
-                <engine:Label text="Fates resolve the instant they're drawn — you don't choose when. After resolving, it stays face-up in your Arcanum."
-                              class="tip__text" style="color: rgb(160,180,208);" />
-            </engine:VisualElement>
+                <engine:VisualElement class="tip" style="background-color: rgb(26,32,48); border-width: 1px; border-color: rgb(58,74,106); margin-bottom: 10px;">
+                    <engine:Label text="Fates resolve the instant they're drawn — you don't choose when. After resolving, it stays face-up in your Arcanum."
+                                  class="tip__text" style="color: rgb(160,180,208);" />
+                </engine:VisualElement>
 
-            <engine:VisualElement style="padding: 4px 16px 16px;">
                 <engine:Button name="fate-accept" text="Accept your fate" class="btn" style="background-color: rgb(22,51,90); border-color: rgb(90,138,192); color: rgb(188,216,240);" />
             </engine:VisualElement>
         </engine:VisualElement>
@@ -149,16 +141,16 @@
         <!-- ===== The Moon — keep 2 of 4 ===== -->
         <engine:VisualElement name="moon-modal" class="card-modal card-modal--fate-decision" style="display: none;">
             <engine:Label name="moon-sr" text="The Moon — choose two cards to keep from four drawn cards." class="sr-only" />
-            <engine:VisualElement class="card-hero" style="background-color: rgb(18,22,42);">
+            <engine:VisualElement class="card-modal__hero card-modal__hero--fate-decision">
                 <engine:Label text="the moon" class="eyebrow" style="color: rgb(138,176,224); -unity-text-align: middle-center;" />
                 <engine:Label text="Keep 2 of 4" class="tarot__name" style="color: rgb(188,216,240); font-size: 16px;" />
                 <engine:Label text="The rest return to the bottom of the deck." style="font-size: 10px; color: rgb(127,160,196); white-space: normal; -unity-text-align: middle-center;" />
             </engine:VisualElement>
-            <engine:ScrollView style="max-height: 200px; padding: 8px 16px;">
-                <engine:VisualElement name="moon-cards" class="fate-chip-row" />
-            </engine:ScrollView>
-            <engine:Label name="moon-count" text="Keeping: 0 / 2" style="font-size: 10px; color: rgb(184, 154, 110); padding: 4px 16px;" />
-            <engine:VisualElement style="padding: 4px 16px 16px;">
+            <engine:VisualElement class="card-modal__body">
+                <engine:ScrollView style="max-height: 200px;">
+                    <engine:VisualElement name="moon-cards" class="fate-chip-row" />
+                </engine:ScrollView>
+                <engine:Label name="moon-count" text="Keeping: 0 / 2" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 8px; margin-bottom: 8px;" />
                 <engine:Button name="moon-confirm" text="Confirm keep" class="btn btn--primary" />
             </engine:VisualElement>
         </engine:VisualElement>
@@ -166,36 +158,40 @@
         <!-- ===== The Fool — reagent pick ===== -->
         <engine:VisualElement name="fate-reagent-modal" class="card-modal card-modal--fate-decision" style="display: none;">
             <engine:Label name="reagent-sr" text="Choose one reagent to receive from the Fool fate." class="sr-only" />
-            <engine:VisualElement class="card-hero" style="background-color: rgb(18,22,42);">
+            <engine:VisualElement class="card-modal__hero card-modal__hero--fate-decision">
                 <engine:VisualElement name="reagent-card-art" class="tarot tarot--fate">
                     <engine:Label name="reagent-card-art-fallback" text="&#xed1d;" class="ti-icon" style="font-size: 40px; color: rgb(188,216,240);" />
                 </engine:VisualElement>
                 <engine:Label name="reagent-card-name" text="The Fool." class="tarot__name" style="color: rgb(188,216,240);" />
                 <engine:Label name="reagent-card-description" text="Draw 2 cards. Your Opponents receive 1 Reagent of their choice." class="card-modal__description" />
-                <engine:Label name="reagent-prompt" text="Choose 1 Reagent" class="card-modal__prompt" />
             </engine:VisualElement>
-            <engine:VisualElement name="reagent-buttons" class="fate-reagent-grid" style="padding: 8px 16px 16px;" />
+            <engine:VisualElement class="card-modal__body">
+                <engine:Label name="reagent-prompt" text="Choose 1 Reagent" class="card-modal__prompt" />
+                <engine:VisualElement name="reagent-buttons" class="fate-reagent-grid" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <!-- ===== The Lovers — pick target ===== -->
         <engine:VisualElement name="lovers-target-modal" class="card-modal card-modal--fate-decision" style="display: none;">
             <engine:Label name="lovers-target-sr" text="Pick an opponent to choose your Lovers reward." class="sr-only" />
-            <engine:VisualElement class="card-hero" style="background-color: rgb(28,18,36);">
+            <engine:VisualElement class="card-modal__hero card-modal__hero--lovers">
                 <engine:Label text="The Lovers" class="eyebrow" style="color: rgb(176,144,208); -unity-text-align: middle-center;" />
                 <engine:Label text="Pick who chooses" class="tarot__name" style="color: rgb(224,200,240); font-size: 16px;" />
                 <engine:Label text="An opponent will decide your reward." style="font-size: 10px; color: rgb(168,144,192); white-space: normal; -unity-text-align: middle-center;" />
             </engine:VisualElement>
-            <engine:VisualElement name="lovers-target-buttons" style="padding: 8px 16px 16px;" />
+            <engine:VisualElement class="card-modal__body">
+                <engine:VisualElement name="lovers-target-buttons" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <!-- ===== The Lovers — target chooses reward ===== -->
         <engine:VisualElement name="lovers-choice-modal" class="card-modal card-modal--fate-decision" style="display: none;">
             <engine:Label name="lovers-choice-sr" text="Choose the drawer's Lovers reward — two cards or one reagent." class="sr-only" />
-            <engine:VisualElement class="card-hero" style="background-color: rgb(28,18,36);">
+            <engine:VisualElement class="card-modal__hero card-modal__hero--lovers">
                 <engine:Label text="The Lovers" class="eyebrow" style="color: rgb(176,144,208); -unity-text-align: middle-center;" />
                 <engine:Label name="lovers-choice-sub" text="Choose their reward" class="tarot__name" style="color: rgb(224,200,240); font-size: 16px;" />
             </engine:VisualElement>
-            <engine:VisualElement style="padding: 8px 16px 16px;">
+            <engine:VisualElement class="card-modal__body">
                 <engine:Button name="lovers-draw-btn" text="Drawer draws 2 cards" class="btn btn--secondary" style="margin-bottom: 8px;" />
                 <engine:Label text="— or one reagent —" style="font-size: 9px; color: rgb(168,144,192); -unity-text-align: middle-center; margin-bottom: 8px;" />
                 <engine:VisualElement name="lovers-reagent-buttons" class="fate-reagent-grid" />

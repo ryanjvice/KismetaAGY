@@ -121,6 +121,7 @@ namespace Kismeta.UI
             overlay.RemoveFromClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
             InstantiateOverlay(overlay, asset, _tokenStylesheet);
+            SetOverlayBackdropBlur(true);
         }
 
         public void ShowBottomSheet(VisualTreeAsset asset)
@@ -135,6 +136,7 @@ namespace Kismeta.UI
             InstantiateOverlay(overlay, asset, _tokenStylesheet);
             if (_overlayContentRoot != null)
                 UiMotion.AnimateSheetRise(_overlayContentRoot);
+            SetOverlayBackdropBlur(true);
         }
 
         /// <summary>Show a programmatic overlay (no UXML asset).</summary>
@@ -152,6 +154,7 @@ namespace Kismeta.UI
             overlay.style.display = DisplayStyle.Flex;
             overlay.Add(content);
             _overlayContentRoot = content;
+            SetOverlayBackdropBlur(true);
         }
 
         /// <summary>
@@ -164,7 +167,7 @@ namespace Kismeta.UI
             host.style.flexGrow = 0;
             host.style.flexShrink = 1;
             host.style.flexDirection = FlexDirection.Column;
-            PrepareCloneHost(host, stretchFull: false, tokenStylesheet);
+            PrepareCloneHost(host, stretchFull: false, tokenStylesheet, overlayScope: true);
             host.AddToClassList("overlay-clone-host");
             ApplyAssetStylesheets(host, asset);
             overlay.Add(host);
@@ -192,9 +195,9 @@ namespace Kismeta.UI
         /// Attach token scope before <see cref="VisualTreeAsset.CloneTree"/>.
         /// Inline <c>var(--token)</c> in UXML <c>style=""</c> attributes NRE during clone — use USS classes or literal values in UXML instead.
         /// </summary>
-        private void PrepareCloneHost(VisualElement host, bool stretchFull, StyleSheet? tokenStylesheet = null)
+        private void PrepareCloneHost(VisualElement host, bool stretchFull, StyleSheet? tokenStylesheet = null, bool overlayScope = false)
         {
-            host.AddToClassList("kismeta-root");
+            host.AddToClassList(overlayScope ? "kismeta-scope" : "kismeta-root");
             EnsureTokenStylesheets(host, tokenStylesheet);
             if (stretchFull)
                 StretchToContentLayer(host);
@@ -228,6 +231,23 @@ namespace Kismeta.UI
             _overlayLayer.style.display = DisplayStyle.None;
             _overlayLayer.RemoveFromClassList("overlay-layer--sheet");
             _overlayContentRoot = null;
+            SetOverlayBackdropBlur(false);
+        }
+
+        void SetOverlayBackdropBlur(bool active)
+        {
+            var content = Root?.Q<VisualElement>("content-layer");
+            var hud = Root?.Q<VisualElement>("player-hud-layer");
+            if (active)
+            {
+                content?.AddToClassList("content-layer--overlay-backdrop");
+                hud?.AddToClassList("content-layer--overlay-backdrop");
+            }
+            else
+            {
+                content?.RemoveFromClassList("content-layer--overlay-backdrop");
+                hud?.RemoveFromClassList("content-layer--overlay-backdrop");
+            }
         }
 
         /// <summary>Runs after the panel has non-zero layout (avoids startup races).</summary>

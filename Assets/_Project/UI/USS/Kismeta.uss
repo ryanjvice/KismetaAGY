@@ -5,6 +5,7 @@
    ============================================================ */
 
 :root,
+.kismeta-scope,
 .screen,
 .sheet,
 .kismeta-root {
@@ -65,11 +66,14 @@
     --touch-min: 44px;
     --card-chip-w: 34px;
     --card-chip-h: 48px;
+    --overlay-max-width: 520px;
+    --overlay-inset-x: var(--space-xl);
 }
 
 /* ---------- Typography (Assets/_Project/UI/Fonts) ---------- */
 /* Default body: Futura Book. Override with utility classes below. */
 .kismeta-root,
+.kismeta-scope,
 .screen,
 .sheet,
 .modal {
@@ -148,30 +152,46 @@
     align-items: stretch;
 }
 
+/* Token scope for overlay clone hosts — no viewport stretch layout. */
+.kismeta-scope {
+    flex-direction: column;
+}
+
 .overlay-layer {
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.65);
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.95);
     align-items: center;
     justify-content: flex-start;
+    padding-left: var(--overlay-inset-x);
+    padding-right: var(--overlay-inset-x);
+}
+
+.content-layer--overlay-backdrop {
+    filter: blur(6px);
 }
 
 .overlay-clone-host {
+    width: 100%;
+    max-width: var(--overlay-max-width);
+    min-width: 0;
     height: auto;
     flex-grow: 0;
+    flex-shrink: 1;
+    flex-direction: column;
     background-color: rgba(0, 0, 0, 0);
-    align-items: center;
+    align-items: stretch;
     justify-content: flex-start;
     padding-top: var(--space-lg);
-    width: 100%;
 }
 
 .overlay-layer--sheet {
-    justify-content: flex-end;
-    align-items: stretch;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 /* ---------- Full-bleed screens ---------- */
@@ -863,16 +883,37 @@
 .cauldron--lit { border-width: 3px; border-color: var(--gold-bright); }
 .cauldron--dormant { border-width: 2px; border-color: rgb(90, 58, 74); opacity: 0.6; }
 
-/* ---------- Bottom sheet ---------- */
-.sheet {
+/* ---------- Overlay surfaces (sheet + card-modal) ---------- */
+.sheet,
+.card-modal {
     width: 100%;
-    max-height: 90%;
     flex-shrink: 0;
-    background-color: rgb(26, 14, 31);
-    border-top-width: 2px;
-    border-top-color: var(--gold-deep);
-    border-top-left-radius: var(--radius-xl);
-    border-top-right-radius: var(--radius-xl);
+    flex-direction: column;
+    background-color: var(--panel-dark);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    border-radius: var(--radius-xl);
+}
+
+.sheet {
+    max-height: none;
+    overflow: visible;
+}
+
+.card-modal {
+    max-height: 88%;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.card-modal__hero {
+    align-items: center;
+    padding: var(--space-lg) var(--space-lg) var(--space-md);
+}
+
+.sheet__body,
+.card-modal__body {
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
 }
 
 .sheet__header {
@@ -881,14 +922,23 @@
     justify-content: space-between;
     padding: 13px var(--space-lg);
     background-color: var(--panel-dark);
+    border-top-width: 2px;
+    border-top-color: var(--gold-deep);
     border-bottom-width: 1px;
     border-bottom-color: var(--border-subtle);
 }
 
 .sheet__body {
-    flex-grow: 1;
+    flex-grow: 0;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.card-modal__body {
     flex-shrink: 1;
-    overflow: hidden;
+    min-height: 0;
+    min-width: 0;
+    overflow: auto;
 }
 
 /* ---------- Centered modal (shared chrome) ---------- */

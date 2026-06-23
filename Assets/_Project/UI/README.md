@@ -137,6 +137,20 @@ Open `Bootstrap.unity` (or your play scene with `GameBootstrap`), then:
 panel root → .kismeta-root → .app-shell → .content-layer → .screen-host → .screen
 ```
 
+**Overlay flex chain** (sheets and card modals via `ShowModal` / `ShowBottomSheet`):
+
+```
+overlay-layer → overlay-clone-host → .sheet | .card-modal
+```
+
+| Layer | Role |
+|-------|------|
+| `.overlay-layer` | Scrim; horizontal inset (`--overlay-inset-x`); top safe-area from `ViewportLayout` |
+| `.overlay-clone-host` | Token scope (`.kismeta-scope`); caps width at `--overlay-max-width` |
+| `.sheet` / `.card-modal` | Surface chrome; `width: 100%` of host |
+
+Do not add `kismeta-root`, horizontal margins, or competing `max-width` on overlay clone hosts.
+
 - **`Instantiate()` shrink-wraps** UXML in a wrapper. `ViewportLayout.SetScreen()` adds `.screen-host` and inline stretch styles. Do not rely on `height: 100%` alone on `.screen`.
 - **Panel root** is stretched in `EnsurePanelRootFillsViewport()`.
 - **USS canonical copy:** `Assets/_Project/UI/USS/Kismeta.uss` (sync `Docs/wireframes/Kismeta.uss` when changing shared tokens).
@@ -147,6 +161,9 @@ panel root → .kismeta-root → .app-shell → .content-layer → .screen-host 
 | PanelSettings | Scale With Screen Size (380×844 reference), opaque clear color |
 | `ViewportLayout` | Safe area, overlays, screen stretch |
 | `.screen-host` | UXML instantiate wrapper — must fill content layer |
+| `.overlay-clone-host` | Overlay width cap + `.kismeta-scope` token scope |
+| `--overlay-max-width` | Max floating panel width (520px) |
+| `--overlay-inset-x` | Horizontal scrim inset for overlays |
 | `.viewport--tablet` | Shortest side ≥ 600dp |
 
 **Test in Game view:** 390×844, 428×926, 768×1024 portrait.
@@ -157,6 +174,7 @@ panel root → .kismeta-root → .app-shell → .content-layer → .screen-host 
 |---------|-------|-----|
 | UI flashes then blue screen | TitleScreen or custom layout as UIDocument Source Asset; tree reload wipes `content-layer` | Source Asset = AppShell only; run **Setup Bootstrap Scene** |
 | UI centered with blue bars top/bottom | `TemplateContainer` from `Instantiate()` not stretching | `.screen-host` + `StretchToContentLayer()` in ViewportLayout (automatic if using router) |
+| Modal shifted right / clipped on edge | `width:100%` + margins on clone host, or `kismeta-root` on overlay host | Padding on `.overlay-layer`; scope overlays with `.kismeta-scope` only |
 | Title buttons do nothing | Title menu not wired before session exists | `GamePresenter.InitializeForTitle()` at startup |
 | Missing script on controllers | Components added while scripts had compile errors | Remove broken components; re-run **Setup Bootstrap Scene** |
 | `GameMode.Magnus` compile error | Wireframe shorthand vs Core enum | Use `GameMode.MagnusAlchemist` — see `UiSetupConfigMapper` |

@@ -11,7 +11,9 @@
     border-radius: var(--radius-md);
     padding: 11px 12px;
     margin-bottom: 7px;
+    flex-shrink: 0;
 }
+.action-sheet__row:last-child { margin-bottom: 0; }
 .action-sheet__icon {
     width: 30px; height: 30px; border-radius: var(--radius-md);
     border-width: 1px;

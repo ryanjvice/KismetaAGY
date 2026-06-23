@@ -286,16 +286,18 @@ namespace Kismeta.UI.Controllers
 
             modal.Q("adept-payment-host")?.RemoveFromHierarchy();
 
-            var host = new VisualElement { name = "adept-payment-host" };
-            host.style.paddingLeft = host.style.paddingRight = 16;
-            host.style.paddingTop = 6;
-            host.style.paddingBottom = 4;
+            var body = modal.Q(className: "card-modal__body");
+            if (body == null) return;
 
-            host.Add(new Label("payment — select 3 cards") { name = "eyebrow" });
+            var host = new VisualElement { name = "adept-payment-host" };
+            host.AddToClassList("adept-payment");
+
+            var eyebrow = new Label("payment — select 3 cards");
+            eyebrow.AddToClassList("eyebrow");
+            host.Add(eyebrow);
 
             var chips = new VisualElement();
-            chips.style.flexDirection = FlexDirection.Row;
-            chips.style.flexWrap = Wrap.Wrap;
+            chips.AddToClassList("adept-payment__chips");
 
             var player = _session.Players[_playerId];
             var db = _session.Rules!.CardDatabase;
@@ -311,10 +313,16 @@ namespace Kismeta.UI.Controllers
             if (adeptCount >= 2)
             {
                 host.Add(new Label("Arcanum full — tap an Adept to swap out")
-                    { style = { fontSize = 9, marginTop = 6 } });
+                {
+                    style =
+                    {
+                        fontSize = 9,
+                        marginTop = 6,
+                        whiteSpace = WhiteSpace.Normal
+                    }
+                });
                 var swapHost = new VisualElement();
-                swapHost.style.flexDirection = FlexDirection.Row;
-                swapHost.style.flexWrap = Wrap.Wrap;
+                swapHost.AddToClassList("adept-payment__swap");
                 foreach (var aid in player.Arcanum)
                 {
                     var adef = db.GetById(_session.GetCard(aid)?.DefinitionId ?? "");
@@ -327,17 +335,20 @@ namespace Kismeta.UI.Controllers
                         RebuildAdeptPaymentUi();
                         RefreshAdeptButtons();
                     }) { text = adef.EffectText.Split('\n')[0] };
+                    btn.AddToClassList("btn");
+                    btn.AddToClassList("btn--secondary");
+                    btn.style.whiteSpace = WhiteSpace.Normal;
                     btn.EnableInClassList("btn--primary", sel);
                     swapHost.Add(btn);
                 }
                 host.Add(swapHost);
             }
 
-            var buttonsRow = Btn("adept-hold")?.parent;
-            if (buttonsRow != null)
-                modal.Insert(modal.IndexOf(buttonsRow), host);
+            var actionsRow = El("adept-actions");
+            if (actionsRow != null && actionsRow.parent == body)
+                body.Insert(body.IndexOf(actionsRow), host);
             else
-                modal.Add(host);
+                body.Add(host);
         }
 
         void AddPaymentChip(VisualElement chips, string id, ICardDatabase db)

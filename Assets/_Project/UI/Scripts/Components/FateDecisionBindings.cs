@@ -58,8 +58,6 @@ namespace Kismeta.UI.Components
             {
                 var type = r;
                 var btn = new Button(() => onPick(type)) { text = $"Take 1 {r}" };
-                btn.AddToClassList("btn");
-                btn.AddToClassList("btn--secondary");
                 btn.AddToClassList("fate-reagent-btn");
                 host.Add(btn);
             }

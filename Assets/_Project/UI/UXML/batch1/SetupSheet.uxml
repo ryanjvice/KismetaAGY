@@ -18,18 +18,16 @@
             <engine:Button name="close-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
         </engine:VisualElement>
 
-        <engine:VisualElement style="padding: 14px 16px 6px;">
+        <engine:VisualElement class="sheet__body">
             <engine:Label text="alchemists" class="eyebrow" />
-            <engine:VisualElement name="player-row" style="flex-direction: row;">
+            <engine:VisualElement name="player-row" style="flex-direction: row; margin-bottom: 12px;">
                 <engine:Button name="players-2" text="2" class="player-pip" />
                 <engine:Button name="players-3" text="3" class="player-pip player-pip--active" />
                 <engine:Button name="players-4" text="4" class="player-pip" />
             </engine:VisualElement>
-        </engine:VisualElement>
 
-        <engine:VisualElement style="padding: 10px 16px 6px;">
             <engine:Label text="game mode" class="eyebrow" />
-            <engine:VisualElement name="mode-list">
+            <engine:VisualElement name="mode-list" style="margin-bottom: 12px;">
                 <engine:Button name="mode-quickplay" class="mode-row">
                     <engine:Label text="Quickplay" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
                     <engine:Label text="~30 min" style="font-size: 10px; color: rgb(127, 196, 168);" />
@@ -43,11 +41,9 @@
                     <engine:Label text="~90 min" style="font-size: 10px; color: rgb(205, 176, 224);" />
                 </engine:Button>
             </engine:VisualElement>
-        </engine:VisualElement>
 
-        <engine:VisualElement style="padding: 10px 16px 6px;">
             <engine:Label text="crucible deck" class="eyebrow" />
-            <engine:VisualElement name="deck-list">
+            <engine:VisualElement name="deck-list" style="margin-bottom: 12px;">
                 <engine:Button name="deck-curated" class="mode-row mode-row--active">
                     <engine:Label text="Curated" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
                     <engine:Label text="preset for mode" style="font-size: 10px; color: rgb(184, 154, 110);" />
@@ -57,9 +53,7 @@
                     <engine:Label text="random cards" style="font-size: 10px; color: rgb(205, 176, 224);" />
                 </engine:Button>
             </engine:VisualElement>
-        </engine:VisualElement>
 
-        <engine:VisualElement style="padding: 12px 16px 18px;">
             <engine:Button name="begin-btn" text="Start Game" class="btn btn--primary" style="font-size: 14px;" />
             <engine:Label name="summary" text="3 alchemists · Standard · curated deck"
                           style="font-size: 9px; color: rgb(106,90,74); -unity-text-align: middle-center; margin-top: 8px;" />
