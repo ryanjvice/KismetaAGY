@@ -143,8 +143,10 @@ does not write USS variables at runtime (Unity API is read-only for custom prope
 
 ## 4. Spacing, Shape & Elevation
 
-- **Viewport:** screens fill `width: 100%` / `height: 100%` with safe-area padding
-  on the root (notch, home indicator). No mockup phone-card frame or fixed width cap.
+- **Viewport:** screens fill `width: 100%` / `height: 100%`. Safe-area insets:
+  horizontal + bottom on `.kismeta-root`; top on `.screen__chrome` (fallback `.screen`)
+  and `overlay-layer` so season backgrounds bleed under the status bar. No mockup
+  phone-card frame or fixed width cap.
 - **Design baseline:** 380×844 px artboard — drives proportions and PanelSettings
   reference resolution, not production layout width.
 - **Cards/panels inside:** radius `9–14px`. Inset panels use a darker fill than
@@ -171,10 +173,10 @@ design reference copy).
 | **Full bleed** | `.screen`, `.kismeta-root` are 100% viewport; flex column layout |
 | **Screen host** | `.screen-host` on the UXML `Instantiate()` wrapper — without it, screens shrink to content height and letterbox |
 | **Root fallback** | `.kismeta-root` uses `background-color: var(--panel-dark)` so gaps never show the camera clear color |
-| **Safe area** | `Screen.safeArea` applied as root padding on resize |
+| **Safe area** | `Screen.safeArea`: left/right/bottom on root; top on `.screen__chrome` (fallback `.screen`) and `overlay-layer` |
 | **Spacing / type / touch** | Static USS token defaults; scaled by PanelSettings (not written at runtime) |
 | **Touch targets** | `--touch-min` ≥ 44px on buttons, action bar, setup pips |
-| **Flex frame** | status bar + rivals + **stage** (`flex-grow: 1`) + action bar + dock |
+| **Flex frame** | unified **game header** (cosmic age + season/step rail, 2 compact rows) + rivals + **stage** (`flex-grow: 1`) + action bar + dock |
 | **Modals** | full-screen scrim; centered card at 92% width, max 520px, max-height 88%, scrollable body |
 | **Bottom sheets** | full width, anchored to bottom safe area, max-height 90% |
 | **Viewport classes** | `.viewport--compact` (w &lt; 360), `.viewport--regular`, `.viewport--tablet` (shortest side ≥ 600dp) |

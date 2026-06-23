@@ -140,7 +140,7 @@ panel root → .kismeta-root → .app-shell → .content-layer → .screen-host 
 - **`Instantiate()` shrink-wraps** UXML in a wrapper. `ViewportLayout.SetScreen()` adds `.screen-host` and inline stretch styles. Do not rely on `height: 100%` alone on `.screen`.
 - **Panel root** is stretched in `EnsurePanelRootFillsViewport()`.
 - **USS canonical copy:** `Assets/_Project/UI/USS/Kismeta.uss` (sync `Docs/wireframes/Kismeta.uss` when changing shared tokens).
-- **No runtime USS custom-property writes** — Unity does not support writing USS variables from C#. PanelSettings scales typography; `ViewportLayout` applies safe-area padding and `.viewport--*` classes only.
+- **No runtime USS custom-property writes** — Unity does not support writing USS variables from C#. PanelSettings scales typography; `ViewportLayout` applies safe-area insets (L/R/B on root, top on screen chrome / overlay) and `.viewport--*` classes only.
 
 | Token / class | Purpose |
 |---------------|---------|

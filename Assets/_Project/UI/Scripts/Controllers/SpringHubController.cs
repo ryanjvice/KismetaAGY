@@ -84,7 +84,6 @@ namespace Kismeta.UI.Controllers
                 El("step-rail"), ResolveStepIndex(session, player, hint), 5, "step__dot--active");
 
             BindPhaseVisibility(isCommune);
-            BindSceneSubtitle(hint, player);
 
             if (isCommune)
                 BindCommune(session, bridge);
@@ -210,23 +209,6 @@ namespace Kismeta.UI.Controllers
                 return 2;
             }
             return session.Phase.CurrentStepIndex;
-        }
-
-        void BindSceneSubtitle(ActionHint hint, PlayerState player)
-        {
-            var subtitle = Lbl("scene-subtitle");
-            if (subtitle == null) return;
-
-            if (hint == ActionHint.Commune)
-                subtitle.text = "arrange cards between spread and hand before the age lock";
-            else if (hint == ActionHint.RollZodiac && player.CurrentSign == ZodiacSign.None)
-                subtitle.text = "roll your zodiac die to claim a sign";
-            else if (hint == ActionHint.AcknowledgeSign)
-                subtitle.text = "your sign is set — gather your harvest next";
-            else if (player.CurrentSign != ZodiacSign.None)
-                subtitle.text = "your sign is set — harvest and commune follow";
-            else
-                subtitle.text = "spring — set your sign, gather, commune";
         }
 
         void BindHintLabel(ActionHint hint, CommandBridge bridge, PlayerState player)

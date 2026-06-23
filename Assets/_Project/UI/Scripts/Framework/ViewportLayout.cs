@@ -7,9 +7,8 @@ using UnityEngine.UIElements;
 namespace Kismeta.UI
 {
     /// <summary>
-    /// Full-viewport UI host: safe-area padding, viewport classes, and overlay layer
-    /// for modals and bottom sheets. Typography/size scaling comes from PanelSettings
-    /// (Scale With Screen Size, 380×844 reference). USS variables are static defaults.
+    /// Full-viewport UI host: safe-area insets (L/R/B on root, top on screen chrome),
+    /// viewport classes, and overlay layer for modals and bottom sheets.
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class ViewportLayout : MonoBehaviour
@@ -428,22 +427,59 @@ namespace Kismeta.UI
 
             float scale = Mathf.Clamp(Mathf.Min(w / DesignWidth, h / DesignHeight), ScaleMin, ScaleMax);
             UiScale = scale;
-            ApplySafeAreaPadding(root, w, h);
+            float topInset = ApplySafeAreaPadding(root, w, h);
+            ApplyTopSafeInsetToContent(root, topInset);
             ApplyViewportClass(root, w, h);
         }
 
-        private static void ApplySafeAreaPadding(VisualElement root, float panelW, float panelH)
+        /// <summary>
+        /// Horizontal and bottom safe-area insets on the layout root; top inset is returned
+        /// for application on the active screen chrome so season backgrounds bleed edge-to-edge.
+        /// </summary>
+        private static float ApplySafeAreaPadding(VisualElement root, float panelW, float panelH)
         {
             var safe = Screen.safeArea;
             float sw = Screen.width;
             float sh = Screen.height;
             if (sw <= 0f || sh <= 0f)
-                return;
+            {
+                root.style.paddingTop = 0;
+                return 0f;
+            }
 
             root.style.paddingLeft = safe.x / sw * panelW;
             root.style.paddingRight = (sw - safe.xMax) / sw * panelW;
             root.style.paddingBottom = safe.y / sh * panelH;
-            root.style.paddingTop = (sh - safe.yMax) / sh * panelH;
+            root.style.paddingTop = 0;
+            return (sh - safe.yMax) / sh * panelH;
+        }
+
+        private static void ApplyTopSafeInsetToContent(VisualElement root, float topInset)
+        {
+            var overlay = root.Q<VisualElement>("overlay-layer");
+            if (overlay != null)
+                overlay.style.paddingTop = topInset;
+
+            var contentLayer = root.Q<VisualElement>("content-layer");
+            if (contentLayer == null || contentLayer.childCount == 0)
+                return;
+
+            var screenHost = contentLayer[0];
+            var screen = screenHost.Q(className: "screen")
+                ?? (screenHost.childCount > 0 ? screenHost[0] : null);
+            if (screen == null)
+                return;
+
+            var chrome = screen.Q(className: "screen__chrome");
+            if (chrome != null)
+            {
+                screen.style.paddingTop = 0;
+                chrome.style.paddingTop = topInset;
+            }
+            else
+            {
+                screen.style.paddingTop = topInset;
+            }
         }
 
         private static void ApplyViewportClass(VisualElement root, float w, float h)
