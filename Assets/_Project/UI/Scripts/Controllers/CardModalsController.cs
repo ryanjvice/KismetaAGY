@@ -150,12 +150,28 @@ namespace Kismeta.UI.Controllers
             RefreshMoonUi();
         }
 
-        public void BindReagentChoice(GameSession session, CommandBridge bridge)
+        public void BindReagentChoice(GameSession session, CommandBridge bridge, string? fateInstanceId = null)
         {
             _session = session;
             _bridge = bridge;
             _playerId = ResolvePlayerId(session, bridge);
             Show(Modal.ReagentChoice);
+
+            var def = ResolveFateCardDefinition(session, fateInstanceId);
+            if (def != null)
+            {
+                if (Lbl("reagent-card-name") != null)
+                    Lbl("reagent-card-name")!.text = def.Name.EndsWith(".") ? def.Name : $"{def.Name}.";
+                if (Lbl("reagent-card-description") != null)
+                    Lbl("reagent-card-description")!.text = def.EffectText;
+                if (Lbl("reagent-sr") != null)
+                    Lbl("reagent-sr")!.text =
+                        $"Choose one reagent to receive from {def.Name}. {def.EffectText}";
+
+                var artHost = El("reagent-card-art");
+                if (artHost != null)
+                    CardArtBindings.Apply(artHost, Lbl("reagent-card-art-fallback"), def);
+            }
 
             var host = El("reagent-buttons");
             if (host == null) return;
@@ -165,6 +181,24 @@ namespace Kismeta.UI.Controllers
                     && _bridge.TrySubmit(new FateReagentChoiceCommand(_playerId, type)))
                     OnFateDecisionCompleted?.Invoke();
             });
+        }
+
+        static CardDefinition? ResolveFateCardDefinition(GameSession session, string? fateInstanceId)
+        {
+            var db = session.Rules?.CardDatabase;
+            if (db == null) return null;
+
+            if (!string.IsNullOrEmpty(fateInstanceId))
+            {
+                var inst = session.GetCard(fateInstanceId);
+                if (inst != null)
+                {
+                    var def = db.GetById(inst.DefinitionId);
+                    if (def != null) return def;
+                }
+            }
+
+            return db.GetById("major.fate.0");
         }
 
         public void BindLoversTarget(GameSession session, CommandBridge bridge)

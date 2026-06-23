@@ -310,7 +310,7 @@ namespace Kismeta.UI
                     _endOverlays.ShowMoonDecision();
                     break;
                 case ActionHint.FateReagentChoice:
-                    _endOverlays.ShowFateReagentChoice();
+                    _endOverlays.ShowFateReagentChoice(_loop?.PendingCardId);
                     break;
                 case ActionHint.FateLoversTargetPick:
                     _endOverlays.ShowLoversTargetPick();

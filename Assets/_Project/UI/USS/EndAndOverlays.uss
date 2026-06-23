@@ -117,20 +117,47 @@
 }
 
 /* ---------- Card modals (inspect / adept / fate) ---------- */
+.card-modals {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 0;
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+}
 .card-modal {
-    width: 92%;
+    width: 100%;
     max-width: 520px;
     max-height: 88%;
     flex-direction: column;
     border-radius: var(--radius-xl);
     border-width: 1px;
     overflow: hidden;
-    flex-shrink: 1;
+    flex-shrink: 0;
+    align-self: center;
 }
 .card-modal--inspect { background-color: rgb(14,10,20); border-color: rgb(90,43,43); }
 .card-modal--adept { background-color: rgb(18,10,24); border-color: rgb(90,58,122); }
 .card-modal--fate { background-color: rgb(10,14,24); border-color: rgb(58,90,138); }
-.card-modal--fate-decision { background-color: rgb(14,12,28); border-color: rgb(74,58,106); }
+.card-modal--fate-decision {
+    background-color: rgb(14,12,28);
+    border-color: rgb(74,58,106);
+}
+.card-modal__description {
+    font-size: 11px;
+    color: rgb(127,160,196);
+    white-space: normal;
+    -unity-text-align: middle-center;
+    margin-top: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+.card-modal__prompt {
+    font-size: 16px;
+    color: rgb(188,216,240);
+    -unity-text-align: middle-center;
+    margin-top: 10px;
+}
 
 .fate-chip-row {
     flex-direction: row;
@@ -161,6 +188,9 @@
     align-items: center; justify-content: center;
 }
 .tarot--big { width: 108px; height: 150px; }
+.tarot--adept { border-color: rgb(154,122,192); background-color: rgb(46,26,68); }
+.tarot--fate { border-color: rgb(90,138,192); background-color: rgb(22,51,90); }
+.tarot--lovers { border-color: rgb(154,122,192); background-color: rgb(28,18,36); }
 .tarot__name {
     font-size: 19px;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");

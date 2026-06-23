@@ -107,13 +107,13 @@ namespace Kismeta.UI
                 _modals?.BindMoonDecision(_session, _bridge);
         }
 
-        public void ShowFateReagentChoice()
+        public void ShowFateReagentChoice(string? fateInstanceId = null)
         {
             EnsureControllers();
             _reopenCardTableAfterInspect = false;
             ShowOverlay(_cardModals, _modals, WireModals, ActiveOverlay.CardModals);
             if (_session != null && _bridge != null)
-                _modals?.BindReagentChoice(_session, _bridge);
+                _modals?.BindReagentChoice(_session, _bridge, fateInstanceId);
         }
 
         public void ShowLoversTargetPick()

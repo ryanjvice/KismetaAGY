@@ -165,6 +165,7 @@ namespace Kismeta.UI
             host.style.flexShrink = 1;
             host.style.flexDirection = FlexDirection.Column;
             PrepareCloneHost(host, stretchFull: false, tokenStylesheet);
+            host.AddToClassList("overlay-clone-host");
             ApplyAssetStylesheets(host, asset);
             overlay.Add(host);
             asset.CloneTree(host);
