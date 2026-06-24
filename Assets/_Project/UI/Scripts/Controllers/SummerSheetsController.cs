@@ -19,16 +19,46 @@ namespace Kismeta.UI.Controllers
         GameSession? _session;
         CommandBridge? _bridge;
 
+        Action? _onCraft;
+        Action? _onBuild;
+        Action? _onWard;
+        Action? _onTrade;
+        Action? _onDuel;
+        Action? _onGambit;
+        Action? _onCbClose;
+        Action? _onConClose;
+
         protected override void Wire()
         {
-            WireBtn("act-craft", () => OnCraft?.Invoke());
-            WireBtn("act-build", () => OnBuild?.Invoke());
-            WireBtn("act-ward", () => OnWard?.Invoke());
-            WireBtn("act-trade", () => OnTrade?.Invoke());
-            WireBtn("act-duel", () => OnDuel?.Invoke());
-            WireBtn("act-gambit", () => OnGambit?.Invoke());
-            WireBtn("cb-close", () => OnClose?.Invoke());
-            WireBtn("con-close", () => OnClose?.Invoke());
+            _onCraft = () => OnCraft?.Invoke();
+            _onBuild = () => OnBuild?.Invoke();
+            _onWard = () => OnWard?.Invoke();
+            _onTrade = () => TryInvokeConsortRow("act-trade", OnTrade);
+            _onDuel = () => TryInvokeConsortRow("act-duel", OnDuel);
+            _onGambit = () => TryInvokeConsortRow("act-gambit", OnGambit);
+            _onCbClose = () => OnClose?.Invoke();
+            _onConClose = () => OnClose?.Invoke();
+
+            WireBtn("act-craft", _onCraft);
+            WireBtn("act-build", _onBuild);
+            WireBtn("act-ward", _onWard);
+            WireBtn("act-trade", _onTrade);
+            WireBtn("act-duel", _onDuel);
+            WireBtn("act-gambit", _onGambit);
+            WireBtn("cb-close", _onCbClose);
+            WireBtn("con-close", _onConClose);
+        }
+
+        protected override void Unwire()
+        {
+            UnwireBtn("act-craft", _onCraft);
+            UnwireBtn("act-build", _onBuild);
+            UnwireBtn("act-ward", _onWard);
+            UnwireBtn("act-trade", _onTrade);
+            UnwireBtn("act-duel", _onDuel);
+            UnwireBtn("act-gambit", _onGambit);
+            UnwireBtn("cb-close", _onCbClose);
+            UnwireBtn("con-close", _onConClose);
         }
 
         public void BindState(GameSession session, CommandBridge bridge)
@@ -64,17 +94,33 @@ namespace Kismeta.UI.Controllers
             var btn = Btn(name);
             if (btn == null) return;
             btn.SetEnabled(enabled);
+            btn.pickingMode = PickingMode.Position;
             if (enabled)
                 btn.RemoveFromClassList("btn--disabled");
             else
                 btn.AddToClassList("btn--disabled");
         }
 
-        void WireBtn(string name, Action handler)
+        void TryInvokeConsortRow(string name, Action? action)
         {
             var btn = Btn(name);
-            if (btn != null)
+            if (btn != null && !btn.enabledSelf)
+                return;
+            action?.Invoke();
+        }
+
+        void WireBtn(string name, Action? handler)
+        {
+            var btn = Btn(name);
+            if (btn != null && handler != null)
                 btn.clicked += handler;
+        }
+
+        void UnwireBtn(string name, Action? handler)
+        {
+            var btn = Btn(name);
+            if (btn != null && handler != null)
+                btn.clicked -= handler;
         }
     }
 }

@@ -572,9 +572,9 @@ namespace Kismeta.UI
         {
             if (_summerOverlays == null || _contestOverlays == null) return;
 
-            _summerOverlays.OnTrade = () => { _summerOverlays.Dismiss(); _contestOverlays.ShowTrade(); };
-            _summerOverlays.OnDuel = () => { _summerOverlays.Dismiss(); _contestOverlays.ShowDuel(); };
-            _summerOverlays.OnGambit = () => { _summerOverlays.Dismiss(); _contestOverlays.ShowGambit(); };
+            _summerOverlays.OnTrade = () => _contestOverlays.ShowTrade();
+            _summerOverlays.OnDuel = () => _contestOverlays.ShowDuel();
+            _summerOverlays.OnGambit = () => _contestOverlays.ShowGambit();
 
             var autumn = _router.GetController<AutumnSceneController>(ScreenIds.AutumnMain);
             if (autumn != null && autumn.OnOppose == null)

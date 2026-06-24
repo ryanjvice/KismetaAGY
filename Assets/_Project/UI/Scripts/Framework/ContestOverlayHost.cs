@@ -32,7 +32,8 @@ namespace Kismeta.UI
         enum ActiveContest { None, Trade, Duel, Gambit, Opposition }
         ActiveContest _active = ActiveContest.None;
 
-        public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
+        public bool IsOpen => _active != ActiveContest.None
+            && _layout != null && _layout.IsOverlayVisible;
 
         public int? ActiveSummerGroupIndex => _active is ActiveContest.Trade or ActiveContest.Duel or ActiveContest.Gambit
             ? 1
@@ -42,14 +43,7 @@ namespace Kismeta.UI
 
         public Action? OverlayChanged;
 
-        void Awake()
-        {
-            _layout = GetComponent<ViewportLayout>();
-            _tradeCtrl = GetComponent<TradeController>();
-            _duelCtrl = GetComponent<DuelController>();
-            _gambitCtrl = GetComponent<GambitController>();
-            _oppositionCtrl = GetComponent<OppositionController>();
-        }
+        void Awake() => EnsureControllers();
 
         public void Configure(
             VisualTreeAsset trade,
@@ -61,6 +55,16 @@ namespace Kismeta.UI
             _duel = duel;
             _gambit = gambit;
             _opposition = opposition;
+            EnsureControllers();
+        }
+
+        void EnsureControllers()
+        {
+            _layout ??= GetComponent<ViewportLayout>();
+            _tradeCtrl ??= GetComponent<TradeController>();
+            _duelCtrl ??= GetComponent<DuelController>();
+            _gambitCtrl ??= GetComponent<GambitController>();
+            _oppositionCtrl ??= GetComponent<OppositionController>();
         }
 
         public void BindState(GameSession session, CommandBridge bridge)
@@ -75,10 +79,32 @@ namespace Kismeta.UI
             Dismiss();
         }
 
-        public void ShowTrade(int? rivalId = null) { _pendingTradeRival = rivalId; ShowContest(_trade, _tradeCtrl, WireTrade, ActiveContest.Trade); }
-        public void ShowDuel(int? rivalId = null) { _pendingDuelRival = rivalId; ShowContest(_duel, _duelCtrl, WireDuel, ActiveContest.Duel); }
-        public void ShowGambit(int? rivalId = null) { _pendingGambitRival = rivalId; ShowContest(_gambit, _gambitCtrl, WireGambit, ActiveContest.Gambit); }
-        public void ShowOpposition() => ShowContest(_opposition, _oppositionCtrl, WireOpposition, ActiveContest.Opposition);
+        public void ShowTrade(int? rivalId = null)
+        {
+            EnsureControllers();
+            _pendingTradeRival = rivalId;
+            ShowContest(_trade, _tradeCtrl, WireTrade, ActiveContest.Trade);
+        }
+
+        public void ShowDuel(int? rivalId = null)
+        {
+            EnsureControllers();
+            _pendingDuelRival = rivalId;
+            ShowContest(_duel, _duelCtrl, WireDuel, ActiveContest.Duel);
+        }
+
+        public void ShowGambit(int? rivalId = null)
+        {
+            EnsureControllers();
+            _pendingGambitRival = rivalId;
+            ShowContest(_gambit, _gambitCtrl, WireGambit, ActiveContest.Gambit);
+        }
+
+        public void ShowOpposition()
+        {
+            EnsureControllers();
+            ShowContest(_opposition, _oppositionCtrl, WireOpposition, ActiveContest.Opposition);
+        }
 
         public void Dismiss()
         {
@@ -94,10 +120,29 @@ namespace Kismeta.UI
         void ShowContest<T>(VisualTreeAsset? asset, T? controller, System.Action wire, ActiveContest kind)
             where T : OverlayController
         {
-            if (_layout == null || asset == null || controller == null) return;
+            EnsureControllers();
+            if (_layout == null)
+            {
+                Debug.LogWarning($"[ContestOverlayHost] Cannot show {kind}: ViewportLayout missing.");
+                return;
+            }
+            if (asset == null)
+            {
+                Debug.LogWarning($"[ContestOverlayHost] Cannot show {kind}: UXML asset not assigned.");
+                return;
+            }
+            if (controller == null)
+            {
+                Debug.LogWarning($"[ContestOverlayHost] Cannot show {kind}: controller missing on bootstrap.");
+                return;
+            }
             _layout.ShowModal(asset);
             var root = _layout.OverlayContentRoot;
-            if (root == null) return;
+            if (root == null)
+            {
+                Debug.LogWarning($"[ContestOverlayHost] Cannot show {kind}: overlay content root missing.");
+                return;
+            }
             controller.AttachTo(root);
             _active = kind;
             wire();

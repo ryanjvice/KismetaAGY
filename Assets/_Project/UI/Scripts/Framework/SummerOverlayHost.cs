@@ -49,7 +49,8 @@ namespace Kismeta.UI
         public Action OnGambit;
         public Action? OverlayChanged;
 
-        public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
+        public bool IsOpen => _active != ActiveOverlay.None
+            && _layout != null && _layout.IsOverlayVisible;
 
         public int? ActiveActionGroupIndex => _active switch
         {
@@ -152,6 +153,16 @@ namespace Kismeta.UI
             RefreshOpenOverlay();
         }
 
+        /// <summary>
+        /// Detaches the action sheet without clearing the overlay layer so a contest modal can replace it.
+        /// </summary>
+        internal void ReleaseSheetForContest()
+        {
+            _sheets?.Detach();
+            _active = ActiveOverlay.None;
+            NotifyOverlayChanged();
+        }
+
         public void Dismiss()
         {
             _active = ActiveOverlay.None;
@@ -213,9 +224,9 @@ namespace Kismeta.UI
             _sheets.OnCraft = () => { Dismiss(); ShowCraftReagent(); };
             _sheets.OnBuild = () => { Dismiss(); ShowBuildHouse(); };
             _sheets.OnWard = () => { Dismiss(); ShowPlaceWards(); };
-            _sheets.OnTrade = () => OnTrade?.Invoke();
-            _sheets.OnDuel = () => OnDuel?.Invoke();
-            _sheets.OnGambit = () => OnGambit?.Invoke();
+            _sheets.OnTrade = () => { ReleaseSheetForContest(); OnTrade?.Invoke(); };
+            _sheets.OnDuel = () => { ReleaseSheetForContest(); OnDuel?.Invoke(); };
+            _sheets.OnGambit = () => { ReleaseSheetForContest(); OnGambit?.Invoke(); };
             _sheets.OnClose = Dismiss;
         }
 
