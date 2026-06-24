@@ -162,6 +162,8 @@ Do not add `kismeta-root`, horizontal margins, or competing `max-width` on overl
 | `ViewportLayout` | Safe area, overlays, screen stretch |
 | `.screen-host` | UXML instantiate wrapper — must fill content layer |
 | `.overlay-clone-host` | Overlay width cap + `.kismeta-scope` token scope |
+| `.overlay-clone-host > .screen` | Panel chrome (border, radius) for action/contest modals via `ShowModal` |
+| `ShowOverlayElement` | Wraps programmatic overlays in `.overlay-clone-host` (same inset/width cap as UXML modals) |
 | `--overlay-max-width` | Max floating panel width (520px) |
 | `--overlay-inset-x` | Horizontal scrim inset for overlays |
 | `.viewport--tablet` | Shortest side ≥ 600dp |

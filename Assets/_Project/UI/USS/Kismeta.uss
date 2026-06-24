@@ -180,13 +180,20 @@
     max-width: var(--overlay-max-width);
     min-width: 0;
     height: auto;
+    max-height: 88%;
     flex-grow: 0;
-    flex-shrink: 1;
+    flex-shrink: 0;
     flex-direction: column;
     background-color: rgba(0, 0, 0, 0);
     align-items: stretch;
     justify-content: flex-start;
     padding-top: var(--space-lg);
+    overflow: auto;
+}
+
+.overlay-clone-host > * {
+    width: 100%;
+    min-width: 0;
 }
 
 .overlay-layer--sheet {
@@ -897,7 +904,23 @@
 
 .sheet {
     max-height: none;
-    overflow: visible;
+    overflow: hidden;
+    border-top-width: 2px;
+    border-top-color: var(--gold-deep);
+}
+
+/* Action / contest screens shown via ShowModal — panel chrome inside clone host */
+.overlay-clone-host > .screen {
+    height: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-direction: column;
+    border-radius: var(--radius-xl);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    border-top-width: 2px;
+    border-top-color: var(--gold-deep);
+    overflow: hidden;
 }
 
 .card-modal {
@@ -922,8 +945,6 @@
     justify-content: space-between;
     padding: 13px var(--space-lg);
     background-color: var(--panel-dark);
-    border-top-width: 2px;
-    border-top-color: var(--gold-deep);
     border-bottom-width: 1px;
     border-bottom-color: var(--border-subtle);
 }

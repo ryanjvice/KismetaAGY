@@ -152,8 +152,13 @@ namespace Kismeta.UI
             else
                 overlay.RemoveFromClassList("overlay-layer--sheet");
             overlay.style.display = DisplayStyle.Flex;
-            overlay.Add(content);
+
+            var host = CreateOverlayCloneHost();
+            host.Add(content);
+            overlay.Add(host);
             _overlayContentRoot = content;
+            if (asSheet)
+                UiMotion.AnimateSheetRise(content);
             SetOverlayBackdropBlur(true);
         }
 
@@ -163,12 +168,7 @@ namespace Kismeta.UI
         /// </summary>
         private VisualElement InstantiateOverlay(VisualElement overlay, VisualTreeAsset asset, StyleSheet? tokenStylesheet)
         {
-            var host = new VisualElement();
-            host.style.flexGrow = 0;
-            host.style.flexShrink = 1;
-            host.style.flexDirection = FlexDirection.Column;
-            PrepareCloneHost(host, stretchFull: false, tokenStylesheet, overlayScope: true);
-            host.AddToClassList("overlay-clone-host");
+            var host = CreateOverlayCloneHost(tokenStylesheet);
             ApplyAssetStylesheets(host, asset);
             overlay.Add(host);
             asset.CloneTree(host);
@@ -176,6 +176,17 @@ namespace Kismeta.UI
             if (screenRoot != null)
                 ApplyAssetStylesheets(screenRoot, asset);
             _overlayContentRoot = screenRoot ?? host;
+            return host;
+        }
+
+        VisualElement CreateOverlayCloneHost(StyleSheet? tokenStylesheet = null)
+        {
+            var host = new VisualElement();
+            host.style.flexGrow = 0;
+            host.style.flexShrink = 1;
+            host.style.flexDirection = FlexDirection.Column;
+            PrepareCloneHost(host, stretchFull: false, tokenStylesheet, overlayScope: true);
+            host.AddToClassList("overlay-clone-host");
             return host;
         }
 

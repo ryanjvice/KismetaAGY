@@ -133,10 +133,30 @@
     max-width: var(--overlay-max-width);
     min-width: 0;
     flex-grow: 0;
-    flex-shrink: 1;
+    flex-shrink: 0;
     flex-direction: column;
     align-items: stretch;
     padding-top: var(--space-lg);
+    max-height: 88%;
+    overflow: auto;
+}
+
+.overlay-clone-host > * {
+    width: 100%;
+    min-width: 0;
+}
+
+.overlay-clone-host > .screen {
+    height: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-direction: column;
+    border-radius: var(--radius-xl);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    border-top-width: 2px;
+    border-top-color: var(--gold-deep);
+    overflow: hidden;
 }
 
 .overlay-layer--sheet {

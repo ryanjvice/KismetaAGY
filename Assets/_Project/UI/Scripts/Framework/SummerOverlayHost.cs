@@ -150,22 +150,27 @@ namespace Kismeta.UI
             if (_layout == null) return;
 
             var tip = new VisualElement();
-            tip.AddToClassList("screen");
-            tip.AddToClassList("screen--summer");
-            tip.style.paddingLeft = 14;
-            tip.style.paddingRight = 14;
-            tip.style.paddingTop = 16;
-            tip.style.paddingBottom = 16;
+            tip.AddToClassList("sheet");
 
-            tip.Add(new Label("Light a cauldron")
-            {
-                style = { fontSize = 14, unityFontStyleAndWeight = FontStyle.Bold }
-            });
-            tip.Add(new Label(
+            var header = new VisualElement();
+            header.AddToClassList("sheet__header");
+            var title = new Label("Light a cauldron");
+            title.AddToClassList("statusbar__title");
+            title.style.color = new StyleColor(new Color(127f / 255f, 196f / 255f, 168f / 255f));
+            header.Add(title);
+
+            var body = new VisualElement();
+            body.AddToClassList("sheet__body");
+            body.Add(new Label(
                 "Activating a crucible card moves its coal to the matching cauldron — lighting it. " +
                 "A lit cauldron lets you craft that element's reagent.")
             {
-                style = { fontSize = 11, whiteSpace = WhiteSpace.Normal, marginTop = 8 }
+                style =
+                {
+                    fontSize = 12,
+                    color = new StyleColor(new Color(243f / 255f, 233f / 255f, 210f / 255f)),
+                    whiteSpace = WhiteSpace.Normal
+                }
             });
 
             var close = new Button { text = "Got it" };
@@ -173,7 +178,10 @@ namespace Kismeta.UI
             close.AddToClassList("btn--primary");
             close.style.marginTop = 12;
             close.clicked += Dismiss;
-            tip.Add(close);
+            body.Add(close);
+
+            tip.Add(header);
+            tip.Add(body);
 
             _active = ActiveOverlay.LightTip;
             _layout.ShowOverlayElement(tip);

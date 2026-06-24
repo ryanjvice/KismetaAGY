@@ -124,6 +124,20 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.craft-pick {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-direction: column;
+}
+
+.craft-body {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-direction: column;
+    padding-bottom: var(--space-xs);
 }
 
 .reagent-pick {
@@ -189,6 +203,100 @@
     align-items: center; justify-content: center;
 }
 .crucible-slot__reagent { font-size: 12px; -unity-font-style: bold; color: var(--ink); margin-bottom: 4px; }
+
+/* ---------- Pass your turn (End Summer) ---------- */
+.end-summer__title {
+    color: rgb(127, 196, 168);
+}
+
+.end-summer__close {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: var(--muted);
+    font-size: 18px;
+    min-width: var(--touch-min);
+    min-height: var(--touch-min);
+}
+
+.end-summer__section {
+    margin-bottom: var(--space-md);
+}
+
+.end-summer__eyebrow {
+    font-size: var(--font-label);
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: var(--space-sm);
+}
+
+.end-summer__recap-list {
+    flex-direction: column;
+}
+
+.end-summer__recap-row {
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--panel-darker);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 9px 11px;
+    margin-bottom: 6px;
+}
+
+.end-summer__hints {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0;
+}
+
+.end-summer__hint-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 7px;
+}
+
+.end-summer__hint-row:last-child {
+    margin-bottom: 0;
+}
+
+.end-summer__line {
+    font-size: var(--font-body);
+    color: var(--ink);
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+.end-summer__hints .end-summer__line {
+    color: var(--caution-text);
+}
+
+.end-summer__footnote {
+    font-size: var(--font-label);
+    color: var(--muted);
+    -unity-text-align: middle-center;
+    margin-top: var(--space-sm);
+    white-space: normal;
+}
+
+.end-summer__actions {
+    flex-direction: row;
+    margin-top: var(--space-xs);
+}
+
+.end-summer__btn {
+    flex-grow: 1;
+    margin-right: var(--space-sm);
+}
+
+.end-summer__btn:last-child {
+    margin-right: 0;
+}
+
+.end-summer__btn--pass {
+    flex-grow: 1.3;
+    color: rgb(224, 138, 74);
+}
 .crucible-slot__progress { font-size: 9px; }
 
 .ring--red { border-color: rgb(192,57,43); }

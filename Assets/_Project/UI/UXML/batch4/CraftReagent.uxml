@@ -13,7 +13,7 @@
          ============================================================ -->
     <engine:VisualElement name="craft-reagent" class="screen screen--summer">
 
-        <engine:VisualElement name="craft-pick">
+        <engine:VisualElement name="craft-pick" class="craft-pick">
 
             <engine:VisualElement class="statusbar">
                 <engine:VisualElement class="statusbar__left">
@@ -24,6 +24,8 @@
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
+
+            <engine:VisualElement class="craft-body">
 
             <!-- reagent picker -->
             <engine:VisualElement style="padding: 12px 14px 4px;">
@@ -74,6 +76,8 @@
 
             <engine:VisualElement style="padding: 2px 14px 16px;">
                 <engine:Button name="forge-btn" text="Forge — needs 3 more cards" class="btn btn--disabled" />
+            </engine:VisualElement>
+
             </engine:VisualElement>
 
         </engine:VisualElement>

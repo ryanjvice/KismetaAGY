@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
@@ -53,8 +52,10 @@ namespace Kismeta.UI.Controllers
         static void AddRecapRow(VisualElement list, string icon, string text)
         {
             var row = new VisualElement();
-            row.AddToClassList("benefit-row");
-            row.Add(new Label(text) { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal } });
+            row.AddToClassList("end-summer__recap-row");
+            var label = new Label(text);
+            label.AddToClassList("end-summer__line");
+            row.Add(label);
             list.Add(row);
         }
 
@@ -73,15 +74,8 @@ namespace Kismeta.UI.Controllers
         {
             if (_session == null || _playerId < 0) return;
             var player = _session.Players[_playerId];
-            var tip = Root?.Q(className: "tip--caution");
+            var tip = El("still-available");
             if (tip == null) return;
-
-            foreach (var child in tip.Query(className: "benefit-row").ToList())
-                child.RemoveFromHierarchy();
-
-            foreach (var child in tip.Children().ToList())
-                if (child.ClassListContains("benefit-row") == false && child is Label == false)
-                    continue;
 
             tip.Clear();
 
@@ -112,10 +106,10 @@ namespace Kismeta.UI.Controllers
         VisualElement MakeHintRow(string text)
         {
             var row = new VisualElement();
-            row.style.flexDirection = FlexDirection.Row;
-            row.style.alignItems = Align.Center;
-            row.style.marginBottom = 7;
-            row.Add(new Label(text) { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal } });
+            row.AddToClassList("end-summer__hint-row");
+            var label = new Label(text);
+            label.AddToClassList("end-summer__line");
+            row.Add(label);
             return row;
         }
 

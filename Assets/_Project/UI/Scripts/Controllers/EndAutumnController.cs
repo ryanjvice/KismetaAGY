@@ -51,8 +51,10 @@ namespace Kismeta.UI.Controllers
         static void AddRecapRow(VisualElement list, string text)
         {
             var row = new VisualElement();
-            row.AddToClassList("benefit-row");
-            row.Add(new Label(text) { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal } });
+            row.AddToClassList("end-autumn__recap-row");
+            var label = new Label(text);
+            label.AddToClassList("end-autumn__line");
+            row.Add(label);
             list.Add(row);
         }
 
@@ -60,7 +62,7 @@ namespace Kismeta.UI.Controllers
         {
             if (_session == null || _playerId < 0) return;
             var player = _session.Players[_playerId];
-            var tip = Root?.Q(className: "tip--caution");
+            var tip = El("still-available");
             if (tip == null) return;
 
             tip.Clear();
@@ -91,10 +93,10 @@ namespace Kismeta.UI.Controllers
         static VisualElement MakeHintRow(string text)
         {
             var row = new VisualElement();
-            row.style.flexDirection = FlexDirection.Row;
-            row.style.alignItems = Align.Center;
-            row.style.marginBottom = 7;
-            row.Add(new Label(text) { style = { fontSize = 11, whiteSpace = WhiteSpace.Normal } });
+            row.AddToClassList("end-autumn__hint-row");
+            var label = new Label(text);
+            label.AddToClassList("end-autumn__line");
+            row.Add(label);
             return row;
         }
     }

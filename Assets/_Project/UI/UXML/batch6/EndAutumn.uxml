@@ -6,36 +6,37 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/AutumnActions.uss" />
 
-    <engine:VisualElement name="end-autumn" class="screen screen--autumn">
+    <engine:VisualElement name="end-autumn" class="sheet end-autumn">
 
-        <engine:VisualElement class="statusbar">
+        <engine:VisualElement class="sheet__header end-autumn__header">
             <engine:VisualElement class="statusbar__left">
                 <engine:VisualElement class="statusbar__sigil" style="background-color: rgb(42,21,14); border-color: rgb(224, 138, 74);">
                     <engine:Label text="&#xed5a;" class="ti-icon" style="color: rgb(224, 138, 74);" />
                 </engine:VisualElement>
                 <engine:VisualElement>
-                    <engine:Label text="Pass your turn?" class="statusbar__title" style="color: rgb(224, 138, 74);" />
+                    <engine:Label text="Pass your turn?" class="statusbar__title end-autumn__title" />
                     <engine:Label text="yield the forge — autumn ends when everyone passes in a row" class="statusbar__sub" />
                 </engine:VisualElement>
             </engine:VisualElement>
-            <engine:Button name="close-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
+            <engine:Button name="close-btn" text="&#10005;" class="end-autumn__close" />
         </engine:VisualElement>
 
-        <engine:VisualElement style="padding: 13px 14px 4px;">
-            <engine:Label text="your autumn at the forge" class="eyebrow" />
-            <engine:VisualElement name="recap-list" />
-        </engine:VisualElement>
+        <engine:VisualElement class="sheet__body end-autumn__body">
+            <engine:VisualElement class="end-autumn__section">
+                <engine:Label text="your autumn at the forge" class="end-autumn__eyebrow" />
+                <engine:VisualElement name="recap-list" class="end-autumn__recap-list" />
+            </engine:VisualElement>
 
-        <engine:VisualElement style="padding: 10px 14px 4px;">
-            <engine:Label text="still available this autumn" class="eyebrow" />
-            <engine:VisualElement class="tip tip--caution" style="margin: 0; flex-direction: column; align-items: stretch;" />
-            <engine:Label text="passing forfeits any remaining actions this turn"
-                          style="font-size: 9px; color: rgb(122,106,74); -unity-text-align: middle-center; margin-top: 7px;" />
-        </engine:VisualElement>
+            <engine:VisualElement class="end-autumn__section">
+                <engine:Label text="still available this autumn" class="end-autumn__eyebrow" />
+                <engine:VisualElement name="still-available" class="end-autumn__hints tip tip--caution" />
+                <engine:Label text="passing forfeits any remaining actions this turn" class="end-autumn__footnote" />
+            </engine:VisualElement>
 
-        <engine:VisualElement style="padding: 10px 14px 16px; flex-direction: row;">
-            <engine:Button name="keep-btn" text="Keep forging" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
-            <engine:Button name="end-btn" text="Pass turn" class="btn btn--primary" style="flex-grow: 1.3; color: rgb(224, 138, 74);" />
+            <engine:VisualElement class="end-autumn__actions">
+                <engine:Button name="keep-btn" text="Keep forging" class="btn btn--secondary end-autumn__btn" />
+                <engine:Button name="end-btn" text="Pass turn" class="btn btn--primary end-autumn__btn end-autumn__btn--pass" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
     </engine:VisualElement>
