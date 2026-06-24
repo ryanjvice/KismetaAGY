@@ -332,3 +332,141 @@
 .fslot-fill--blue { background-color: rgb(46,109,164); }
 .fslot-fill--green { background-color: rgb(43,106,74); }
 .fslot-fill--yellow { background-color: rgb(184,148,31); }
+
+/* ---------- Summer main: cauldron hub (state center) ---------- */
+.cauldron-hub {
+    align-items: center;
+    justify-content: center;
+    width: 220px;
+    height: 220px;
+    align-self: center;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.cauldron-stage {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    align-items: center;
+    justify-content: center;
+}
+
+.cauldron-hub .cauldron {
+    width: 72px;
+    height: 72px;
+    border-radius: 36px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    -unity-text-align: middle-center;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.cauldron-hub .cauldron--tappable {
+    picking-mode: position;
+}
+
+.cauldron-hub .cauldron--tappable:active {
+    scale: 0.96 0.96;
+}
+
+.cauldron-hub .codex-hub--tappable {
+    picking-mode: position;
+}
+
+.cauldron-hub .codex-hub--tappable:active {
+    scale: 0.96 0.96;
+}
+
+.cauldron-hub #cauldron-n { top: 0; left: 74px; }
+
+.cauldron-hub #cauldron-e { right: 0; top: 74px; }
+
+.cauldron-hub #cauldron-s { bottom: 0; left: 74px; }
+
+.cauldron-hub #cauldron-w { left: 0; top: 74px; }
+
+.cauldron-hub .cauldron--red { background-color: var(--reagent-sulphur); }
+.cauldron-hub .cauldron--blue { background-color: var(--reagent-aqua); }
+.cauldron-hub .cauldron--green { background-color: var(--reagent-vitriol); }
+.cauldron-hub .cauldron--yellow { background-color: var(--reagent-quick); }
+
+.cauldron-hub .cauldron--lit {
+    border-width: 3px;
+    border-color: var(--gold-bright);
+    opacity: 1;
+}
+
+.cauldron-hub .cauldron--dormant {
+    border-width: 2px;
+    border-color: rgb(90, 58, 74);
+    opacity: 1;
+    border-style: dashed;
+}
+
+.cauldron-hub .cauldron--dormant.cauldron--red { background-color: rgba(192, 57, 43, 0.35); }
+.cauldron-hub .cauldron--dormant.cauldron--blue { background-color: rgba(46, 109, 164, 0.35); }
+.cauldron-hub .cauldron--dormant.cauldron--green { background-color: rgba(31, 110, 74, 0.35); }
+.cauldron-hub .cauldron--dormant.cauldron--yellow { background-color: rgba(184, 148, 31, 0.35); }
+
+.cauldron__color {
+    font-size: 9px;
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    margin-bottom: 1px;
+}
+
+.cauldron__reagent {
+    font-size: 8px;
+    color: rgb(243, 233, 210);
+    margin-bottom: 1px;
+}
+
+.cauldron__state {
+    font-size: 8px;
+    color: rgb(184, 154, 110);
+}
+
+.cauldron--dormant .cauldron__reagent {
+    display: none;
+}
+
+.cauldron--lit .cauldron__state {
+    color: var(--gold-bright);
+}
+
+.codex-hub {
+    position: absolute;
+    width: 58px;
+    height: 58px;
+    border-radius: 29px;
+    top: 81px;
+    left: 81px;
+    background-color: rgb(22, 10, 28);
+    border-width: 2px;
+    border-color: var(--gold-bright);
+    align-items: center;
+    justify-content: center;
+    -unity-text-align: middle-center;
+}
+
+.codex-hub__title {
+    font-size: 7px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 1px;
+}
+
+.codex-hub__count {
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: var(--ink);
+    margin-bottom: 1px;
+}
+
+.codex-hub__status {
+    font-size: 7px;
+    color: var(--gold-bright);
+}

@@ -34,6 +34,12 @@ namespace Kismeta.Core.Views
         public int UnplacedAstralHouses { get; }
         public IReadOnlyList<CrucibleSlotView> CrucibleSlots { get; }
 
+        private readonly bool[] _cauldronLit = new bool[4];
+
+        /// <summary>True when the player's coal has lit this elemental cauldron (persists across crucible card states).</summary>
+        public bool IsCauldronLit(Suit suit) =>
+            suit != Suit.None && _cauldronLit[(int)suit - 1];
+
         private PublicPlayerView(
             PlayerState p,
             ICardDatabase? db = null,
@@ -59,6 +65,11 @@ namespace Kismeta.Core.Views
 
             AstralHouses         = p.AstralHouses;
             UnplacedAstralHouses = p.UnplacedAstralHouses;
+
+            _cauldronLit[(int)Suit.Wands - 1]     = p.IsCauldronLit(Suit.Wands);
+            _cauldronLit[(int)Suit.Cups - 1]       = p.IsCauldronLit(Suit.Cups);
+            _cauldronLit[(int)Suit.Pentacles - 1]  = p.IsCauldronLit(Suit.Pentacles);
+            _cauldronLit[(int)Suit.Swords - 1]     = p.IsCauldronLit(Suit.Swords);
 
             var slots = new List<CrucibleSlotView>(p.CrucibleSlots.Count);
             foreach (var slot in p.CrucibleSlots)

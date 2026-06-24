@@ -29,6 +29,8 @@ namespace Kismeta.UI.Controllers
         public System.Action OnBack;
         public System.Action OnCompleted;
 
+        public int? InitialSlotIndex { get; set; }
+
         protected override void Bind()
         {
             _uiInitialized = false;
@@ -63,13 +65,17 @@ namespace Kismeta.UI.Controllers
                     detail.style.display = DisplayStyle.None;
 
                 RefreshAllSlots();
-                DisableActivate("Select a card to activate");
                 _uiInitialized = true;
-                return;
             }
+            else
+                RefreshAllSlots();
 
-            RefreshAllSlots();
-            if (_slotIndex >= 0)
+            if (InitialSlotIndex.HasValue)
+            {
+                SelectSlot(InitialSlotIndex.Value);
+                InitialSlotIndex = null;
+            }
+            else if (_slotIndex >= 0)
                 RefreshFormulaDetail();
             else
                 DisableActivate("Select a card to activate");
@@ -145,7 +151,6 @@ namespace Kismeta.UI.Controllers
             if (slotIndex >= player.CrucibleSlots.Count) return;
 
             var slot = player.CrucibleSlots[slotIndex];
-            if (IsSlotActive(slot)) return;
 
             _slotIndex = slotIndex;
             _selected.Clear();

@@ -21,6 +21,7 @@ namespace Kismeta.UI.Controllers
         public Action OnPass;
         public Action OnOpenCardTable;
         public Action<string> OnInspectCard;
+        public Action<Suit>? OnCauldronClicked;
 
         CommandBridge? _bridge;
         GameSession? _session;
@@ -38,6 +39,7 @@ namespace Kismeta.UI.Controllers
         protected override void Unwire()
         {
             _showHand = false;
+            CauldronHubBindings.UnwireCauldrons(Root);
         }
 
         protected override void Wire()
@@ -48,6 +50,10 @@ namespace Kismeta.UI.Controllers
             Btn("pass-btn")!.clicked += () => OnPass?.Invoke();
             Btn("hand-btn")!.clicked += OnHandToggle;
             Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
+            CauldronHubBindings.WireCauldrons(
+                Root,
+                suit => OnCauldronClicked?.Invoke(suit),
+                onCodexTap: () => OnActivate?.Invoke());
         }
 
         void OnHandToggle()
@@ -76,14 +82,6 @@ namespace Kismeta.UI.Controllers
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             MainSceneBindings.BindCauldrons(Root, local);
-
-            if (Lbl("codex-label") != null && local != null)
-            {
-                int active = 0;
-                foreach (var slot in local.CrucibleSlots)
-                    if (slot.State >= CrucibleCardState.Active) active++;
-                Lbl("codex-label")!.text = $"codex · {active} active";
-            }
 
             RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
         }

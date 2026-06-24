@@ -23,6 +23,8 @@ namespace Kismeta.UI.Controllers
         public System.Action OnBack;
         public System.Action OnDone;
 
+        public ReagentType? InitialReagent { get; set; }
+
         protected override void Wire()
         {
             Btn("back-btn")!.clicked += () => OnBack?.Invoke();
@@ -97,6 +99,13 @@ namespace Kismeta.UI.Controllers
 
         void SelectDefaultReagent()
         {
+            if (InitialReagent.HasValue)
+            {
+                var key = CraftReagentPanelBindings.ReagentKeyFor(InitialReagent.Value);
+                InitialReagent = null;
+                if (TryPickReagent(key)) return;
+            }
+
             if (TryPickReagent("sulphur")) return;
             if (TryPickReagent("salt")) return;
             foreach (var key in CraftReagentPanelBindings.ReagentKeys)
@@ -279,6 +288,7 @@ namespace Kismeta.UI.Controllers
         {
             _forged = false;
             _uiInitialized = false;
+            InitialReagent = null;
         }
     }
 }

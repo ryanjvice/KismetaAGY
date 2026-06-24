@@ -211,22 +211,8 @@ namespace Kismeta.UI.Controllers
                 hint.text = "Review your board while you wait";
         }
 
-        public static void BindCauldrons(VisualElement? root, PublicPlayerView? local)
-        {
-            if (root == null) return;
-
-            var ids = new[] { "cauldron-n", "cauldron-e", "cauldron-s", "cauldron-w" };
-            for (int i = 0; i < ids.Length; i++)
-            {
-                var el = root.Q<VisualElement>(ids[i]);
-                if (el == null) continue;
-
-                bool lit = local != null && i < local.CrucibleSlots.Count &&
-                    local.CrucibleSlots[i].State >= CrucibleCardState.Active;
-                el.EnableInClassList("cauldron--lit", lit);
-                el.EnableInClassList("cauldron--dormant", !lit);
-            }
-        }
+        public static void BindCauldrons(VisualElement? root, PublicPlayerView? local) =>
+            CauldronHubBindings.Bind(root, local);
 
         public static PublicPlayerView? LocalPlayer(GamePublicView view, int localPlayerId)
         {

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/SummerActions.uss" />
+
+    <engine:VisualElement name="cauldron-hub" class="cauldron-hub">
+
+        <engine:VisualElement name="cauldron-stage" class="cauldron-stage">
+
+            <engine:VisualElement name="cauldron-n" class="cauldron cauldron--red cauldron--dormant cauldron--tappable">
+                <engine:Label name="cauldron-n-color" text="RED" class="cauldron__color" />
+                <engine:Label name="cauldron-n-reagent" text="sulphur" class="cauldron__reagent" />
+                <engine:Label name="cauldron-n-state" text="dormant" class="cauldron__state" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="cauldron-e" class="cauldron cauldron--blue cauldron--dormant cauldron--tappable">
+                <engine:Label name="cauldron-e-color" text="BLUE" class="cauldron__color" />
+                <engine:Label name="cauldron-e-reagent" text="aqua regia" class="cauldron__reagent" />
+                <engine:Label name="cauldron-e-state" text="dormant" class="cauldron__state" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="cauldron-s" class="cauldron cauldron--green cauldron--dormant cauldron--tappable">
+                <engine:Label name="cauldron-s-color" text="GREEN" class="cauldron__color" />
+                <engine:Label name="cauldron-s-reagent" text="vitriol" class="cauldron__reagent" />
+                <engine:Label name="cauldron-s-state" text="dormant" class="cauldron__state" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="cauldron-w" class="cauldron cauldron--yellow cauldron--dormant cauldron--tappable">
+                <engine:Label name="cauldron-w-color" text="YEL" class="cauldron__color" />
+                <engine:Label name="cauldron-w-reagent" text="quicksilver" class="cauldron__reagent" />
+                <engine:Label name="cauldron-w-state" text="dormant" class="cauldron__state" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="codex-hub" class="codex-hub codex-hub--tappable">
+                <engine:Label text="codex" class="codex-hub__title" />
+                <engine:Label name="codex-hub-count" text="0/4" class="codex-hub__count" />
+                <engine:Label name="codex-hub-status" text="dormant" class="codex-hub__status" />
+            </engine:VisualElement>
+
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

@@ -1,4 +1,5 @@
 using System;
+using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Controllers;
 using UnityEngine;
@@ -108,16 +109,24 @@ namespace Kismeta.UI
         public void ShowCraftBuildSheet() => ShowSheet(craftBuild: true);
         public void ShowConsortSheet() => ShowSheet(craftBuild: false);
 
-        public void ShowCraftReagent()
+        public void ShowCraftReagent() => ShowCraftReagent(null);
+
+        public void ShowCraftReagent(ReagentType? initialReagent)
         {
             if (!ShowModal(_craftReagent, _craft, ActiveOverlay.CraftReagent)) return;
+            if (_craft != null)
+                _craft.InitialReagent = initialReagent;
             WireCraft();
             RefreshOpenOverlay();
         }
 
-        public void ShowActivate()
+        public void ShowActivate() => ShowActivate(null);
+
+        public void ShowActivate(int? initialSlotIndex)
         {
             if (!ShowModal(_activateCard, _activate, ActiveOverlay.Activate)) return;
+            if (_activate != null)
+                _activate.InitialSlotIndex = initialSlotIndex;
             WireActivate();
             RefreshOpenOverlay();
         }

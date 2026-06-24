@@ -58,14 +58,6 @@ namespace Kismeta.UI.Controllers
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             MainSceneBindings.BindCauldrons(Root, local);
 
-            if (Lbl("codex-label") != null && local != null)
-            {
-                int active = 0;
-                foreach (var slot in local.CrucibleSlots)
-                    if (slot.State >= CrucibleCardState.Active) active++;
-                Lbl("codex-label")!.text = $"codex · {active} active";
-            }
-
             RivalStripBuilder.Populate(
                 El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, Season.Summer);
         }

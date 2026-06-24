@@ -4,6 +4,7 @@ using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI.Chronicle;
+using Kismeta.UI.Components;
 using Kismeta.UI.Controllers;
 using Kismeta.UI.Setup;
 using UnityEngine;
@@ -533,6 +534,21 @@ namespace Kismeta.UI
             summer.OnConsort = () => _summerOverlays.ShowConsortSheet();
             summer.OnActivate = () => _summerOverlays.ShowActivate();
             summer.OnPass = () => _summerOverlays.ShowEndSummer();
+            summer.OnCauldronClicked = suit =>
+            {
+                if (_session == null || _loop == null) return;
+
+                var localId = MainSceneBindings.ResolveLocalPlayerId(_session, _loop, _bridge);
+                if (localId < 0 || localId >= _session.Players.Count) return;
+
+                var player = _session.Players[localId];
+                if (player.IsCauldronLit(suit))
+                    _summerOverlays.ShowCraftReagent(Correspondence.ReagentFor(suit));
+                else if (CauldronHubBindings.TrySlotIndexForSuit(_session, localId, suit, out int slot))
+                    _summerOverlays.ShowActivate(slot);
+                else
+                    _summerOverlays.ShowActivate();
+            };
         }
 
         private void WireSeasonHubNavigation()
