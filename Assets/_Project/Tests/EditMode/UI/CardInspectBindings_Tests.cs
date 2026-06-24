@@ -70,6 +70,13 @@ namespace Kismeta.UI.Tests
             Assert.AreEqual("Sun", modal.Q<Label>("inspect-aspect-planet")?.text);
             Assert.AreEqual("Pentacles", modal.Q<Label>("inspect-aspect-suit")?.text);
 
+            var elementIcon = modal.Q<Label>("inspect-aspect-element-icon");
+            var suitIcon = modal.Q<Label>("inspect-aspect-suit-icon");
+            Assert.AreEqual(SymbolGlyphs.ElementGlyph(Element.Earth), elementIcon?.text);
+            Assert.AreEqual(SymbolGlyphs.SuitGlyph(Suit.Pentacles), suitIcon?.text);
+            Assert.IsTrue(elementIcon!.ClassListContains(SymbolGlyphs.TablerIconClass));
+            Assert.IsTrue(suitIcon!.ClassListContains(SymbolGlyphs.TablerIconClass));
+
             var hero = modal.Q<VisualElement>("inspect-hero-tarot");
             Assert.IsTrue(hero!.ClassListContains("card-chip--pentacles"));
 
@@ -121,6 +128,30 @@ namespace Kismeta.UI.Tests
                 .ToList();
             CollectionAssert.Contains(tags, "crafting Aqua Regia");
             CollectionAssert.Contains(tags, "Saturn sets");
+        }
+
+        [Test]
+        public void NineOfWands_BindsElementAndSuitTablerIcons()
+        {
+            var modal = InstantiateInspectModal();
+            var session = BuildSession("minor.wands.nine.2", ZodiacSign.Aries);
+
+            CardInspectBindings.BindInspectModal(modal, session, "inspect-card");
+
+            var elementIcon = modal.Q<Label>("inspect-aspect-element-icon");
+            var suitIcon = modal.Q<Label>("inspect-aspect-suit-icon");
+            var heroIcon = modal.Q<Label>("inspect-hero-icon");
+            Assert.IsNotNull(elementIcon);
+            Assert.IsNotNull(suitIcon);
+            Assert.IsNotNull(heroIcon);
+
+            Assert.AreEqual(SymbolGlyphs.ElementGlyph(Element.Fire), elementIcon!.text);
+            Assert.AreEqual(SymbolGlyphs.SuitGlyph(Suit.Wands), suitIcon!.text);
+            Assert.AreEqual(SymbolGlyphs.SuitGlyph(Suit.Wands), heroIcon!.text);
+            Assert.IsTrue(elementIcon.ClassListContains(SymbolGlyphs.TablerIconClass));
+            Assert.IsTrue(suitIcon.ClassListContains(SymbolGlyphs.TablerIconClass));
+            Assert.IsTrue(heroIcon.ClassListContains(SymbolGlyphs.TablerIconClass));
+            Assert.IsFalse(elementIcon.ClassListContains(SymbolGlyphs.ZodiacFontClass));
         }
 
         static VisualElement InstantiateInspectModal()

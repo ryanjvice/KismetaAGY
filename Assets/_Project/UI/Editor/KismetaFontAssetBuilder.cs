@@ -19,6 +19,7 @@ namespace Kismeta.UI.Editor
 
         private const string ZodiacSymbolCharset = "♈♉♊♋♌♍♎♏♐♑♒♓";
         private const string PlanetSymbolCharset = "☉☽☿♀♂♃♄";
+        private const string TablerIconCharset = "\uec2c\uebcb\uea97\ueb82\uf030\ued4f\uec34\ueac5";
 
         // Latin display copy + zodiac names + astrological symbols + common punctuation.
         private const string CommonUiCharset =
@@ -39,7 +40,7 @@ namespace Kismeta.UI.Editor
             created += CreateFontAsset("Amarante-Regular.ttf") ? 1 : 0;
             created += CreateFontAsset("GermaniaOne-Regular.ttf") ? 1 : 0;
             created += CreateFontAsset("NotoColorEmoji-Regular.ttf", ZodiacSymbolCharset) ? 1 : 0;
-            created += CreateFontAsset("tabler-icons.ttf") ? 1 : 0;
+            created += CreateFontAsset("tabler-icons.ttf", TablerIconCharset) ? 1 : 0;
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();

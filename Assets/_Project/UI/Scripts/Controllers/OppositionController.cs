@@ -215,7 +215,8 @@ namespace Kismeta.UI.Controllers
                     signLbl.style.display = DisplayStyle.Flex;
                     if (cosmic == ZodiacSign.None)
                     {
-                        signLbl.RemoveFromClassList(SymbolGlyphs.EmojiFontClass);
+                        signLbl.RemoveFromClassList(SymbolGlyphs.ZodiacFontClass);
+                        signLbl.RemoveFromClassList(SymbolGlyphs.TablerIconClass);
                         signLbl.text = "Cosmic age sign pending";
                         signLbl.style.fontSize = 13;
                     }

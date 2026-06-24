@@ -1,6 +1,7 @@
 using System;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
@@ -77,7 +78,8 @@ namespace Kismeta.UI.Components
 
             if (suit != Suit.None)
             {
-                var suitGlyph = SymbolGlyphs.CreateEmojiLabel(SymbolGlyphs.SuitGlyph(suit), "card-chip__suit");
+                var suitGlyph = SymbolGlyphs.CreateTablerLabel(
+                    SymbolGlyphs.SuitGlyph(suit), "card-chip__suit", Color.white);
                 suitGlyph.pickingMode = PickingMode.Ignore;
                 chip.Add(suitGlyph);
             }

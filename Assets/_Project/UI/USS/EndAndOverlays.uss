@@ -249,6 +249,16 @@
     overflow: visible;
 }
 .aspect-tile:last-child { margin-right: 0; }
+.aspect-tile__icon {
+    font-size: 18px;
+    margin-bottom: 2px;
+    -unity-text-align: middle-center;
+}
+
+.inspect-hero-icon {
+    font-size: 46px;
+}
+
 .aspect-tile__kind {
     font-size: 8px;
     color: rgb(184, 154, 110);

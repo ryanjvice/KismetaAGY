@@ -1,12 +1,12 @@
 using Kismeta.Core.Domain;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
 {
-    /// <summary>Unicode symbol glyphs — zodiac/planets via Amarante, suit icons via Noto Color Emoji.</summary>
+    /// <summary>Unicode symbol glyphs — zodiac/planets via Amarante, suit/element icons via Tabler.</summary>
     public static class SymbolGlyphs
     {
-        public const string EmojiFontClass = "font-emoji";
         public const string ZodiacFontClass = "font-zodiac";
         public const string TablerIconClass = "ti-icon";
         public const string InfoCircleGlyph = "\ueac5";
@@ -18,18 +18,26 @@ namespace Kismeta.UI.Components
             ZodiacSign.Sagittarius, ZodiacSign.Capricorn, ZodiacSign.Aquarius, ZodiacSign.Pisces
         };
 
-        public static void TagEmoji(VisualElement element) => element.AddToClassList(EmojiFontClass);
-
         public static void TagZodiac(VisualElement element)
         {
-            element.RemoveFromClassList(EmojiFontClass);
+            element.RemoveFromClassList(TablerIconClass);
             element.AddToClassList(ZodiacFontClass);
         }
 
-        public static Label CreateEmojiLabel(string glyph, string? ussClass = null)
+        public static void ApplyTablerIcon(Label label, string glyph, Color? tint = null)
+        {
+            label.text = glyph;
+            label.RemoveFromClassList(ZodiacFontClass);
+            label.AddToClassList(TablerIconClass);
+            if (tint.HasValue)
+                label.style.color = tint.Value;
+            label.style.display = DisplayStyle.Flex;
+        }
+
+        public static Label CreateTablerLabel(string glyph, string? ussClass = null, Color? tint = null)
         {
             var label = new Label(glyph);
-            TagEmoji(label);
+            ApplyTablerIcon(label, glyph, tint);
             if (ussClass != null)
                 label.AddToClassList(ussClass);
             return label;
@@ -104,13 +112,44 @@ namespace Kismeta.UI.Components
             _ => "?"
         };
 
+        /// <summary>Tabler icon glyph for a minor-arcana suit (tabler-icons.ttf codepoints).</summary>
         public static string SuitGlyph(Suit suit) => suit switch
         {
-            Suit.Wands => "\U0001FA84",
-            Suit.Cups => "\U0001F377",
-            Suit.Pentacles => "\U0001FA99",
-            Suit.Swords => "\U0001F5E1\uFE0F",
-            _ => "\u00B7"
+            Suit.Wands => "\uebcb",
+            Suit.Cups => "\uea97",
+            Suit.Pentacles => "\ueb82",
+            Suit.Swords => "\uf030",
+            _ => "\u00b7"
+        };
+
+        /// <summary>Tabler icon glyph for an elemental aspect (tabler-icons.ttf codepoints).</summary>
+        public static string ElementGlyph(Element element) => element switch
+        {
+            Element.Fire => "\uec2c",
+            Element.Water => "\uea97",
+            Element.Earth => "\ued4f",
+            Element.Air => "\uec34",
+            _ => "\u00b7"
+        };
+
+        public static Color SuitTablerTint(Suit suit, bool hero = false) => suit switch
+        {
+            Suit.Wands => hero
+                ? new Color(0.957f, 0.847f, 0.753f)
+                : new Color(0.957f, 0.784f, 0.604f),
+            Suit.Cups => new Color(0.435f, 0.659f, 0.831f),
+            Suit.Pentacles => new Color(0.957f, 0.827f, 0.369f),
+            Suit.Swords => new Color(0.878f, 0.753f, 0.376f),
+            _ => Color.white
+        };
+
+        public static Color ElementTablerTint(Element element) => element switch
+        {
+            Element.Fire => new Color(0.941f, 0.600f, 0.482f),
+            Element.Water => new Color(0.435f, 0.659f, 0.831f),
+            Element.Earth => new Color(0.365f, 0.792f, 0.647f),
+            Element.Air => new Color(0.878f, 0.753f, 0.376f),
+            _ => Color.white
         };
     }
 }

@@ -66,11 +66,8 @@ namespace Kismeta.UI.Components
 
             CardArtBindings.Apply(hero, heroIcon, def);
             if (heroIcon != null && Resources.Load<Sprite>($"CardArt/{def.Id}") == null)
-            {
-                heroIcon.text = SymbolGlyphs.SuitGlyph(def.Suit);
-                SymbolGlyphs.TagEmoji(heroIcon);
-                heroIcon.style.display = DisplayStyle.Flex;
-            }
+                SymbolGlyphs.ApplyTablerIcon(heroIcon, SymbolGlyphs.SuitGlyph(def.Suit),
+                    SymbolGlyphs.SuitTablerTint(def.Suit, hero: true));
         }
 
         static void BindAspects(VisualElement root, CardDefinition def)
@@ -80,6 +77,21 @@ namespace Kismeta.UI.Components
             var elementLbl = root.Q<Label>("inspect-aspect-element");
             if (elementLbl != null)
                 elementLbl.text = element != Element.None ? element.ToString() : "—";
+
+            var elementIcon = root.Q<Label>("inspect-aspect-element-icon");
+            if (elementIcon != null)
+            {
+                if (element != Element.None)
+                {
+                    SymbolGlyphs.ApplyTablerIcon(elementIcon, SymbolGlyphs.ElementGlyph(element),
+                        SymbolGlyphs.ElementTablerTint(element));
+                }
+                else
+                {
+                    elementIcon.text = "—";
+                    elementIcon.style.display = DisplayStyle.Flex;
+                }
+            }
 
             var planetLbl = root.Q<Label>("inspect-aspect-planet");
             if (planetLbl != null)
@@ -101,8 +113,16 @@ namespace Kismeta.UI.Components
             var suitIcon = root.Q<Label>("inspect-aspect-suit-icon");
             if (suitIcon != null)
             {
-                suitIcon.text = def.Suit != Suit.None ? SymbolGlyphs.SuitGlyph(def.Suit) : "—";
-                SymbolGlyphs.TagEmoji(suitIcon);
+                if (def.Suit != Suit.None)
+                {
+                    SymbolGlyphs.ApplyTablerIcon(suitIcon, SymbolGlyphs.SuitGlyph(def.Suit),
+                        SymbolGlyphs.SuitTablerTint(def.Suit));
+                }
+                else
+                {
+                    suitIcon.text = "—";
+                    suitIcon.style.display = DisplayStyle.Flex;
+                }
             }
         }
 
