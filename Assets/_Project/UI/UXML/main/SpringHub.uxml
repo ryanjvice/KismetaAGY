@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
+    <engine:Template src="../shell/InventoryToolbar.uxml" name="InventoryToolbar" />
 
     <engine:VisualElement name="spring-hub" class="screen screen--spring">
         <engine:Label text="Spring hub — your sign, harvest tally, spread, and commune action." class="sr-only" />
@@ -109,10 +110,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="screen__inventory">
-            <engine:VisualElement class="screen__fab-layer">
-                <engine:Button name="hand-btn" text="Hand" class="menu-btn-fab btn btn--secondary" />
-                <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
-            </engine:VisualElement>
+            <engine:Instance template="InventoryToolbar" />
 
             <engine:VisualElement class="dock">
                 <engine:VisualElement class="dock__header">

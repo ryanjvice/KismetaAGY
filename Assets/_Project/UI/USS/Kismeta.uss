@@ -320,7 +320,9 @@
 }
 
 .screen__inventory {
-    flex-shrink: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
     flex-direction: column;
     overflow: visible;
     border-top-width: 1px;
@@ -665,26 +667,73 @@
 .actionbtn:last-child { margin-right: 0; }
 .actionbtn__label { font-size: var(--font-body); -unity-font-style: normal; }
 
-.screen__fab-layer {
+.screen__inventory-bar {
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
     flex-shrink: 0;
     padding: 4px 10px;
+    min-height: 44px;
 }
+
+.screen__zone-toggles {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+
+.screen__zone-toggles .menu-btn-fab {
+    flex-grow: 0;
+    min-width: 44px;
+    min-height: 36px;
+    border-radius: var(--radius-md);
+    padding: 6px 10px;
+    font-size: 11px;
+    -unity-text-align: middle-center;
+    margin-right: 6px;
+}
+
+.screen__zone-toggles .menu-btn-fab:last-child {
+    margin-right: 0;
+}
+
+.inventory-reagents {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.reagent-chip {
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    border-width: 1px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.reagent-chip__count {
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: white;
+    -unity-text-align: middle-center;
+    margin: 0;
+    padding: 0;
+}
+
+.reagent-chip--salt { background-color: var(--reagent-salt); border-color: white; }
+.reagent-chip--salt .reagent-chip__count { color: rgb(32, 32, 32); }
+.reagent-chip--sulphur { background-color: var(--reagent-sulphur); border-color: rgb(229, 115, 115); }
+.reagent-chip--vitriol { background-color: var(--reagent-vitriol); border-color: rgb(93, 202, 165); }
+.reagent-chip--aqua { background-color: var(--reagent-aqua); border-color: rgb(111, 168, 212); }
+.reagent-chip--quick { background-color: var(--reagent-quick); border-color: rgb(224, 192, 96); }
 
 .screen__inventory .dock {
     border-top-width: 0;
-}
-
-.screen__fab-layer .menu-btn-fab {
-    flex-grow: 0;
-    min-width: 44px;
-    min-height: 44px;
-    border-radius: var(--radius-md);
-    padding: 8px 10px;
-    font-size: 11px;
-    -unity-text-align: middle-center;
 }
 
 .menu-btn-fab--active {
@@ -693,7 +742,10 @@
 }
 
 .dock {
-    flex-shrink: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    flex-direction: column;
     overflow: visible;
     border-top-width: 1px;
     border-top-color: var(--border-subtle);
@@ -709,50 +761,17 @@
 }
 
 .dock__strip {
+    flex-grow: 1;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: flex-start;
+    align-content: flex-start;
     row-gap: 6px;
     column-gap: 6px;
     width: 100%;
     min-height: var(--card-chip-h);
     overflow: visible;
-}
-
-/* ---------- Persistent player HUD (AppShell player-hud-layer) ---------- */
-.player-hud-layer {
-    flex-shrink: 0;
-    flex-direction: column;
-    width: 100%;
-}
-
-.player-hud {
-    flex-shrink: 0;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    border-top-width: 1px;
-    border-top-color: var(--border-subtle);
-    background-color: var(--panel-darker);
-    padding: var(--space-sm) var(--space-md);
-}
-
-.player-hud__reagent {
-    flex-direction: row;
-    align-items: center;
-    flex-shrink: 0;
-}
-
-.player-hud__reagent .reagent-dot {
-    margin-right: 3px;
-}
-
-.player-hud__reagent-count {
-    font-size: var(--font-body);
-    color: var(--ink);
-    min-width: 12px;
-    -unity-text-align: middle-left;
 }
 
 /* ---------- Accessibility ---------- */

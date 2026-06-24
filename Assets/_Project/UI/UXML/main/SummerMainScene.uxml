@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
+    <engine:Template src="../shell/InventoryToolbar.uxml" name="InventoryToolbar" />
 
     <engine:VisualElement name="summer-main" class="screen screen--summer">
 
@@ -62,10 +63,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="screen__inventory">
-            <engine:VisualElement class="screen__fab-layer">
-                <engine:Button name="hand-btn" text="Hand" class="menu-btn-fab btn btn--secondary" />
-                <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
-            </engine:VisualElement>
+            <engine:Instance template="InventoryToolbar" />
 
             <engine:VisualElement class="dock">
                 <engine:VisualElement class="dock__header">

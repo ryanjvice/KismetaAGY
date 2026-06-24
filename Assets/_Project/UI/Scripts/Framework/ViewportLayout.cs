@@ -42,8 +42,6 @@ namespace Kismeta.UI
         }
         public bool IsOverlayVisible => _overlayLayer != null && _overlayLayer.style.display == DisplayStyle.Flex;
 
-        public VisualElement? PlayerHudLayer => Root?.Q<VisualElement>("player-hud-layer");
-
         /// <summary>Root of the most recently shown overlay UXML clone.</summary>
         public VisualElement? OverlayContentRoot => _overlayContentRoot;
 
@@ -248,17 +246,10 @@ namespace Kismeta.UI
         void SetOverlayBackdropBlur(bool active)
         {
             var content = Root?.Q<VisualElement>("content-layer");
-            var hud = Root?.Q<VisualElement>("player-hud-layer");
             if (active)
-            {
                 content?.AddToClassList("content-layer--overlay-backdrop");
-                hud?.AddToClassList("content-layer--overlay-backdrop");
-            }
             else
-            {
                 content?.RemoveFromClassList("content-layer--overlay-backdrop");
-                hud?.RemoveFromClassList("content-layer--overlay-backdrop");
-            }
         }
 
         /// <summary>Runs after the panel has non-zero layout (avoids startup races).</summary>
@@ -344,7 +335,7 @@ namespace Kismeta.UI
             el.style.alignSelf = Align.Stretch;
         }
 
-        /// <summary>Flex child inside app-shell so player-hud-layer can share vertical space.</summary>
+        /// <summary>Flex child inside app-shell; shrinks when vertical space is tight.</summary>
         private static void StretchFlexColumnChild(VisualElement el)
         {
             el.style.flexGrow = 1;
@@ -402,32 +393,8 @@ namespace Kismeta.UI
             }
 
             shell.Add(content);
-            EnsurePlayerHudLayer();
             root.Add(shell);
             EnsureOverlayLayer();
-        }
-
-        public VisualElement? EnsurePlayerHudLayer()
-        {
-            var shell = Root?.Q("app-shell");
-            if (shell == null)
-                return null;
-
-            var layer = shell.Q<VisualElement>("player-hud-layer");
-            if (layer != null)
-                return layer;
-
-            layer = new VisualElement { name = "player-hud-layer" };
-            layer.AddToClassList("player-hud-layer");
-            layer.style.display = DisplayStyle.None;
-
-            var overlay = shell.Q<VisualElement>("overlay-layer");
-            if (overlay != null)
-                shell.Insert(shell.IndexOf(overlay), layer);
-            else
-                shell.Add(layer);
-
-            return layer;
         }
 
         private VisualElement EnsureOverlayLayer()
