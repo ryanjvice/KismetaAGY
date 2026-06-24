@@ -159,6 +159,103 @@
 }
 .reagent-pick--locked { opacity: 0.45; }
 
+/* Activate panel — compact layout so intro + slots + formula + footer fit on screen */
+#activate .statusbar {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+#activate .tip {
+    padding: 6px 9px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-left: 14px;
+    margin-right: 14px;
+}
+
+#activate .activate-section {
+    padding: 6px 14px 2px;
+}
+
+#activate .activate-section--detail {
+    padding: 4px 14px 6px;
+}
+
+#activate .eyebrow {
+    margin-bottom: 4px;
+}
+
+#activate .crucible-slots__row {
+    margin-bottom: 4px;
+}
+
+#activate .crucible-slots__row:last-child {
+    margin-bottom: 0;
+}
+
+#activate .crucible-slot {
+    padding: 6px 8px;
+}
+
+#activate .crucible-slot__head {
+    margin-bottom: 2px;
+}
+
+#activate .crucible-slot__ring {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+}
+
+#activate .crucible-slot__reagent {
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+#activate .formula-card {
+    padding: 8px 10px;
+}
+
+#activate .formula-card__head {
+    margin-bottom: 6px;
+}
+
+#activate .formula-card__ring {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    margin-right: 8px;
+}
+
+#activate .formula-card__count {
+    font-size: 13px;
+}
+
+#activate .formula-slot {
+    width: 38px;
+    height: 54px;
+}
+
+#activate .formula-status {
+    margin-top: 4px;
+}
+
+#activate #formula-chips > .card-chip {
+    width: 38px;
+    min-height: 54px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+
+#activate #formula-chips > .formula-slot {
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+
+#activate .activate-footer {
+    padding: 6px 14px 10px;
+}
+
 /* ---------- Activate: four cauldron slots + formula reveal (#21 v2) ---------- */
 .activate-scroll {
     flex-grow: 1;
@@ -337,8 +434,8 @@
 .cauldron-hub {
     align-items: center;
     justify-content: center;
-    width: 220px;
-    height: 220px;
+    width: 244px;
+    height: 244px;
     align-self: center;
     margin-top: 4px;
     margin-bottom: 4px;
@@ -346,8 +443,8 @@
 
 .cauldron-stage {
     position: relative;
-    width: 220px;
-    height: 220px;
+    width: 244px;
+    height: 244px;
     align-items: center;
     justify-content: center;
 }
@@ -380,13 +477,13 @@
     scale: 0.96 0.96;
 }
 
-.cauldron-hub #cauldron-n { top: 0; left: 74px; }
+.cauldron-hub #cauldron-n { top: 1px; left: 86px; }
 
-.cauldron-hub #cauldron-e { right: 0; top: 74px; }
+.cauldron-hub #cauldron-e { right: 0; top: 86px; }
 
-.cauldron-hub #cauldron-s { bottom: 0; left: 74px; }
+.cauldron-hub #cauldron-s { bottom: 0; left: 86px; }
 
-.cauldron-hub #cauldron-w { left: 0; top: 74px; }
+.cauldron-hub #cauldron-w { left: 0; top: 86px; }
 
 .cauldron-hub .cauldron--red { background-color: var(--reagent-sulphur); }
 .cauldron-hub .cauldron--blue { background-color: var(--reagent-aqua); }
@@ -439,34 +536,44 @@
 
 .codex-hub {
     position: absolute;
-    width: 58px;
-    height: 58px;
-    border-radius: 29px;
-    top: 81px;
-    left: 81px;
+    width: 78px;
+    height: 78px;
+    border-radius: 39px;
+    top: 83px;
+    left: 83px;
     background-color: rgb(22, 10, 28);
     border-width: 2px;
     border-color: var(--gold-bright);
     align-items: center;
     justify-content: center;
     -unity-text-align: middle-center;
+    padding: 4px 2px;
 }
 
 .codex-hub__title {
-    font-size: 7px;
+    width: 100%;
+    font-size: 8px;
     color: var(--muted);
     letter-spacing: 0.5px;
-    margin-bottom: 1px;
+    margin-bottom: 2px;
+    -unity-text-align: middle-center;
+    white-space: nowrap;
 }
 
 .codex-hub__count {
-    font-size: 12px;
+    width: 100%;
+    font-size: 13px;
     -unity-font-style: bold;
     color: var(--ink);
-    margin-bottom: 1px;
+    margin-bottom: 2px;
+    -unity-text-align: middle-center;
+    white-space: nowrap;
 }
 
 .codex-hub__status {
+    width: 100%;
     font-size: 7px;
     color: var(--gold-bright);
+    -unity-text-align: middle-center;
+    white-space: nowrap;
 }

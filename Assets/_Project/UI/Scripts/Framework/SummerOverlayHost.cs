@@ -39,8 +39,7 @@ namespace Kismeta.UI
             BuildHouse,
             PlaceWards,
             Activate,
-            EndSummer,
-            LightTip
+            EndSummer
         }
 
         ActiveOverlay _active = ActiveOverlay.None;
@@ -55,7 +54,7 @@ namespace Kismeta.UI
         public int? ActiveActionGroupIndex => _active switch
         {
             ActiveOverlay.CraftBuildSheet or ActiveOverlay.CraftReagent or ActiveOverlay.BuildHouse
-                or ActiveOverlay.PlaceWards or ActiveOverlay.LightTip => 0,
+                or ActiveOverlay.PlaceWards => 0,
             ActiveOverlay.ConsortSheet => 1,
             ActiveOverlay.Activate => 2,
             _ => null
@@ -153,50 +152,6 @@ namespace Kismeta.UI
             RefreshOpenOverlay();
         }
 
-        public void ShowLightTip()
-        {
-            Dismiss();
-            if (_layout == null) return;
-
-            var tip = new VisualElement();
-            tip.AddToClassList("sheet");
-
-            var header = new VisualElement();
-            header.AddToClassList("sheet__header");
-            var title = new Label("Light a cauldron");
-            title.AddToClassList("statusbar__title");
-            title.style.color = new StyleColor(new Color(127f / 255f, 196f / 255f, 168f / 255f));
-            header.Add(title);
-
-            var body = new VisualElement();
-            body.AddToClassList("sheet__body");
-            body.Add(new Label(
-                "Activating a crucible card moves its coal to the matching cauldron — lighting it. " +
-                "A lit cauldron lets you craft that element's reagent.")
-            {
-                style =
-                {
-                    fontSize = 12,
-                    color = new StyleColor(new Color(243f / 255f, 233f / 255f, 210f / 255f)),
-                    whiteSpace = WhiteSpace.Normal
-                }
-            });
-
-            var close = new Button { text = "Got it" };
-            close.AddToClassList("btn");
-            close.AddToClassList("btn--primary");
-            close.style.marginTop = 12;
-            close.clicked += Dismiss;
-            body.Add(close);
-
-            tip.Add(header);
-            tip.Add(body);
-
-            _active = ActiveOverlay.LightTip;
-            _layout.ShowOverlayElement(tip);
-            NotifyOverlayChanged();
-        }
-
         public void Dismiss()
         {
             _active = ActiveOverlay.None;
@@ -258,7 +213,6 @@ namespace Kismeta.UI
             _sheets.OnCraft = () => { Dismiss(); ShowCraftReagent(); };
             _sheets.OnBuild = () => { Dismiss(); ShowBuildHouse(); };
             _sheets.OnWard = () => { Dismiss(); ShowPlaceWards(); };
-            _sheets.OnLight = () => { Dismiss(); ShowLightTip(); };
             _sheets.OnTrade = () => OnTrade?.Invoke();
             _sheets.OnDuel = () => OnDuel?.Invoke();
             _sheets.OnGambit = () => OnGambit?.Invoke();

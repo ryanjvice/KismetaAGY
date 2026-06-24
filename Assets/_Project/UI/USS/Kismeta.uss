@@ -767,11 +767,22 @@
     justify-content: flex-start;
     align-items: flex-start;
     align-content: flex-start;
-    row-gap: 6px;
-    column-gap: 6px;
     width: 100%;
     min-height: var(--card-chip-h);
     overflow: visible;
+}
+
+.dock__strip .card-chip {
+    width: var(--card-chip-w);
+    min-width: var(--card-chip-w);
+    max-width: var(--card-chip-w);
+    height: var(--card-chip-h);
+    min-height: var(--card-chip-h);
+    max-height: var(--card-chip-h);
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-right: 8px;
+    margin-bottom: 8px;
 }
 
 /* ---------- Accessibility ---------- */
@@ -788,10 +799,12 @@
 /* ---------- Cards ---------- */
 .card-chip {
     width: var(--card-chip-w);
+    height: var(--card-chip-h);
     min-height: var(--card-chip-h);
     flex-shrink: 0;
+    flex-grow: 0;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
     border-radius: var(--radius-sm);
     border-width: 1px;
     border-color: var(--gold-deep);
@@ -824,7 +837,7 @@
     min-height: 12px;
 }
 .card-chip__corner {
-    min-width: 12px;
+    min-width: 14px;
     flex-shrink: 0;
 }
 .card-chip__corner--left {
@@ -836,6 +849,8 @@
 .card-chip__planet {
     font-size: var(--card-chip-planet);
     color: rgba(255, 255, 255, 0.92);
+    padding: 0;
+    margin: 0;
     -unity-text-align: middle-right;
 }
 .card-chip__rank {
@@ -850,7 +865,12 @@
 }
 .card-chip__rank--compact { font-size: 10px; }
 .card-chip__suit {
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/tabler-icons.asset");
     font-size: var(--card-chip-icon);
+    color: white;
+    padding: 0;
+    margin: 0;
+    -unity-text-align: middle-center;
 }
 .card-chip__bottom {
     flex-shrink: 0;
@@ -1014,16 +1034,31 @@
     font-size: var(--font-title);
 }
 
-.card-chip--inspectable { cursor: pointer; }
+.card-chip--inspectable {
+    cursor: pointer;
+    padding-bottom: 12px;
+}
+
+.card-chip--inspectable .card-chip__bottom {
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.card-chip--inspectable .card-chip__rank {
+    flex-shrink: 1;
+    min-height: 0;
+}
 
 .card-chip .card-chip__inspect {
-    position: relative;
-    bottom: auto;
-    left: auto;
-    right: auto;
-    height: auto;
+    height: 10px;
+    padding: 0;
+    margin: 0;
     font-size: 9px;
-    margin-top: 0;
     color: rgba(255, 255, 255, 0.95);
     -unity-text-align: middle-center;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/tabler-icons.asset");

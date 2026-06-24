@@ -33,16 +33,6 @@
                     </engine:VisualElement>
                 </engine:Button>
 
-                <engine:Button name="act-light" class="action-sheet__row">
-                    <engine:VisualElement class="action-sheet__icon" style="background-color: rgb(58,46,14); border-color: rgb(201, 150, 47);">
-                        <engine:Label text="&#xec3a;" class="ti-icon" style="color: rgb(232, 185, 74);" />
-                    </engine:VisualElement>
-                    <engine:VisualElement style="flex-grow: 1;">
-                        <engine:Label text="Light a cauldron" style="font-size: 13px; color: rgb(243, 233, 210);" />
-                        <engine:Label text="how cauldrons ignite (via Activate)" class="action-sheet__sub" />
-                    </engine:VisualElement>
-                </engine:Button>
-
                 <engine:Button name="act-build" class="action-sheet__row">
                     <engine:VisualElement class="action-sheet__icon" style="background-color: rgb(36, 16, 40); border-color: rgb(106, 74, 138);">
                         <engine:Label text="&#xeac4;" class="ti-icon" style="color: rgb(205, 176, 224);" />

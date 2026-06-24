@@ -14,7 +14,7 @@ namespace Kismeta.UI.Editor
     {
         private const string FontsDir = "Assets/_Project/UI/Fonts";
         private const int SamplingPointSize = 90;
-        private const int AtlasPadding = 4;
+        private const int AtlasPadding = 8;
         private const int AtlasSize = 1024;
 
         private const string ZodiacSymbolCharset = "♈♉♊♋♌♍♎♏♐♑♒♓";

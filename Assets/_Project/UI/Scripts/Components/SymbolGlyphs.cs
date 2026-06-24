@@ -43,6 +43,19 @@ namespace Kismeta.UI.Components
             return label;
         }
 
+        /// <summary>Compact Tabler suit icon for card chips — avoids .ti-icon global sizing.</summary>
+        public static Label CreateChipSuitLabel(string glyph, Color? tint = null)
+        {
+            var label = new Label(glyph);
+            label.text = glyph;
+            label.RemoveFromClassList(ZodiacFontClass);
+            label.RemoveFromClassList(TablerIconClass);
+            label.AddToClassList("card-chip__suit");
+            if (tint.HasValue)
+                label.style.color = tint.Value;
+            return label;
+        }
+
         public static Label CreateZodiacLabel(string glyph, string? ussClass = null)
         {
             var label = new Label(glyph);

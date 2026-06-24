@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!28 &-6813858076778299589
+--- !u!28 &-1612346355052530836
 Texture2D:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: NotoColorEmoji-Regular
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.TextCore.Text.FontAsset
   m_Version: 1.1.0
-  m_Material: {fileID: 5940532000095218946}
+  m_Material: {fileID: 3672137561070159101}
   m_SourceFontFileGUID: 1f09d81ce145ff241b3f6e66a7a5e259
   m_fontAssetCreationEditorSettings:
     sourceFontFileGUID: 
@@ -287,126 +287,6 @@ MonoBehaviour:
     m_Scale: 1
     m_AtlasIndex: 0
     m_ClassDefinitionType: 0
-  - m_Index: 2595
-    m_Metrics:
-      m_Width: 0
-      m_Height: 0
-      m_HorizontalBearingX: 0
-      m_HorizontalBearingY: 0
-      m_HorizontalAdvance: 112.0625
-    m_GlyphRect:
-      m_X: 0
-      m_Y: 0
-      m_Width: 0
-      m_Height: 0
-    m_Scale: 1
-    m_AtlasIndex: 0
-    m_ClassDefinitionType: 0
-  - m_Index: 3464
-    m_Metrics:
-      m_Width: 0
-      m_Height: 0
-      m_HorizontalBearingX: 0
-      m_HorizontalBearingY: 0
-      m_HorizontalAdvance: 112.0625
-    m_GlyphRect:
-      m_X: 0
-      m_Y: 0
-      m_Width: 0
-      m_Height: 0
-    m_Scale: 1
-    m_AtlasIndex: 0
-    m_ClassDefinitionType: 0
-  - m_Index: 2601
-    m_Metrics:
-      m_Width: 0
-      m_Height: 0
-      m_HorizontalBearingX: 0
-      m_HorizontalBearingY: 0
-      m_HorizontalAdvance: 112.0625
-    m_GlyphRect:
-      m_X: 0
-      m_Y: 0
-      m_Width: 0
-      m_Height: 0
-    m_Scale: 1
-    m_AtlasIndex: 0
-    m_ClassDefinitionType: 0
-  - m_Index: 2337
-    m_Metrics:
-      m_Width: 0
-      m_Height: 0
-      m_HorizontalBearingX: 0
-      m_HorizontalBearingY: 0
-      m_HorizontalAdvance: 112.0625
-    m_GlyphRect:
-      m_X: 0
-      m_Y: 0
-      m_Width: 0
-      m_Height: 0
-    m_Scale: 1
-    m_AtlasIndex: 0
-    m_ClassDefinitionType: 0
-  - m_Index: 3682
-    m_Metrics:
-      m_Width: 0
-      m_Height: 0
-      m_HorizontalBearingX: 0
-      m_HorizontalBearingY: 0
-      m_HorizontalAdvance: 112.0625
-    m_GlyphRect:
-      m_X: 0
-      m_Y: 0
-      m_Width: 0
-      m_Height: 0
-    m_Scale: 1
-    m_AtlasIndex: 0
-    m_ClassDefinitionType: 0
-  - m_Index: 3411
-    m_Metrics:
-      m_Width: 0
-      m_Height: 0
-      m_HorizontalBearingX: 0
-      m_HorizontalBearingY: 0
-      m_HorizontalAdvance: 112.0625
-    m_GlyphRect:
-      m_X: 0
-      m_Y: 0
-      m_Width: 0
-      m_Height: 0
-    m_Scale: 1
-    m_AtlasIndex: 0
-    m_ClassDefinitionType: 0
-  - m_Index: 3631
-    m_Metrics:
-      m_Width: 0
-      m_Height: 0
-      m_HorizontalBearingX: 0
-      m_HorizontalBearingY: 0
-      m_HorizontalAdvance: 112.0625
-    m_GlyphRect:
-      m_X: 0
-      m_Y: 0
-      m_Width: 0
-      m_Height: 0
-    m_Scale: 1
-    m_AtlasIndex: 0
-    m_ClassDefinitionType: 0
-  - m_Index: 3917
-    m_Metrics:
-      m_Width: 0
-      m_Height: 0
-      m_HorizontalBearingX: 0
-      m_HorizontalBearingY: 0
-      m_HorizontalAdvance: 112.0625
-    m_GlyphRect:
-      m_X: 0
-      m_Y: 0
-      m_Width: 0
-      m_Height: 0
-    m_Scale: 1
-    m_AtlasIndex: 0
-    m_ClassDefinitionType: 0
   m_CharacterTable:
   - m_ElementType: 1
     m_Unicode: 9800
@@ -456,40 +336,8 @@ MonoBehaviour:
     m_Unicode: 9811
     m_GlyphIndex: 2702
     m_Scale: 1
-  - m_ElementType: 1
-    m_Unicode: 129668
-    m_GlyphIndex: 2595
-    m_Scale: 1
-  - m_ElementType: 1
-    m_Unicode: 127863
-    m_GlyphIndex: 3464
-    m_Scale: 1
-  - m_ElementType: 1
-    m_Unicode: 129689
-    m_GlyphIndex: 2601
-    m_Scale: 1
-  - m_ElementType: 1
-    m_Unicode: 128481
-    m_GlyphIndex: 2337
-    m_Scale: 1
-  - m_ElementType: 1
-    m_Unicode: 128293
-    m_GlyphIndex: 3682
-    m_Scale: 1
-  - m_ElementType: 1
-    m_Unicode: 127808
-    m_GlyphIndex: 3411
-    m_Scale: 1
-  - m_ElementType: 1
-    m_Unicode: 128167
-    m_GlyphIndex: 3631
-    m_Scale: 1
-  - m_ElementType: 1
-    m_Unicode: 129718
-    m_GlyphIndex: 3917
-    m_Scale: 1
   m_AtlasTextures:
-  - {fileID: -6813858076778299589}
+  - {fileID: -1612346355052530836}
   m_AtlasTextureIndex: 0
   m_IsMultiAtlasTexturesEnabled: 1
   m_GetFontFeatures: 1
@@ -539,7 +387,7 @@ MonoBehaviour:
   m_BoldStyleSpacing: 7
   m_ItalicStyleSlant: 35
   m_TabMultiple: 10
---- !u!21 &5940532000095218946
+--- !u!21 &3672137561070159101
 Material:
   serializedVersion: 8
   m_ObjectHideFlags: 1
@@ -563,7 +411,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: -6813858076778299589}
+        m_Texture: {fileID: -1612346355052530836}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []

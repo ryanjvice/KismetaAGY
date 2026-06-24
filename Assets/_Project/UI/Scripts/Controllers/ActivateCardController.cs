@@ -64,6 +64,7 @@ namespace Kismeta.UI.Controllers
                 if (detail != null)
                     detail.style.display = DisplayStyle.None;
 
+                SetIntroVisible(true);
                 RefreshAllSlots();
                 _uiInitialized = true;
             }
@@ -78,7 +79,17 @@ namespace Kismeta.UI.Controllers
             else if (_slotIndex >= 0)
                 RefreshFormulaDetail();
             else
+            {
+                SetIntroVisible(true);
                 DisableActivate("Select a card to activate");
+            }
+        }
+
+        void SetIntroVisible(bool visible)
+        {
+            var intro = El("activate-intro-wrap");
+            if (intro != null)
+                intro.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         static bool CanActivateSlot(PlayerCrucibleSlot slot) =>
@@ -179,6 +190,8 @@ namespace Kismeta.UI.Controllers
             var detail = El("formula-detail");
             if (detail != null)
                 detail.style.display = DisplayStyle.Flex;
+
+            SetIntroVisible(false);
 
             var panel = El("formula-card-panel");
             if (panel != null)
@@ -324,7 +337,7 @@ namespace Kismeta.UI.Controllers
             var slot = new VisualElement();
             slot.AddToClassList("formula-slot");
             slot.AddToClassList("formula-slot--empty");
-            slot.style.marginRight = 6;
+            slot.style.marginRight = 4;
             var lbl = new Label("?");
             lbl.style.fontSize = 13;
             lbl.style.color = new StyleColor(new Color(106f / 255f, 90f / 255f, 74f / 255f));

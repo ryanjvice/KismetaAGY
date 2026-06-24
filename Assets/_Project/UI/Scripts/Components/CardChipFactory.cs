@@ -63,8 +63,8 @@ namespace Kismeta.UI.Components
             suitCorner.pickingMode = PickingMode.Ignore;
             if (suit != Suit.None)
             {
-                var suitGlyph = SymbolGlyphs.CreateTablerLabel(
-                    SymbolGlyphs.SuitGlyph(suit), "card-chip__suit", Color.white);
+                var suitGlyph = SymbolGlyphs.CreateChipSuitLabel(
+                    SymbolGlyphs.SuitGlyph(suit), Color.white);
                 suitGlyph.pickingMode = PickingMode.Ignore;
                 suitCorner.Add(suitGlyph);
             }

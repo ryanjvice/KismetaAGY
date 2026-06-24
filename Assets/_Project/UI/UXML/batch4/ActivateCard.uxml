@@ -24,7 +24,12 @@
 
         <engine:ScrollView name="activate-scroll" class="screen__body activate-scroll">
             <engine:VisualElement style="flex-shrink: 0;">
-                <engine:VisualElement style="padding: 12px 14px 4px;">
+                <engine:VisualElement name="activate-intro-wrap" class="tip tip--caution">
+                    <engine:Label name="activate-intro"
+                                  text="Activating a crucible card moves its coal to the matching cauldron — lighting it. A lit cauldron lets you craft that element's reagent."
+                                  class="tip__text" style="color: rgb(212,184,122);" />
+                </engine:VisualElement>
+                <engine:VisualElement class="activate-section">
                     <engine:Label text="1 · choose a dormant crucible card" class="eyebrow" />
                     <engine:VisualElement name="crucible-slots" class="crucible-slots">
 
@@ -79,7 +84,7 @@
                     </engine:VisualElement>
                 </engine:VisualElement>
 
-                <engine:VisualElement name="formula-detail" style="padding: 6px 14px 12px; display: none;">
+                <engine:VisualElement name="formula-detail" class="activate-section activate-section--detail" style="display: none;">
                     <engine:Label text="2 · the formula" class="eyebrow" />
 
                     <engine:VisualElement name="formula-card-panel" class="formula-card">
@@ -100,10 +105,10 @@
                         <engine:VisualElement name="formula-chips" style="flex-direction: row; justify-content: center; flex-wrap: wrap;" />
 
                         <engine:Label name="formula-status" text=""
-                                      style="font-size: 9px; color: rgb(138,122,106); -unity-text-align: middle-center; margin-top: 8px; white-space: normal;" />
+                                      class="formula-status" style="font-size: 9px; color: rgb(138,122,106); -unity-text-align: middle-center; white-space: normal;" />
                     </engine:VisualElement>
 
-                    <engine:VisualElement class="tip tip--caution" style="margin: 9px 0 0;">
+                    <engine:VisualElement class="tip tip--caution" style="margin-top: 6px; margin-bottom: 0;">
                         <engine:Label name="formula-consequence" text=""
                                       class="tip__text" style="color: rgb(212,184,122);" />
                     </engine:VisualElement>

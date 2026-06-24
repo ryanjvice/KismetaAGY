@@ -63,7 +63,7 @@ namespace Kismeta.UI.Components
             var color = CauldronNameFor(suit);
             note.text = lit
                 ? $"{reagent} needs the lit {color} cauldron — discard {need} {suit}."
-                : $"The {color} cauldron must be lit before crafting {reagent}.";
+                : $"The {color} cauldron must be lit before crafting {reagent}. Activate a crucible card to light it.";
         }
 
         public static void RefreshForgeButton(VisualElement root, GameSession session, PlayerState player,

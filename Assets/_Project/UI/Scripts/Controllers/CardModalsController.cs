@@ -359,8 +359,6 @@ namespace Kismeta.UI.Controllers
 
             bool sel = _payment.Contains(id);
                 var chip = CardChipFactory.CreateFromDefinition(def, selected: sel);
-            chip.style.marginRight = 4;
-            chip.style.marginBottom = 4;
             string captured = id;
             chip.RegisterCallback<ClickEvent>(_ =>
             {
