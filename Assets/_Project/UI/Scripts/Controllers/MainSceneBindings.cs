@@ -282,8 +282,7 @@ namespace Kismeta.UI.Controllers
                 var def = db.GetById(inst.DefinitionId);
                 if (def == null) continue;
                 strip.Add(CardChipFactory.CreateFromDefinition(
-                    def.Rank.ToString(), def.Id, db,
-                    instanceId: cardId, onInspect: onInspect));
+                    def, instanceId: cardId, onInspect: onInspect));
             }
         }
     }

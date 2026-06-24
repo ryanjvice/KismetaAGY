@@ -76,7 +76,7 @@ namespace Kismeta.UI.Components
                 if (def == null) continue;
 
                 bool isSelected = selected.Contains(cardId);
-                var chip = CardChipFactory.Create(def.Rank.ToString(), def.Suit, selected: isSelected);
+                var chip = CardChipFactory.CreateFromDefinition(def, selected: isSelected);
                 chip.userData = cardId;
                 chip.RegisterCallback<ClickEvent>(_ =>
                 {

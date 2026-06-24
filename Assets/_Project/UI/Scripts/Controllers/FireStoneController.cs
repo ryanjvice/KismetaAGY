@@ -141,7 +141,7 @@ namespace Kismeta.UI.Controllers
                 if (def == null) continue;
 
                 bool sel = _selected.Contains(cardId);
-                var chip = CardChipFactory.Create(def.Rank.ToString(), def.Suit, selected: sel);
+                var chip = CardChipFactory.CreateFromDefinition(def, selected: sel);
                 chip.userData = cardId;
                 chip.RegisterCallback<ClickEvent>(_ => ToggleCard(cardId, crucibleDef));
                 host.Add(chip);

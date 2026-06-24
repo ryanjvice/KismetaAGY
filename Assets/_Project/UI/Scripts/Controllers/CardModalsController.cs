@@ -358,7 +358,7 @@ namespace Kismeta.UI.Controllers
             if (def == null || def.IsMajorArcana) return;
 
             bool sel = _payment.Contains(id);
-            var chip = CardChipFactory.Create(def.Rank.ToString(), def.Suit, selected: sel);
+                var chip = CardChipFactory.CreateFromDefinition(def, selected: sel);
             chip.style.marginRight = 4;
             chip.style.marginBottom = 4;
             string captured = id;

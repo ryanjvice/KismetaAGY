@@ -119,7 +119,7 @@ namespace Kismeta.UI.Controllers
                 bool isOverLimit = !marked && zoneOver && overCount > 0;
                 if (isOverLimit) overCount--;
 
-                var chip = CardChipFactory.Create(def.Rank.ToString(), def.Suit, selected: marked);
+                var chip = CardChipFactory.CreateFromDefinition(def, selected: marked);
                 if (isOverLimit)
                     chip.AddToClassList("card-chip--overlimit");
 

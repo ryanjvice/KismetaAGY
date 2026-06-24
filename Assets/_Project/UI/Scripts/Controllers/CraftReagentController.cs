@@ -231,8 +231,7 @@ namespace Kismeta.UI.Controllers
                 var def = inst != null ? db.GetById(inst.DefinitionId) : null;
                 if (def == null) continue;
 
-                var chip = CardChipFactory.Create(
-                    SummerCardPickBindings.CompactRank(def.Rank), def.Suit);
+                var chip = CardChipFactory.CreateFromDefinition(def);
                 chip.style.width = 24;
                 chip.style.height = 34;
                 chip.style.marginLeft = cardsRow.childCount > 0 ? 3 : 0;

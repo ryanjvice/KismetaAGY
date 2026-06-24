@@ -42,7 +42,7 @@ namespace Kismeta.UI.Components
                 var inst = session.GetCard(cardId);
                 var def = inst != null ? db.GetById(inst.DefinitionId) : null;
                 if (def == null) continue;
-                var chip = CardChipFactory.Create(def.Rank.ToString(), def.Suit);
+                var chip = CardChipFactory.CreateFromDefinition(def);
                 chip.style.marginRight = 5;
                 host.Add(chip);
             }

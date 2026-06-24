@@ -37,7 +37,7 @@ namespace Kismeta.UI.Components
                 bool matches = filterSuit == null || def.Suit == filterSuit.Value
                     || (filterSuit == Suit.None);
 
-                var chip = CardChipFactory.Create(CompactRank(def.Rank), def.Suit, selected: isSelected);
+                var chip = CardChipFactory.CreateFromDefinition(def, selected: isSelected);
                 chip.userData = cardId;
 
                 if (filterSuit != null && filterSuit != Suit.None && def.Suit != filterSuit.Value)
@@ -49,25 +49,6 @@ namespace Kismeta.UI.Components
                 pool.Add(chip);
             }
         }
-
-        public static string CompactRank(Rank rank) => rank switch
-        {
-            Rank.Ace => "A",
-            Rank.Two => "2",
-            Rank.Three => "3",
-            Rank.Four => "4",
-            Rank.Five => "5",
-            Rank.Six => "6",
-            Rank.Seven => "7",
-            Rank.Eight => "8",
-            Rank.Nine => "9",
-            Rank.Ten => "10",
-            Rank.Princess => "P",
-            Rank.Knight => "N",
-            Rank.Queen => "Q",
-            Rank.King => "K",
-            _ => "?"
-        };
 
         static void WireChip(VisualElement chip, Action onTap)
         {

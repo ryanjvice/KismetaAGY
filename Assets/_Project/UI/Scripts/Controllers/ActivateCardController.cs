@@ -279,7 +279,7 @@ namespace Kismeta.UI.Controllers
                     if (def.Suit != formula.RequiredSuit) continue;
 
                     bool sel = _selected.Contains(id);
-                    var chip = CardChipFactory.Create(def.Rank.ToString(), def.Suit, selected: sel);
+                    var chip = CardChipFactory.CreateFromDefinition(def, selected: sel);
                     chip.userData = id;
                     chip.RegisterCallback<ClickEvent>(_ => ToggleSpreadCard(id, formula));
                     chips.Add(chip);
@@ -308,7 +308,7 @@ namespace Kismeta.UI.Controllers
                         new StyleColor(new Color(201f / 255f, 150f / 255f, 47f / 255f));
             }
 
-            var rank = new Label(def.Rank.ToString());
+            var rank = new Label(SymbolGlyphs.CompactRank(def.Rank));
             rank.AddToClassList("card-chip__rank");
             chip.Add(rank);
             return chip;

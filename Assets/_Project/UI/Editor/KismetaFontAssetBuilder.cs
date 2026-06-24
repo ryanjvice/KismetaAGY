@@ -18,6 +18,7 @@ namespace Kismeta.UI.Editor
         private const int AtlasSize = 1024;
 
         private const string ZodiacSymbolCharset = "♈♉♊♋♌♍♎♏♐♑♒♓";
+        private const string PlanetSymbolCharset = "☉☽☿♀♂♃♄";
 
         // Latin display copy + zodiac names + astrological symbols + common punctuation.
         private const string CommonUiCharset =
@@ -25,7 +26,8 @@ namespace Kismeta.UI.Editor
             " .,!?'\"-:;·—–()&" +
             "ARIES TAURUS GEMINI CANCER LEO VIRGO LIBRA SCORPIO SAGITTARIUS CAPRICORN AQUARIUS PISCES" +
             "KISMETAAlchemists of the Great Year" +
-            ZodiacSymbolCharset;
+            ZodiacSymbolCharset +
+            PlanetSymbolCharset;
 
         [MenuItem("Kismeta/UI/Create UI Font Assets")]
         public static void CreateAllFontAssets()

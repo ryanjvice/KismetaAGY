@@ -31,7 +31,7 @@ namespace Kismeta.UI.Components
                 if (def == null) continue;
 
                 bool sel = selected.Contains(id);
-                var chip = CardChipFactory.Create(def.Rank.ToString(), def.Suit, selected: sel);
+                var chip = CardChipFactory.CreateFromDefinition(def, selected: sel);
                 chip.style.width = 36;
                 chip.style.height = 50;
                 chip.style.marginRight = 6;

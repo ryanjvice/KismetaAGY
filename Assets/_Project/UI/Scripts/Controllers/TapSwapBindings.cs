@@ -47,7 +47,7 @@ namespace Kismeta.UI.Controllers
             if (def == null) return new VisualElement();
 
             int align = CardAlignPoints(session, cardId, referenceSign);
-            var chip = CardChipFactory.Create(def.Rank.ToString(), def.Suit, aligned: align > 0);
+            var chip = CardChipFactory.CreateFromDefinition(def, aligned: align > 0);
             chip.userData = cardId;
             chip.pickingMode = PickingMode.Position;
             chip.style.cursor = new StyleCursor(StyleKeyword.Auto);

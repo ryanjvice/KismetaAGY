@@ -146,10 +146,8 @@
                 <engine:Label text="Keep 2 of 4" class="tarot__name" style="color: rgb(188,216,240); font-size: 16px;" />
                 <engine:Label text="The rest return to the bottom of the deck." style="font-size: 10px; color: rgb(127,160,196); white-space: normal; -unity-text-align: middle-center;" />
             </engine:VisualElement>
-            <engine:VisualElement class="card-modal__body">
-                <engine:ScrollView style="max-height: 200px;">
-                    <engine:VisualElement name="moon-cards" class="fate-chip-row" />
-                </engine:ScrollView>
+            <engine:VisualElement class="card-modal__body card-modal__body--grow">
+                <engine:VisualElement name="moon-cards" class="fate-chip-row moon-cards" />
                 <engine:Label name="moon-count" text="Keeping: 0 / 2" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 8px; margin-bottom: 8px;" />
                 <engine:Button name="moon-confirm" text="Confirm keep" class="btn btn--primary" />
             </engine:VisualElement>

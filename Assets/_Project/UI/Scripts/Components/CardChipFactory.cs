@@ -1,15 +1,47 @@
 using System;
-using UnityEngine.UIElements;
 using Kismeta.Core.Domain;
-using Kismeta.Core.Rules;
+using Kismeta.Core.Entities;
+using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
 {
     /// <summary>Factory for compact card chips used in spreads, docks, and trays.</summary>
     public static class CardChipFactory
     {
-        public static VisualElement Create(string rankLabel, Suit suit, bool selected = false, bool aligned = false,
-            string? instanceId = null, Action<string>? onInspect = null)
+        public static VisualElement Create(
+            Rank rank,
+            Suit suit,
+            Planet planet,
+            bool selected = false,
+            bool aligned = false,
+            string? instanceId = null,
+            Action<string>? onInspect = null)
+        {
+            return CreateInternal(SymbolGlyphs.CompactRank(rank), suit, planet, selected, aligned,
+                instanceId, onInspect);
+        }
+
+        public static VisualElement CreateFromDefinition(
+            CardDefinition def,
+            bool selected = false,
+            bool aligned = false,
+            string? instanceId = null,
+            Action<string>? onInspect = null,
+            string? rankLabelOverride = null)
+        {
+            var rankLabel = rankLabelOverride ?? SymbolGlyphs.CompactRank(def.Rank);
+            return CreateInternal(rankLabel, def.Suit, def.Planet, selected, aligned,
+                instanceId, onInspect);
+        }
+
+        static VisualElement CreateInternal(
+            string rankLabel,
+            Suit suit,
+            Planet planet,
+            bool selected,
+            bool aligned,
+            string? instanceId,
+            Action<string>? onInspect)
         {
             var chip = new VisualElement();
             chip.AddToClassList("card-chip");
@@ -24,9 +56,18 @@ namespace Kismeta.UI.Components
                 chip.Add(dot);
             }
 
-            var rank = new Label(rankLabel);
-            rank.AddToClassList("card-chip__rank");
-            chip.Add(rank);
+            if (planet != Planet.None)
+            {
+                var planetGlyph = SymbolGlyphs.CreatePlanetLabel(
+                    SymbolGlyphs.PlanetGlyph(planet), "card-chip__planet");
+                chip.Add(planetGlyph);
+            }
+
+            var rankLbl = new Label(rankLabel);
+            rankLbl.AddToClassList("card-chip__rank");
+            if (rankLabel.Length >= 2)
+                rankLbl.AddToClassList("card-chip__rank--compact");
+            chip.Add(rankLbl);
 
             if (suit != Suit.None)
             {
@@ -41,19 +82,6 @@ namespace Kismeta.UI.Components
             }
 
             return chip;
-        }
-
-        public static VisualElement CreateFromDefinition(string rankLabel, string definitionId,
-            ICardDatabase? db, bool selected = false, string? instanceId = null, Action<string>? onInspect = null)
-        {
-            var suit = Suit.Wands;
-            if (db != null)
-            {
-                var def = db.GetById(definitionId);
-                if (def != null)
-                    suit = def.Suit;
-            }
-            return Create(rankLabel, suit, selected, instanceId: instanceId, onInspect: onInspect);
         }
 
         static string SuitClass(Suit suit) => suit switch

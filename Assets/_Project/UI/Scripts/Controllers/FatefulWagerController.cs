@@ -91,7 +91,7 @@ namespace Kismeta.UI.Controllers
             if (def == null) return;
 
             bool staked = _staked.Contains(cardId);
-            var chip = CardChipFactory.Create(def.Rank.ToString(), def.Suit, selected: staked);
+            var chip = CardChipFactory.CreateFromDefinition(def, selected: staked);
             chip.userData = cardId;
             chip.RegisterCallback<ClickEvent>(_ =>
             {

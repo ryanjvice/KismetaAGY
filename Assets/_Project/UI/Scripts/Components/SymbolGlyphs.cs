@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
 {
-    /// <summary>Unicode symbol glyphs — zodiac via Amarante, suit icons via Noto Color Emoji.</summary>
+    /// <summary>Unicode symbol glyphs — zodiac/planets via Amarante, suit icons via Noto Color Emoji.</summary>
     public static class SymbolGlyphs
     {
         public const string EmojiFontClass = "font-emoji";
@@ -41,6 +41,40 @@ namespace Kismeta.UI.Components
                 label.AddToClassList(ussClass);
             return label;
         }
+
+        public static Label CreatePlanetLabel(string glyph, string? ussClass = null)
+            => CreateZodiacLabel(glyph, ussClass);
+
+        public static string CompactRank(Rank rank) => rank switch
+        {
+            Rank.Ace => "A",
+            Rank.Two => "2",
+            Rank.Three => "3",
+            Rank.Four => "4",
+            Rank.Five => "5",
+            Rank.Six => "6",
+            Rank.Seven => "7",
+            Rank.Eight => "8",
+            Rank.Nine => "9",
+            Rank.Ten => "10",
+            Rank.Princess => "Ps",
+            Rank.Knight => "Kn",
+            Rank.Queen => "Qu",
+            Rank.King => "Kg",
+            _ => "?"
+        };
+
+        public static string PlanetGlyph(Planet planet) => planet switch
+        {
+            Planet.Sun => "\u2609",
+            Planet.Moon => "\u263D",
+            Planet.Mercury => "\u263F",
+            Planet.Venus => "\u2640",
+            Planet.Mars => "\u2642",
+            Planet.Jupiter => "\u2643",
+            Planet.Saturn => "\u2644",
+            _ => "?"
+        };
 
         public static string Zodiac(ZodiacSign sign) => sign switch
         {

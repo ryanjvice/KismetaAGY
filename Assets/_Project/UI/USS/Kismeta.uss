@@ -715,7 +715,20 @@
 .card-chip--cups { background-color: var(--suit-cups); }
 .card-chip--pentacles { background-color: var(--suit-pentacles); }
 .card-chip--swords { background-color: var(--suit-swords); }
-.card-chip__rank { font-size: var(--font-body); color: white; -unity-font-style: bold; }
+.card-chip__planet {
+    position: absolute;
+    left: 2px;
+    top: 1px;
+    font-size: var(--font-micro);
+    color: rgba(255, 255, 255, 0.92);
+}
+.card-chip__rank {
+    font-size: var(--font-body);
+    color: white;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+.card-chip__rank--compact { font-size: var(--font-micro); }
 .card-chip__suit {
     position: absolute;
     left: 2px;

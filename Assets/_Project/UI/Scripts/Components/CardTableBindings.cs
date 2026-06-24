@@ -142,7 +142,7 @@ namespace Kismeta.UI.Components
                             cardId,
                             aligned: false,
                             onInspect,
-                            def.IsMajorArcana ? "★" : def.Rank.ToString()));
+                            def.IsMajorArcana ? "★" : null));
                     }
                     block.Add(arcRow);
                 }
@@ -193,12 +193,12 @@ namespace Kismeta.UI.Components
         static VisualElement MakeChip(CardDefinition def, string cardId, bool aligned, Action<string>? onInspect,
             string? rankLabel = null)
         {
-            var chip = CardChipFactory.Create(
-                rankLabel ?? def.Rank.ToString(),
-                def.Suit,
+            var chip = CardChipFactory.CreateFromDefinition(
+                def,
                 aligned: aligned,
                 instanceId: cardId,
-                onInspect: onInspect);
+                onInspect: onInspect,
+                rankLabelOverride: rankLabel);
             chip.style.width = 30;
             chip.style.height = 42;
             chip.style.marginRight = 4;
