@@ -102,6 +102,10 @@
                                   class="tip__text" style="color: rgb(184,154,192);" />
                 </engine:VisualElement>
             </engine:VisualElement>
+
+            <engine:VisualElement class="stage-cta stage-cta--single">
+                <engine:Button name="commune-btn" text="Roll your zodiac die" class="actionbtn btn btn--primary" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement class="screen__inventory">
@@ -117,10 +121,6 @@
                 </engine:VisualElement>
                 <engine:VisualElement name="spread-strip" class="dock__strip" />
             </engine:VisualElement>
-        </engine:VisualElement>
-
-        <engine:VisualElement class="actionbar">
-            <engine:Button name="commune-btn" text="Commune" class="actionbtn btn btn--primary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

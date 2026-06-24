@@ -44,6 +44,18 @@
                 </engine:VisualElement>
                 <engine:Label name="hint-label" text="Your turn" style="font-size: 11px; color: rgb(243, 233, 210); margin-top: 10px;" />
             </engine:VisualElement>
+
+            <engine:VisualElement class="stage-cta stage-cta--multi">
+                <engine:VisualElement class="actionbar__row actionbar__row--primary">
+                    <engine:Button name="fire-btn" text="Fire" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="temper-btn" text="Temper" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="oppose-btn" text="Oppose" class="actionbtn btn btn--secondary" />
+                </engine:VisualElement>
+                <engine:VisualElement class="actionbar__row actionbar__row--primary">
+                    <engine:Button name="manage-cards-btn" text="Cards" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
+                </engine:VisualElement>
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement class="screen__inventory">
@@ -58,18 +70,6 @@
                     <engine:Label name="spread-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
                 </engine:VisualElement>
                 <engine:VisualElement name="spread-strip" class="dock__strip" />
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <engine:VisualElement class="actionbar actionbar--summer">
-            <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                <engine:Button name="fire-btn" text="Fire" class="actionbtn btn btn--secondary" />
-                <engine:Button name="temper-btn" text="Temper" class="actionbtn btn btn--secondary" />
-                <engine:Button name="oppose-btn" text="Oppose" class="actionbtn btn btn--secondary" />
-            </engine:VisualElement>
-            <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                <engine:Button name="manage-cards-btn" text="Cards" class="actionbtn btn btn--secondary" />
-                <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
             </engine:VisualElement>
         </engine:VisualElement>
 

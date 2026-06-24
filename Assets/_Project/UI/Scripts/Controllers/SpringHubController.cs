@@ -217,11 +217,11 @@ namespace Kismeta.UI.Controllers
             if (label == null) return;
 
             if (hint == ActionHint.RollZodiac && bridge.CanSubmit)
-                label.text = "Your turn — roll your zodiac die";
+                label.text = "Your turn";
             else if (hint == ActionHint.AcknowledgeSign && bridge.CanSubmit)
-                label.text = "Review your sign — continue when ready";
+                label.text = "Review your sign when ready";
             else if (hint == ActionHint.Commune && bridge.CanSubmit)
-                label.text = "Your turn — lock the tableau when ready";
+                label.text = "Arrange spread and hand, then lock";
             else
                 label.text = "Your turn";
         }

@@ -95,9 +95,13 @@
     padding-right: 1px;
 }
 .formula-slot {
-    width: 34px; height: 48px; border-radius: var(--radius-sm);
-    border-width: 1px; border-color: rgb(90,74,58);
-    align-items: center; justify-content: center;
+    width: var(--card-chip-w);
+    height: var(--card-chip-h);
+    border-radius: var(--radius-sm);
+    border-width: 1px;
+    border-color: rgb(90,74,58);
+    align-items: center;
+    justify-content: center;
     margin-right: 5px;
 }
 .formula-slot--empty {

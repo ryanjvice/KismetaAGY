@@ -43,6 +43,15 @@
                 <engine:Label name="limits-line" text="Spread 0/5 · Hand 0/5" style="font-size: 11px; color: rgb(184, 154, 110); margin-bottom: 12px;" />
                 <engine:Label name="hint-label" text="Your turn" style="font-size: 11px; color: rgb(158, 201, 224); margin-top: 14px;" />
             </engine:VisualElement>
+
+            <engine:VisualElement class="stage-cta stage-cta--multi stage-cta--winter">
+                <engine:Button name="continue-btn" text="Unlock cards" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="craft-btn" text="Craft reagents" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="wager-btn" text="Fateful wager" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="limits-btn" text="Enforce limits" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="transit-btn" text="Transit the age" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="pass-btn" text="Pass" class="actionbtn actionbtn--tight btn btn--secondary" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement class="screen__inventory">
@@ -58,15 +67,6 @@
                 </engine:VisualElement>
                 <engine:VisualElement name="spread-strip" class="dock__strip" />
             </engine:VisualElement>
-        </engine:VisualElement>
-
-        <engine:VisualElement class="actionbar">
-            <engine:Button name="continue-btn" text="Unlock cards" class="actionbtn btn btn--primary" style="display: none;" />
-            <engine:Button name="craft-btn" text="Craft reagents" class="actionbtn btn btn--primary" style="display: none;" />
-            <engine:Button name="wager-btn" text="Fateful wager" class="actionbtn btn btn--primary" style="display: none;" />
-            <engine:Button name="limits-btn" text="Enforce limits" class="actionbtn btn btn--primary" style="display: none;" />
-            <engine:Button name="transit-btn" text="Transit the age" class="actionbtn btn btn--primary" style="display: none;" />
-            <engine:Button name="pass-btn" text="Pass" class="actionbtn actionbtn--tight btn btn--secondary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

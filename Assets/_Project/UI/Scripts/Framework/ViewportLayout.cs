@@ -91,7 +91,7 @@ namespace Kismeta.UI
                 return;
             }
 
-            StretchToContentLayer(content);
+            StretchFlexColumnChild(content);
             content.Clear();
             var host = new VisualElement();
             host.AddToClassList("screen-host");
@@ -103,7 +103,7 @@ namespace Kismeta.UI
             if (screenRoot != null)
             {
                 ApplyAssetStylesheets(screenRoot, screen);
-                StretchToContentLayer(screenRoot);
+                StretchFlexColumnChild(screenRoot);
             }
 
             var layoutRoot = GetLayoutRoot();
@@ -211,7 +211,7 @@ namespace Kismeta.UI
             host.AddToClassList(overlayScope ? "kismeta-scope" : "kismeta-root");
             EnsureTokenStylesheets(host, tokenStylesheet);
             if (stretchFull)
-                StretchToContentLayer(host);
+                StretchFlexColumnChild(host);
         }
 
         private void EnsureTokenStylesheets(VisualElement host, StyleSheet? tokenStylesheet = null)
@@ -332,6 +332,7 @@ namespace Kismeta.UI
             panelRoot.style.height = new StyleLength(new Length(100, LengthUnit.Percent));
         }
 
+        /// <summary>Fills the UIDocument panel (kismeta-root).</summary>
         private static void StretchToContentLayer(VisualElement el)
         {
             el.style.flexGrow = 1;
@@ -339,6 +340,18 @@ namespace Kismeta.UI
             el.style.width = new StyleLength(new Length(100, LengthUnit.Percent));
             el.style.height = new StyleLength(new Length(100, LengthUnit.Percent));
             el.style.minHeight = new StyleLength(new Length(100, LengthUnit.Percent));
+            el.style.flexDirection = FlexDirection.Column;
+            el.style.alignSelf = Align.Stretch;
+        }
+
+        /// <summary>Flex child inside app-shell so player-hud-layer can share vertical space.</summary>
+        private static void StretchFlexColumnChild(VisualElement el)
+        {
+            el.style.flexGrow = 1;
+            el.style.flexShrink = 1;
+            el.style.minHeight = 0;
+            el.style.width = new StyleLength(new Length(100, LengthUnit.Percent));
+            el.style.height = StyleKeyword.Auto;
             el.style.flexDirection = FlexDirection.Column;
             el.style.alignSelf = Align.Stretch;
         }

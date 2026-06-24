@@ -53,21 +53,36 @@ namespace Kismeta.UI.Components
             if (selected || aligned)
                 chip.AddToClassList("card-chip--selected");
 
-            if (aligned)
-            {
-                var dot = new VisualElement();
-                dot.AddToClassList("card-chip__align-dot");
-                dot.pickingMode = PickingMode.Ignore;
-                chip.Add(dot);
-            }
+            var topRow = new VisualElement();
+            topRow.AddToClassList("card-chip__top");
+            topRow.pickingMode = PickingMode.Ignore;
 
+            var suitCorner = new VisualElement();
+            suitCorner.AddToClassList("card-chip__corner");
+            suitCorner.AddToClassList("card-chip__corner--left");
+            suitCorner.pickingMode = PickingMode.Ignore;
+            if (suit != Suit.None)
+            {
+                var suitGlyph = SymbolGlyphs.CreateTablerLabel(
+                    SymbolGlyphs.SuitGlyph(suit), "card-chip__suit", Color.white);
+                suitGlyph.pickingMode = PickingMode.Ignore;
+                suitCorner.Add(suitGlyph);
+            }
+            topRow.Add(suitCorner);
+
+            var planetCorner = new VisualElement();
+            planetCorner.AddToClassList("card-chip__corner");
+            planetCorner.AddToClassList("card-chip__corner--right");
+            planetCorner.pickingMode = PickingMode.Ignore;
             if (planet != Planet.None)
             {
                 var planetGlyph = SymbolGlyphs.CreatePlanetLabel(
                     SymbolGlyphs.PlanetGlyph(planet), "card-chip__planet");
                 planetGlyph.pickingMode = PickingMode.Ignore;
-                chip.Add(planetGlyph);
+                planetCorner.Add(planetGlyph);
             }
+            topRow.Add(planetCorner);
+            chip.Add(topRow);
 
             var rankLbl = new Label(rankLabel);
             rankLbl.AddToClassList("card-chip__rank");
@@ -76,13 +91,9 @@ namespace Kismeta.UI.Components
             rankLbl.pickingMode = PickingMode.Ignore;
             chip.Add(rankLbl);
 
-            if (suit != Suit.None)
-            {
-                var suitGlyph = SymbolGlyphs.CreateTablerLabel(
-                    SymbolGlyphs.SuitGlyph(suit), "card-chip__suit", Color.white);
-                suitGlyph.pickingMode = PickingMode.Ignore;
-                chip.Add(suitGlyph);
-            }
+            var bottomRow = new VisualElement();
+            bottomRow.AddToClassList("card-chip__bottom");
+            bottomRow.pickingMode = PickingMode.Ignore;
 
             if (onInspect != null && !string.IsNullOrEmpty(instanceId))
             {
@@ -90,10 +101,21 @@ namespace Kismeta.UI.Components
                 {
                     chip.AddToClassList("card-chip--inspectable");
                     var icon = SymbolGlyphs.CreateInfoIconLabel("card-chip__inspect");
-                    chip.Add(icon);
+                    icon.pickingMode = PickingMode.Ignore;
+                    bottomRow.Add(icon);
                 }
 
                 WireInspect(chip, instanceId, onInspect);
+            }
+
+            chip.Add(bottomRow);
+
+            if (aligned)
+            {
+                var dot = new VisualElement();
+                dot.AddToClassList("card-chip__align-dot");
+                dot.pickingMode = PickingMode.Ignore;
+                chip.Add(dot);
             }
 
             return chip;
@@ -103,11 +125,19 @@ namespace Kismeta.UI.Components
         {
             chip.pickingMode = PickingMode.Position;
             chip.style.cursor = new StyleCursor(StyleKeyword.Auto);
-            foreach (var child in chip.Children())
-                child.pickingMode = PickingMode.Ignore;
+            SetIgnorePicking(chip);
 
             var cardId = instanceId;
             chip.AddManipulator(new Clickable(() => onInspect(cardId)));
+        }
+
+        static void SetIgnorePicking(VisualElement root)
+        {
+            foreach (var child in root.Children())
+            {
+                child.pickingMode = PickingMode.Ignore;
+                SetIgnorePicking(child);
+            }
         }
 
         static string SuitClass(Suit suit) => suit switch
