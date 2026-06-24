@@ -22,50 +22,61 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="card-modal__hero card-modal__hero--inspect">
-                <engine:VisualElement class="tarot tarot--big card-chip--wands" style="border-color: rgb(201, 150, 47);">
-                    <engine:Label text="&#xee7e;" class="ti-icon" style="font-size: 46px; color: rgb(244,216,192);" />
+                <engine:VisualElement name="inspect-hero-tarot" class="tarot tarot--big" style="border-color: rgb(201, 150, 47);">
+                    <engine:Label name="inspect-hero-icon" text="&#xee7e;" class="ti-icon" style="font-size: 46px; color: rgb(244,216,192);" />
                 </engine:VisualElement>
                 <engine:Label name="inspect-name" text="Seven of Wands" class="tarot__name" style="color: rgb(244,216,192);" />
-                <engine:Label text="minor arcana · rank 7" style="font-size: 10px; color: rgb(208,144,128);" />
+                <engine:Label name="inspect-subtitle" text="minor arcana · rank 7" style="font-size: 10px; color: rgb(208,144,128);" />
             </engine:VisualElement>
 
-            <engine:VisualElement class="card-modal__body">
-                <engine:Label text="aspects" class="eyebrow" />
-                <engine:VisualElement style="flex-direction: row; margin-bottom: 10px;">
-                    <engine:VisualElement class="aspect-tile">
-                        <engine:Label text="&#xec3a;" class="ti-icon" style="color: rgb(240,153,123);" />
-                        <engine:Label text="Fire" style="font-size: 11px; color: rgb(243, 233, 210);" />
-                        <engine:Label text="element" style="font-size: 8px; color: rgb(184, 154, 110);" />
+            <engine:VisualElement class="card-modal__body card-modal__body--inspect">
+                <engine:VisualElement name="inspect-minor-detail" class="inspect-minor-detail">
+                    <engine:VisualElement class="inspect-block">
+                        <engine:Label text="aspects" class="eyebrow" />
+                        <engine:VisualElement name="inspect-aspects" class="inspect-aspects">
+                            <engine:VisualElement class="aspect-tile">
+                                <engine:Label text="&#xec3a;" class="ti-icon" style="color: rgb(240,153,123);" />
+                                <engine:Label name="inspect-aspect-element" text="Fire" style="font-size: 11px; color: rgb(243, 233, 210);" />
+                                <engine:Label text="element" class="aspect-tile__kind" />
+                            </engine:VisualElement>
+                            <engine:VisualElement class="aspect-tile">
+                                <engine:Label name="inspect-aspect-planet-icon" text="&#xeb4c;" class="font-zodiac" style="font-size: 18px; color: rgb(224,138,106);" />
+                                <engine:Label name="inspect-aspect-planet" text="Mars" style="font-size: 11px; color: rgb(243, 233, 210);" />
+                                <engine:Label text="planet" class="aspect-tile__kind" />
+                            </engine:VisualElement>
+                            <engine:VisualElement class="aspect-tile">
+                                <engine:Label name="inspect-aspect-suit-icon" text="&#xee7e;" class="font-emoji" style="font-size: 18px; color: rgb(244,200,154);" />
+                                <engine:Label name="inspect-aspect-suit" text="Wands" style="font-size: 11px; color: rgb(243, 233, 210);" />
+                                <engine:Label text="suit" class="aspect-tile__kind" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
                     </engine:VisualElement>
-                    <engine:VisualElement class="aspect-tile">
-                        <engine:Label text="&#xeb4c;" class="ti-icon" style="color: rgb(224,138,106);" />
-                        <engine:Label text="Mars" style="font-size: 11px; color: rgb(243, 233, 210);" />
-                        <engine:Label text="planet" style="font-size: 8px; color: rgb(184, 154, 110);" />
+
+                    <engine:VisualElement name="inspect-effect-section" class="inspect-block">
+                        <engine:Label name="inspect-effect-eyebrow" text="effect" class="eyebrow" />
+                        <engine:VisualElement class="panel inspect-effect-panel">
+                            <engine:Label name="inspect-effect" text="When you Fire the Stone, gain 1 Sulphur." class="inspect-effect__text" />
+                        </engine:VisualElement>
                     </engine:VisualElement>
-                    <engine:VisualElement class="aspect-tile">
-                        <engine:Label text="&#xee7e;" class="ti-icon" style="color: rgb(244,200,154);" />
-                        <engine:Label text="Wands" style="font-size: 11px; color: rgb(243, 233, 210);" />
-                        <engine:Label text="suit" style="font-size: 8px; color: rgb(184, 154, 110);" />
+
+                    <engine:VisualElement class="inspect-block">
+                        <engine:Label text="good for" class="eyebrow" />
+                        <engine:VisualElement name="inspect-good-for" class="inspect-good-for" />
                     </engine:VisualElement>
                 </engine:VisualElement>
 
-                <engine:Label text="alignment this age" class="eyebrow" />
-                <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; border-color: rgb(106,80,32); margin-bottom: 10px;">
-                    <engine:VisualElement style="flex-grow: 1;">
-                        <engine:Label name="inspect-align-age" text="Age of Scorpio · Mars · Water" style="font-size: 11px; color: rgb(243, 233, 210);" />
-                        <engine:Label name="inspect-align-why" text="its Mars matches the age's planet" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                <engine:VisualElement class="inspect-block">
+                    <engine:Label text="alignment this age" class="eyebrow" />
+                    <engine:VisualElement class="panel inspect-align-panel">
+                        <engine:VisualElement class="inspect-align-copy">
+                            <engine:Label name="inspect-align-age" text="Age of Scorpio · Mars · Water" class="inspect-align-age" />
+                            <engine:Label name="inspect-align-why" text="its Mars matches the age's planet" class="inspect-align-why" />
+                        </engine:VisualElement>
+                        <engine:Label name="inspect-align-pts" text="+2" class="inspect-align-pts" />
                     </engine:VisualElement>
-                    <engine:Label name="inspect-align-pts" text="+2" style="font-size: 17px; color: rgb(240,153,123); -unity-font-style: bold;" />
                 </engine:VisualElement>
 
-                <engine:Label text="good for" class="eyebrow" />
-                <engine:VisualElement style="flex-direction: row; flex-wrap: wrap; margin-bottom: 10px;">
-                    <engine:Label text="crafting Sulphur" style="font-size: 10px; color: rgb(240,176,160); background-color: rgb(42,18,18); border-radius: 6px; padding: 4px 9px; margin-right: 6px; margin-bottom: 6px;" />
-                    <engine:Label text="Mars sets" style="font-size: 10px; color: rgb(224,200,120); background-color: rgb(42,35,14); border-radius: 6px; padding: 4px 9px; margin-right: 6px; margin-bottom: 6px;" />
-                    <engine:Label text="alignment +2" style="font-size: 10px; color: rgb(127, 196, 168); background-color: rgb(19,36,26); border-radius: 6px; padding: 4px 9px;" />
-                </engine:VisualElement>
-
-                <engine:Button name="inspect-done" text="Done" class="btn btn--secondary" style="color: rgb(240,176,160);" />
+                <engine:Button name="inspect-done" text="Done" class="btn btn--secondary inspect-done" style="color: rgb(240,176,160);" />
             </engine:VisualElement>
         </engine:VisualElement>
 

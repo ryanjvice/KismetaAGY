@@ -236,14 +236,136 @@
 /* aspect tiles (inspect) */
 .aspect-tile {
     flex-grow: 1;
+    flex-shrink: 0;
+    flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    min-height: 84px;
     background-color: rgb(28,16,16);
     border-width: 1px; border-color: rgb(90,43,26);
     border-radius: var(--radius-md);
-    padding: 9px 2px;
+    padding: 10px 4px 12px;
     margin-right: 7px;
+    overflow: visible;
 }
 .aspect-tile:last-child { margin-right: 0; }
+.aspect-tile__kind {
+    font-size: 8px;
+    color: rgb(184, 154, 110);
+    margin-top: 2px;
+    -unity-text-align: middle-center;
+}
+
+/* inspect modal layout */
+.card-modal__body--inspect {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.inspect-minor-detail {
+    flex-direction: column;
+    align-items: stretch;
+    flex-shrink: 0;
+}
+
+.inspect-block {
+    flex-direction: column;
+    align-items: stretch;
+    flex-shrink: 0;
+}
+
+.card-modal__body--inspect > .inspect-block,
+.card-modal__body--inspect > .inspect-minor-detail,
+.inspect-minor-detail > .inspect-block {
+    margin-bottom: var(--space-md);
+}
+
+.card-modal__body--inspect > .inspect-block:last-child,
+.inspect-minor-detail > .inspect-block:last-child {
+    margin-bottom: 0;
+}
+
+.inspect-aspects {
+    flex-direction: row;
+    flex-shrink: 0;
+    align-items: stretch;
+    width: 100%;
+}
+
+.inspect-good-for {
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.inspect-effect-panel {
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: stretch;
+    border-color: rgb(90,43,26);
+}
+
+.inspect-effect__text {
+    font-size: 12px;
+    color: var(--ink);
+    white-space: normal;
+    -unity-text-align: upper-left;
+    flex-shrink: 0;
+}
+
+.inspect-align-panel {
+    flex-direction: row;
+    align-items: flex-start;
+    flex-shrink: 0;
+    border-color: rgb(106,80,32);
+}
+
+.inspect-align-copy {
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.inspect-align-age {
+    font-size: 11px;
+    color: rgb(243, 233, 210);
+    white-space: normal;
+}
+
+.inspect-align-why {
+    font-size: 10px;
+    color: rgb(184, 154, 110);
+    white-space: normal;
+    margin-top: 4px;
+}
+
+.inspect-align-pts {
+    font-size: 17px;
+    color: rgb(240,153,123);
+    -unity-font-style: bold;
+    flex-shrink: 0;
+    margin-left: var(--space-sm);
+    align-self: flex-start;
+}
+
+.inspect-done {
+    flex-shrink: 0;
+    margin-top: var(--space-xs);
+}
+
+.inspect-tag {
+    font-size: 10px;
+    border-radius: 6px;
+    padding: 4px 9px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+}
+.inspect-tag--craft { color: rgb(240,176,160); background-color: rgb(42,18,18); }
+.inspect-tag--set { color: rgb(224,200,120); background-color: rgb(42,35,14); }
+.inspect-tag--align { color: rgb(127, 196, 168); background-color: rgb(19,36,26); }
 
 /* fired-effect rows (fate) */
 .effect-row {

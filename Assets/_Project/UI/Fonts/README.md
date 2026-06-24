@@ -4,14 +4,14 @@ Production typography for Unity UI Toolkit. Font roles and USS utility classes l
 
 ## Typefaces
 
-| File | Role | USS class | Use for |
-|------|------|-----------|---------|
-| `Amarante-Regular.asset` | Display / lore | `.font-display`, `.font-lore`, `.h1` | Titles, wordmarks, ceremonial names, immersive lore copy (non-instructional) |
-| `GermaniaOne-Regular.asset` | Section headings | `.font-heading`, `.h2`, `.h3` | Screen section titles, season taglines, modal headings |
-| `FuturaCyrillicDemi.asset` | UI headings | `.font-ui`, `.h4`, `.h5`, `.h6` | Smaller headings, labels, buttons, data chrome (h4 and below) |
-| `FuturaCyrillicBook.asset` | Body | *(default on `.kismeta-root`)*, `.font-body`, `.p` | Instructional body text, rules, lists, normal paragraphs |
-| `NotoColorEmoji-Regular.asset` | Symbols | `.font-emoji` | Zodiac glyphs (♈–♓), suit emojis (🪄🍷🪙🗡️), and other emoji |
-| `tabler-icons.asset` | Icons | `.ti-icon` | Tabler icon glyphs in `Kismeta.uss` |
+| File                           | Role             | USS class                                          | Use for                                                                      |
+| ------------------------------ | ---------------- | -------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `Amarante-Regular.asset`       | Display / lore   | `.font-display`, `.font-lore`, `.h1`               | Titles, wordmarks, ceremonial names, immersive lore copy (non-instructional) |
+| `GermaniaOne-Regular.asset`    | Section headings | `.font-heading`, `.h2`, `.h3`                      | Screen section titles, season taglines, modal headings                       |
+| `FuturaCyrillicDemi.asset`     | UI headings      | `.font-ui`, `.h4`, `.h5`, `.h6`                    | Smaller headings, labels, buttons, data chrome (h4 and below)                |
+| `FuturaCyrillicBook.asset`     | Body             | _(default on `.kismeta-root`)_, `.font-body`, `.p` | Instructional body text, rules, lists, normal paragraphs                     |
+| `NotoColorEmoji-Regular.asset` | Symbols          | `.font-emoji`                                      | Zodiac glyphs (♈–♓), suit emojis (🪄🍷🪙🗡️), and other emoji               |
+| `tabler-icons.asset`           | Icons            | `.ti-icon`                                         | Tabler icon glyphs in `Kismeta.uss`                                          |
 
 ## Hierarchy (quick reference)
 

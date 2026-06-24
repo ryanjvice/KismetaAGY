@@ -518,17 +518,21 @@ namespace Kismeta.UI
 
         private void WireSummerNavigation()
         {
+            var summer = _router.GetController<SummerSceneController>(ScreenIds.SummerMain);
+            if (summer != null)
+            {
+                summer.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+            }
+
             if (_summerOverlays == null) return;
 
-            var summer = _router.GetController<SummerSceneController>(ScreenIds.SummerMain);
             if (summer == null) return;
 
             summer.OnCraftBuild = () => _summerOverlays.ShowCraftBuildSheet();
             summer.OnConsort = () => _summerOverlays.ShowConsortSheet();
             summer.OnActivate = () => _summerOverlays.ShowActivate();
             summer.OnPass = () => _summerOverlays.ShowEndSummer();
-            summer.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
-            summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
         }
 
         private void WireSeasonHubNavigation()

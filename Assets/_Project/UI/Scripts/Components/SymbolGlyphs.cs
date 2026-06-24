@@ -8,6 +8,8 @@ namespace Kismeta.UI.Components
     {
         public const string EmojiFontClass = "font-emoji";
         public const string ZodiacFontClass = "font-zodiac";
+        public const string TablerIconClass = "ti-icon";
+        public const string InfoCircleGlyph = "\ueac5";
 
         public static readonly ZodiacSign[] AllSigns =
         {
@@ -44,6 +46,15 @@ namespace Kismeta.UI.Components
 
         public static Label CreatePlanetLabel(string glyph, string? ussClass = null)
             => CreateZodiacLabel(glyph, ussClass);
+
+        public static Label CreateInfoIconLabel(string? ussClass = null)
+        {
+            var label = new Label(InfoCircleGlyph);
+            label.AddToClassList(TablerIconClass);
+            if (ussClass != null)
+                label.AddToClassList(ussClass);
+            return label;
+        }
 
         public static string CompactRank(Rank rank) => rank switch
         {

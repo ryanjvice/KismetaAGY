@@ -270,6 +270,13 @@ namespace Kismeta.UI.Controllers
 
             var strip = root.Q<VisualElement>("spread-strip");
             if (strip == null) return;
+
+            var signature = (showHand ? "H:" : "S:") + (onInspect != null ? "I:" : "i:")
+                + string.Join(",", cardIds);
+            if (strip.userData as string == signature)
+                return;
+
+            strip.userData = signature;
             strip.Clear();
 
             var db = session.Rules?.CardDatabase;
@@ -282,7 +289,7 @@ namespace Kismeta.UI.Controllers
                 var def = db.GetById(inst.DefinitionId);
                 if (def == null) continue;
                 strip.Add(CardChipFactory.CreateFromDefinition(
-                    def, instanceId: cardId, onInspect: onInspect));
+                    def, instanceId: cardId, onInspect: onInspect, inspectViaButton: true));
             }
         }
     }
