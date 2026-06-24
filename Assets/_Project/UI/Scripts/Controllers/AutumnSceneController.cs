@@ -144,8 +144,11 @@ namespace Kismeta.UI.Controllers
             Btn("manage-cards-btn")?.SetEnabled(autumnAction);
             Btn("pass-btn")?.SetEnabled(autumnAction);
 
-            if (Lbl("stone-label") != null)
-                Lbl("stone-label")!.text = AutumnActionBindings.StoneStatusLabel(player);
+            CrucibleForgeBindings.Apply(
+                El("stone-art"),
+                Lbl("stone-label"),
+                player.StonePosition,
+                AutumnActionBindings.StoneStatusLabel(player));
 
             if (Lbl("hint-label") != null)
             {

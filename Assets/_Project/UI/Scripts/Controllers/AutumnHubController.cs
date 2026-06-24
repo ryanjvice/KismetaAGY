@@ -56,8 +56,11 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.SetHandFabActive(Root, _showHand);
             MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
 
-            if (Lbl("stone-label") != null)
-                Lbl("stone-label")!.text = AutumnActionBindings.StoneStatusLabel(player);
+            CrucibleForgeBindings.Apply(
+                El("stone-art"),
+                Lbl("stone-label"),
+                player.StonePosition,
+                AutumnActionBindings.StoneStatusLabel(player));
 
             RivalStripBuilder.Populate(
                 El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, Season.Autumn);

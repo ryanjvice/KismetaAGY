@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312b42ba514607647ac3179a68e8a75d, type: 3}
+  m_Name: CrucibleForgeArt
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Components.CrucibleForgeArt
+  _byPosition:
+  - {fileID: 21300000, guid: 793de71838ce70f449f6b5b54f4786b3, type: 3}
+  - {fileID: 21300000, guid: 8a85c29e115f1334baadff8e162c2a02, type: 3}
+  - {fileID: 21300000, guid: 8507c4d160a7aca428f9e5bfb0dfd7d7, type: 3}
+  - {fileID: 21300000, guid: e5af78a79da6af14b88fd380293eeb11, type: 3}
+  - {fileID: 21300000, guid: 083ffb6c4c91db246bf88e3f6150c7d2, type: 3}
+  - {fileID: 21300000, guid: 8416e00bf3114f14dbe7060647b5699d, type: 3}
+  - {fileID: 21300000, guid: 8b810fa7397d36c449138c7c4d3c4787, type: 3}
+  - {fileID: 21300000, guid: f2da987b9756a26418a656b12e853553, type: 3}
+  - {fileID: 21300000, guid: ca90b50b5c1401e419616aeb9c1c5260, type: 3}

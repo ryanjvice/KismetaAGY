@@ -174,3 +174,25 @@
     flex-grow: 1.3;
     color: var(--autumn-accent);
 }
+
+/* Autumn main/hub — forge progress art + caption */
+.forge-stage {
+    align-items: center;
+    justify-content: center;
+}
+
+.forge-stage__art {
+    width: 200px;
+    height: 200px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.forge-stage__label {
+    font-size: 9px;
+    color: var(--autumn-accent);
+    -unity-text-align: middle-center;
+    margin-top: 4px;
+    white-space: normal;
+    max-width: 190px;
+}

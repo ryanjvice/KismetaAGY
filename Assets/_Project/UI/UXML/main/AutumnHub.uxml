@@ -41,8 +41,9 @@
         <engine:VisualElement class="screen__body">
             <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
                 <engine:Label name="turn-banner" text="Rivals are taking their turns…" style="font-size: 13px; color: rgb(224, 138, 74); -unity-font-style: bold; margin-bottom: 12px; -unity-text-align: middle-center;" />
-                <engine:VisualElement name="board-stage" style="width: 220px; height: 220px; border-radius: 110px; border-width: 1px; border-color: rgb(106, 48, 48); background-color: rgb(28, 14, 14); align-items: center; justify-content: center;">
-                    <engine:Label name="stone-label" text="stone · lead" style="font-size: 12px; color: rgb(224, 138, 74);" />
+                <engine:VisualElement name="board-stage" class="forge-stage">
+                    <engine:VisualElement name="stone-art" class="forge-stage__art" />
+                    <engine:Label name="stone-label" class="forge-stage__label" text="stone · lead" />
                 </engine:VisualElement>
                 <engine:Label name="hint-label" text="Review your board while you wait" style="font-size: 11px; color: rgb(243, 233, 210); margin-top: 10px;" />
             </engine:VisualElement>
