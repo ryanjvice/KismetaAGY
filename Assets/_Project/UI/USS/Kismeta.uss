@@ -15,6 +15,16 @@
     --gold-bright: rgb(244, 211, 94);
     --muted: rgb(184, 154, 110);
     --muted-dim: rgb(138, 106, 122);
+    --burgundy-deep: rgb(26, 5, 5);
+    --burgundy-mid: rgb(64, 0, 0);
+    --felt-base: rgb(38, 38, 42);
+    --felt-vignette: rgb(12, 8, 10);
+    --zodiac-red: rgb(227, 30, 36);
+    --zodiac-green: rgb(0, 168, 79);
+    --zodiac-yellow: rgb(255, 215, 0);
+    --zodiac-blue: rgb(0, 150, 214);
+    --border-gold: rgb(192, 160, 96);
+    --scrim-dark: rgba(8, 4, 6, 0.88);
     --suit-wands: rgb(122, 31, 26);
     --suit-cups: rgb(31, 58, 110);
     --suit-pentacles: rgb(31, 110, 74);
@@ -24,13 +34,13 @@
     --reagent-vitriol: rgb(31, 110, 74);
     --reagent-aqua: rgb(46, 109, 164);
     --reagent-quick: rgb(184, 148, 31);
-    --spring-bg: rgb(15, 20, 16);
+    --spring-bg: rgba(15, 20, 16, 0.72);
     --spring-accent: rgb(127, 196, 154);
-    --summer-bg: rgb(24, 15, 10);
+    --summer-bg: rgba(24, 15, 10, 0.72);
     --summer-accent: rgb(240, 176, 96);
-    --autumn-bg: rgb(22, 10, 10);
+    --autumn-bg: rgba(22, 10, 10, 0.72);
     --autumn-accent: rgb(224, 138, 74);
-    --winter-bg: rgb(14, 20, 32);
+    --winter-bg: rgba(14, 20, 32, 0.72);
     --winter-accent: rgb(158, 201, 224);
     --ok-bg: rgb(22, 38, 31);
     --ok-border: rgb(43, 106, 74);
@@ -44,9 +54,9 @@
     --arcanum-bg: rgb(36, 16, 40);
     --arcanum-border: rgb(106, 74, 138);
     --arcanum-text: rgb(205, 176, 224);
-    --panel-dark: rgb(22, 10, 28);
-    --panel-darker: rgb(16, 10, 18);
-    --border-subtle: rgb(58, 36, 64);
+    --panel-dark: rgba(22, 10, 28, 0.85);
+    --panel-darker: rgba(16, 10, 18, 0.9);
+    --border-subtle: rgb(106, 74, 42);
     --radius-sm: 6px;
     --radius-md: 9px;
     --radius-lg: 14px;
@@ -123,7 +133,18 @@
     flex-shrink: 0;
     flex-direction: column;
     position: relative;
-    background-color: var(--panel-dark);
+    background-color: var(--burgundy-deep);
+}
+
+.app-shell__felt {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("project://database/Assets/_Project/Art/UI/tableFelt_vignette.png");
+    -unity-background-scale-mode: scale-and-crop;
+    opacity: 0.88;
 }
 
 .app-shell {
@@ -167,7 +188,7 @@
     top: 0;
     bottom: 0;
     flex-direction: column;
-    background-color: rgba(0, 0, 0, 0.95);
+    background-color: var(--scrim-dark);
     align-items: center;
     justify-content: flex-start;
     padding-left: var(--overlay-inset-x);
@@ -223,6 +244,46 @@
 .screen--summer { background-color: var(--summer-bg); }
 .screen--autumn { background-color: var(--autumn-bg); }
 .screen--winter { background-color: var(--winter-bg); }
+.screen--title { background-color: rgba(20, 10, 24, 0.78); }
+.screen--menu { background-color: rgba(19, 16, 15, 0.78); }
+
+.screen__felt {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("project://database/Assets/_Project/Art/UI/tableFelt_vignette.png");
+    -unity-background-scale-mode: scale-and-crop;
+    opacity: 0.85;
+}
+
+.screen__tint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.screen__content {
+    position: relative;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.screen > .screen__content,
+.screen > .screen__chrome,
+.screen > .screen__body,
+.screen > .screen__inventory,
+.screen > .statusbar,
+.screen > .title-hero,
+.screen > .title-menu {
+    position: relative;
+}
 
 .screen__body {
     flex-grow: 1;
@@ -250,8 +311,9 @@
     flex-shrink: 0;
     flex-direction: column;
     padding: 2px 10px 3px;
-    border-bottom-width: 1px;
-    border-bottom-color: var(--border-subtle);
+    border-bottom-width: 2px;
+    border-bottom-color: var(--border-gold);
+    background-color: rgba(16, 8, 12, 0.55);
 }
 .game-header__row {
     flex-direction: row;
@@ -275,6 +337,11 @@
     height: 20px;
     border-radius: 10px;
     margin-right: 6px;
+    border-width: 1px;
+    border-color: var(--gold-deep);
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/crucibleForge.png");
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: rgba(16, 8, 12, 0.6);
 }
 .game-header .cosmic-age-banner__eyebrow {
     margin-bottom: 0;
@@ -325,8 +392,9 @@
     min-height: 0;
     flex-direction: column;
     overflow: visible;
-    border-top-width: 1px;
-    border-top-color: var(--border-subtle);
+    border-top-width: 2px;
+    border-top-color: var(--border-gold);
+    background-color: rgba(12, 8, 10, 0.45);
 }
 
 /* ---------- Persistent in-game frame ---------- */
@@ -898,18 +966,67 @@
     font-size: var(--font-body);
 }
 
-.btn--primary { background-color: rgb(58, 46, 14); border-color: var(--gold-deep); color: var(--gold); }
-.btn--secondary { background-color: var(--panel-dark); border-color: rgb(74, 58, 90); color: var(--muted); }
+.btn--primary { background-color: rgba(58, 46, 14, 0.92); border-color: var(--gold-deep); border-width: 2px; color: var(--gold); }
+.btn--secondary { background-color: rgba(22, 10, 28, 0.88); border-color: var(--border-gold); border-width: 1px; color: var(--muted); }
 .btn--disabled { background-color: rgb(42, 21, 48); border-color: var(--border-subtle); color: rgb(90, 74, 106); }
 .btn:hover { opacity: 0.92; }
 
 /* ---------- Panels & semantic blocks ---------- */
 .panel {
     background-color: var(--panel-darker);
-    border-width: 1px;
-    border-color: var(--border-subtle);
+    border-width: 2px;
+    border-color: var(--border-gold);
     border-radius: var(--radius-md);
     padding: var(--space-md);
+}
+
+.panel--gold {
+    background-color: rgba(28, 18, 8, 0.92);
+    border-width: 2px;
+    border-color: var(--gold-deep);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.text-ink { color: var(--ink); }
+.text-muted { color: var(--muted); }
+.text-gold { color: var(--gold-bright); }
+.text-dim { color: var(--muted-dim); }
+.text-body { color: var(--ink); font-size: var(--font-body); }
+.text-hint { color: var(--ink); font-size: 11px; }
+.text-count { color: var(--muted); font-size: 10px; }
+.text-ok { color: var(--ok-text); }
+
+.menu-screen__title { margin-left: 4px; }
+.menu-screen__body { margin: 24px 18px; padding: 24px 18px; align-items: stretch; }
+.menu-screen__eyebrow { -unity-text-align: middle-center; }
+.menu-screen__input { margin: 8px 0 16px; font-size: 20px; -unity-text-align: middle-center; }
+.menu-screen__hint { font-size: 10px; -unity-text-align: middle-center; margin-top: 10px; white-space: normal; }
+.menu-screen__list-wrap { padding: 16px; }
+.menu-screen__scroll { flex-grow: 1; }
+.menu-screen__scroll--grow { flex-grow: 1; padding: 8px 16px; }
+.menu-screen__empty { font-size: 11px; -unity-text-align: middle-center; margin-top: 24px; white-space: normal; display: none; }
+.menu-screen__search-wrap { padding: 12px 16px 6px; }
+.menu-screen__search { font-size: 13px; }
+.menu-screen__tabs { padding: 6px 16px 4px; flex-direction: row; }
+.menu-screen__panel { margin-bottom: 7px; }
+.menu-screen__panel-sub { font-size: 10px; white-space: normal; }
+.menu-screen__hero { margin: 28px 20px 12px; padding: 20px 18px; align-items: center; }
+.menu-screen__hero-title { margin-top: 6px; }
+.menu-screen__hero-sub { font-size: 11px; margin-top: 10px; white-space: normal; -unity-text-align: middle-center; }
+.menu-screen__footer { padding: 12px 16px 24px; }
+.menu-screen__winner { font-size: 12px; -unity-text-align: middle-center; margin-bottom: 10px; white-space: normal; display: none; }
+.menu-screen__cta { font-size: 14px; }
+.menu-screen__cta--hidden { display: none; }
+.menu-screen__codex-list { height: 360px; padding: 4px 16px 16px; }
+
+.btn-back {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: var(--muted);
+    font-size: 18px;
+    min-height: var(--touch-min);
+    padding: 0;
 }
 
 .tip {
@@ -1082,16 +1199,16 @@
     width: 100%;
     flex-shrink: 0;
     flex-direction: column;
-    background-color: var(--panel-dark);
-    border-width: 1px;
-    border-color: var(--border-subtle);
+    background-color: rgba(22, 10, 28, 0.94);
+    border-width: 2px;
+    border-color: var(--border-gold);
     border-radius: var(--radius-xl);
 }
 
 .sheet {
     max-height: none;
     overflow: hidden;
-    border-top-width: 2px;
+    border-top-width: 3px;
     border-top-color: var(--gold-deep);
 }
 
@@ -1102,11 +1219,12 @@
     flex-shrink: 0;
     flex-direction: column;
     border-radius: var(--radius-xl);
-    border-width: 1px;
-    border-color: var(--border-subtle);
-    border-top-width: 2px;
+    border-width: 2px;
+    border-color: var(--border-gold);
+    border-top-width: 3px;
     border-top-color: var(--gold-deep);
     overflow: hidden;
+    background-color: rgba(22, 10, 28, 0.94);
 }
 
 .card-modal {

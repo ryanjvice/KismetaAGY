@@ -5,28 +5,23 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
 
-    <!-- ============================================================
-         AGEKEEPER CONTEST — first step after setup. Everyone rolls
-         their zodiac die; highest becomes first Agekeeper (reroll ties).
-         NATIVE NOTE: animate die faces in C# (batch5 RollDie pattern).
-         ============================================================ -->
-    <engine:VisualElement name="agekeeper-contest" class="screen" style="background-color: rgb(12,8,18);">
+    <engine:VisualElement name="agekeeper-contest" class="screen screen--menu">
         <engine:Label text="Agekeeper contest — each alchemist rolls; highest becomes first Agekeeper." class="sr-only" />
 
-        <engine:VisualElement style="padding: 28px 20px 12px; align-items: center;">
+        <engine:VisualElement class="menu-screen__hero panel--gold">
             <engine:Label text="determine the agekeeper" class="eyebrow" />
-            <engine:Label text="Roll the dice" class="statusbar__title" style="color: rgb(232, 185, 74); margin-top: 6px;" />
+            <engine:Label text="Roll the dice" class="statusbar__title text-gold menu-screen__hero-title" />
             <engine:Label name="status-line" text="Each alchemist rolls their zodiac die — highest holds the key first."
-                          style="font-size: 11px; color: rgb(184, 154, 110); margin-top: 10px; white-space: normal; -unity-text-align: middle-center;" />
+                          class="text-muted menu-screen__hero-sub" />
         </engine:VisualElement>
 
-        <engine:ScrollView name="player-rolls" style="flex-grow: 1; padding: 8px 16px;" />
+        <engine:ScrollView name="player-rolls" class="menu-screen__scroll menu-screen__scroll--grow" />
 
-        <engine:VisualElement style="padding: 12px 16px 24px;">
+        <engine:VisualElement class="menu-screen__footer">
             <engine:Label name="winner-line" text=""
-                          style="font-size: 12px; color: rgb(127, 196, 168); -unity-text-align: middle-center; margin-bottom: 10px; white-space: normal; display: none;" />
-            <engine:Button name="roll-btn" text="Roll the dice" class="btn btn--primary" style="font-size: 14px;" />
-            <engine:Button name="continue-btn" text="Begin the Great Year" class="btn btn--primary" style="font-size: 14px; display: none;" />
+                          class="text-ok menu-screen__winner" />
+            <engine:Button name="roll-btn" text="Roll the dice" class="btn btn--primary menu-screen__cta" />
+            <engine:Button name="continue-btn" text="Begin the Great Year" class="btn btn--primary menu-screen__cta menu-screen__cta--hidden" />
         </engine:VisualElement>
 
     </engine:VisualElement>

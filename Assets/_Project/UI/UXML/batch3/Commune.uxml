@@ -6,6 +6,7 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
 
+    <!-- DEPRECATED: commune UI is embedded in SpringHub.uxml — do not style this orphan separately. -->
     <!-- ============================================================
          COMMUNE (#14) — tap-to-swap Minor Arcana between Spread and Hand.
          NATIVE NOTE: card chips are built from game state in C# and tapped

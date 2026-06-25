@@ -7,6 +7,7 @@
     <!-- Stable UIDocument root: ScreenRouter swaps content-layer children only. -->
     <engine:VisualElement class="kismeta-root">
         <engine:VisualElement name="app-shell" class="app-shell">
+            <engine:VisualElement name="app-felt" class="app-shell__felt" />
             <engine:VisualElement name="content-layer" class="content-layer" />
             <engine:VisualElement name="overlay-layer" class="overlay-layer" style="display: none;" />
         </engine:VisualElement>

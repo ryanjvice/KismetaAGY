@@ -20,12 +20,23 @@ namespace Kismeta.UI.Components
         };
 
         static readonly Dictionary<VisualElement, List<(VisualElement el, EventCallback<ClickEvent> cb)>> Wired = new();
+        static readonly HashSet<VisualElement> DecorApplied = new();
+
+        public static void EnsureDecor(VisualElement? root)
+        {
+            if (root == null) return;
+            var hub = root.Q<VisualElement>("cauldron-hub") ?? root;
+            if (DecorApplied.Contains(hub)) return;
+            UiArtBindings.ApplyCauldronHubDecor(hub);
+            DecorApplied.Add(hub);
+        }
 
         public static void Bind(VisualElement? root, PublicPlayerView? player)
         {
             if (root == null) return;
 
             var hub = root.Q<VisualElement>("cauldron-hub") ?? root;
+            EnsureDecor(hub);
             int activeCrucibles = 0;
 
             foreach (var (id, suit, abbrev, reagent) in Slots)

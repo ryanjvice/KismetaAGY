@@ -6,11 +6,11 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SeasonIntro.uss" />
 
-    <engine:VisualElement name="autumn-intro" class="screen intro--autumn" style="background-color: rgb(22,10,10);">
+    <engine:VisualElement name="autumn-intro" class="screen screen--autumn intro--autumn">
 
         <engine:VisualElement class="intro-hero">
             <engine:VisualElement class="intro-sigil">
-                <engine:Label text="&#xec3a;" class="ti-icon" style="font-size: 26px; color: rgb(224, 138, 74);" />
+                <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
             </engine:VisualElement>
             <engine:Label text="AUTUMN" class="intro-name" />
             <engine:Label text="THE FORGE SEASON · TRANSMUTE &amp; CLASH" class="intro-tagline" />

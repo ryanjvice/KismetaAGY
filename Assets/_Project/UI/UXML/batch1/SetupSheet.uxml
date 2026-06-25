@@ -14,8 +14,8 @@
     <engine:VisualElement name="setup-sheet" class="sheet">
 
         <engine:VisualElement class="sheet__header">
-            <engine:Label text="New game" class="statusbar__title" style="color: rgb(232, 185, 74);" />
-            <engine:Button name="close-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
+            <engine:Label text="New game" class="statusbar__title text-gold" />
+            <engine:Button name="close-btn" text="&#10005;" class="btn-back" />
         </engine:VisualElement>
 
         <engine:VisualElement class="sheet__body">

@@ -6,6 +6,7 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
 
+    <!-- DEPRECATED: harvest roll UI is embedded in SpringHub.uxml — do not style this orphan separately. -->
     <!-- ============================================================
          ROLL YOUR SIGN (#11) + HARVEST TALLY (#12)
          NATIVE NOTE: the zodiac wheel + landing meeple was SVG. Animate

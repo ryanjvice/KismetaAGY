@@ -150,6 +150,8 @@ namespace Kismeta.UI.Controllers
                 player.StonePosition,
                 AutumnActionBindings.StoneStatusLabel(player));
 
+            UiArtBindings.ApplyForgeStageDecor(El("board-stage"));
+
             if (Lbl("hint-label") != null)
             {
                 Lbl("hint-label")!.text = autumnAction

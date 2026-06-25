@@ -297,8 +297,10 @@ namespace Kismeta.UI.Controllers
 
         void BindWheelAndHarvest(GameSession session, PlayerState player, ActionHint hint)
         {
-            var wheel = El("wheel-host");
+            var wheel = El("wheel-stack") ?? El("wheel-host");
             if (wheel == null) return;
+
+            UiArtBindings.ApplyWheelStack(wheel);
 
             var sign = player.CurrentSign;
             var cosmic = session.Board.CosmicAgeSign;

@@ -77,6 +77,57 @@
 
 /* Spring hub — roll scene */
 .spring-hub__stage { align-items: center; }
+
+.wheel-stack {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 4px 0 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.wheel-stack__star {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    opacity: 0.15;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/starChart.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.wheel-stack__zodiac {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 8%;
+    bottom: 8%;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/zodiacWheel.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.wheel-stack__glyph-host {
+    position: absolute;
+    left: 32%;
+    right: 32%;
+    top: 32%;
+    bottom: 32%;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(16, 8, 12, 0.55);
+    border-width: 2px;
+    border-color: var(--gold-deep);
+}
+
+.wheel-stack__glyph {
+    font-size: 32px;
+    color: var(--gold-bright);
+    -unity-text-align: middle-center;
+}
+
 .spring-hub__wheel {
     width: 96px;
     height: 96px;

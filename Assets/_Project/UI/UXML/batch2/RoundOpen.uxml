@@ -15,6 +15,8 @@
 
         <engine:VisualElement name="cast-phase">
             <engine:VisualElement class="ceremony-hero ceremony-hero--open" style="padding-bottom: 22px;">
+                <engine:VisualElement name="ceremony-starfield" class="ceremony-hero__starfield" />
+                <engine:VisualElement class="ceremony-hero__content">
                 <engine:Label name="keeper-eyebrow" text="Iolanthe casts the age" class="ceremony-eyebrow" />
 
                 <engine:VisualElement name="age-die" style="width: 88px; height: 88px; border-radius: 14px; background-color: rgb(36,20,52); border-width: 2px; border-color: rgb(106, 74, 138); align-items: center; justify-content: center; margin-bottom: 14px;">
@@ -23,6 +25,7 @@
 
                 <engine:Label text="the cosmic age die" class="ceremony-prelabel" />
                 <engine:Label text="one of twelve signs will rule the coming age" class="ceremony-couplet" style="margin-top: 8px;" />
+                </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:VisualElement name="pending-wager" style="padding: 14px 16px 4px;">
@@ -41,6 +44,8 @@
 
         <engine:VisualElement name="reveal-phase" style="display: none;">
             <engine:VisualElement class="ceremony-hero ceremony-hero--open">
+                <engine:VisualElement name="ceremony-starfield" class="ceremony-hero__starfield" />
+                <engine:VisualElement class="ceremony-hero__content">
                 <engine:Label text="the heavens turn · an age dawns" class="ceremony-eyebrow" />
 
                 <engine:VisualElement name="age-sigil" class="ceremony-sigil ceremony-sigil--open">
@@ -53,6 +58,7 @@
                 <engine:VisualElement class="ceremony-aspects">
                     <engine:Label name="age-planet" text="Mars" class="ceremony-aspect ceremony-aspect--planet" />
                     <engine:Label name="age-element" text="Water" class="ceremony-aspect ceremony-aspect--element" />
+                </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
 

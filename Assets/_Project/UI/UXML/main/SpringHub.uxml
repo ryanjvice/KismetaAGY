@@ -43,8 +43,12 @@
 
         <engine:VisualElement class="screen__body">
             <engine:VisualElement name="wheel-stage" class="stage spring-hub__stage">
-                <engine:VisualElement name="wheel-host" class="roll-host spring-hub__wheel">
-                    <engine:Label name="wheel-glyph" text="?" class="font-zodiac spring-hub__wheel-glyph" />
+                <engine:VisualElement name="wheel-stack" class="wheel-stack">
+                    <engine:VisualElement name="wheel-star-chart" class="wheel-stack__star" />
+                    <engine:VisualElement name="wheel-zodiac" class="wheel-stack__zodiac" />
+                    <engine:VisualElement name="wheel-glyph-host" class="wheel-stack__glyph-host">
+                        <engine:Label name="wheel-glyph" text="?" class="font-zodiac wheel-stack__glyph" />
+                    </engine:VisualElement>
                 </engine:VisualElement>
                 <engine:Label name="rolled-sign" text="" class="spring-hub__rolled-sign" />
                 <engine:Label name="sign-match" text="" class="spring-hub__sign-match" />
@@ -78,7 +82,7 @@
                                 <engine:Label text="Spread" style="font-size: 12px; color: rgb(244, 211, 94);" />
                                 <engine:Label text="visible · duel-exposed" style="font-size: 9px; color: rgb(154,122,122); margin-left: 6px;" />
                             </engine:VisualElement>
-                            <engine:Label name="commune-spread-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                            <engine:Label name="commune-spread-count" text="0" class="text-count" />
                         </engine:VisualElement>
                         <engine:VisualElement name="spread-cards" class="swap-zone__cards" />
                     </engine:VisualElement>
@@ -92,7 +96,7 @@
                                 <engine:Label text="Hand" style="font-size: 12px; color: rgb(127, 196, 168);" />
                                 <engine:Label text="hidden · safe" style="font-size: 9px; color: rgb(122,138,122); margin-left: 6px;" />
                             </engine:VisualElement>
-                            <engine:Label name="commune-hand-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                            <engine:Label name="commune-hand-count" text="0" class="text-count" />
                         </engine:VisualElement>
                         <engine:VisualElement name="hand-cards" class="swap-zone__cards" />
                     </engine:VisualElement>
@@ -115,7 +119,7 @@
             <engine:VisualElement class="dock">
                 <engine:VisualElement class="dock__header">
                     <engine:Label name="dock-zone-label" text="spread" class="eyebrow" style="margin-bottom: 0;" />
-                    <engine:Label name="spread-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                    <engine:Label name="spread-count" text="0" class="text-count" />
                 </engine:VisualElement>
                 <engine:VisualElement name="spread-strip" class="dock__strip" />
             </engine:VisualElement>

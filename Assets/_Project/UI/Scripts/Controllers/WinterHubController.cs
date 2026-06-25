@@ -54,6 +54,8 @@ namespace Kismeta.UI.Controllers
             _localPlayerId = MainSceneBindings.ResolveLocalPlayerId(session, loop, bridge);
             if (Root == null) return;
 
+            UiArtBindings.ApplyWinterSeal(El("winter-stage"));
+
             var view = GamePublicView.From(session);
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             MainSceneBindings.BindStatusBar(Root, session, loop);

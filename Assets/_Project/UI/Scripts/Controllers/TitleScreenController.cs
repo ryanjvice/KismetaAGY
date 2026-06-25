@@ -1,4 +1,5 @@
 using System;
+using Kismeta.UI.Components;
 using UnityEngine.UIElements;
 using Kismeta.UI;
 
@@ -13,6 +14,11 @@ namespace Kismeta.UI.Controllers
         public Action OnJoin;
         public Action OnHowToPlay;
         public Action OnCodex;
+
+        protected override void Bind()
+        {
+            UiArtBindings.ApplyTitleHero(Root);
+        }
 
         protected override void Wire()
         {

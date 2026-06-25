@@ -439,6 +439,18 @@
     align-self: center;
     margin-top: 4px;
     margin-bottom: 4px;
+    position: relative;
+}
+
+.cauldron-hub__mantle {
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    top: 2%;
+    bottom: 2%;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/mantleRing.png");
+    -unity-background-scale-mode: scale-to-fit;
+    opacity: 0.55;
 }
 
 .cauldron-stage {
@@ -459,6 +471,39 @@
     -unity-text-align: middle-center;
     padding-top: 2px;
     padding-bottom: 2px;
+    overflow: hidden;
+    background-color: rgba(12, 8, 10, 0.35);
+    border-color: var(--border-gold);
+}
+
+.cauldron__art {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: 4px;
+    bottom: 18px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.cauldron-hub .cauldron--lit {
+    border-width: 3px;
+    border-color: var(--gold-bright);
+    opacity: 1;
+    background-color: rgba(12, 8, 10, 0.15);
+}
+
+.cauldron-hub .cauldron--dormant {
+    border-width: 2px;
+    border-color: rgba(192, 160, 96, 0.45);
+    opacity: 0.85;
+    border-style: dashed;
+}
+
+.cauldron-hub .cauldron--dormant.cauldron--red,
+.cauldron-hub .cauldron--dormant.cauldron--blue,
+.cauldron-hub .cauldron--dormant.cauldron--green,
+.cauldron-hub .cauldron--dormant.cauldron--yellow {
+    background-color: rgba(12, 8, 10, 0.55);
 }
 
 .cauldron-hub .cauldron--tappable {
@@ -484,29 +529,6 @@
 .cauldron-hub #cauldron-s { bottom: 0; left: 86px; }
 
 .cauldron-hub #cauldron-w { left: 0; top: 86px; }
-
-.cauldron-hub .cauldron--red { background-color: var(--reagent-sulphur); }
-.cauldron-hub .cauldron--blue { background-color: var(--reagent-aqua); }
-.cauldron-hub .cauldron--green { background-color: var(--reagent-vitriol); }
-.cauldron-hub .cauldron--yellow { background-color: var(--reagent-quick); }
-
-.cauldron-hub .cauldron--lit {
-    border-width: 3px;
-    border-color: var(--gold-bright);
-    opacity: 1;
-}
-
-.cauldron-hub .cauldron--dormant {
-    border-width: 2px;
-    border-color: rgb(90, 58, 74);
-    opacity: 1;
-    border-style: dashed;
-}
-
-.cauldron-hub .cauldron--dormant.cauldron--red { background-color: rgba(192, 57, 43, 0.35); }
-.cauldron-hub .cauldron--dormant.cauldron--blue { background-color: rgba(46, 109, 164, 0.35); }
-.cauldron-hub .cauldron--dormant.cauldron--green { background-color: rgba(31, 110, 74, 0.35); }
-.cauldron-hub .cauldron--dormant.cauldron--yellow { background-color: rgba(184, 148, 31, 0.35); }
 
 .cauldron__color {
     font-size: 9px;

@@ -16,6 +16,7 @@
         <engine:Label text="Victory — winner coronation and final standings by stone position." class="sr-only" />
 
         <engine:VisualElement class="victory-hero">
+            <engine:VisualElement name="victory-halo" class="victory-halo" />
             <engine:VisualElement class="victory-sigil">
                 <engine:Label text="&#xea69;" class="ti-icon" style="font-size: 44px; color: rgb(90,60,10);" />
             </engine:VisualElement>

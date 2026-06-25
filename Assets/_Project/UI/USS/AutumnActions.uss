@@ -179,13 +179,30 @@
 .forge-stage {
     align-items: center;
     justify-content: center;
+    position: relative;
+    width: 220px;
+    height: 220px;
+}
+
+.forge-stage__mantle {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/mantleRing.png");
+    -unity-background-scale-mode: scale-to-fit;
+    opacity: 0.5;
 }
 
 .forge-stage__art {
-    width: 200px;
-    height: 200px;
+    width: 160px;
+    height: 160px;
     flex-shrink: 0;
     -unity-background-scale-mode: scale-to-fit;
+    border-width: 3px;
+    border-color: var(--border-gold);
+    border-radius: 80px;
 }
 
 .forge-stage__label {
@@ -195,4 +212,8 @@
     margin-top: 4px;
     white-space: normal;
     max-width: 190px;
+}
+
+.forge-stage__hint {
+    margin-top: 10px;
 }

@@ -4,6 +4,7 @@
     xmlns:editor="UnityEditor.UIElements">
 
     <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/WinterHub.uss" />
     <engine:Template src="../shell/InventoryToolbar.uxml" name="InventoryToolbar" />
 
     <engine:VisualElement name="winter-hub" class="screen screen--winter">
@@ -39,10 +40,11 @@
         <engine:VisualElement name="rivals" class="rivals" />
 
         <engine:VisualElement class="screen__body">
-            <engine:VisualElement class="stage" style="padding: 16px;">
-                <engine:Label text="closing rites" class="eyebrow" />
-                <engine:Label name="limits-line" text="Spread 0/5 · Hand 0/5" style="font-size: 11px; color: rgb(184, 154, 110); margin-bottom: 12px;" />
-                <engine:Label name="hint-label" text="Your turn" style="font-size: 11px; color: rgb(158, 201, 224); margin-top: 14px;" />
+            <engine:VisualElement name="winter-stage" class="stage winter-hub__stage">
+                <engine:VisualElement name="winter-seal" class="winter-seal" />
+                <engine:Label text="closing rites" class="eyebrow winter-hub__title" />
+                <engine:Label name="limits-line" text="Spread 0/5 · Hand 0/5" class="text-muted winter-hub__limits" />
+                <engine:Label name="hint-label" text="Your turn" class="text-hint winter-hub__hint" />
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--multi stage-cta--winter">
@@ -61,7 +63,7 @@
             <engine:VisualElement class="dock">
                 <engine:VisualElement class="dock__header">
                     <engine:Label name="dock-zone-label" text="spread" class="eyebrow" style="margin-bottom: 0;" />
-                    <engine:Label name="spread-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                    <engine:Label name="spread-count" text="0" class="text-count" />
                 </engine:VisualElement>
                 <engine:VisualElement name="spread-strip" class="dock__strip" />
             </engine:VisualElement>

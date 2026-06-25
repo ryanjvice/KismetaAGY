@@ -6,11 +6,11 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SeasonIntro.uss" />
 
-    <engine:VisualElement name="summer-intro" class="screen intro--summer" style="background-color: rgb(24,15,10);">
+    <engine:VisualElement name="summer-intro" class="screen screen--summer intro--summer">
 
         <engine:VisualElement class="intro-hero">
             <engine:VisualElement class="intro-sigil">
-                <engine:Label text="&#xeb30;" class="ti-icon" style="font-size: 28px; color: rgb(240, 176, 96);" />
+                <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
             </engine:VisualElement>
             <engine:Label text="SUMMER" class="intro-name" />
             <engine:Label text="THE HIGH SUN · BUILD &amp; PREPARE" class="intro-tagline" />

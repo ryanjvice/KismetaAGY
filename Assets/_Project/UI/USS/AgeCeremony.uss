@@ -6,52 +6,84 @@
 .ceremony-hero {
     padding: 26px 18px 16px;
     align-items: center;
-    background-color: rgb(22,16,40); /* open: rising; close: setting (overridden) */
+    position: relative;
+    overflow: hidden;
+    background-image: url("project://database/Assets/_Project/Art/UI/tableFelt_vignette.png");
+    -unity-background-scale-mode: scale-and-crop;
+    background-color: rgba(22, 16, 40, 0.88);
 }
-.ceremony-hero--open { background-color: rgb(36,26,58); }
-.ceremony-hero--close { background-color: rgb(26,20,46); }
+
+.ceremony-hero__starfield {
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    top: 0;
+    bottom: 0;
+    opacity: 0.2;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/starChart.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.ceremony-hero__content {
+    position: relative;
+    align-items: center;
+}
+
+.ceremony-hero--open { background-color: rgba(36, 26, 58, 0.88); }
+.ceremony-hero--close { background-color: rgba(26, 20, 46, 0.88); }
 
 .ceremony-eyebrow {
-    font-size: 10px; letter-spacing: 4px;
-    color: rgb(154,122,186);
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: rgb(184, 154, 186);
     margin-bottom: 16px;
 }
 
 .ceremony-sigil {
-    align-items: center; justify-content: center;
+    align-items: center;
+    justify-content: center;
+    border-color: var(--gold-deep);
 }
 .ceremony-sigil--open {
-    width: 96px; height: 96px; border-radius: 48px;
-    background-color: rgb(74,20,16);
-    border-width: 2px; border-color: var(--gold-deep);
+    width: 96px;
+    height: 96px;
+    border-radius: 48px;
+    background-color: rgba(74, 20, 16, 0.75);
+    border-width: 3px;
     margin-bottom: 16px;
 }
 .ceremony-sigil--close {
-    width: 78px; height: 78px; border-radius: 39px;
-    background-color: rgb(36,16,16);
-    border-width: 2px; border-color: rgb(138,106,74);
+    width: 78px;
+    height: 78px;
+    border-radius: 39px;
+    background-color: rgba(36, 16, 16, 0.75);
+    border-width: 2px;
+    border-color: rgb(192, 160, 96);
     margin-bottom: 14px;
     opacity: 0.85;
 }
 .ceremony-sigil__glyph {
-    font-size: 48px; color: rgb(240,192,176);
+    font-size: 48px;
+    color: rgb(240, 192, 176);
     -unity-font-style: normal;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
 }
-.ceremony-sigil--close .ceremony-sigil__glyph { font-size: 38px; }
+.ceremony-sigil--close .ceremony-sigil__glyph { font-size: 38px; color: rgb(176, 136, 104); }
 
 .ceremony-prelabel {
-    font-size: 11px; color: var(--muted);
+    font-size: 11px;
+    color: var(--muted);
     letter-spacing: 2px;
 }
 .ceremony-agename {
-    font-size: 36px; color: var(--gold);
+    font-size: 36px;
+    color: var(--gold);
     letter-spacing: 2px;
     margin-top: 2px;
     -unity-font-style: normal;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
 }
-.ceremony-hero--close .ceremony-agename { font-size: 30px; }
+.ceremony-hero--close .ceremony-agename { font-size: 30px; color: rgb(201, 168, 74); }
 
 .ceremony-couplet {
     font-size: 10px;
@@ -61,39 +93,51 @@
     -unity-text-align: middle-center;
     max-width: 260px;
     margin-top: 14px;
-    color: rgb(154,138,172);
+    color: rgb(184, 168, 172);
 }
 
 .ceremony-aspects {
-    flex-direction: row; align-items: center;
+    flex-direction: row;
+    align-items: center;
     margin-top: 13px;
 }
 .ceremony-aspect {
     font-size: 11px;
-    border-width: 1px; border-radius: var(--radius-sm);
+    border-width: 1px;
+    border-radius: var(--radius-sm);
     padding: 3px 10px;
     margin-right: 8px;
 }
 .ceremony-aspect:last-child { margin-right: 0; }
 .ceremony-aspect--planet {
-    color: rgb(240,153,123);
-    background-color: rgb(42,21,16);
-    border-color: rgb(90,43,26);
+    color: rgb(240, 153, 123);
+    background-color: rgba(42, 21, 16, 0.9);
+    border-color: rgb(106, 58, 42);
 }
 .ceremony-aspect--element {
-    color: var(--ok-text);
-    background-color: var(--ok-bg);
-    border-color: var(--ok-border);
+    color: rgb(127, 196, 168);
+    background-color: rgba(22, 38, 31, 0.9);
+    border-color: rgb(43, 106, 74);
 }
 
-.ceremony-callout {
-    margin: 6px 16px 0;
+.ceremony-panel-wrap {
+    padding: 15px 16px 0;
+}
+
+.ceremony-standing-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.ceremony-footer {
+    padding: 12px 16px 24px;
 }
 
 .ceremony-cta {
-    margin: 6px 16px 16px;
+    font-size: 14px;
 }
 
-.ceremony-cta .btn {
-    width: 100%;
+.screen.ceremony {
+    background-color: rgba(10, 8, 16, 0.78);
 }

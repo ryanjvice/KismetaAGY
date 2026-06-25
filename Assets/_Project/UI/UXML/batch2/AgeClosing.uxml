@@ -14,7 +14,9 @@
     <engine:VisualElement name="age-close" class="screen ceremony" style="background-color: rgb(10,8,16);">
 
         <engine:VisualElement class="ceremony-hero ceremony-hero--close">
-            <engine:Label text="the constellation sets" class="ceremony-eyebrow" style="color: rgb(138,106,170);" />
+            <engine:VisualElement name="ceremony-starfield" class="ceremony-hero__starfield" />
+            <engine:VisualElement class="ceremony-hero__content">
+            <engine:Label text="the constellation sets" class="ceremony-eyebrow" />
 
             <engine:VisualElement name="age-sigil" class="ceremony-sigil ceremony-sigil--close">
                 <engine:Label text="?" class="ceremony-sigil__glyph font-zodiac" style="color: rgb(176,136,104);" />
@@ -26,6 +28,7 @@
 
             <engine:Label text="The waters recede, the stars wheel on. What was forged in this age is forged forever."
                           class="ceremony-couplet" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <!-- how the age moved the board -->

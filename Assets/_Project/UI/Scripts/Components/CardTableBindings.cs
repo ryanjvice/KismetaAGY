@@ -69,7 +69,7 @@ namespace Kismeta.UI.Components
 
                 var name = new Label(PlayerUiNames.ShortName(p.PlayerId) + (isSelf ? " (you)" : ""));
                 name.style.fontSize = 13;
-                name.style.color = new StyleColor(new Color(0.95f, 0.91f, 0.82f));
+                name.style.color = new StyleColor(UiTheme.TextBody);
                 name.style.marginRight = 6;
                 header.Add(name);
 
@@ -77,7 +77,7 @@ namespace Kismeta.UI.Components
                     ? "stasis"
                     : $"{StoneShort(p.StonePosition)} · {threat}");
                 meta.style.fontSize = 9;
-                meta.style.color = new StyleColor(new Color(0.72f, 0.6f, 0.43f));
+                meta.style.color = new StyleColor(UiTheme.TextSub);
                 header.Add(meta);
 
                 if (!inStasis && threat >= 8)

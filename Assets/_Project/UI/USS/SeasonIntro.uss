@@ -8,23 +8,40 @@
 .intro-hero {
     padding: 24px 18px 16px;
     align-items: center;
-    background-color: rgb(19,37,26); /* overridden per season below */
+    position: relative;
+    overflow: hidden;
+    background-image: url("project://database/Assets/_Project/Art/UI/tableFelt_vignette.png");
+    -unity-background-scale-mode: scale-and-crop;
+    background-color: rgba(19, 37, 26, 0.85);
 }
-.intro--spring .intro-hero { background-color: rgb(26,58,36); }
-.intro--summer .intro-hero { background-color: rgb(74,46,10); }
-.intro--autumn .intro-hero { background-color: rgb(74,22,10); }
-.intro--winter .intro-hero { background-color: rgb(26,48,72); }
+
+.intro--spring .intro-hero { background-color: rgba(26, 58, 36, 0.82); }
+.intro--summer .intro-hero { background-color: rgba(74, 46, 10, 0.82); }
+.intro--autumn .intro-hero { background-color: rgba(74, 22, 10, 0.82); }
+.intro--winter .intro-hero { background-color: rgba(26, 48, 72, 0.82); }
 
 .intro-sigil {
-    width: 60px; height: 60px; border-radius: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
     border-width: 2px;
-    align-items: center; justify-content: center;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 12px;
+    overflow: hidden;
+    background-color: rgba(16, 8, 12, 0.65);
 }
-.intro--spring .intro-sigil { background-color: rgb(19,37,26); border-color: var(--spring-accent); }
-.intro--summer .intro-sigil { background-color: rgb(46,28,10); border-color: var(--summer-accent); }
-.intro--autumn .intro-sigil { background-color: rgb(46,14,10); border-color: var(--autumn-accent); }
-.intro--winter .intro-sigil { background-color: rgb(17,32,46); border-color: rgb(111,168,212); }
+.intro--spring .intro-sigil { border-color: var(--spring-accent); }
+.intro--summer .intro-sigil { border-color: var(--summer-accent); }
+.intro--autumn .intro-sigil { border-color: var(--autumn-accent); }
+.intro--winter .intro-sigil { border-color: var(--winter-accent); }
+
+.intro-sigil__art {
+    width: 46px;
+    height: 46px;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/crucibleForge.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
 
 .intro-name {
     font-size: 26px;
@@ -37,14 +54,15 @@
 .intro--winter .intro-name { color: var(--winter-accent); }
 
 .intro-tagline {
-    font-size: 10px; letter-spacing: 3px;
+    font-size: 10px;
+    letter-spacing: 3px;
     margin-top: 7px;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/GermaniaOne-Regular.asset");
 }
-.intro--spring .intro-tagline { color: rgb(90,154,111); }
-.intro--summer .intro-tagline { color: rgb(184,122,58); }
-.intro--autumn .intro-tagline { color: rgb(176,90,42); }
-.intro--winter .intro-tagline { color: rgb(111,154,196); }
+.intro--spring .intro-tagline { color: rgb(90, 154, 111); }
+.intro--summer .intro-tagline { color: rgb(184, 122, 58); }
+.intro--autumn .intro-tagline { color: rgb(176, 90, 42); }
+.intro--winter .intro-tagline { color: rgb(111, 154, 196); }
 
 .intro-couplet {
     font-size: 10px;
@@ -54,44 +72,77 @@
     -unity-text-align: middle-center;
     max-width: 250px;
     margin-top: 13px;
-    color: rgb(138,172,146);
+    color: rgb(184, 168, 146);
 }
 
-/* the shared age strip under the hero */
 .intro-agestrip {
-    flex-direction: row; align-items: center;
-    padding: 13px 16px 4px;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+    border-top-width: 2px;
+    border-top-color: var(--border-gold);
+    border-bottom-width: 2px;
+    border-bottom-color: var(--border-gold);
+    background-color: rgba(16, 10, 18, 0.75);
 }
+
 .intro-agestrip__sigil {
-    width: 28px; height: 28px; border-radius: 14px;
-    background-color: rgb(58,26,14);
-    border-width: 1px; border-color: var(--gold-deep);
-    align-items: center; justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    border-width: 2px;
+    border-color: var(--gold-deep);
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    background-color: rgba(28, 18, 8, 0.8);
+}
+
+.intro-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 7px;
+}
+.intro-row__num {
+    width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    border-width: 1px;
+    align-items: center;
+    justify-content: center;
     margin-right: 9px;
 }
 
-/* preview step / action rows */
-.intro-row {
-    flex-direction: row; align-items: center;
-    background-color: var(--panel-darker);
-    border-width: 1px; border-color: var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 8px 11px;
-    margin-bottom: 6px;
+.intro-row__label {
+    font-size: 12px;
+    color: var(--ink);
 }
-.intro-row__num {
-    width: 20px; height: 20px; border-radius: 10px;
-    border-width: 1px;
-    align-items: center; justify-content: center;
-    margin-right: 10px;
+
+.intro-steps-wrap {
+    padding: 10px 16px 4px;
+}
+
+.intro-steps-eyebrow {
+    color: var(--muted-dim);
+}
+
+.intro-cta-wrap {
+    padding: 12px 16px 24px;
+}
+
+.intro-cta {
+    font-size: 14px;
+    padding: 12px 16px 24px;
 }
 
 .intro-tip {
-    flex-direction: row;
-    border-radius: var(--radius-md);
-    padding: 9px 11px;
-    margin: 11px 16px;
+    margin-left: var(--space-md);
+    margin-right: var(--space-md);
 }
-.intro-cta {
-    margin: 4px 16px 16px;
+
+.screen.intro--spring,
+.screen.intro--summer,
+.screen.intro--autumn,
+.screen.intro--winter {
+    background-color: transparent;
 }

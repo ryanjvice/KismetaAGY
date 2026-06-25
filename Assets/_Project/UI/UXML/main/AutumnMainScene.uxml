@@ -41,10 +41,11 @@
         <engine:VisualElement class="screen__body">
             <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
                 <engine:VisualElement name="board-stage" class="forge-stage">
+                    <engine:VisualElement name="forge-mantle-ring" class="forge-stage__mantle" />
                     <engine:VisualElement name="stone-art" class="forge-stage__art" />
                     <engine:Label name="stone-label" class="forge-stage__label" text="stone · lead" />
                 </engine:VisualElement>
-                <engine:Label name="hint-label" text="Your turn" style="font-size: 11px; color: rgb(243, 233, 210); margin-top: 10px;" />
+                <engine:Label name="hint-label" text="Your turn" class="text-hint forge-stage__hint" />
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--multi">
@@ -66,7 +67,7 @@
             <engine:VisualElement class="dock">
                 <engine:VisualElement class="dock__header">
                     <engine:Label name="dock-zone-label" text="spread" class="eyebrow" style="margin-bottom: 0;" />
-                    <engine:Label name="spread-count" text="0" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                    <engine:Label name="spread-count" text="0" class="text-count" />
                 </engine:VisualElement>
                 <engine:VisualElement name="spread-strip" class="dock__strip" />
             </engine:VisualElement>

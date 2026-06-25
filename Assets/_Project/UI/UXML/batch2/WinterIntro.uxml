@@ -6,11 +6,11 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SeasonIntro.uss" />
 
-    <engine:VisualElement name="winter-intro" class="screen intro--winter" style="background-color: rgb(14,20,32);">
+    <engine:VisualElement name="winter-intro" class="screen screen--winter intro--winter">
 
         <engine:VisualElement class="intro-hero">
             <engine:VisualElement class="intro-sigil">
-                <engine:Label text="&#10052;" style="font-size: 28px; color: rgb(158, 201, 224);" />
+                <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
             </engine:VisualElement>
             <engine:Label text="WINTER" class="intro-name" />
             <engine:Label text="THE LONG NIGHT · CLOSE THE AGE" class="intro-tagline" />

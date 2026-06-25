@@ -2,40 +2,81 @@
 
 .title-hero {
     flex-grow: 1;
-    padding: 30px 20px 22px;
+    padding: 0;
+    align-items: stretch;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.title-hero__bg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/splashBackground.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.title-hero__star-chart {
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    top: 8%;
+    bottom: 8%;
+    opacity: 0.15;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/starChart.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.title-hero__content {
+    position: relative;
+    flex-grow: 1;
     align-items: center;
     justify-content: center;
-    /* radial glow backdrop -> background sprite in Unity (see NATIVE NOTE) */
-    background-color: rgb(34,21,10);
+    padding: 30px 20px 22px;
 }
 
 .title-sigil {
-    width: 74px; height: 74px; border-radius: 37px;
-    background-color: var(--gold-deep);
-    border-width: 2px; border-color: var(--gold-bright);
-    align-items: center; justify-content: center;
+    width: 74px;
+    height: 74px;
+    border-radius: 37px;
+    background-color: rgba(201, 150, 47, 0.35);
+    border-width: 2px;
+    border-color: var(--gold-bright);
+    align-items: center;
+    justify-content: center;
     margin-bottom: 14px;
-}
-.title-sigil__mark {
-    font-size: 34px; color: rgb(90,60,10);
-    -unity-font-style: bold;
+    overflow: hidden;
 }
 
-.title-wordmark {
-    font-size: 34px; color: var(--gold);
-    letter-spacing: 5px;
-    -unity-font-style: normal;
-    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
+.title-sigil__art {
+    width: 56px;
+    height: 56px;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/crucibleForge.png");
+    -unity-background-scale-mode: scale-to-fit;
 }
-.title-tagline {
-    font-size: 11px; color: rgb(201,168,74);
-    letter-spacing: 3px;
-    margin-top: 7px;
-    -unity-font-style: normal;
-    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/GermaniaOne-Regular.asset");
+
+.title-wordmark-img {
+    width: 280px;
+    height: 72px;
+    margin-bottom: 4px;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/kismeta_metallic_1.png");
+    -unity-background-scale-mode: scale-to-fit;
 }
+
+.title-tagline-img {
+    width: 300px;
+    height: 48px;
+    margin-bottom: 4px;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/alchemists_metallic.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
 .title-flavor {
-    font-size: 10px; color: rgb(154,138,106);
+    font-size: 10px;
+    color: rgb(201, 168, 120);
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
     -unity-font-style: normal;
     white-space: normal;
@@ -46,15 +87,31 @@
 
 .title-menu {
     padding: 14px 16px 16px;
-    background-color: rgb(20,10,24);
+    background-color: rgba(20, 10, 24, 0.92);
+    border-top-width: 2px;
+    border-top-color: var(--border-gold);
 }
-.title-menu__row { flex-direction: row; margin-top: 8px; }
+
+.title-menu__primary {
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.title-menu__row {
+    flex-direction: row;
+    margin-top: 8px;
+}
+
+.title-menu__row--secondary {
+    margin-top: 2px;
+}
 
 .btn--menu {
     flex-grow: 1;
-    background-color: rgb(28,18,8);
-    border-width: 1px; border-color: rgb(106,74,26);
-    color: rgb(201,168,74);
+    background-color: rgba(28, 18, 8, 0.92);
+    border-width: 2px;
+    border-color: var(--gold-deep);
+    color: rgb(201, 168, 74);
     border-radius: var(--radius-md);
     padding: 11px;
     -unity-text-align: middle-center;
@@ -64,9 +121,10 @@
 
 .btn--menu-sm {
     flex-grow: 1;
-    background-color: var(--panel-darker);
-    border-width: 1px; border-color: var(--border-subtle);
-    color: rgb(154,138,172);
+    background-color: rgba(16, 10, 18, 0.9);
+    border-width: 1px;
+    border-color: var(--border-gold);
+    color: rgb(184, 154, 138);
     border-radius: var(--radius-md);
     padding: 10px;
     font-size: 11px;

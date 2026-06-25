@@ -25,6 +25,8 @@ namespace Kismeta.UI.Controllers
         {
             if (Root == null) return;
 
+            UiArtBindings.ApplyVictoryHalo(Root);
+
             int? winnerId = session.WinnerPlayerId;
             if (winnerId.HasValue && Lbl("winner-name") != null)
                 Lbl("winner-name")!.text = $"{PlayerUiNames.ForPlayer(winnerId.Value)} has completed the Great Work";
@@ -50,7 +52,7 @@ namespace Kismeta.UI.Controllers
                 row.AddToClassList("standing");
                 if (isWinner)
                 {
-                    var gold = new StyleColor(new UnityEngine.Color(0.79f, 0.59f, 0.18f));
+                    var gold = new StyleColor(UiTheme.GoldDeep);
                     row.style.borderTopColor = row.style.borderRightColor =
                         row.style.borderBottomColor = row.style.borderLeftColor = gold;
                 }
@@ -58,7 +60,7 @@ namespace Kismeta.UI.Controllers
                 var rankLbl = new Label((rank + 1).ToString());
                 rankLbl.AddToClassList("standing__rank");
                 if (isWinner)
-                    rankLbl.style.color = new StyleColor(new UnityEngine.Color(0.96f, 0.83f, 0.37f));
+                    rankLbl.style.color = new StyleColor(UiTheme.GoldBright);
                 row.Add(rankLbl);
 
                 var dot = new VisualElement();
@@ -73,14 +75,12 @@ namespace Kismeta.UI.Controllers
                 var name = new Label(PlayerUiNames.ShortName(p.PlayerId));
                 name.style.flexGrow = 1;
                 name.style.fontSize = 12;
-                name.style.color = new StyleColor(new UnityEngine.Color(0.95f, 0.91f, 0.82f));
+                name.style.color = new StyleColor(UiTheme.TextBody);
                 row.Add(name);
 
                 var stone = new Label(StoneLabel(p.StonePosition));
                 stone.style.fontSize = 10;
-                stone.style.color = new StyleColor(isWinner
-                    ? new UnityEngine.Color(0.96f, 0.83f, 0.37f)
-                    : new UnityEngine.Color(0.72f, 0.6f, 0.43f));
+                stone.style.color = new StyleColor(isWinner ? UiTheme.GoldBright : UiTheme.TextSub);
                 row.Add(stone);
 
                 host.Add(row);
