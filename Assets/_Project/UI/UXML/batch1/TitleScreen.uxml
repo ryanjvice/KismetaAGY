@@ -12,16 +12,16 @@
         <engine:VisualElement name="title-hero" class="title-hero">
             <engine:VisualElement name="title-hero-bg" class="title-hero__bg" />
             <engine:VisualElement class="title-hero__content">
-                <engine:VisualElement name="title-wheel-stack" class="title-wheel-stack">
-                    <engine:VisualElement name="title-wheel-star" class="title-wheel-stack__star" />
-                    <engine:VisualElement name="title-wheel-zodiac" class="title-wheel-stack__zodiac" />
-                    <engine:VisualElement name="title-wheel-mantle" class="title-wheel-stack__mantle" />
-                    <engine:VisualElement name="title-wheel-forge" class="title-wheel-stack__forge" />
-                </engine:VisualElement>
                 <engine:VisualElement name="title-wordmark-img" class="title-wordmark-img" />
+                <engine:VisualElement class="title-hero__wheel-stage">
+                    <engine:VisualElement name="title-wheel-stack" class="title-wheel-stack">
+                        <engine:VisualElement name="title-wheel-star" class="title-wheel-stack__star" />
+                        <engine:VisualElement name="title-wheel-zodiac" class="title-wheel-stack__zodiac" />
+                        <engine:VisualElement name="title-wheel-mantle" class="title-wheel-stack__mantle" />
+                        <engine:VisualElement name="title-wheel-forge" class="title-wheel-stack__forge" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
                 <engine:VisualElement name="title-tagline-img" class="title-tagline-img" />
-                <engine:Label text="Turn your lead into gold, carry your stone to the Altar, and claim the title of Magnus Alchemista."
-                              class="title-flavor" />
             </engine:VisualElement>
         </engine:VisualElement>
 
