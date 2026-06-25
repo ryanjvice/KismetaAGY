@@ -7,8 +7,8 @@ using UnityEngine.UIElements;
 namespace Kismeta.UI
 {
     /// <summary>
-    /// Full-viewport UI host: safe-area insets on the layout root and screen chrome,
-    /// except full-bleed screens (title) which match splash edge-to-edge backgrounds.
+    /// Full-viewport UI host: splash backdrop on the app shell; safe-area insets on
+    /// screen chrome (top) and footers (bottom) only — content fills edge-to-edge.
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class ViewportLayout : MonoBehaviour
@@ -300,6 +300,7 @@ namespace Kismeta.UI
 
             EnsurePanelRootFillsViewport(root);
             EnsureAppShell(root);
+            UiArtBindings.ApplyAppShellBackdrop(root.Q("app-shell"));
             BindOverlayLayer(root);
 
             var layoutRoot = GetLayoutRoot();
@@ -383,6 +384,10 @@ namespace Kismeta.UI
             var shell = new VisualElement { name = "app-shell" };
             shell.AddToClassList("app-shell");
 
+            var backdrop = new VisualElement { name = "app-backdrop" };
+            backdrop.AddToClassList("app-shell__backdrop");
+            shell.Add(backdrop);
+
             var content = new VisualElement { name = "content-layer" };
             content.AddToClassList("content-layer");
 
@@ -394,6 +399,7 @@ namespace Kismeta.UI
 
             shell.Add(content);
             root.Add(shell);
+            UiArtBindings.ApplyAppShellBackdrop(shell);
             EnsureOverlayLayer();
         }
 
@@ -440,31 +446,57 @@ namespace Kismeta.UI
             float scale = Mathf.Clamp(Mathf.Min(w / DesignWidth, h / DesignHeight), ScaleMin, ScaleMax);
             UiScale = scale;
 
-            if (UsesFullBleedLayout(root))
-                ApplyFullBleedLayout(root, h);
+            ClearSafeAreaPadding(root);
+            ComputeSafeAreaInsets(w, h, out float topInset, out float bottomInset);
+
+            if (UsesFullBleedTopLayout(root))
+                ClearTopSafeInset(root);
             else
-                ApplySafeAreaLayout(root, w, h);
+                ApplyTopSafeInsetToContent(root, topInset);
+
+            ApplyBottomSafeInsetToFooters(root, bottomInset);
 
             ApplyViewportClass(root, w, h);
         }
 
-        static void ApplySafeAreaLayout(VisualElement root, float panelW, float panelH)
+        static void ComputeSafeAreaInsets(float panelW, float panelH, out float topInset, out float bottomInset)
         {
-            float topInset = ApplySafeAreaPadding(root, panelW, panelH);
-            ApplyTopSafeInsetToContent(root, topInset);
+            topInset = 0f;
+            bottomInset = 0f;
+
+            var safe = Screen.safeArea;
+            float sw = Screen.width;
+            float sh = Screen.height;
+            if (sw <= 0f || sh <= 0f)
+                return;
+
+            topInset = (sh - safe.yMax) / sh * panelH;
+            bottomInset = safe.y / sh * panelH;
         }
 
-        static void ApplyFullBleedLayout(VisualElement root, float panelH)
-        {
-            ClearSafeAreaPadding(root);
-            ClearTopSafeInset(root);
-            ApplyTitleMenuBottomInset(root, panelH);
-        }
-
-        static bool UsesFullBleedLayout(VisualElement root)
+        static bool UsesFullBleedTopLayout(VisualElement root)
         {
             var screen = GetActiveScreen(root);
             return screen != null && screen.ClassListContains("screen--title");
+        }
+
+        static void ApplyBottomSafeInsetToFooters(VisualElement root, float bottomInset)
+        {
+            var screen = GetActiveScreen(root);
+            if (screen == null)
+                return;
+
+            float insetPad = bottomInset + 8f;
+            ApplyFooterBottomPad(screen.Q(className: "title-menu"), insetPad, 16f);
+            ApplyFooterBottomPad(screen.Q(className: "menu-screen__footer"), insetPad, 24f);
+        }
+
+        static void ApplyFooterBottomPad(VisualElement? footer, float minFromSafeArea, float ussDefault)
+        {
+            if (footer == null)
+                return;
+
+            footer.style.paddingBottom = Mathf.Max(ussDefault, minFromSafeArea);
         }
 
         static void ClearSafeAreaPadding(VisualElement root)
@@ -491,19 +523,6 @@ namespace Kismeta.UI
                 chrome.style.paddingTop = 0;
         }
 
-        static void ApplyTitleMenuBottomInset(VisualElement root, float panelH)
-        {
-            var screen = GetActiveScreen(root);
-            var menu = screen?.Q(className: "title-menu");
-            if (menu == null)
-                return;
-
-            var safe = Screen.safeArea;
-            float sh = Screen.height;
-            float bottomInset = sh > 0f ? safe.y / sh * panelH : 0f;
-            menu.style.paddingBottom = Mathf.Max(16f, bottomInset + 8f);
-        }
-
         static VisualElement? GetActiveScreen(VisualElement root)
         {
             var contentLayer = root.Q<VisualElement>("content-layer");
@@ -513,28 +532,6 @@ namespace Kismeta.UI
             var screenHost = contentLayer[0];
             return screenHost.Q(className: "screen")
                 ?? (screenHost.childCount > 0 ? screenHost[0] : null);
-        }
-
-        /// <summary>
-        /// Horizontal and bottom safe-area insets on the layout root; top inset is returned
-        /// for application on the active screen chrome so season backgrounds bleed edge-to-edge.
-        /// </summary>
-        private static float ApplySafeAreaPadding(VisualElement root, float panelW, float panelH)
-        {
-            var safe = Screen.safeArea;
-            float sw = Screen.width;
-            float sh = Screen.height;
-            if (sw <= 0f || sh <= 0f)
-            {
-                root.style.paddingTop = 0;
-                return 0f;
-            }
-
-            root.style.paddingLeft = safe.x / sw * panelW;
-            root.style.paddingRight = (sw - safe.xMax) / sw * panelW;
-            root.style.paddingBottom = safe.y / sh * panelH;
-            root.style.paddingTop = 0;
-            return (sh - safe.yMax) / sh * panelH;
         }
 
         private static void ApplyTopSafeInsetToContent(VisualElement root, float topInset)

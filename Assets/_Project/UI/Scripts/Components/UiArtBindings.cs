@@ -29,12 +29,21 @@ namespace Kismeta.UI.Components
                 host.style.opacity = opacity;
         }
 
+        public static void ApplyAppShellBackdrop(VisualElement? shellRoot)
+        {
+            var catalog = ResolveCatalog();
+            var backdrop = shellRoot?.Q("app-backdrop");
+            if (backdrop == null || catalog == null)
+                return;
+
+            ApplyBackground(backdrop, catalog.HeroBurgundy, BackgroundSizeType.Cover);
+        }
+
         public static void ApplyTitleHero(VisualElement? heroRoot)
         {
             var catalog = ResolveCatalog();
             if (heroRoot == null || catalog == null) return;
 
-            ApplyBackground(heroRoot.Q("title-screen-bg"), catalog.HeroBurgundy, BackgroundSizeType.Cover);
             ApplyBackground(heroRoot.Q("title-screen-star"), catalog.StarChart, BackgroundSizeType.Contain, StarChartOpacity);
             ApplyBackground(heroRoot.Q("title-wheel-zodiac"), catalog.ZodiacWheel);
             ApplyBackground(heroRoot.Q("title-wheel-mantle"), catalog.MantleRing);
@@ -81,14 +90,6 @@ namespace Kismeta.UI.Components
             if (stageRoot == null || catalog == null) return;
 
             ApplyBackground(stageRoot.Q("winter-seal"), catalog.CrucibleForge, BackgroundSizeType.Contain);
-        }
-
-        public static void ApplyCeremonyStarfield(VisualElement? heroRoot)
-        {
-            var catalog = ResolveCatalog();
-            if (heroRoot == null || catalog == null) return;
-
-            ApplyBackground(heroRoot.Q("ceremony-starfield"), catalog.StarChart, BackgroundSizeType.Cover, 0.2f);
         }
 
         public static void ApplyIntroSigil(VisualElement? sigilHost)

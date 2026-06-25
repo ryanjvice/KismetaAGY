@@ -5,16 +5,6 @@
     overflow: visible;
 }
 
-.title-screen__bg {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-image: url("project://database/Assets/_Project/Art/GameSplash/splashBackground.png");
-    -unity-background-scale-mode: scale-and-crop;
-}
-
 .title-screen__star-field {
     position: absolute;
     left: -35%;

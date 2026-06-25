@@ -1,4 +1,3 @@
-using System.Linq;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
@@ -52,8 +51,6 @@ namespace Kismeta.UI.Controllers
         {
             if (root == null) return;
 
-            ApplyCeremonyArt(root);
-
             var sign = session.Board.CosmicAgeSign;
             var planet = Correspondence.PlanetFor(sign);
             var element = Correspondence.ElementFor(sign);
@@ -73,8 +70,6 @@ namespace Kismeta.UI.Controllers
         public static void BindAgeClosing(VisualElement? root, GameSession session)
         {
             if (root == null) return;
-
-            ApplyCeremonyArt(root);
 
             var sign = session.Board.CosmicAgeSign;
             int nextKeeper = NextAgekeeperId(session);
@@ -125,8 +120,6 @@ namespace Kismeta.UI.Controllers
         public static void BindRoundOpen(VisualElement? root, GameSession session, int localPlayerId)
         {
             if (root == null) return;
-
-            ApplyCeremonyArt(root);
 
             int keeperId = FindAgekeeperId(session);
             SetLabel(root, "keeper-eyebrow", $"{PlayerName(session, keeperId)} casts the age");
@@ -193,12 +186,6 @@ namespace Kismeta.UI.Controllers
             PlayerColor.White => new Color(0.72f, 0.72f, 0.72f),
             _ => new Color(0.5f, 0.5f, 0.5f)
         };
-
-        static void ApplyCeremonyArt(VisualElement root)
-        {
-            foreach (var hero in root.Query(className: "ceremony-hero").ToList())
-                UiArtBindings.ApplyCeremonyStarfield(hero);
-        }
 
         static void BindSigilGlyph(VisualElement root, ZodiacSign sign)
         {

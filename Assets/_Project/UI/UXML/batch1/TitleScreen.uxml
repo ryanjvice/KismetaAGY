@@ -9,7 +9,6 @@
     <engine:VisualElement name="title-screen" class="screen screen--title">
         <engine:Label text="Title screen — start a new game, resume, join, or open the codex." class="sr-only" />
 
-        <engine:VisualElement name="title-screen-bg" class="title-screen__bg" />
         <engine:VisualElement name="title-screen-star" class="title-screen__star-field" />
 
         <engine:VisualElement name="title-hero" class="title-hero">

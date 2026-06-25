@@ -6,62 +6,40 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/AgeCeremony.uss" />
 
-    <!-- ============================================================
-         AGE CLOSING — folds #45 (close ceremony) + #46 (standings recap).
-         Mirrors AgeOpening inverted: constellation setting, sigil faded.
-         NATIVE NOTE: same starfield/constellation sprite approach, dimmed.
-         ============================================================ -->
-    <engine:VisualElement name="age-close" class="screen ceremony" style="background-color: rgb(10,8,16);">
+    <!-- AGE CLOSING — close ceremony + standings recap. -->
+    <engine:VisualElement name="age-close" class="screen screen--menu">
 
-        <engine:VisualElement class="ceremony-hero ceremony-hero--close">
-            <engine:VisualElement name="ceremony-starfield" class="ceremony-hero__starfield" />
-            <engine:VisualElement class="ceremony-hero__content">
+        <engine:VisualElement class="menu-screen__hero panel--gold">
             <engine:Label text="the constellation sets" class="ceremony-eyebrow" />
 
             <engine:VisualElement name="age-sigil" class="ceremony-sigil ceremony-sigil--close">
-                <engine:Label text="?" class="ceremony-sigil__glyph font-zodiac" style="color: rgb(176,136,104);" />
+                <engine:Label text="?" class="ceremony-sigil__glyph font-zodiac" />
             </engine:VisualElement>
 
             <engine:Label text="the age of" class="ceremony-prelabel" />
-            <engine:Label name="age-name" text="SCORPIO" class="ceremony-agename" style="color: rgb(201,168,74);" />
-            <engine:Label text="has passed" class="ceremony-prelabel" style="margin-top: 4px;" />
+            <engine:Label name="age-name" text="SCORPIO" class="ceremony-agename ceremony-agename--close" />
+            <engine:Label text="has passed" class="ceremony-prelabel ceremony-prelabel--after" />
 
             <engine:Label text="The waters recede, the stars wheel on. What was forged in this age is forged forever."
                           class="ceremony-couplet" />
-            </engine:VisualElement>
         </engine:VisualElement>
 
-        <!-- how the age moved the board -->
-        <engine:VisualElement style="padding: 15px 16px 0;">
-            <engine:Label text="how the age moved the board" class="eyebrow" />
-            <engine:VisualElement name="standings-list">
-                <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; margin-bottom: 6px;">
-                    <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(192,57,43); border-width: 1px; border-color: rgb(229,115,115); margin-right: 9px;" />
-                    <engine:Label text="Aurelia fired to Gold" style="flex-grow: 1; font-size: 11px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="5 &#8594; 7" style="font-size: 10px; color: rgb(127, 196, 168);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="panel" style="flex-direction: row; align-items: center; margin-bottom: 6px;">
-                    <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(46,109,164); border-width: 1px; border-color: rgb(111,168,212); margin-right: 9px;" />
-                    <engine:Label text="Iolanthe held at Gold, defended twice" style="flex-grow: 1; font-size: 11px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="7" style="font-size: 10px; color: rgb(184, 154, 110);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="panel" style="flex-direction: row; align-items: center;">
-                    <engine:VisualElement style="width: 13px; height: 13px; border-radius: 7px; background-color: rgb(31,110,74); border-width: 1px; border-color: rgb(93,202,165); margin-right: 9px;" />
-                    <engine:Label text="Severin opposed to stasis" style="flex-grow: 1; font-size: 11px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="5 &#8594; &#10052;" style="font-size: 10px; color: rgb(240, 144, 138);" />
+        <engine:ScrollView class="menu-screen__scroll menu-screen__scroll--grow">
+            <engine:VisualElement class="ceremony-panel-wrap">
+                <engine:Label text="how the age moved the board" class="eyebrow" />
+                <engine:VisualElement name="standings-list" />
+            </engine:VisualElement>
+
+            <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
+                <engine:VisualElement class="panel tip--arcanum">
+                    <engine:Label name="keypass-line" text="The key passes to Aurelia. She will cast the next age — its sign is unknown until the dice fall."
+                                  class="tip__text ceremony-callout__text" />
                 </engine:VisualElement>
             </engine:VisualElement>
-        </engine:VisualElement>
+        </engine:ScrollView>
 
-        <!-- key passes -->
-        <engine:VisualElement class="panel tip--arcanum ceremony-callout">
-            <engine:Label name="keypass-line" text="The key passes to Aurelia. She will cast the next age — its sign is unknown until the dice fall."
-                          class="tip__text" style="color: rgb(168,176,216);" />
-        </engine:VisualElement>
-
-        <engine:VisualElement class="ceremony-cta">
-            <engine:Button name="next-age-btn" text="Turn the wheel · cast the next age" class="btn"
-                           style="background-color: rgb(36, 16, 40); border-color: rgb(106, 74, 138); color: rgb(205, 176, 224); font-size: 14px;" />
+        <engine:VisualElement class="menu-screen__footer">
+            <engine:Button name="next-age-btn" text="Turn the wheel · cast the next age" class="btn btn--secondary menu-screen__cta" />
         </engine:VisualElement>
 
     </engine:VisualElement>
