@@ -8,6 +8,7 @@
         <engine:VisualElement class="screen__zone-toggles">
             <engine:Button name="hand-btn" text="Hand" class="menu-btn-fab btn btn--secondary" />
             <engine:Button name="menu-btn" text="Table" class="menu-btn-fab btn btn--secondary" />
+            <engine:Button name="arcanum-btn" text="Arcanum" class="menu-btn-fab btn btn--secondary menu-btn-fab--arcanum" />
         </engine:VisualElement>
         <engine:VisualElement name="player-hud" class="inventory-reagents">
             <engine:VisualElement class="reagent-chip reagent-chip--sulphur">

@@ -4,11 +4,12 @@
     xmlns:editor="UnityEditor.UIElements">
 
     <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/AgeCeremony.uss" />
     <engine:Style src="../../USS/SeasonIntro.uss" />
 
-    <engine:VisualElement name="spring-intro" class="screen screen--spring intro--spring">
+    <engine:VisualElement name="spring-intro" class="screen screen--menu intro--spring">
 
-        <engine:VisualElement class="intro-hero">
+        <engine:VisualElement class="menu-screen__hero panel--gold">
             <engine:VisualElement class="intro-sigil">
                 <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
             </engine:VisualElement>
@@ -18,51 +19,67 @@
                           class="intro-couplet" />
         </engine:VisualElement>
 
-        <engine:VisualElement class="intro-agestrip">
-            <engine:VisualElement class="intro-agestrip__sigil">
-                <engine:Label text="&#xea6c;" class="ti-icon" style="color: rgb(232, 185, 74);" />
+        <engine:VisualElement class="ceremony-reveal-body">
+            <engine:VisualElement class="ceremony-panel-wrap">
+                <engine:VisualElement class="panel intro-info-panel">
+                    <engine:VisualElement class="intro-info-panel__icon-wrap">
+                        <engine:Label text="&#xea6c;" class="ti-icon" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-info-panel__body">
+                        <engine:Label text="a new age is cast" class="eyebrow intro-info-panel__eyebrow" />
+                        <engine:Label text="the Agekeeper rolls to set the cosmic age for all" class="intro-info-panel__subtitle" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
             </engine:VisualElement>
-            <engine:VisualElement>
-                <engine:Label text="a new age is cast" class="eyebrow" style="margin-bottom: 0;" />
-                <engine:Label text="the Agekeeper rolls to set the cosmic age for all" style="font-size: 12px; color: rgb(154,172,146);" />
+
+            <engine:VisualElement class="ceremony-panel-wrap">
+                <engine:VisualElement class="panel intro-content-panel">
+                    <engine:Label text="five steps to open the round" class="eyebrow intro-content-panel__eyebrow" />
+                    <engine:VisualElement name="intro-steps">
+                        <engine:VisualElement class="intro-row">
+                            <engine:VisualElement class="intro-row__num intro-row__num--gold">
+                                <engine:Label text="1" class="intro-row__num-label" />
+                            </engine:VisualElement>
+                            <engine:Label text="Set the Cosmic Age" class="intro-row__label" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-row">
+                            <engine:VisualElement class="intro-row__num intro-row__num--green">
+                                <engine:Label text="2" class="intro-row__num-label" />
+                            </engine:VisualElement>
+                            <engine:Label text="Determine Your Sign" class="intro-row__label" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-row">
+                            <engine:VisualElement class="intro-row__num intro-row__num--gold">
+                                <engine:Label text="3" class="intro-row__num-label" />
+                            </engine:VisualElement>
+                            <engine:Label text="Harvest Cards" class="intro-row__label" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-row">
+                            <engine:VisualElement class="intro-row__num intro-row__num--purple">
+                                <engine:Label text="4" class="intro-row__num-label" />
+                            </engine:VisualElement>
+                            <engine:Label text="Commune" class="intro-row__label" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-row">
+                            <engine:VisualElement class="intro-row__num intro-row__num--violet">
+                                <engine:Label text="5" class="intro-row__num-label" />
+                            </engine:VisualElement>
+                            <engine:Label text="Card Lock" class="intro-row__label" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
+                <engine:VisualElement class="panel tip--ok">
+                    <engine:Label text="This age's sign shapes everything — which cards harvest well, which alignments score, and your own cosmic effect for the round."
+                                  class="tip__text intro-tip__text" />
+                </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <!-- preview: 5 steps -->
-        <engine:VisualElement style="padding: 10px 16px 4px;">
-            <engine:Label text="five steps to open the round" class="eyebrow" style="color: rgb(106,138,114);" />
-            <engine:VisualElement name="intro-steps">
-                <engine:VisualElement class="intro-row">
-                    <engine:VisualElement class="intro-row__num" style="background-color: rgb(58,46,14); border-color: rgb(201, 150, 47);"><engine:Label text="1" style="font-size: 10px; color: rgb(232, 185, 74); -unity-font-style: bold;" /></engine:VisualElement>
-                    <engine:Label text="Set the Cosmic Age" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="intro-row">
-                    <engine:VisualElement class="intro-row__num" style="background-color: rgb(22, 38, 31); border-color: rgb(43, 106, 74);"><engine:Label text="2" style="font-size: 10px; color: rgb(127, 196, 168); -unity-font-style: bold;" /></engine:VisualElement>
-                    <engine:Label text="Determine Your Sign" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="intro-row">
-                    <engine:VisualElement class="intro-row__num" style="background-color: rgb(58,46,14); border-color: rgb(184,148,31);"><engine:Label text="3" style="font-size: 10px; color: rgb(224,200,120); -unity-font-style: bold;" /></engine:VisualElement>
-                    <engine:Label text="Harvest Cards" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="intro-row">
-                    <engine:VisualElement class="intro-row__num" style="background-color: rgb(36, 16, 40); border-color: rgb(106, 74, 138);"><engine:Label text="4" style="font-size: 10px; color: rgb(205, 176, 224); -unity-font-style: bold;" /></engine:VisualElement>
-                    <engine:Label text="Commune" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="intro-row">
-                    <engine:VisualElement class="intro-row__num" style="background-color: rgb(26,21,48); border-color: rgb(74,58,106);"><engine:Label text="5" style="font-size: 10px; color: rgb(184,154,192); -unity-font-style: bold;" /></engine:VisualElement>
-                    <engine:Label text="Card Lock" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <engine:VisualElement class="intro-tip tip--ok">
-            <engine:Label text="This age's sign shapes everything — which cards harvest well, which alignments score, and your own cosmic effect for the round."
-                          class="tip__text" style="color: rgb(159,196,180);" />
-        </engine:VisualElement>
-
-        <engine:VisualElement class="intro-cta">
-            <engine:Button name="begin-btn" text="Begin Spring" class="btn"
-                           style="background-color: rgb(22, 38, 31); border-color: rgb(43, 106, 74); color: rgb(127, 196, 154);" />
+        <engine:VisualElement class="menu-screen__footer">
+            <engine:Button name="begin-btn" text="Begin Spring" class="btn btn--primary menu-screen__cta" />
         </engine:VisualElement>
 
     </engine:VisualElement>

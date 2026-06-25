@@ -14,7 +14,8 @@ namespace Kismeta.UI.Editor
     {
         private const string FontsDir = "Assets/_Project/UI/Fonts";
         private const int SamplingPointSize = 90;
-        private const int AtlasPadding = 8;
+        // Unity recommends ~1:10 sampling:padding for SDF atlases.
+        private const int AtlasPadding = 9;
         private const int AtlasSize = 1024;
 
         private const string ZodiacSymbolCharset = "♈♉♊♋♌♍♎♏♐♑♒♓";
@@ -39,7 +40,11 @@ namespace Kismeta.UI.Editor
             created += CreateFontAsset("FuturaCyrillicDemi.ttf") ? 1 : 0;
             created += CreateFontAsset("Amarante-Regular.ttf") ? 1 : 0;
             created += CreateFontAsset("GermaniaOne-Regular.ttf") ? 1 : 0;
-            created += CreateFontAsset("NotoColorEmoji-Regular.ttf", ZodiacSymbolCharset) ? 1 : 0;
+            created += CreateFontAsset(
+                "NotoColorEmoji-Regular.ttf",
+                ZodiacSymbolCharset,
+                GlyphRenderMode.COLOR,
+                AtlasPopulationMode.Dynamic) ? 1 : 0;
             created += CreateFontAsset("tabler-icons.ttf", TablerIconCharset) ? 1 : 0;
 
             AssetDatabase.SaveAssets();
@@ -47,7 +52,11 @@ namespace Kismeta.UI.Editor
             Debug.Log($"[Kismeta.UI] Created/updated {created} FontAsset(s) in {FontsDir}. USS must use -unity-font-definition to reference them.");
         }
 
-        static bool CreateFontAsset(string ttfFileName, string warmCharset = null)
+        static bool CreateFontAsset(
+            string ttfFileName,
+            string warmCharset = null,
+            GlyphRenderMode renderMode = GlyphRenderMode.SDFAA,
+            AtlasPopulationMode populationMode = AtlasPopulationMode.Dynamic)
         {
             var charset = string.IsNullOrEmpty(warmCharset) ? CommonUiCharset : warmCharset;
             var ttfPath = $"{FontsDir}/{ttfFileName}";
@@ -68,10 +77,10 @@ namespace Kismeta.UI.Editor
                 font,
                 SamplingPointSize,
                 AtlasPadding,
-                GlyphRenderMode.SMOOTH,
+                renderMode,
                 AtlasSize,
                 AtlasSize,
-                AtlasPopulationMode.Dynamic);
+                populationMode);
 
             if (fontAsset == null)
             {
@@ -80,12 +89,14 @@ namespace Kismeta.UI.Editor
             }
 
             fontAsset.name = assetName;
+            fontAsset.isMultiAtlasTexturesEnabled = false;
+            ConfigureAtlasTextures(fontAsset);
             NameSubAssets(fontAsset, assetName);
-
             WarmAtlas(fontAsset, assetPath, charset);
 
             AssetDatabase.CreateAsset(fontAsset, assetPath);
             PersistSubAssets(fontAsset);
+            ApplySerializedFontSettings(fontAsset);
 
             if (ttfFileName.StartsWith("Amarante") || ttfFileName.StartsWith("Germania"))
             {
@@ -105,14 +116,43 @@ namespace Kismeta.UI.Editor
                 && reloaded.material != null;
             var glyphCount = reloaded != null && reloaded.glyphTable != null ? reloaded.glyphTable.Count : 0;
 
-            if (!atlasOk)
+            if (!atlasOk || glyphCount == 0)
             {
-                Debug.LogError($"[Kismeta.UI] FontAsset save incomplete: {assetPath} — atlas/material sub-assets missing after reload.");
+                Debug.LogError($"[Kismeta.UI] FontAsset save incomplete: {assetPath} — glyphs={glyphCount}, atlasOk={atlasOk}.");
                 return false;
             }
 
-            Debug.Log($"[Kismeta.UI] FontAsset ready: {assetPath} (material={reloaded.material.name}, atlas={reloaded.atlasTextures.Length}, glyphs={glyphCount})");
+            Debug.Log($"[Kismeta.UI] FontAsset ready: {assetPath} (material={reloaded.material.name}, atlas={reloaded.atlasTextures.Length}, glyphs={glyphCount}, mode={renderMode})");
             return true;
+        }
+
+        static void ApplySerializedFontSettings(FontAsset fontAsset)
+        {
+            var so = new SerializedObject(fontAsset);
+            var clearOnBuild = so.FindProperty("m_ClearDynamicDataOnBuild");
+            if (clearOnBuild != null)
+                clearOnBuild.boolValue = false;
+
+            var multiAtlas = so.FindProperty("m_IsMultiAtlasTexturesEnabled");
+            if (multiAtlas != null)
+                multiAtlas.boolValue = false;
+
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void ConfigureAtlasTextures(FontAsset fontAsset)
+        {
+            if (fontAsset.atlasTextures == null)
+                return;
+
+            foreach (var texture in fontAsset.atlasTextures)
+            {
+                if (texture == null)
+                    continue;
+
+                texture.filterMode = FilterMode.Bilinear;
+                texture.wrapMode = TextureWrapMode.Clamp;
+            }
         }
 
         static void NameSubAssets(FontAsset fontAsset, string assetName)

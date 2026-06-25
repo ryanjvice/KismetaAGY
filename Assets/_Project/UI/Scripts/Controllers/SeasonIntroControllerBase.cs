@@ -2,6 +2,7 @@ using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI;
+using Kismeta.UI.Components;
 
 namespace Kismeta.UI.Controllers
 {
@@ -20,6 +21,7 @@ namespace Kismeta.UI.Controllers
         {
             _gate = gate;
             CeremonyBindings.ApplySeasonIntroClass(Root, IntroSeason);
+            UiArtBindings.ApplyIntroSigil(Root);
         }
     }
 }

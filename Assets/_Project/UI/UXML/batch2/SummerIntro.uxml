@@ -4,71 +4,79 @@
     xmlns:editor="UnityEditor.UIElements">
 
     <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/AgeCeremony.uss" />
     <engine:Style src="../../USS/SeasonIntro.uss" />
 
-    <engine:VisualElement name="summer-intro" class="screen screen--summer intro--summer">
+    <engine:VisualElement name="summer-intro" class="screen screen--menu intro--summer">
 
-        <engine:VisualElement class="intro-hero">
+        <engine:VisualElement class="menu-screen__hero panel--gold">
             <engine:VisualElement class="intro-sigil">
                 <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
             </engine:VisualElement>
             <engine:Label text="SUMMER" class="intro-name" />
             <engine:Label text="THE HIGH SUN · BUILD &amp; PREPARE" class="intro-tagline" />
             <engine:Label text="The sun rides high and the work is long. Forge your reagents, raise your houses, and reckon with your rivals."
-                          class="intro-couplet" style="color: rgb(196,160,114);" />
+                          class="intro-couplet" />
         </engine:VisualElement>
 
-        <engine:VisualElement class="intro-agestrip">
-            <engine:VisualElement class="intro-agestrip__sigil">
-                <engine:Label text="&#xea6c;" class="ti-icon" style="color: rgb(232, 185, 74);" />
-            </engine:VisualElement>
-            <engine:VisualElement>
-                <engine:Label text="cards are locked · the work begins" class="eyebrow" style="margin-bottom: 0;" />
-                <engine:Label text="take any actions, in any order, as many as you can fuel" style="font-size: 12px; color: rgb(196,160,114);" />
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <!-- preview: 3 action groups (not numbered steps) -->
-        <engine:VisualElement style="padding: 10px 16px 4px;">
-            <engine:Label text="your workshop — act freely" class="eyebrow" style="color: rgb(154,122,74);" />
-            <engine:VisualElement name="intro-actions">
-                <engine:VisualElement class="intro-row" style="background-color: rgb(28,19,10); border-color: rgb(74,48,24);">
-                    <engine:VisualElement style="width: 26px; height: 26px; border-radius: 6px; background-color: rgb(58,46,14); border-width: 1px; border-color: rgb(201, 150, 47); align-items: center; justify-content: center; margin-right: 10px;">
-                        <engine:Label text="&#xea2c;" class="ti-icon" style="color: rgb(232, 185, 74);" />
+        <engine:VisualElement class="ceremony-reveal-body">
+            <engine:VisualElement class="ceremony-panel-wrap">
+                <engine:VisualElement class="panel intro-info-panel">
+                    <engine:VisualElement class="intro-info-panel__icon-wrap">
+                        <engine:Label text="&#xea6c;" class="ti-icon" />
                     </engine:VisualElement>
-                    <engine:VisualElement style="flex-grow: 1;">
-                        <engine:Label text="Activate" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                        <engine:Label text="complete a crucible formula, light its cauldron" style="font-size: 10px; color: rgb(184,148,106); white-space: normal;" />
-                    </engine:VisualElement>
-                </engine:VisualElement>
-                <engine:VisualElement class="intro-row" style="background-color: rgb(28,19,10); border-color: rgb(74,48,24);">
-                    <engine:VisualElement style="width: 26px; height: 26px; border-radius: 6px; background-color: rgb(22, 38, 31); border-width: 1px; border-color: rgb(43, 106, 74); align-items: center; justify-content: center; margin-right: 10px;">
-                        <engine:Label text="&#xc5;" class="ti-icon" style="color: rgb(127, 196, 168);" />
-                    </engine:VisualElement>
-                    <engine:VisualElement style="flex-grow: 1;">
-                        <engine:Label text="Craft &amp; build" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                        <engine:Label text="reagents, cauldrons, houses, wards" style="font-size: 10px; color: rgb(184,148,106); white-space: normal;" />
-                    </engine:VisualElement>
-                </engine:VisualElement>
-                <engine:VisualElement class="intro-row" style="background-color: rgb(28,19,10); border-color: rgb(74,48,24);">
-                    <engine:VisualElement style="width: 26px; height: 26px; border-radius: 6px; background-color: rgb(58,26,26); border-width: 1px; border-color: rgb(106,48,48); align-items: center; justify-content: center; margin-right: 10px;">
-                        <engine:Label text="&#xeb4d;" class="ti-icon" style="color: rgb(240,176,160);" />
-                    </engine:VisualElement>
-                    <engine:VisualElement style="flex-grow: 1;">
-                        <engine:Label text="Consort" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                        <engine:Label text="trade, duel, or gambit a rival" style="font-size: 10px; color: rgb(184,148,106); white-space: normal;" />
+                    <engine:VisualElement class="intro-info-panel__body">
+                        <engine:Label text="cards are locked · the work begins" class="eyebrow intro-info-panel__eyebrow" />
+                        <engine:Label text="take any actions, in any order, as many as you can fuel" class="intro-info-panel__subtitle" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
+
+            <engine:VisualElement class="ceremony-panel-wrap">
+                <engine:VisualElement class="panel intro-content-panel">
+                    <engine:Label text="your workshop — act freely" class="eyebrow intro-content-panel__eyebrow" />
+                    <engine:VisualElement name="intro-actions">
+                        <engine:VisualElement class="intro-action-row">
+                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--gold">
+                                <engine:Label text="&#xea2c;" class="ti-icon" />
+                            </engine:VisualElement>
+                            <engine:VisualElement class="intro-action-row__body">
+                                <engine:Label text="Activate" class="intro-action-row__title" />
+                                <engine:Label text="complete a crucible formula, light its cauldron" class="intro-action-row__subtitle" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row">
+                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--green">
+                                <engine:Label text="&#xc5;" class="ti-icon" />
+                            </engine:VisualElement>
+                            <engine:VisualElement class="intro-action-row__body">
+                                <engine:Label text="Craft &amp; build" class="intro-action-row__title" />
+                                <engine:Label text="reagents, cauldrons, houses, wards" class="intro-action-row__subtitle" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row">
+                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--red">
+                                <engine:Label text="&#xeb4d;" class="ti-icon" />
+                            </engine:VisualElement>
+                            <engine:VisualElement class="intro-action-row__body">
+                                <engine:Label text="Consort" class="intro-action-row__title" />
+                                <engine:Label text="trade, duel, or gambit a rival" class="intro-action-row__subtitle" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
+                <engine:VisualElement class="panel tip--caution">
+                    <engine:Label text="No fixed order and no turn limit — repeat actions as long as you have the cards and reagents to spend. This is where the round is won or lost."
+                                  class="tip__text intro-tip__text" />
+                </engine:VisualElement>
+            </engine:VisualElement>
         </engine:VisualElement>
 
-        <engine:VisualElement class="intro-tip tip--caution">
-            <engine:Label text="No fixed order and no turn limit — repeat actions as long as you have the cards and reagents to spend. This is where the round is won or lost."
-                          class="tip__text" style="color: rgb(212,184,122);" />
-        </engine:VisualElement>
-
-        <engine:VisualElement class="intro-cta">
-            <engine:Button name="begin-btn" text="Begin Summer" class="btn btn--primary" style="color: rgb(240, 176, 96);" />
+        <engine:VisualElement class="menu-screen__footer">
+            <engine:Button name="begin-btn" text="Begin Summer" class="btn btn--primary menu-screen__cta" />
         </engine:VisualElement>
 
     </engine:VisualElement>

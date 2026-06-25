@@ -1,24 +1,5 @@
 /* Kismeta — SeasonIntro.uss
-   Shared styling for the 4 season-intro screens. The season's hue is applied
-   by adding a modifier class to the root: .intro--spring/summer/autumn/winter.
-   NATIVE NOTE: the radial header glow + drifting motes (seeds/sun/leaves/snow)
-   were SVG. In Unity use a background sprite per season on .intro-hero, and an
-   optional particle overlay for the motes. */
-
-.intro-hero {
-    padding: 24px 18px 16px;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    background-image: url("project://database/Assets/_Project/Art/UI/tableFelt_vignette.png");
-    -unity-background-scale-mode: scale-and-crop;
-    background-color: rgba(19, 37, 26, 0.85);
-}
-
-.intro--spring .intro-hero { background-color: rgba(26, 58, 36, 0.82); }
-.intro--summer .intro-hero { background-color: rgba(74, 46, 10, 0.82); }
-.intro--autumn .intro-hero { background-color: rgba(74, 22, 10, 0.82); }
-.intro--winter .intro-hero { background-color: rgba(26, 48, 72, 0.82); }
+   Season intro panels inside menu-screen shell (splash backdrop visible). */
 
 .intro-sigil {
     width: 60px;
@@ -27,10 +8,11 @@
     border-width: 2px;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     overflow: hidden;
     background-color: rgba(16, 8, 12, 0.65);
 }
+
 .intro--spring .intro-sigil { border-color: var(--spring-accent); }
 .intro--summer .intro-sigil { border-color: var(--summer-accent); }
 .intro--autumn .intro-sigil { border-color: var(--autumn-accent); }
@@ -46,8 +28,10 @@
 .intro-name {
     font-size: 26px;
     letter-spacing: 4px;
+    -unity-text-align: middle-center;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
 }
+
 .intro--spring .intro-name { color: var(--spring-accent); }
 .intro--summer .intro-name { color: var(--summer-accent); }
 .intro--autumn .intro-name { color: var(--autumn-accent); }
@@ -56,9 +40,11 @@
 .intro-tagline {
     font-size: 10px;
     letter-spacing: 3px;
-    margin-top: 7px;
+    margin-top: 6px;
+    -unity-text-align: middle-center;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/GermaniaOne-Regular.asset");
 }
+
 .intro--spring .intro-tagline { color: rgb(90, 154, 111); }
 .intro--summer .intro-tagline { color: rgb(184, 122, 58); }
 .intro--autumn .intro-tagline { color: rgb(176, 90, 42); }
@@ -71,22 +57,20 @@
     white-space: normal;
     -unity-text-align: middle-center;
     max-width: 250px;
-    margin-top: 13px;
+    margin-top: 10px;
     color: rgb(184, 168, 146);
 }
 
-.intro-agestrip {
+.intro--summer .intro-couplet { color: rgb(196, 160, 114); }
+.intro--autumn .intro-couplet { color: rgb(196, 136, 98); }
+.intro--winter .intro-couplet { color: rgb(138, 154, 172); }
+
+.intro-info-panel {
     flex-direction: row;
     align-items: center;
-    padding: 12px 16px;
-    border-top-width: 2px;
-    border-top-color: var(--border-gold);
-    border-bottom-width: 2px;
-    border-bottom-color: var(--border-gold);
-    background-color: rgba(16, 10, 18, 0.75);
 }
 
-.intro-agestrip__sigil {
+.intro-info-panel__icon-wrap {
     width: 36px;
     height: 36px;
     border-radius: 18px;
@@ -95,14 +79,55 @@
     align-items: center;
     justify-content: center;
     margin-right: 10px;
+    flex-shrink: 0;
     background-color: rgba(28, 18, 8, 0.8);
 }
+
+.intro-info-panel__icon-wrap .ti-icon {
+    color: rgb(232, 185, 74);
+}
+
+.intro-info-panel__body {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.intro-info-panel__eyebrow {
+    margin-bottom: 0;
+}
+
+.intro-info-panel__subtitle {
+    font-size: 12px;
+    white-space: normal;
+}
+
+.intro--spring .intro-info-panel__subtitle { color: rgb(154, 172, 146); }
+.intro--summer .intro-info-panel__subtitle { color: rgb(196, 160, 114); }
+.intro--autumn .intro-info-panel__subtitle { color: rgb(196, 136, 98); }
+.intro--winter .intro-info-panel__subtitle { color: rgb(154, 138, 122); }
+
+.intro-content-panel {
+    flex-direction: column;
+}
+
+.intro-content-panel__eyebrow {
+    margin-bottom: 8px;
+}
+
+.intro--spring .intro-content-panel__eyebrow { color: rgb(106, 138, 114); }
+.intro--summer .intro-content-panel__eyebrow { color: rgb(154, 122, 74); }
+.intro--autumn .intro-content-panel__eyebrow { color: rgb(154, 90, 58); }
 
 .intro-row {
     flex-direction: row;
     align-items: center;
     margin-bottom: 7px;
 }
+
+.intro-row:last-child {
+    margin-bottom: 0;
+}
+
 .intro-row__num {
     width: 22px;
     height: 22px;
@@ -111,38 +136,133 @@
     align-items: center;
     justify-content: center;
     margin-right: 9px;
+    flex-shrink: 0;
 }
+
+.intro-row__num-label {
+    font-size: 10px;
+    -unity-font-style: bold;
+}
+
+.intro-row__num--gold {
+    background-color: rgb(58, 46, 14);
+    border-color: rgb(201, 150, 47);
+}
+
+.intro-row__num--gold .intro-row__num-label { color: rgb(232, 185, 74); }
+
+.intro-row__num--green {
+    background-color: rgb(22, 38, 31);
+    border-color: rgb(43, 106, 74);
+}
+
+.intro-row__num--green .intro-row__num-label { color: rgb(127, 196, 168); }
+
+.intro-row__num--purple {
+    background-color: rgb(36, 16, 40);
+    border-color: rgb(106, 74, 138);
+}
+
+.intro-row__num--purple .intro-row__num-label { color: rgb(205, 176, 224); }
+
+.intro-row__num--violet {
+    background-color: rgb(26, 21, 48);
+    border-color: rgb(74, 58, 106);
+}
+
+.intro-row__num--violet .intro-row__num-label { color: rgb(184, 154, 192); }
+
+.intro-row__num--winter {
+    background-color: rgb(22, 32, 42);
+    border-color: rgb(43, 74, 106);
+}
+
+.intro-row__num--winter .intro-row__num-label { color: rgb(158, 201, 224); }
 
 .intro-row__label {
     font-size: 12px;
     color: var(--ink);
 }
 
-.intro-steps-wrap {
-    padding: 10px 16px 4px;
+.intro-action-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 8px;
 }
 
-.intro-steps-eyebrow {
-    color: var(--muted-dim);
+.intro-action-row:last-child {
+    margin-bottom: 0;
 }
 
-.intro-cta-wrap {
-    padding: 12px 16px 24px;
+.intro-action-row__icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border-width: 1px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
 }
 
-.intro-cta {
-    font-size: 14px;
-    padding: 12px 16px 24px;
+.intro-action-row__icon--gold {
+    background-color: rgb(58, 46, 14);
+    border-color: rgb(201, 150, 47);
 }
 
-.intro-tip {
-    margin-left: var(--space-md);
-    margin-right: var(--space-md);
+.intro-action-row__icon--gold .ti-icon { color: rgb(232, 185, 74); }
+
+.intro-action-row__icon--green {
+    background-color: rgb(22, 38, 31);
+    border-color: rgb(43, 106, 74);
 }
 
-.screen.intro--spring,
-.screen.intro--summer,
-.screen.intro--autumn,
-.screen.intro--winter {
-    background-color: transparent;
+.intro-action-row__icon--green .ti-icon { color: rgb(127, 196, 168); }
+
+.intro-action-row__icon--red {
+    background-color: rgb(58, 26, 26);
+    border-color: rgb(106, 48, 48);
 }
+
+.intro-action-row__icon--red .ti-icon { color: rgb(240, 176, 160); }
+
+.intro-action-row__icon--forge {
+    background-color: rgb(58, 26, 14);
+    border-color: rgb(201, 150, 47);
+}
+
+.intro-action-row__icon--forge .ti-icon { color: rgb(232, 185, 74); }
+
+.intro-action-row__icon--arcane {
+    background-color: rgb(36, 16, 40);
+    border-color: rgb(106, 74, 138);
+}
+
+.intro-action-row__icon--arcane .ti-icon { color: rgb(205, 176, 224); }
+
+.intro-action-row__body {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.intro-action-row__title {
+    font-size: 12px;
+    color: var(--ink);
+}
+
+.intro-action-row__subtitle {
+    font-size: 10px;
+    white-space: normal;
+}
+
+.intro--summer .intro-action-row__subtitle { color: rgb(184, 148, 106); }
+.intro--autumn .intro-action-row__subtitle { color: rgb(188, 132, 98); }
+
+.intro-tip__text {
+    white-space: normal;
+}
+
+.intro--spring .intro-tip__text { color: rgb(159, 196, 180); }
+.intro--summer .intro-tip__text { color: rgb(212, 184, 122); }
+.intro--autumn .intro-tip__text { color: rgb(212, 160, 122); }
+.intro--winter .intro-tip__text { color: rgb(159, 196, 180); }

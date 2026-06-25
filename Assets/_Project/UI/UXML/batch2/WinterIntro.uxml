@@ -4,60 +4,76 @@
     xmlns:editor="UnityEditor.UIElements">
 
     <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/AgeCeremony.uss" />
     <engine:Style src="../../USS/SeasonIntro.uss" />
 
-    <engine:VisualElement name="winter-intro" class="screen screen--winter intro--winter">
+    <engine:VisualElement name="winter-intro" class="screen screen--menu intro--winter">
 
-        <engine:VisualElement class="intro-hero">
+        <engine:VisualElement class="menu-screen__hero panel--gold">
             <engine:VisualElement class="intro-sigil">
                 <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
             </engine:VisualElement>
             <engine:Label text="WINTER" class="intro-name" />
             <engine:Label text="THE LONG NIGHT · CLOSE THE AGE" class="intro-tagline" />
             <engine:Label text="The forge fires bank low. What was gained is reckoned, what was held is loosed, and the wheel turns toward a new age."
-                          class="intro-couplet" style="color: rgb(138,154,172);" />
+                          class="intro-couplet" />
         </engine:VisualElement>
 
-        <engine:VisualElement class="intro-agestrip">
-            <engine:VisualElement class="intro-agestrip__sigil">
-                <engine:Label text="&#xec3a;" class="ti-icon" style="color: rgb(232, 185, 74);" />
-            </engine:VisualElement>
-            <engine:VisualElement>
-                <engine:Label text="the age of Scorpio ends" class="eyebrow" style="margin-bottom: 0;" />
-                <engine:Label text="mars · water — a strong age for your forging run" style="font-size: 12px; color: rgb(154,138,122);" />
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <engine:VisualElement style="padding: 10px 16px 4px;">
-            <engine:Label text="four steps to close the age" class="eyebrow" />
-            <engine:VisualElement name="intro-steps">
-                <engine:VisualElement class="intro-row">
-                    <engine:VisualElement class="intro-row__num" style="background-color: rgb(22,32,42); border-color: rgb(43,74,106);"><engine:Label text="1" style="font-size: 10px; color: rgb(158, 201, 224); -unity-font-style: bold;" /></engine:VisualElement>
-                    <engine:Label text="Unlock cards" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="intro-row">
-                    <engine:VisualElement class="intro-row__num" style="background-color: rgb(36, 16, 40); border-color: rgb(106, 74, 138);"><engine:Label text="2" style="font-size: 10px; color: rgb(205, 176, 224); -unity-font-style: bold;" /></engine:VisualElement>
-                    <engine:Label text="Fateful Wager" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="intro-row">
-                    <engine:VisualElement class="intro-row__num" style="background-color: rgb(22, 38, 31); border-color: rgb(43, 106, 74);"><engine:Label text="3" style="font-size: 10px; color: rgb(127, 196, 168); -unity-font-style: bold;" /></engine:VisualElement>
-                    <engine:Label text="Card limits" style="font-size: 12px; color: rgb(243, 233, 210);" />
-                </engine:VisualElement>
-                <engine:VisualElement class="intro-row">
-                    <engine:VisualElement class="intro-row__num" style="background-color: rgb(58,46,14); border-color: rgb(201, 150, 47);"><engine:Label text="4" style="font-size: 10px; color: rgb(232, 185, 74); -unity-font-style: bold;" /></engine:VisualElement>
-                    <engine:Label text="Transit the age" style="font-size: 12px; color: rgb(243, 233, 210);" />
+        <engine:VisualElement class="ceremony-reveal-body">
+            <engine:VisualElement class="ceremony-panel-wrap">
+                <engine:VisualElement class="panel intro-info-panel">
+                    <engine:VisualElement class="intro-info-panel__icon-wrap">
+                        <engine:Label text="&#xec3a;" class="ti-icon" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-info-panel__body">
+                        <engine:Label text="the age of Scorpio ends" class="eyebrow intro-info-panel__eyebrow" />
+                        <engine:Label text="mars · water — a strong age for your forging run" class="intro-info-panel__subtitle" />
+                    </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
+
+            <engine:VisualElement class="ceremony-panel-wrap">
+                <engine:VisualElement class="panel intro-content-panel">
+                    <engine:Label text="four steps to close the age" class="eyebrow intro-content-panel__eyebrow" />
+                    <engine:VisualElement name="intro-steps">
+                        <engine:VisualElement class="intro-row">
+                            <engine:VisualElement class="intro-row__num intro-row__num--winter">
+                                <engine:Label text="1" class="intro-row__num-label" />
+                            </engine:VisualElement>
+                            <engine:Label text="Unlock cards" class="intro-row__label" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-row">
+                            <engine:VisualElement class="intro-row__num intro-row__num--purple">
+                                <engine:Label text="2" class="intro-row__num-label" />
+                            </engine:VisualElement>
+                            <engine:Label text="Fateful Wager" class="intro-row__label" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-row">
+                            <engine:VisualElement class="intro-row__num intro-row__num--green">
+                                <engine:Label text="3" class="intro-row__num-label" />
+                            </engine:VisualElement>
+                            <engine:Label text="Card limits" class="intro-row__label" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-row">
+                            <engine:VisualElement class="intro-row__num intro-row__num--gold">
+                                <engine:Label text="4" class="intro-row__num-label" />
+                            </engine:VisualElement>
+                            <engine:Label text="Transit the age" class="intro-row__label" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
+                <engine:VisualElement class="panel tip--ok">
+                    <engine:Label text="Only your cards reset. Lit cauldrons, astral houses, active crucible cards and your stone's forge position all carry into the next age."
+                                  class="tip__text intro-tip__text" />
+                </engine:VisualElement>
+            </engine:VisualElement>
         </engine:VisualElement>
 
-        <engine:VisualElement class="intro-tip tip--ok">
-            <engine:Label text="Only your cards reset. Lit cauldrons, astral houses, active crucible cards and your stone's forge position all carry into the next age."
-                          class="tip__text" style="color: rgb(159,196,180);" />
-        </engine:VisualElement>
-
-        <engine:VisualElement class="intro-cta">
-            <engine:Button name="begin-btn" text="Begin Winter" class="btn"
-                           style="background-color: rgb(22,32,42); border-color: rgb(43,74,106); color: rgb(158, 201, 224);" />
+        <engine:VisualElement class="menu-screen__footer">
+            <engine:Button name="begin-btn" text="Begin Winter" class="btn btn--primary menu-screen__cta" />
         </engine:VisualElement>
 
     </engine:VisualElement>

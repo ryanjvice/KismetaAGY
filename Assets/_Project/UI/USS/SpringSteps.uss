@@ -117,7 +117,7 @@
     border-radius: 50%;
     align-items: center;
     justify-content: center;
-    background-color: rgba(16, 8, 12, 0.55);
+    background-color: rgb(22, 32, 58);
     border-width: 2px;
     border-color: var(--gold-deep);
 }

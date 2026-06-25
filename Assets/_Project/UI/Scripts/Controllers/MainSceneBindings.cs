@@ -7,10 +7,18 @@ using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
 {
+    public enum DockZone
+    {
+        Spread,
+        Hand,
+        Arcanum
+    }
+
     /// <summary>Shared bind helpers for season main scenes.</summary>
     internal static class MainSceneBindings
     {
@@ -224,31 +232,85 @@ namespace Kismeta.UI.Controllers
             return view.Players.Count > 0 ? view.Players[0] : null;
         }
 
-        public static void SetHandFabActive(VisualElement? root, bool showHand)
+        public static void BindPlayerStrip(VisualElement? root, GameSession session, int localPlayerId)
         {
-            var btn = root?.Q<Button>("hand-btn");
-            if (btn == null) return;
-            btn.text = showHand ? "Spread" : "Hand";
-            btn.EnableInClassList("menu-btn-fab--active", showHand);
+            if (root == null) return;
+            if (localPlayerId < 0 || localPlayerId >= session.Players.Count)
+                return;
+
+            var player = session.Players[localPlayerId];
+            var sign = player.CurrentSign;
+
+            var dot = root.Q("player-strip-dot");
+            if (dot != null)
+                dot.style.backgroundColor = new StyleColor(PlayerUiNames.PlayerColor(localPlayerId));
+
+            var glyph = root.Q<Label>("player-sign-glyph");
+            if (glyph != null)
+            {
+                SymbolGlyphs.TagZodiac(glyph);
+                glyph.text = sign == ZodiacSign.None ? "?" : SymbolGlyphs.Zodiac(sign);
+            }
+
+            var signLbl = root.Q<Label>("player-sign");
+            if (signLbl != null)
+                signLbl.text = sign == ZodiacSign.None ? "no sign" : sign.ToString();
+
+            var planetLbl = root.Q<Label>("player-planet");
+            if (planetLbl != null)
+                planetLbl.text = sign == ZodiacSign.None ? "—" : Correspondence.PlanetFor(sign).ToString();
+
+            var elementLbl = root.Q<Label>("player-element");
+            if (elementLbl != null)
+                elementLbl.text = sign == ZodiacSign.None ? "—" : Correspondence.ElementFor(sign).ToString();
         }
+
+        public static void SetDockZoneFabActive(VisualElement? root, DockZone zone)
+        {
+            var handBtn = root?.Q<Button>("hand-btn");
+            if (handBtn != null)
+            {
+                handBtn.text = zone == DockZone.Hand ? "Spread" : "Hand";
+                handBtn.EnableInClassList("menu-btn-fab--active", zone == DockZone.Hand);
+            }
+
+            var arcanumBtn = root?.Q<Button>("arcanum-btn");
+            if (arcanumBtn != null)
+                arcanumBtn.EnableInClassList("menu-btn-fab--active", zone == DockZone.Arcanum);
+        }
+
+        public static void SetHandFabActive(VisualElement? root, bool showHand) =>
+            SetDockZoneFabActive(root, showHand ? DockZone.Hand : DockZone.Spread);
 
         public static void BindDockStrip(
             VisualElement? root,
             GameSession session,
             int localPlayerId,
-            bool showHand,
+            DockZone zone,
             Action<string>? onInspect)
         {
             if (root == null) return;
+            if (localPlayerId < 0 || localPlayerId >= session.Players.Count)
+                return;
 
             var zoneLbl = root.Q<Label>("dock-zone-label");
             if (zoneLbl != null)
-                zoneLbl.text = showHand ? "hand" : "spread";
+            {
+                zoneLbl.text = zone switch
+                {
+                    DockZone.Hand => "hand",
+                    DockZone.Arcanum => "arcanum",
+                    _ => "spread"
+                };
+            }
 
             var local = LocalPlayer(GamePublicView.From(session), localPlayerId);
-            IReadOnlyList<string> cardIds = showHand
-                ? PlayerPrivateView.From(session, localPlayerId).Hand
-                : local?.Spread ?? Array.Empty<string>();
+            IReadOnlyList<string> cardIds = zone switch
+            {
+                DockZone.Hand => PlayerPrivateView.From(session, localPlayerId).Hand,
+                DockZone.Arcanum => session.Players[localPlayerId].Arcanum,
+                _ => local?.Spread ?? Array.Empty<string>()
+            };
 
             var countLbl = root.Q<Label>("spread-count");
             if (countLbl != null)
@@ -257,7 +319,13 @@ namespace Kismeta.UI.Controllers
             var strip = root.Q<VisualElement>("spread-strip");
             if (strip == null) return;
 
-            var signature = (showHand ? "H:" : "S:") + (onInspect != null ? "I:" : "i:")
+            var zonePrefix = zone switch
+            {
+                DockZone.Hand => "H:",
+                DockZone.Arcanum => "A:",
+                _ => "S:"
+            };
+            var signature = zonePrefix + (onInspect != null ? "I:" : "i:")
                 + string.Join(",", cardIds);
             if (strip.userData as string == signature)
                 return;

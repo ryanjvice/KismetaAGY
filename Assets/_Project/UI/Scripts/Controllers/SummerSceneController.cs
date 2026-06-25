@@ -26,7 +26,7 @@ namespace Kismeta.UI.Controllers
         CommandBridge? _bridge;
         GameSession? _session;
         int _localPlayerId;
-        bool _showHand;
+        DockZone _dockZone = DockZone.Spread;
         SummerOverlayHost? _summerOverlays;
         ContestOverlayHost? _contestOverlays;
 
@@ -38,7 +38,7 @@ namespace Kismeta.UI.Controllers
 
         protected override void Unwire()
         {
-            _showHand = false;
+            _dockZone = DockZone.Spread;
             CauldronHubBindings.UnwireCauldrons(Root);
         }
 
@@ -49,6 +49,7 @@ namespace Kismeta.UI.Controllers
             Btn("activate-btn")!.clicked += () => OnActivate?.Invoke();
             Btn("pass-btn")!.clicked += () => OnPass?.Invoke();
             Btn("hand-btn")!.clicked += OnHandToggle;
+            Btn("arcanum-btn")!.clicked += OnArcanumToggle;
             Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
             CauldronHubBindings.WireCauldrons(
                 Root,
@@ -58,10 +59,21 @@ namespace Kismeta.UI.Controllers
 
         void OnHandToggle()
         {
-            _showHand = !_showHand;
-            MainSceneBindings.SetHandFabActive(Root, _showHand);
+            _dockZone = _dockZone == DockZone.Hand ? DockZone.Spread : DockZone.Hand;
+            RefreshDock();
+        }
+
+        void OnArcanumToggle()
+        {
+            _dockZone = _dockZone == DockZone.Arcanum ? DockZone.Spread : DockZone.Arcanum;
+            RefreshDock();
+        }
+
+        void RefreshDock()
+        {
+            MainSceneBindings.SetDockZoneFabActive(Root, _dockZone);
             if (_session != null)
-                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _showHand, OnInspectCard);
+                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -77,8 +89,8 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindCosmicAgeBanner(Root, session);
             MainSceneBindings.BindPassButton(Root, session, bridge);
             RefreshActionGroupRail();
-            MainSceneBindings.SetHandFabActive(Root, _showHand);
-            MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
+            MainSceneBindings.BindPlayerStrip(Root, session, _localPlayerId);
+            RefreshDock();
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             MainSceneBindings.BindCauldrons(Root, local);

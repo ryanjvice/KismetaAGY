@@ -27,7 +27,7 @@ namespace Kismeta.UI.Controllers
         GameSession? _session;
         int _localPlayerId;
         bool _inStasis;
-        bool _showHand;
+        DockZone _dockZone = DockZone.Spread;
         AutumnOverlayHost? _autumnOverlays;
         ContestOverlayHost? _contestOverlays;
 
@@ -39,7 +39,7 @@ namespace Kismeta.UI.Controllers
 
         protected override void Unwire()
         {
-            _showHand = false;
+            _dockZone = DockZone.Spread;
         }
 
         protected override void Wire()
@@ -50,15 +50,27 @@ namespace Kismeta.UI.Controllers
             WireBtn("manage-cards-btn", OnManageCardsClicked);
             WireBtn("pass-btn", OnPassClicked);
             Btn("hand-btn")?.RegisterCallback<ClickEvent>(_ => OnHandToggle());
+            Btn("arcanum-btn")?.RegisterCallback<ClickEvent>(_ => OnArcanumToggle());
             Btn("menu-btn")?.RegisterCallback<ClickEvent>(_ => OnOpenCardTable?.Invoke());
         }
 
         void OnHandToggle()
         {
-            _showHand = !_showHand;
-            MainSceneBindings.SetHandFabActive(Root, _showHand);
+            _dockZone = _dockZone == DockZone.Hand ? DockZone.Spread : DockZone.Hand;
+            RefreshDock();
+        }
+
+        void OnArcanumToggle()
+        {
+            _dockZone = _dockZone == DockZone.Arcanum ? DockZone.Spread : DockZone.Arcanum;
+            RefreshDock();
+        }
+
+        void RefreshDock()
+        {
+            MainSceneBindings.SetDockZoneFabActive(Root, _dockZone);
             if (_session != null)
-                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _showHand, OnInspectCard);
+                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
         }
 
         void WireBtn(string name, Action handler)
@@ -159,9 +171,8 @@ namespace Kismeta.UI.Controllers
                     : "Waiting…";
             }
 
-            var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
-            MainSceneBindings.SetHandFabActive(Root, _showHand);
-            MainSceneBindings.BindDockStrip(Root, session, _localPlayerId, _showHand, OnInspectCard);
+            MainSceneBindings.BindPlayerStrip(Root, session, _localPlayerId);
+            RefreshDock();
             RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
         }
 
