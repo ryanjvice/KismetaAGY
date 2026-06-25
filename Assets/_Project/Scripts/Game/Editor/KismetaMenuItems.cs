@@ -15,6 +15,7 @@ namespace Kismeta.Game.Editor
     public static class KismetaMenuItems
     {
         private const string BootstrapScenePath = "Assets/_Project/Scenes/Bootstrap.unity";
+        private const string StudioSplashScenePath = "Assets/_Project/Scenes/StudioSplashScreen.unity";
         private const string AndroidPackageName = "com.goodmagik.kismetaagy";
         private const string AndroidApkPath = "Builds/Android/KismetaAGY.apk";
 
@@ -36,8 +37,8 @@ namespace Kismeta.Game.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(BootstrapScenePath)!);
             EditorSceneManager.SaveScene(scene, BootstrapScenePath);
 
-            // Add to build settings at index 0.
-            AddSceneToBuildSettings(BootstrapScenePath);
+            // Add to build settings at index 1 (after studio splash).
+            EnsureStartupSceneOrder();
 
             Debug.Log($"[Kismeta] Bootstrap scene created at {BootstrapScenePath} and added to Build Settings.");
         }
@@ -69,7 +70,7 @@ namespace Kismeta.Game.Editor
         public static void SwitchPlatformToAndroid()
         {
             ConfigureAndroidPlayerSettings();
-            EnsureBootstrapIsFirstScene();
+            EnsureStartupSceneOrder();
 
             if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android)
             {
@@ -91,7 +92,7 @@ namespace Kismeta.Game.Editor
         public static void BuildAndRunOnAndroidDevice()
         {
             ConfigureAndroidPlayerSettings();
-            EnsureBootstrapIsFirstScene();
+            EnsureStartupSceneOrder();
 
             if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
             {
@@ -125,28 +126,31 @@ namespace Kismeta.Game.Editor
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, AndroidPackageName);
         }
 
-        private static void EnsureBootstrapIsFirstScene()
+        private static void EnsureStartupSceneOrder()
         {
             var scenes = EditorBuildSettings.scenes.ToList();
-            var bootstrapIndex = scenes.FindIndex(scene => scene.path == BootstrapScenePath);
-            if (bootstrapIndex < 0)
-            {
-                scenes.Insert(0, new EditorBuildSettingsScene(BootstrapScenePath, true));
-            }
-            else if (bootstrapIndex != 0)
-            {
-                var bootstrap = scenes[bootstrapIndex];
-                scenes.RemoveAt(bootstrapIndex);
-                scenes.Insert(0, bootstrap);
-            }
 
-            for (var i = 0; i < scenes.Count; i++)
-            {
-                if (scenes[i].path == BootstrapScenePath)
-                    scenes[i] = new EditorBuildSettingsScene(scenes[i].path, true);
-            }
+            EnsureScene(scenes, StudioSplashScenePath, enabled: true);
+            EnsureScene(scenes, BootstrapScenePath, enabled: true);
+
+            scenes = scenes
+                .OrderBy(scene => scene.path == StudioSplashScenePath ? 0 :
+                    scene.path == BootstrapScenePath ? 1 : 2)
+                .ToList();
 
             EditorBuildSettings.scenes = scenes.ToArray();
+        }
+
+        private static void EnsureScene(
+            System.Collections.Generic.List<EditorBuildSettingsScene> scenes,
+            string scenePath,
+            bool enabled)
+        {
+            var index = scenes.FindIndex(scene => scene.path == scenePath);
+            if (index < 0)
+                scenes.Add(new EditorBuildSettingsScene(scenePath, enabled));
+            else
+                scenes[index] = new EditorBuildSettingsScene(scenePath, enabled);
         }
 
         private static void AddSceneToBuildSettings(string scenePath)
