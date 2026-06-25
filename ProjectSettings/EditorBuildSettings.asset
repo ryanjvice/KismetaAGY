@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/_Project/Scenes/StudioSplashScreen.unity
     guid: 97ba9010394d4e4ca657d976d3e76442
   - enabled: 1
+    path: Assets/_Project/Scenes/GameSplashScreen.unity
+    guid: 6499616fb0404724f97f419159cc2c6c
+  - enabled: 1
     path: Assets/_Project/Scenes/Bootstrap.unity
     guid: f70290e7b3444e84e8e12c79569dcf57
   - enabled: 0

@@ -16,6 +16,7 @@ namespace Kismeta.Game.Editor
     {
         private const string BootstrapScenePath = "Assets/_Project/Scenes/Bootstrap.unity";
         private const string StudioSplashScenePath = "Assets/_Project/Scenes/StudioSplashScreen.unity";
+        private const string GameSplashScenePath = "Assets/_Project/Scenes/GameSplashScreen.unity";
         private const string AndroidPackageName = "com.goodmagik.kismetaagy";
         private const string AndroidApkPath = "Builds/Android/KismetaAGY.apk";
 
@@ -131,11 +132,13 @@ namespace Kismeta.Game.Editor
             var scenes = EditorBuildSettings.scenes.ToList();
 
             EnsureScene(scenes, StudioSplashScenePath, enabled: true);
+            EnsureScene(scenes, GameSplashScenePath, enabled: true);
             EnsureScene(scenes, BootstrapScenePath, enabled: true);
 
             scenes = scenes
                 .OrderBy(scene => scene.path == StudioSplashScenePath ? 0 :
-                    scene.path == BootstrapScenePath ? 1 : 2)
+                    scene.path == GameSplashScenePath ? 1 :
+                    scene.path == BootstrapScenePath ? 2 : 3)
                 .ToList();
 
             EditorBuildSettings.scenes = scenes.ToArray();

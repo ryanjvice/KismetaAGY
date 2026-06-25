@@ -326,7 +326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77c6f0c0463a8df49967cb616a223cc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Kismeta.UI.SplashController
-  displayDuration: 3.25
+  displayDuration: 3
   fadeInDuration: 0.5
   fadeOutDuration: 0.5
   splashCanvasGroup: {fileID: 0}
@@ -336,9 +336,9 @@ MonoBehaviour:
   magikImage: {fileID: 270114721}
   audioSource: {fileID: 0}
   splashSound: {fileID: 0}
-  nextSceneName: Bootstrap
+  nextSceneName: GameSplashScreen
   allowSkip: 1
-  rotationDuration: 3.75
+  rotationDuration: 3.5
   animationCurve:
     serializedVersion: 2
     m_Curve:
