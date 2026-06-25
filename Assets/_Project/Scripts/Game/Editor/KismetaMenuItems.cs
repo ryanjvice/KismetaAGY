@@ -1,5 +1,8 @@
 using System.IO;
+using System.Linq;
 using UnityEditor;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using Kismeta.Game.Bootstrap;
@@ -12,6 +15,8 @@ namespace Kismeta.Game.Editor
     public static class KismetaMenuItems
     {
         private const string BootstrapScenePath = "Assets/_Project/Scenes/Bootstrap.unity";
+        private const string AndroidPackageName = "com.goodmagik.kismetaagy";
+        private const string AndroidApkPath = "Builds/Android/KismetaAGY.apk";
 
         [MenuItem("Kismeta/Create Bootstrap Scene")]
         public static void CreateBootstrapScene()
@@ -58,6 +63,90 @@ namespace Kismeta.Game.Editor
 
             AssetDatabase.Refresh();
             Debug.Log("[Kismeta] data:sync complete. Assets refreshed.");
+        }
+
+        [MenuItem("Kismeta/Android/Switch Platform to Android")]
+        public static void SwitchPlatformToAndroid()
+        {
+            ConfigureAndroidPlayerSettings();
+            EnsureBootstrapIsFirstScene();
+
+            if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android)
+            {
+                Debug.Log("[Kismeta] Active build target is already Android.");
+                return;
+            }
+
+            var switched = EditorUserBuildSettings.SwitchActiveBuildTarget(
+                BuildTargetGroup.Android,
+                BuildTarget.Android);
+
+            if (switched)
+                Debug.Log("[Kismeta] Switched active build target to Android.");
+            else
+                Debug.LogError("[Kismeta] Failed to switch active build target to Android.");
+        }
+
+        [MenuItem("Kismeta/Android/Build And Run on Device")]
+        public static void BuildAndRunOnAndroidDevice()
+        {
+            ConfigureAndroidPlayerSettings();
+            EnsureBootstrapIsFirstScene();
+
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
+            {
+                var switched = EditorUserBuildSettings.SwitchActiveBuildTarget(
+                    BuildTargetGroup.Android,
+                    BuildTarget.Android);
+                if (!switched)
+                {
+                    Debug.LogError("[Kismeta] Could not switch to Android before building.");
+                    return;
+                }
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(AndroidApkPath)!);
+
+            var buildOptions = BuildOptions.Development | BuildOptions.AutoRunPlayer;
+            var report = BuildPipeline.BuildPlayer(
+                EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray(),
+                AndroidApkPath,
+                BuildTarget.Android,
+                buildOptions);
+
+            if (report.summary.result == BuildResult.Succeeded)
+                Debug.Log($"[Kismeta] Android build succeeded: {AndroidApkPath}");
+            else
+                Debug.LogError($"[Kismeta] Android build failed: {report.summary.result}");
+        }
+
+        private static void ConfigureAndroidPlayerSettings()
+        {
+            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, AndroidPackageName);
+        }
+
+        private static void EnsureBootstrapIsFirstScene()
+        {
+            var scenes = EditorBuildSettings.scenes.ToList();
+            var bootstrapIndex = scenes.FindIndex(scene => scene.path == BootstrapScenePath);
+            if (bootstrapIndex < 0)
+            {
+                scenes.Insert(0, new EditorBuildSettingsScene(BootstrapScenePath, true));
+            }
+            else if (bootstrapIndex != 0)
+            {
+                var bootstrap = scenes[bootstrapIndex];
+                scenes.RemoveAt(bootstrapIndex);
+                scenes.Insert(0, bootstrap);
+            }
+
+            for (var i = 0; i < scenes.Count; i++)
+            {
+                if (scenes[i].path == BootstrapScenePath)
+                    scenes[i] = new EditorBuildSettingsScene(scenes[i].path, true);
+            }
+
+            EditorBuildSettings.scenes = scenes.ToArray();
         }
 
         private static void AddSceneToBuildSettings(string scenePath)
