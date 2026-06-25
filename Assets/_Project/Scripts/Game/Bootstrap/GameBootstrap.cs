@@ -395,8 +395,10 @@ namespace Kismeta.Game.Bootstrap
             _loop.BindCeremonyGate(_ceremonyGate);
             _loop.OnLog += msg => Debug.Log($"[GameLoop] {msg}");
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (_ui != null)
                 _ui.Bind(_session, _loop, _db!, _codexDb);
+#endif
         }
 
         private async Task StartLoopAsync(CancellationToken ct)
