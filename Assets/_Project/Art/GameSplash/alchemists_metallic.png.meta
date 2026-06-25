@@ -141,12 +141,12 @@ TextureImporter:
       name: alchemists_metallic_0
       rect:
         serializedVersion: 2
-        x: 99
-        y: 544
-        width: 1387
-        height: 247
+        x: 24
+        y: 267
+        width: 1862
+        height: 526
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -159,99 +159,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: alchemists_metallic_1
-      rect:
-        serializedVersion: 2
-        x: 1530
-        y: 544
-        width: 310
-        height: 247
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d25ce24cbfae3f740800000000000000
-      internalID: 5184745963082663213
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: alchemists_metallic_2
-      rect:
-        serializedVersion: 2
-        x: 26
-        y: 268
-        width: 446
-        height: 244
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0ebe6990767259170800000000000000
-      internalID: 8184491221311744992
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: alchemists_metallic_3
-      rect:
-        serializedVersion: 2
-        x: 519
-        y: 265
-        width: 722
-        height: 247
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e62a8831b97c6c180800000000000000
-      internalID: -9095362928566558098
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: alchemists_metallic_4
-      rect:
-        serializedVersion: 2
-        x: 1289
-        y: 268
-        width: 595
-        height: 244
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3e1ef4ea8dc27ea30800000000000000
-      internalID: 4244410482969010659
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: f7879ebdb4755da4ca30eac8ede49a7a
     internalID: 0
     vertices: []
     indices: 
