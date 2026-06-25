@@ -1,5 +1,6 @@
 using System;
 using Kismeta.UI.Components;
+using UnityEngine;
 using UnityEngine.UIElements;
 using Kismeta.UI;
 
@@ -15,9 +16,28 @@ namespace Kismeta.UI.Controllers
         public Action OnHowToPlay;
         public Action OnCodex;
 
+        const float StarChartSpeedDegPerSec = 3f;
+        const float ZodiacWheelSpeedDegPerSec = -18f;
+        const float MantleRingSpeedDegPerSec = 12f;
+
+        VisualElement? _starChart;
+        VisualElement? _zodiacWheel;
+        VisualElement? _mantleRing;
+        IVisualElementScheduledItem? _rotationTick;
+        float _lastTickTime;
+        float _starAngle;
+        float _zodiacAngle;
+        float _mantleAngle;
+
         protected override void Bind()
         {
             UiArtBindings.ApplyTitleHero(Root);
+            StartWheelRotation();
+        }
+
+        protected override void Unwire()
+        {
+            StopWheelRotation();
         }
 
         protected override void Wire()
@@ -27,6 +47,65 @@ namespace Kismeta.UI.Controllers
             Btn("join-btn")!.clicked += () => OnJoin?.Invoke();
             Btn("howto-btn")!.clicked += () => OnHowToPlay?.Invoke();
             Btn("codex-btn")!.clicked += () => OnCodex?.Invoke();
+        }
+
+        void StartWheelRotation()
+        {
+            StopWheelRotation();
+
+            _starChart = El("title-wheel-star");
+            _zodiacWheel = El("title-wheel-zodiac");
+            _mantleRing = El("title-wheel-mantle");
+
+            if (_starChart == null && _zodiacWheel == null && _mantleRing == null)
+                return;
+
+            _starAngle = 0f;
+            _zodiacAngle = 0f;
+            _mantleAngle = 0f;
+            _lastTickTime = Time.realtimeSinceStartup;
+            _rotationTick = Root!.schedule.Execute(TickWheelRotation);
+            _rotationTick.ExecuteLater(16);
+        }
+
+        void StopWheelRotation()
+        {
+            _rotationTick?.Pause();
+            _rotationTick = null;
+            _starChart = null;
+            _zodiacWheel = null;
+            _mantleRing = null;
+        }
+
+        void TickWheelRotation()
+        {
+            if (Root == null)
+                return;
+
+            float now = Time.realtimeSinceStartup;
+            float delta = now - _lastTickTime;
+            _lastTickTime = now;
+
+            if (_starChart != null)
+            {
+                _starAngle += StarChartSpeedDegPerSec * delta;
+                _starChart.style.rotate = new Rotate(_starAngle);
+            }
+
+            if (_zodiacWheel != null)
+            {
+                _zodiacAngle += ZodiacWheelSpeedDegPerSec * delta;
+                _zodiacWheel.style.rotate = new Rotate(_zodiacAngle);
+            }
+
+            if (_mantleRing != null)
+            {
+                _mantleAngle += MantleRingSpeedDegPerSec * delta;
+                _mantleRing.style.rotate = new Rotate(_mantleAngle);
+            }
+
+            _rotationTick = Root.schedule.Execute(TickWheelRotation);
+            _rotationTick.ExecuteLater(16);
         }
     }
 }

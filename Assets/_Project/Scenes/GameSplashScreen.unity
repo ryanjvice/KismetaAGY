@@ -529,7 +529,7 @@ RectTransform:
   m_GameObject: {fileID: 927784258}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6.5, y: 6.5, z: 6.5}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 797867449}
@@ -682,7 +682,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Kismeta.UI.GameSplashController
   displayDuration: 5
-  fadeInDuration: 0.5
+  fadeInDuration: 0
   fadeOutDuration: 0
   splashCanvasGroup: {fileID: 797867450}
   starChart: {fileID: 680374730}
@@ -690,7 +690,7 @@ MonoBehaviour:
   mantleRing: {fileID: 1646972964}
   starChartSpeedDegPerSec: 3
   zodiacWheelSpeedDegPerSec: 18
-  mantleRingSpeedDegPerSec: 18
+  mantleRingSpeedDegPerSec: 12
   starChartOpacity: 0.15
   nextSceneName: Bootstrap
   allowSkip: 1
@@ -811,7 +811,7 @@ RectTransform:
   m_GameObject: {fileID: 1836600917}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6.5, y: 6.5, z: 6.5}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 797867449}

@@ -244,7 +244,7 @@
 .screen--summer { background-color: var(--summer-bg); }
 .screen--autumn { background-color: var(--autumn-bg); }
 .screen--winter { background-color: var(--winter-bg); }
-.screen--title { background-color: rgba(20, 10, 24, 0.78); }
+.screen--title { background-color: transparent; }
 .screen--menu { background-color: rgba(19, 16, 15, 0.78); }
 
 .screen__felt {

@@ -20,18 +20,13 @@ namespace Kismeta.UI.Components
             BackgroundSizeType size = BackgroundSizeType.Contain,
             float opacity = 1f)
         {
-            if (host == null) return;
-
-            if (sprite == null)
-            {
-                host.style.backgroundImage = StyleKeyword.None;
+            if (host == null || sprite == null)
                 return;
-            }
 
             host.style.backgroundImage = new StyleBackground(sprite);
             host.style.backgroundSize = new BackgroundSize(size);
-            host.style.unityBackgroundScaleMode = ScaleMode.ScaleAndCrop;
-            host.style.opacity = opacity;
+            if (opacity < 1f)
+                host.style.opacity = opacity;
         }
 
         public static void ApplyTitleHero(VisualElement? heroRoot)
@@ -40,9 +35,12 @@ namespace Kismeta.UI.Components
             if (heroRoot == null || catalog == null) return;
 
             ApplyBackground(heroRoot.Q("title-hero-bg"), catalog.HeroBurgundy, BackgroundSizeType.Cover);
-            ApplyBackground(heroRoot.Q("title-star-chart"), catalog.StarChart, BackgroundSizeType.Contain, StarChartOpacity);
-            ApplyBackground(heroRoot.Q("title-wordmark-img"), catalog.KismetaMetallic, BackgroundSizeType.Contain);
-            ApplyBackground(heroRoot.Q("title-tagline-img"), catalog.AlchemistsMetallic, BackgroundSizeType.Contain);
+            ApplyBackground(heroRoot.Q("title-wheel-star"), catalog.StarChart, BackgroundSizeType.Contain, StarChartOpacity);
+            ApplyBackground(heroRoot.Q("title-wheel-zodiac"), catalog.ZodiacWheel);
+            ApplyBackground(heroRoot.Q("title-wheel-mantle"), catalog.MantleRing);
+            ApplyBackground(heroRoot.Q("title-wheel-forge"), catalog.CrucibleForge);
+            ApplyBackground(heroRoot.Q("title-wordmark-img"), catalog.KismetaMetallic);
+            ApplyBackground(heroRoot.Q("title-tagline-img"), catalog.AlchemistsMetallic);
         }
 
         public static void ApplyWheelStack(VisualElement? stackRoot)
