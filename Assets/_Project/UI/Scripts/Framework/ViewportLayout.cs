@@ -7,8 +7,8 @@ using UnityEngine.UIElements;
 namespace Kismeta.UI
 {
     /// <summary>
-    /// Full-viewport UI host: safe-area insets (L/R/B on root, top on screen chrome),
-    /// viewport classes, and overlay layer for modals and bottom sheets.
+    /// Full-viewport UI host: safe-area insets on the layout root and screen chrome,
+    /// except full-bleed screens (title) which match splash edge-to-edge backgrounds.
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class ViewportLayout : MonoBehaviour
@@ -439,9 +439,80 @@ namespace Kismeta.UI
 
             float scale = Mathf.Clamp(Mathf.Min(w / DesignWidth, h / DesignHeight), ScaleMin, ScaleMax);
             UiScale = scale;
-            float topInset = ApplySafeAreaPadding(root, w, h);
-            ApplyTopSafeInsetToContent(root, topInset);
+
+            if (UsesFullBleedLayout(root))
+                ApplyFullBleedLayout(root, h);
+            else
+                ApplySafeAreaLayout(root, w, h);
+
             ApplyViewportClass(root, w, h);
+        }
+
+        static void ApplySafeAreaLayout(VisualElement root, float panelW, float panelH)
+        {
+            float topInset = ApplySafeAreaPadding(root, panelW, panelH);
+            ApplyTopSafeInsetToContent(root, topInset);
+        }
+
+        static void ApplyFullBleedLayout(VisualElement root, float panelH)
+        {
+            ClearSafeAreaPadding(root);
+            ClearTopSafeInset(root);
+            ApplyTitleMenuBottomInset(root, panelH);
+        }
+
+        static bool UsesFullBleedLayout(VisualElement root)
+        {
+            var screen = GetActiveScreen(root);
+            return screen != null && screen.ClassListContains("screen--title");
+        }
+
+        static void ClearSafeAreaPadding(VisualElement root)
+        {
+            root.style.paddingLeft = 0;
+            root.style.paddingRight = 0;
+            root.style.paddingBottom = 0;
+            root.style.paddingTop = 0;
+        }
+
+        static void ClearTopSafeInset(VisualElement root)
+        {
+            var overlay = root.Q<VisualElement>("overlay-layer");
+            if (overlay != null)
+                overlay.style.paddingTop = 0;
+
+            var screen = GetActiveScreen(root);
+            if (screen == null)
+                return;
+
+            screen.style.paddingTop = 0;
+            var chrome = screen.Q(className: "screen__chrome");
+            if (chrome != null)
+                chrome.style.paddingTop = 0;
+        }
+
+        static void ApplyTitleMenuBottomInset(VisualElement root, float panelH)
+        {
+            var screen = GetActiveScreen(root);
+            var menu = screen?.Q(className: "title-menu");
+            if (menu == null)
+                return;
+
+            var safe = Screen.safeArea;
+            float sh = Screen.height;
+            float bottomInset = sh > 0f ? safe.y / sh * panelH : 0f;
+            menu.style.paddingBottom = Mathf.Max(16f, bottomInset + 8f);
+        }
+
+        static VisualElement? GetActiveScreen(VisualElement root)
+        {
+            var contentLayer = root.Q<VisualElement>("content-layer");
+            if (contentLayer == null || contentLayer.childCount == 0)
+                return null;
+
+            var screenHost = contentLayer[0];
+            return screenHost.Q(className: "screen")
+                ?? (screenHost.childCount > 0 ? screenHost[0] : null);
         }
 
         /// <summary>
@@ -472,13 +543,7 @@ namespace Kismeta.UI
             if (overlay != null)
                 overlay.style.paddingTop = topInset;
 
-            var contentLayer = root.Q<VisualElement>("content-layer");
-            if (contentLayer == null || contentLayer.childCount == 0)
-                return;
-
-            var screenHost = contentLayer[0];
-            var screen = screenHost.Q(className: "screen")
-                ?? (screenHost.childCount > 0 ? screenHost[0] : null);
+            var screen = GetActiveScreen(root);
             if (screen == null)
                 return;
 

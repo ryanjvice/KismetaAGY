@@ -34,8 +34,8 @@ namespace Kismeta.UI.Components
             var catalog = ResolveCatalog();
             if (heroRoot == null || catalog == null) return;
 
-            ApplyBackground(heroRoot.Q("title-hero-bg"), catalog.HeroBurgundy, BackgroundSizeType.Cover);
-            ApplyBackground(heroRoot.Q("title-wheel-star"), catalog.StarChart, BackgroundSizeType.Contain, StarChartOpacity);
+            ApplyBackground(heroRoot.Q("title-screen-bg"), catalog.HeroBurgundy, BackgroundSizeType.Cover);
+            ApplyBackground(heroRoot.Q("title-screen-star"), catalog.StarChart, BackgroundSizeType.Contain, StarChartOpacity);
             ApplyBackground(heroRoot.Q("title-wheel-zodiac"), catalog.ZodiacWheel);
             ApplyBackground(heroRoot.Q("title-wheel-mantle"), catalog.MantleRing);
             ApplyBackground(heroRoot.Q("title-wheel-forge"), catalog.CrucibleForge);

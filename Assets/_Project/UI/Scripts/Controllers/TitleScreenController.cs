@@ -28,16 +28,20 @@ namespace Kismeta.UI.Controllers
         float _starAngle;
         float _zodiacAngle;
         float _mantleAngle;
+        VisualElement? _appFelt;
 
         protected override void Bind()
         {
-            UiArtBindings.ApplyTitleHero(Root);
+            var screen = El("title-screen") ?? Root;
+            UiArtBindings.ApplyTitleHero(screen);
+            SetAppFeltVisible(false);
             StartWheelRotation();
         }
 
         protected override void Unwire()
         {
             StopWheelRotation();
+            SetAppFeltVisible(true);
         }
 
         protected override void Wire()
@@ -53,7 +57,7 @@ namespace Kismeta.UI.Controllers
         {
             StopWheelRotation();
 
-            _starChart = El("title-wheel-star");
+            _starChart = El("title-screen-star");
             _zodiacWheel = El("title-wheel-zodiac");
             _mantleRing = El("title-wheel-mantle");
 
@@ -106,6 +110,15 @@ namespace Kismeta.UI.Controllers
 
             _rotationTick = Root.schedule.Execute(TickWheelRotation);
             _rotationTick.ExecuteLater(16);
+        }
+
+        void SetAppFeltVisible(bool visible)
+        {
+            _appFelt ??= Root?.parent?.parent?.Q("app-felt");
+            if (_appFelt == null)
+                return;
+
+            _appFelt.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
     }
 }

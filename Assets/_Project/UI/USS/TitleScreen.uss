@@ -1,5 +1,31 @@
 /* Kismeta — TitleScreen.uss (per-screen styling) */
 
+.screen--title {
+    background-color: transparent;
+    overflow: visible;
+}
+
+.title-screen__bg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/splashBackground.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.title-screen__star-field {
+    position: absolute;
+    left: -35%;
+    right: -35%;
+    top: -20%;
+    bottom: -20%;
+    opacity: 0.15;
+    background-image: url("project://database/Assets/_Project/Art/GameSplash/starChart.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
 .title-hero {
     flex-grow: 1;
     flex-shrink: 1;
@@ -9,17 +35,7 @@
     align-items: stretch;
     justify-content: flex-start;
     position: relative;
-    overflow: hidden;
-}
-
-.title-hero__bg {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-image: url("project://database/Assets/_Project/Art/GameSplash/splashBackground.png");
-    -unity-background-scale-mode: scale-and-crop;
+    overflow: visible;
 }
 
 .title-hero__content {
@@ -31,7 +47,7 @@
     align-items: center;
     justify-content: center;
     padding: 12px 20px 8px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .title-wordmark-img {
@@ -61,17 +77,6 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-}
-
-.title-wheel-stack__star {
-    position: absolute;
-    left: -100px;
-    right: -100px;
-    top: -100px;
-    bottom: -100px;
-    opacity: 0.15;
-    background-image: url("project://database/Assets/_Project/Art/GameSplash/starChart.png");
-    -unity-background-scale-mode: scale-to-fit;
 }
 
 .title-wheel-stack__zodiac {
