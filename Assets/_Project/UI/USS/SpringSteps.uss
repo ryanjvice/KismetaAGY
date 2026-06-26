@@ -187,11 +187,113 @@
     margin-bottom: 4px;
 }
 
+/* Spring harvest compare row */
+.harvest-compare {
+    flex-direction: row;
+    flex-shrink: 0;
+    margin: 10px 14px 8px;
+}
+.harvest-compare__panel {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    align-items: center;
+    padding: 10px 8px;
+    border-radius: var(--radius-lg);
+    border-width: 1px;
+    border-color: rgb(43, 106, 74);
+    background-color: rgb(22, 38, 31);
+    margin-right: 8px;
+}
+.harvest-compare__panel:last-child { margin-right: 0; }
+.harvest-compare__eyebrow {
+    font-size: 8px;
+    color: rgb(122, 154, 130);
+    margin-bottom: 6px;
+}
+.harvest-compare__sigil {
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    border-width: 1px;
+    border-color: var(--gold-deep);
+    background-color: var(--gold-deep);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+.harvest-compare__glyph {
+    font-size: 18px;
+    color: rgb(26, 14, 31);
+    -unity-text-align: middle-center;
+}
+.harvest-compare__sign {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(244, 211, 94);
+    margin-bottom: 6px;
+}
+.harvest-compare__sign--match {
+    color: rgb(255, 230, 120);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    border-width: 1px;
+    border-color: rgb(244, 211, 94);
+    background-color: rgba(52, 42, 16, 0.6);
+}
+.harvest-compare__aspects {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.harvest-compare__chip {
+    font-size: 9px;
+    -unity-font-style: bold;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    border-width: 1px;
+    margin-right: 4px;
+    margin-bottom: 2px;
+}
+.harvest-compare__chip:last-child { margin-right: 0; }
+.harvest-compare__chip--planet {
+    background-color: rgba(46, 28, 10, 0.85);
+    border-color: var(--border-gold);
+    color: rgb(224, 128, 96);
+}
+.harvest-compare__chip--element {
+    background-color: rgba(22, 32, 58, 0.85);
+    border-color: rgb(111, 168, 212);
+    color: rgb(127, 196, 168);
+}
+.harvest-compare__chip--match-sign {
+    border-color: rgb(244, 211, 94);
+    background-color: rgba(52, 42, 16, 0.95);
+    color: rgb(244, 211, 94);
+}
+.harvest-compare__chip--match-planet {
+    border-color: rgb(224, 128, 96);
+    background-color: rgba(52, 28, 16, 0.95);
+    color: rgb(240, 153, 123);
+}
+.harvest-compare__chip--match-element {
+    border-color: rgb(127, 196, 168);
+    background-color: rgba(22, 38, 31, 0.95);
+    color: rgb(127, 196, 168);
+}
+.harvest-compare__alignment {
+    font-size: 9px;
+    color: rgb(154, 172, 146);
+    margin-top: 6px;
+    -unity-text-align: middle-center;
+}
+
 /* Spring harvest tally screen */
 .harvest-hero {
     align-items: center;
     justify-content: center;
-    margin: 10px 14px 12px;
+    margin: 4px 14px 12px;
     padding: 16px 12px;
     border-radius: var(--radius-lg);
     border-width: 1px;

@@ -38,6 +38,28 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
+        <engine:VisualElement class="harvest-compare">
+            <engine:VisualElement class="harvest-compare__panel">
+                <engine:Label text="cosmic age" class="eyebrow harvest-compare__eyebrow" />
+                <engine:VisualElement name="compare-age-sigil" class="harvest-compare__sigil" />
+                <engine:Label name="compare-age-sign" text="Scorpio" class="harvest-compare__sign" />
+                <engine:VisualElement class="harvest-compare__aspects">
+                    <engine:Label name="compare-age-planet" text="Mars" class="harvest-compare__chip harvest-compare__chip--planet" />
+                    <engine:Label name="compare-age-element" text="Water" class="harvest-compare__chip harvest-compare__chip--element" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:VisualElement class="harvest-compare__panel">
+                <engine:Label text="your sign" class="eyebrow harvest-compare__eyebrow" />
+                <engine:VisualElement name="compare-player-sigil" class="harvest-compare__sigil" />
+                <engine:Label name="compare-player-sign" text="Pisces" class="harvest-compare__sign" />
+                <engine:VisualElement class="harvest-compare__aspects">
+                    <engine:Label name="compare-player-planet" text="Neptune" class="harvest-compare__chip harvest-compare__chip--planet" />
+                    <engine:Label name="compare-player-element" text="Water" class="harvest-compare__chip harvest-compare__chip--element" />
+                </engine:VisualElement>
+                <engine:Label name="compare-alignment" text="+1 element match" class="harvest-compare__alignment" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
         <engine:VisualElement class="harvest-hero">
             <engine:Label name="harvest-total" text="12" class="harvest-hero__total" />
             <engine:Label text="cards this harvest" class="harvest-hero__label" />

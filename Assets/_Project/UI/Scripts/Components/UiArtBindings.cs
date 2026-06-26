@@ -66,7 +66,7 @@ namespace Kismeta.UI.Components
             var catalog = ResolveCatalog();
             if (hubRoot == null || catalog == null) return;
 
-            ApplyBackground(hubRoot.Q("mantle-ring-backdrop"), catalog.MantleRing, BackgroundSizeType.Contain);
+            ApplyBackground(hubRoot.Q("mantle-ring-backdrop"), catalog.CauldronBackground, BackgroundSizeType.Contain);
 
             foreach (var (id, suit) in CauldronSlotIds)
             {

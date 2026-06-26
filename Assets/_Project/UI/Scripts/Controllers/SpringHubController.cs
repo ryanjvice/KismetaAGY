@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
@@ -27,6 +28,8 @@ namespace Kismeta.UI.Controllers
         CommandBridge? _bridge;
         int _localPlayerId;
         int _wheelBindKey = int.MinValue;
+        bool _rolling;
+        bool _justFinishedRollSpin;
         bool _communeInitialized;
         bool _communeZonesBuilt;
         int _communePlayerId = -1;
@@ -36,6 +39,8 @@ namespace Kismeta.UI.Controllers
         protected override void Unwire()
         {
             _wheelBindKey = int.MinValue;
+            _rolling = false;
+            _justFinishedRollSpin = false;
             _dockZone = DockZone.Spread;
             _communeZonesBuilt = false;
             _communeBuiltForRoot = null;
@@ -244,8 +249,8 @@ namespace Kismeta.UI.Controllers
             switch (_bridge.PendingHint)
             {
                 case ActionHint.RollZodiac:
-                    if (_bridge.ActivePlayerId >= 0)
-                        _bridge.TrySubmit(new RollZodiacCommand(_bridge.ActivePlayerId));
+                    if (_bridge.ActivePlayerId >= 0 && !_rolling)
+                        StartCoroutine(DoRollZodiac());
                     break;
                 case ActionHint.AcknowledgeSign:
                     if (_bridge.ActivePlayerId >= 0)
@@ -265,6 +270,35 @@ namespace Kismeta.UI.Controllers
             _bridge.TrySubmit(new CommuneCommand(pid, _spreadIds, _handIds));
         }
 
+        const float RollSpinSec = 2f;
+
+        IEnumerator DoRollZodiac()
+        {
+            if (_rolling || _bridge == null || _session == null || _loop == null
+                || _bridge.PendingHint != ActionHint.RollZodiac
+                || _bridge.ActivePlayerId < 0)
+                yield break;
+
+            _rolling = true;
+            Btn("commune-btn")?.SetEnabled(false);
+            if (Lbl("harvest-count") != null)
+                Lbl("harvest-count")!.text = "Rolling...";
+
+            _bridge.TrySubmit(new RollZodiacCommand(_bridge.ActivePlayerId));
+
+            yield return UiMotion.SpinZodiacWheel(El("wheel-zodiac"), RollSpinSec);
+
+            _justFinishedRollSpin = true;
+            _rolling = false;
+            _wheelBindKey = int.MinValue;
+
+            var player = _session.Players[_localPlayerId];
+            BindWheelAndHarvest(_session, player, _bridge.PendingHint);
+            BindHintLabel(_bridge.PendingHint, _bridge, player);
+            BindSpringCta(_bridge, _loop);
+            _justFinishedRollSpin = false;
+        }
+
         void BindSpringCta(CommandBridge bridge, GameLoop loop)
         {
             var btn = Btn("commune-btn");
@@ -272,6 +306,15 @@ namespace Kismeta.UI.Controllers
 
             var hint = bridge.PendingHint;
             bool canAct = bridge.CanSubmit && loop.PendingHumanController != null;
+
+            if (_rolling)
+            {
+                btn.style.display = DisplayStyle.Flex;
+                btn.text = "Roll your zodiac die";
+                btn.SetEnabled(false);
+                btn.EnableInClassList("btn--disabled", true);
+                return;
+            }
 
             if (!canAct)
             {
@@ -313,6 +356,16 @@ namespace Kismeta.UI.Controllers
 
             UiArtBindings.ApplyWheelStack(wheel);
 
+            if (_rolling)
+            {
+                BindWheelGlyph(ZodiacSign.None);
+                SetLabelVisible("rolled-sign", false);
+                SetLabelVisible("sign-match", false);
+                if (Lbl("harvest-count") != null)
+                    Lbl("harvest-count")!.text = "Rolling...";
+                return;
+            }
+
             var sign = player.CurrentSign;
             var cosmic = session.Board.CosmicAgeSign;
             int bindKey = WheelBindKey(player.PlayerId, sign, hint);
@@ -335,7 +388,7 @@ namespace Kismeta.UI.Controllers
                 return;
             }
 
-            if (hint == ActionHint.AcknowledgeSign)
+            if (hint == ActionHint.AcknowledgeSign && !_justFinishedRollSpin)
                 UiMotion.AnimateWheelSettle(wheel, () => { });
 
             if (Lbl("rolled-sign") != null)

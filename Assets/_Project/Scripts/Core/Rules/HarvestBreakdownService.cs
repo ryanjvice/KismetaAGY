@@ -184,7 +184,7 @@ namespace Kismeta.Core.Rules
             return ($"element · {element.ToString().ToLowerInvariant()}", HarvestAspectTier.Element);
         }
 
-        static int AlignmentBonus(ZodiacSign playerSign, ZodiacSign cosmicSign)
+        public static int AlignmentBonus(ZodiacSign playerSign, ZodiacSign cosmicSign)
         {
             if (playerSign == ZodiacSign.None || cosmicSign == ZodiacSign.None) return 0;
             if (playerSign == cosmicSign) return 3;

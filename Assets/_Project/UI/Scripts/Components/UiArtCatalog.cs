@@ -15,6 +15,7 @@ namespace Kismeta.UI.Components
         [SerializeField] Sprite? _starChart;
         [SerializeField] Sprite? _zodiacWheel;
         [SerializeField] Sprite? _mantleRing;
+        [SerializeField] Sprite? _cauldronBackground;
         [SerializeField] Sprite? _crucibleForge;
 
         [Header("Title wordmarks")]
@@ -32,6 +33,7 @@ namespace Kismeta.UI.Components
         public Sprite? StarChart => _starChart;
         public Sprite? ZodiacWheel => _zodiacWheel;
         public Sprite? MantleRing => _mantleRing;
+        public Sprite? CauldronBackground => _cauldronBackground;
         public Sprite? CrucibleForge => _crucibleForge;
         public Sprite? KismetaMetallic => _kismetaMetallic;
         public Sprite? AlchemistsMetallic => _alchemistsMetallic;

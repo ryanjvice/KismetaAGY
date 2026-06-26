@@ -448,7 +448,7 @@
     right: 2%;
     top: 2%;
     bottom: 2%;
-    background-image: url("project://database/Assets/_Project/Art/GameSplash/mantleRing.png");
+    background-image: url("project://database/Assets/_Project/Art/cauldrons/cauldronBG.png");
     -unity-background-scale-mode: scale-to-fit;
     opacity: 0.55;
 }
@@ -522,13 +522,13 @@
     scale: 0.96 0.96;
 }
 
-.cauldron-hub #cauldron-n { top: 1px; left: 86px; }
+.cauldron-hub #cauldron-n { top: 25px; left: 25px; right: auto; bottom: auto; }
 
-.cauldron-hub #cauldron-e { right: 0; top: 86px; }
+.cauldron-hub #cauldron-e { top: 25px; right: 25px; left: auto; bottom: auto; }
 
-.cauldron-hub #cauldron-s { bottom: 0; left: 86px; }
+.cauldron-hub #cauldron-s { bottom: 25px; left: 25px; top: auto; right: auto; }
 
-.cauldron-hub #cauldron-w { left: 0; top: 86px; }
+.cauldron-hub #cauldron-w { bottom: 25px; right: 25px; top: auto; left: auto; }
 
 .cauldron__color {
     font-size: 9px;

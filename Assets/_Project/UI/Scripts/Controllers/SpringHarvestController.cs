@@ -38,6 +38,7 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindStatusBar(Root, session, loop);
             MainSceneBindings.BindCosmicAgeBanner(Root, session);
             MainSceneBindings.BindStepRail(El("step-rail"), 2, 5, "step__dot--active");
+            HarvestCompareBindings.Bind(Root, session, _playerId);
 
             int bindKey = ComputeBindKey(session, _playerId);
             if (bindKey == _bindKey) return;

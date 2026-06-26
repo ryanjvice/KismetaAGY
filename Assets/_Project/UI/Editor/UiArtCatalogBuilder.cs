@@ -27,6 +27,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_starChart").objectReferenceValue = LoadSprite("Assets/_Project/Art/GameSplash/starChart.png");
             so.FindProperty("_zodiacWheel").objectReferenceValue = LoadSprite("Assets/_Project/Art/GameSplash/zodiacWheel.png");
             so.FindProperty("_mantleRing").objectReferenceValue = LoadSprite("Assets/_Project/Art/GameSplash/mantleRing.png");
+            so.FindProperty("_cauldronBackground").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldronBG.png");
             so.FindProperty("_crucibleForge").objectReferenceValue = LoadSprite("Assets/_Project/Art/GameSplash/crucibleForge.png");
             so.FindProperty("_kismetaMetallic").objectReferenceValue = LoadSprite("Assets/_Project/Art/GameSplash/kismeta_metallic_1.png");
             so.FindProperty("_alchemistsMetallic").objectReferenceValue = LoadSprite("Assets/_Project/Art/GameSplash/alchemists_metallic.png");

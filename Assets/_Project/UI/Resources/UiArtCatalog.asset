@@ -17,6 +17,7 @@ MonoBehaviour:
   _starChart: {fileID: 21300000, guid: d1aff8387ec907742aabb674aeb0aa65, type: 3}
   _zodiacWheel: {fileID: 21300000, guid: a5f28f06600e39c4da7ff69d1453f19f, type: 3}
   _mantleRing: {fileID: 21300000, guid: 5b8b58bc886963642b414433065d2ca5, type: 3}
+  _cauldronBackground: {fileID: -802105710935319375, guid: 8b43ed6022be5a043a385d8470a3e369, type: 3}
   _crucibleForge: {fileID: 21300000, guid: 12a1ef89f6b0fc241a4f56f472b97cb1, type: 3}
   _kismetaMetallic: {fileID: 21300000, guid: 6a3dae2b549b4d44095aa6484f98acf5, type: 3}
   _alchemistsMetallic: {fileID: 21300000, guid: f2f8f336a3c3e2a46b65c2961ae63105, type: 3}
