@@ -18,6 +18,8 @@ namespace Kismeta.UI
         public const float ScaleMin = 0.85f;
         public const float ScaleMax = 1.35f;
         public const float TabletBreakpoint = 600f;
+        const float CenteredOverlayMargin = 24f;
+        const float CenteredOverlayMinScale = 0.68f;
 
         [SerializeField] private PanelSettings _panelSettings;
         [SerializeField] private VisualTreeAsset _initialScreen;
@@ -26,6 +28,8 @@ namespace Kismeta.UI
         private UIDocument _document;
         private VisualElement _overlayLayer;
         private VisualElement _overlayContentRoot;
+        private EventCallback<GeometryChangedEvent>? _centeredOverlayFitHandler;
+        private bool _centeredOverlayFitBound;
 
         public VisualElement Root => _document != null ? _document.rootVisualElement : null;
 
@@ -152,6 +156,11 @@ namespace Kismeta.UI
             InstantiateOverlay(overlay, asset, _tokenStylesheet);
             if (_overlayContentRoot != null)
                 UiMotion.AnimateSheetRise(_overlayContentRoot);
+            if (verticalAlign == SheetVerticalAlign.Center)
+            {
+                BindCenteredOverlayFit();
+                ScheduleFitCenteredOverlay();
+            }
             SetOverlayBackdropBlur(true);
         }
 
@@ -199,7 +208,6 @@ namespace Kismeta.UI
         {
             var host = new VisualElement();
             host.style.flexGrow = 0;
-            host.style.flexShrink = 1;
             host.style.flexDirection = FlexDirection.Column;
             PrepareCloneHost(host, stretchFull: false, tokenStylesheet, overlayScope: true);
             host.AddToClassList("overlay-clone-host");
@@ -254,6 +262,8 @@ namespace Kismeta.UI
         public void DismissOverlay()
         {
             if (_overlayLayer == null) return;
+            ResetCenteredOverlayFit();
+            UnbindCenteredOverlayFit();
             _overlayLayer.Clear();
             _overlayLayer.style.display = DisplayStyle.None;
             _overlayLayer.RemoveFromClassList("overlay-layer--sheet");
@@ -472,11 +482,13 @@ namespace Kismeta.UI
             if (UsesFullBleedTopLayout(root))
                 ClearTopSafeInset(root);
             else
-                ApplyTopSafeInsetToContent(root, topInset);
+                ApplyTopSafeInsetToScreen(root, topInset);
 
             ApplyBottomSafeInsetToFooters(root, bottomInset);
+            ApplyOverlaySafeInsets(root, topInset, bottomInset);
 
             ApplyViewportClass(root, w, h);
+            ScheduleFitCenteredOverlay();
         }
 
         static void ComputeSafeAreaInsets(float panelW, float panelH, out float topInset, out float bottomInset)
@@ -519,6 +531,121 @@ namespace Kismeta.UI
             footer.style.paddingBottom = Mathf.Max(ussDefault, minFromSafeArea);
         }
 
+        static void ApplyOverlaySafeInsets(VisualElement root, float topInset, float bottomInset)
+        {
+            var overlay = root.Q<VisualElement>("overlay-layer");
+            if (overlay == null)
+                return;
+
+            float bottomPad = Mathf.Max(16f, bottomInset + 8f);
+            overlay.style.paddingBottom = bottomPad;
+
+            if (overlay.ClassListContains("overlay-layer--sheet-center"))
+            {
+                overlay.style.paddingTop = Mathf.Max(16f, topInset + 8f);
+                return;
+            }
+
+            overlay.style.paddingTop = UsesFullBleedTopLayout(root) ? 0f : topInset;
+        }
+
+        void BindCenteredOverlayFit()
+        {
+            UnbindCenteredOverlayFit();
+            if (_overlayLayer == null || _overlayContentRoot == null)
+                return;
+            if (!_overlayLayer.ClassListContains("overlay-layer--sheet-center"))
+                return;
+
+            _centeredOverlayFitHandler = _ => ScheduleFitCenteredOverlay();
+            _overlayLayer.RegisterCallback(_centeredOverlayFitHandler);
+            _overlayContentRoot.RegisterCallback(_centeredOverlayFitHandler);
+            _centeredOverlayFitBound = true;
+        }
+
+        void UnbindCenteredOverlayFit()
+        {
+            if (!_centeredOverlayFitBound || _centeredOverlayFitHandler == null)
+                return;
+
+            _overlayLayer?.UnregisterCallback(_centeredOverlayFitHandler);
+            _overlayContentRoot?.UnregisterCallback(_centeredOverlayFitHandler);
+            _centeredOverlayFitHandler = null;
+            _centeredOverlayFitBound = false;
+        }
+
+        void ResetCenteredOverlayFit()
+        {
+            if (_overlayContentRoot == null)
+                return;
+
+            _overlayContentRoot.style.scale = new Scale(Vector3.one);
+            var host = _overlayContentRoot.parent;
+            if (host != null)
+            {
+                host.style.height = StyleKeyword.Auto;
+                host.style.maxHeight = StyleKeyword.Null;
+            }
+        }
+
+        void ScheduleFitCenteredOverlay()
+        {
+            if (_overlayLayer == null || _overlayContentRoot == null)
+                return;
+            if (!_overlayLayer.ClassListContains("overlay-layer--sheet-center"))
+                return;
+
+            _overlayLayer.schedule.Execute(FitCenteredOverlayContent).StartingIn(0);
+        }
+
+        void FitCenteredOverlayContent()
+        {
+            if (_overlayLayer == null || _overlayContentRoot == null)
+                return;
+            if (!_overlayLayer.ClassListContains("overlay-layer--sheet-center"))
+                return;
+
+            float overlayH = _overlayLayer.resolvedStyle.height;
+            float padT = _overlayLayer.resolvedStyle.paddingTop;
+            float padB = _overlayLayer.resolvedStyle.paddingBottom;
+            float avail = overlayH - padT - padB - CenteredOverlayMargin;
+            if (avail <= 0f)
+                return;
+
+            float contentH = _overlayContentRoot.layout.height;
+            if (contentH <= 0f)
+                contentH = _overlayContentRoot.resolvedStyle.height;
+            if (contentH <= 0f)
+                return;
+
+            var host = _overlayContentRoot.parent;
+            // Scale from the top edge: a transform does not shrink the layout box,
+            // so top-origin keeps the scaled sheet flush with the reserved host height
+            // (center-origin would push the visual bottom past the host and clip it).
+            _overlayContentRoot.style.transformOrigin = new TransformOrigin(
+                new Length(50, LengthUnit.Percent),
+                new Length(0, LengthUnit.Percent));
+
+            if (contentH <= avail)
+            {
+                _overlayContentRoot.style.scale = new Scale(Vector3.one);
+                if (host != null)
+                {
+                    host.style.height = StyleKeyword.Auto;
+                    host.style.maxHeight = avail;
+                }
+                return;
+            }
+
+            float scale = Mathf.Clamp(avail / contentH, CenteredOverlayMinScale, 1f);
+            _overlayContentRoot.style.scale = new Scale(new Vector3(scale, scale, 1f));
+            if (host != null)
+            {
+                host.style.maxHeight = avail;
+                host.style.height = contentH * scale;
+            }
+        }
+
         static void ClearSafeAreaPadding(VisualElement root)
         {
             root.style.paddingLeft = 0;
@@ -529,10 +656,6 @@ namespace Kismeta.UI
 
         static void ClearTopSafeInset(VisualElement root)
         {
-            var overlay = root.Q<VisualElement>("overlay-layer");
-            if (overlay != null)
-                overlay.style.paddingTop = 0;
-
             var screen = GetActiveScreen(root);
             if (screen == null)
                 return;
@@ -555,12 +678,8 @@ namespace Kismeta.UI
                 ?? (screenHost.childCount > 0 ? screenHost[0] : null);
         }
 
-        private static void ApplyTopSafeInsetToContent(VisualElement root, float topInset)
+        private static void ApplyTopSafeInsetToScreen(VisualElement root, float topInset)
         {
-            var overlay = root.Q<VisualElement>("overlay-layer");
-            if (overlay != null)
-                overlay.style.paddingTop = topInset;
-
             var screen = GetActiveScreen(root);
             if (screen == null)
                 return;

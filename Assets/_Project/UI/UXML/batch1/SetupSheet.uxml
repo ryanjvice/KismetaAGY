@@ -11,7 +11,7 @@
          top-level overlay VisualElement with a dimmed scrim behind, and
          animate translateY in C# (experimental.animation) for the rise.
          ============================================================ -->
-    <engine:VisualElement name="setup-sheet" class="sheet">
+    <engine:VisualElement name="setup-sheet" class="sheet sheet--setup">
 
         <engine:VisualElement class="sheet__header">
             <engine:Label text="New game" class="statusbar__title text-gold" />
@@ -20,14 +20,14 @@
 
         <engine:VisualElement class="sheet__body">
             <engine:Label text="alchemists" class="eyebrow" />
-            <engine:VisualElement name="player-row" style="flex-direction: row; margin-bottom: 12px;">
+            <engine:VisualElement name="player-row" class="setup-section" style="flex-direction: row;">
                 <engine:Button name="players-2" text="2" class="player-pip" />
                 <engine:Button name="players-3" text="3" class="player-pip player-pip--active" />
                 <engine:Button name="players-4" text="4" class="player-pip" />
             </engine:VisualElement>
 
             <engine:Label text="game mode" class="eyebrow" />
-            <engine:VisualElement name="mode-list" style="margin-bottom: 12px;">
+            <engine:VisualElement name="mode-list" class="setup-section">
                 <engine:Button name="mode-quickplay" class="mode-row">
                     <engine:Label text="Quickplay" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
                     <engine:Label text="~30 min" style="font-size: 10px; color: rgb(127, 196, 168);" />
@@ -43,7 +43,7 @@
             </engine:VisualElement>
 
             <engine:Label text="crucible deck" class="eyebrow" />
-            <engine:VisualElement name="deck-list" style="margin-bottom: 12px;">
+            <engine:VisualElement name="deck-list" class="setup-section">
                 <engine:Button name="deck-curated" class="mode-row mode-row--active">
                     <engine:Label text="Curated" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
                     <engine:Label text="preset for mode" style="font-size: 10px; color: rgb(184, 154, 110);" />

@@ -240,10 +240,15 @@
 
 .overlay-layer--sheet-center {
     justify-content: center;
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-lg);
 }
 
 .overlay-layer--sheet-center .overlay-clone-host {
     padding-top: 0;
+    max-height: 100%;
+    flex-shrink: 1;
+    min-height: 0;
 }
 
 .overlay-layer--sheet-bottom {
@@ -1532,6 +1537,10 @@
 .step__connector { width: 12px; height: 1px; background-color: var(--border-subtle); }
 
 /* ---------- Setup ---------- */
+.setup-section {
+    margin-bottom: 12px;
+}
+
 .player-pip {
     flex-grow: 1;
     min-height: var(--touch-min);
@@ -1573,6 +1582,14 @@
     border-width: 2px;
     border-color: var(--gold-deep);
 }
+
+.viewport--tablet .sheet--setup .setup-section { margin-bottom: 6px; }
+.viewport--tablet .sheet--setup .mode-row { margin-bottom: 5px; min-height: 38px; padding: 7px 12px; }
+.viewport--tablet .sheet--setup .player-pip { min-height: 38px; padding: 7px 0; }
+.viewport--tablet .sheet--setup .sheet__body { padding: var(--space-sm) var(--space-lg) var(--space-md); }
+.viewport--tablet .sheet--setup .sheet__header { padding: 10px var(--space-lg); }
+.viewport--tablet .sheet--setup .eyebrow { margin-bottom: 5px; }
+.viewport--tablet .sheet--setup .btn { min-height: 38px; }
 
 .mode-row__icon {
     width: 34px;
@@ -1652,6 +1669,10 @@
     border-width: 2px;
     border-color: var(--border-gold);
     border-radius: var(--radius-xl);
+}
+
+.sheet--setup {
+    transform-origin: 50% 0;
 }
 
 .sheet {
