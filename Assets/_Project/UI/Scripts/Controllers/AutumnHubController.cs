@@ -70,11 +70,12 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindSpectatorTurnBanner(Root, session, loop, "at the forge");
             RefreshDock();
 
-            CrucibleForgeBindings.Apply(
-                El("stone-art"),
+            CrucibleForgeBindings.ApplyForge(
+                El("board-stage"),
                 Lbl("stone-label"),
-                player.StonePosition,
+                player,
                 AutumnActionBindings.StoneStatusLabel(player));
+            CrucibleForgeBindings.ApplyCauldronReagents(El("cauldron-mini"), player);
         }
 
         public void RefreshActionGroupRail()

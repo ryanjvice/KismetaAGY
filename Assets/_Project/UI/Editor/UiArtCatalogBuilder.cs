@@ -31,10 +31,10 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_crucibleForge").objectReferenceValue = LoadSprite("Assets/_Project/Art/GameSplash/crucibleForge.png");
             so.FindProperty("_kismetaMetallic").objectReferenceValue = LoadSprite("Assets/_Project/Art/GameSplash/kismeta_metallic_1.png");
             so.FindProperty("_alchemistsMetallic").objectReferenceValue = LoadSprite("Assets/_Project/Art/GameSplash/alchemists_metallic.png");
-            so.FindProperty("_cauldronWands").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_Wands.png");
-            so.FindProperty("_cauldronCups").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_Cups.png");
-            so.FindProperty("_cauldronSwords").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_Swords.png");
-            so.FindProperty("_cauldronPentacles").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_Pentacles.png");
+            so.FindProperty("_cauldronWands").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_red.png");
+            so.FindProperty("_cauldronCups").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_blue.png");
+            so.FindProperty("_cauldronSwords").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_yellow.png");
+            so.FindProperty("_cauldronPentacles").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_green.png");
 
             so.ApplyModifiedPropertiesWithoutUndo();
             AssetDatabase.SaveAssets();

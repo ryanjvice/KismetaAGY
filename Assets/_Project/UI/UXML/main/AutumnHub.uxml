@@ -16,10 +16,26 @@
             <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
                 <engine:Label name="turn-banner" text="Rivals are taking their turns…" style="font-size: 13px; color: rgb(224, 138, 74); -unity-font-style: bold; margin-bottom: 12px; -unity-text-align: middle-center;" />
                 <engine:VisualElement name="board-stage" class="forge-stage">
-                    <engine:VisualElement name="stone-art" class="forge-stage__art" />
+                    <engine:VisualElement name="forge-mandala" class="forge-mandala" />
+                    <engine:VisualElement class="stone-marker stone-marker--0" />
+                    <engine:VisualElement class="stone-marker stone-marker--1" />
+                    <engine:VisualElement class="stone-marker stone-marker--2" />
+                    <engine:VisualElement class="stone-marker stone-marker--3" />
+                    <engine:VisualElement class="stone-marker stone-marker--4" />
+                    <engine:VisualElement class="stone-marker stone-marker--5" />
+                    <engine:VisualElement class="stone-marker stone-marker--6" />
+                    <engine:VisualElement class="stone-marker stone-marker--7" />
+                    <engine:VisualElement name="stone-marker-altar" class="stone-marker stone-marker--altar" />
                     <engine:Label name="stone-label" class="forge-stage__label" text="stone · lead" />
                 </engine:VisualElement>
                 <engine:Label name="hint-label" text="Review your board while you wait" style="font-size: 11px; color: rgb(243, 233, 210); margin-top: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="cauldron-mini" class="cauldron-mini">
+                <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--wands" />
+                <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--cups" />
+                <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--pentacles" />
+                <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--swords" />
             </engine:VisualElement>
 
             <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />

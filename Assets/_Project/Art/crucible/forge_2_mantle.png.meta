@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b34910434903dbb4e8d8eb3aabcad385
+guid: 08f5d8bf41ce72546804c6dda8a4db65
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4558882837882964105
-    second: cauldron_Wands_0
+      213: 6240881309092655104
+    second: forge_2_mantle_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cauldron_Wands_0
+      name: forge_2_mantle_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7777c5386389bb0c0800000000000000
-      internalID: -4558882837882964105
+      spriteID: 000b7d92c701c9650800000000000000
+      internalID: 6240881309092655104
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      cauldron_Wands_0: -4558882837882964105
+      forge_2_mantle_0: 6240881309092655104
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

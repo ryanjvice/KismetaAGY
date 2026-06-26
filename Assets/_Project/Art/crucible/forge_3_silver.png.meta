@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 077fef9e9593b5d4e81a4071d8f0816d
+guid: 7baa8ca0ebe8d6e438acce806d148003
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7063132468708876849
-    second: cauldron_Swords_0
+      213: 4895537060931731758
+    second: forge_3_silver_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cauldron_Swords_0
+      name: forge_3_silver_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fcd54191176bafd90800000000000000
-      internalID: -7063132468708876849
+      spriteID: e21889de40170f340800000000000000
+      internalID: 4895537060931731758
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      cauldron_Swords_0: -7063132468708876849
+      forge_3_silver_0: 4895537060931731758
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -49,6 +49,8 @@ namespace Kismeta.UI.Components
                 el.EnableInClassList("cauldron--lit", lit);
                 el.EnableInClassList("cauldron--dormant", !lit);
 
+                UiArtBindings.ApplyCauldronSlotArt(hub.Q<VisualElement>($"{id}-art"), suit, lit);
+
                 var colorLbl = hub.Q<Label>($"{id}-color");
                 var reagentLbl = hub.Q<Label>($"{id}-reagent");
                 var stateLbl = hub.Q<Label>($"{id}-state");

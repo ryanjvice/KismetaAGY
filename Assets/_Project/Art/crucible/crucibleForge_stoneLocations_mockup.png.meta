@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8a85c29e115f1334baadff8e162c2a02
+guid: 55425bd3792235c4c87b3101a5a29360
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7733006768947082041
-    second: forge_Lead_0
+      213: -320224921193863466
+    second: crucibleForge_stoneLocations_mockup_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: forge_Lead_0
+      name: crucibleForge_stoneLocations_mockup_0
       rect:
         serializedVersion: 2
-        x: 7
-        y: 8
-        width: 2119
-        height: 2119
+        x: 9
+        y: 9
+        width: 4485
+        height: 4482
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7ccc73b9057dea490800000000000000
-      internalID: -7733006768947082041
+      spriteID: 6d6230c71255e8bf0800000000000000
+      internalID: -320224921193863466
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      forge_Lead_0: -7733006768947082041
+      crucibleForge_stoneLocations_mockup_0: -320224921193863466
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f2da987b9756a26418a656b12e853553
+guid: daaa61e73d1b8b54cafbb38ce482c95f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7195193270814912191
-    second: forge_Gold_0
+      213: 346452024102023803
+    second: forge_8_altar_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: forge_Gold_0
+      name: forge_8_altar_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fbe243578267ad360800000000000000
-      internalID: 7195193270814912191
+      spriteID: b72f054c748dec400800000000000000
+      internalID: 346452024102023803
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      forge_Gold_0: 7195193270814912191
+      forge_8_altar_0: 346452024102023803
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

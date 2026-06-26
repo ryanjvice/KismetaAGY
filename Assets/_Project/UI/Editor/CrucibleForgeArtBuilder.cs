@@ -8,19 +8,19 @@ namespace Kismeta.UI.Editor
     public static class CrucibleForgeArtBuilder
     {
         const string AssetPath = "Assets/_Project/UI/Resources/CrucibleForgeArt.asset";
-        const string CrucibleDir = "Assets/_Project/UI/img/crucible";
+        const string CrucibleDir = "Assets/_Project/Art/crucible";
 
         static readonly string[] SpriteFileNames =
         {
-            "forge_0",
-            "forge_Lead",
-            "forge_2",
-            "forge_Bronze",
-            "forge_4",
-            "forge_Silver",
-            "forge_6",
-            "forge_Gold",
-            "forge_Altar",
+            "forge_0_mantle",
+            "forge_1_lead",
+            "forge_2_mantle",
+            "forge_3_bronze",
+            "forge_4_mantle",
+            "forge_3_silver",
+            "forge_6_mantle",
+            "forge_7_gold",
+            "forge_8_altar",
         };
 
         [MenuItem("Kismeta/UI/Create Crucible Forge Art Catalog")]

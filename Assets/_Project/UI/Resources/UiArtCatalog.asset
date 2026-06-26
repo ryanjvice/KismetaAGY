@@ -21,7 +21,7 @@ MonoBehaviour:
   _crucibleForge: {fileID: 21300000, guid: 12a1ef89f6b0fc241a4f56f472b97cb1, type: 3}
   _kismetaMetallic: {fileID: 21300000, guid: 6a3dae2b549b4d44095aa6484f98acf5, type: 3}
   _alchemistsMetallic: {fileID: 21300000, guid: f2f8f336a3c3e2a46b65c2961ae63105, type: 3}
-  _cauldronWands: {fileID: 21300000, guid: b34910434903dbb4e8d8eb3aabcad385, type: 3}
-  _cauldronCups: {fileID: 21300000, guid: 4c8e1a1f19d634d44b93b2508a63bf67, type: 3}
-  _cauldronSwords: {fileID: 21300000, guid: 077fef9e9593b5d4e81a4071d8f0816d, type: 3}
-  _cauldronPentacles: {fileID: 21300000, guid: c2d2c48e22d2be740b98b9ffa671ef65, type: 3}
+  _cauldronWands: {fileID: 292234787209184799, guid: 6f95540a586ccd94db8a678c844e0435, type: 3}
+  _cauldronCups: {fileID: -5882453728256855975, guid: cdcb065070f349540b59b5cf15a19334, type: 3}
+  _cauldronSwords: {fileID: 1759966174324012599, guid: 70a2c9c726bc4734f83658baf74aa334, type: 3}
+  _cauldronPentacles: {fileID: -5842517257979005973, guid: e8dca0e5d2bd91043869c4ef6da1ed18, type: 3}

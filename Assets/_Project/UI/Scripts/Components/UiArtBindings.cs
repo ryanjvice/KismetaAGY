@@ -67,13 +67,25 @@ namespace Kismeta.UI.Components
             if (hubRoot == null || catalog == null) return;
 
             ApplyBackground(hubRoot.Q("mantle-ring-backdrop"), catalog.CauldronBackground, BackgroundSizeType.Contain);
+        }
 
-            foreach (var (id, suit) in CauldronSlotIds)
+        public static void ApplyCauldronSlotArt(VisualElement? artHost, Suit suit, bool lit)
+        {
+            if (artHost == null) return;
+
+            if (lit)
             {
-                var el = hubRoot.Q<VisualElement>(id);
-                if (el == null) continue;
-                ApplyBackground(el.Q($"{id}-art"), catalog.CauldronFor(suit), BackgroundSizeType.Contain);
+                var sprite = ResolveCatalog()?.CauldronFor(suit);
+                if (sprite != null)
+                {
+                    ApplyBackground(artHost, sprite, BackgroundSizeType.Contain);
+                    artHost.style.display = DisplayStyle.Flex;
+                    return;
+                }
             }
+
+            artHost.style.backgroundImage = StyleKeyword.None;
+            artHost.style.display = DisplayStyle.None;
         }
 
         public static void ApplyForgeStageDecor(VisualElement? forgeStage)
@@ -107,14 +119,6 @@ namespace Kismeta.UI.Components
 
             ApplyBackground(heroRoot.Q("victory-halo"), catalog.CrucibleForge, BackgroundSizeType.Contain, 0.35f);
         }
-
-        static readonly (string id, Suit suit)[] CauldronSlotIds =
-        {
-            ("cauldron-n", Suit.Wands),
-            ("cauldron-e", Suit.Cups),
-            ("cauldron-s", Suit.Pentacles),
-            ("cauldron-w", Suit.Swords),
-        };
 
         static UiArtCatalog? ResolveCatalog()
         {

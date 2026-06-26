@@ -159,13 +159,12 @@ namespace Kismeta.UI.Controllers
             Btn("manage-cards-btn")?.SetEnabled(autumnAction);
             Btn("pass-btn")?.SetEnabled(autumnAction);
 
-            CrucibleForgeBindings.Apply(
-                El("stone-art"),
+            CrucibleForgeBindings.ApplyForge(
+                El("board-stage"),
                 Lbl("stone-label"),
-                player.StonePosition,
+                player,
                 AutumnActionBindings.StoneStatusLabel(player));
-
-            UiArtBindings.ApplyForgeStageDecor(El("board-stage"));
+            CrucibleForgeBindings.ApplyCauldronReagents(El("cauldron-mini"), player);
 
             if (Lbl("hint-label") != null)
             {

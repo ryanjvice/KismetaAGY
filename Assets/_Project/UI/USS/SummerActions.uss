@@ -499,11 +499,20 @@
     border-style: dashed;
 }
 
-.cauldron-hub .cauldron--dormant.cauldron--red,
-.cauldron-hub .cauldron--dormant.cauldron--blue,
-.cauldron-hub .cauldron--dormant.cauldron--green,
-.cauldron-hub .cauldron--dormant.cauldron--yellow {
-    background-color: rgba(12, 8, 10, 0.55);
+.cauldron-hub .cauldron--red {
+    background-color: rgba(192, 57, 43, 0.9);
+}
+
+.cauldron-hub .cauldron--blue {
+    background-color: rgba(46, 109, 164, 0.9);
+}
+
+.cauldron-hub .cauldron--green {
+    background-color: rgba(43, 106, 74, 0.9);
+}
+
+.cauldron-hub .cauldron--yellow {
+    background-color: rgba(184, 148, 31, 0.9);
 }
 
 .cauldron-hub .cauldron--tappable {
@@ -549,6 +558,14 @@
 }
 
 .cauldron--dormant .cauldron__reagent {
+    display: none;
+}
+
+.cauldron--dormant .cauldron__art {
+    display: none;
+}
+
+.cauldron--lit .cauldron__color {
     display: none;
 }
 

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: CrucibleForgeArt
   m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Components.CrucibleForgeArt
   _byPosition:
-  - {fileID: 21300000, guid: 793de71838ce70f449f6b5b54f4786b3, type: 3}
-  - {fileID: 21300000, guid: 8a85c29e115f1334baadff8e162c2a02, type: 3}
-  - {fileID: 21300000, guid: 8507c4d160a7aca428f9e5bfb0dfd7d7, type: 3}
-  - {fileID: 21300000, guid: e5af78a79da6af14b88fd380293eeb11, type: 3}
-  - {fileID: 21300000, guid: 083ffb6c4c91db246bf88e3f6150c7d2, type: 3}
-  - {fileID: 21300000, guid: 8416e00bf3114f14dbe7060647b5699d, type: 3}
-  - {fileID: 21300000, guid: 8b810fa7397d36c449138c7c4d3c4787, type: 3}
-  - {fileID: 21300000, guid: f2da987b9756a26418a656b12e853553, type: 3}
-  - {fileID: 21300000, guid: ca90b50b5c1401e419616aeb9c1c5260, type: 3}
+  - {fileID: -5796301045212683331, guid: 70d908044b9925f4f83d5fadf9adb3c3, type: 3}
+  - {fileID: 1637402465788627599, guid: f1324ae3c331ee947888b029b676acaf, type: 3}
+  - {fileID: 6240881309092655104, guid: 08f5d8bf41ce72546804c6dda8a4db65, type: 3}
+  - {fileID: -4251582346747497638, guid: 1766937996c6430409ae13e9c7e3777a, type: 3}
+  - {fileID: -4169292208911243346, guid: d58219d83f1e95f48b4f8b011323b8e8, type: 3}
+  - {fileID: 4895537060931731758, guid: 7baa8ca0ebe8d6e438acce806d148003, type: 3}
+  - {fileID: 4928263171041709542, guid: 22acf857a52b63b49b04701bb3c41ff1, type: 3}
+  - {fileID: -2626823545766626411, guid: 764c394614c25d14288a6d78ece2a6a2, type: 3}
+  - {fileID: 346452024102023803, guid: daaa61e73d1b8b54cafbb38ce482c95f, type: 3}

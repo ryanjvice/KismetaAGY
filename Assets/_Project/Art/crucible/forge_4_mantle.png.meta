@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c2d2c48e22d2be740b98b9ffa671ef65
+guid: d58219d83f1e95f48b4f8b011323b8e8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2557807417015286818
-    second: cauldron_Pentacles_0
+      213: -4169292208911243346
+    second: forge_4_mantle_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cauldron_Pentacles_0
+      name: forge_4_mantle_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 22c3e0f3b482f7320800000000000000
-      internalID: 2557807417015286818
+      spriteID: ea7aa0b63d2b326c0800000000000000
+      internalID: -4169292208911243346
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      cauldron_Pentacles_0: 2557807417015286818
+      forge_4_mantle_0: -4169292208911243346
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

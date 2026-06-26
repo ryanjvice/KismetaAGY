@@ -175,45 +175,117 @@
     color: var(--autumn-accent);
 }
 
-/* Autumn main/hub — forge progress art + caption */
+/* Autumn main/hub — crucible forge mandala + stone markers + cauldron mini */
 .forge-stage {
     align-items: center;
     justify-content: center;
     position: relative;
-    width: 220px;
-    height: 220px;
+    width: 280px;
+    height: 280px;
+    flex-shrink: 0;
+    margin-bottom: 18px;
 }
 
-.forge-stage__mantle {
+.forge-mandala {
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("project://database/Assets/_Project/Art/GameSplash/mantleRing.png");
+    background-image: url("project://database/Assets/_Project/Art/crucible/crucibleForge.png");
     -unity-background-scale-mode: scale-to-fit;
-    opacity: 0.5;
 }
 
-.forge-stage__art {
-    width: 160px;
-    height: 160px;
-    flex-shrink: 0;
+.stone-marker {
+    position: absolute;
+    width: 34px;
+    height: 34px;
     -unity-background-scale-mode: scale-to-fit;
-    border-width: 3px;
-    border-color: var(--border-gold);
-    border-radius: 80px;
+    translate: -17px -17px;
+}
+
+.stone-marker--0 { left: 14%; top: 14%; }
+.stone-marker--1 { left: 22%; top: 50%; width: 38px; height: 38px; translate: -19px -19px; }
+.stone-marker--2 { left: 14%; top: 86%; }
+.stone-marker--3 { left: 50%; top: 78%; width: 38px; height: 38px; translate: -19px -19px; }
+.stone-marker--4 { left: 86%; top: 86%; }
+.stone-marker--5 { left: 78%; top: 50%; width: 38px; height: 38px; translate: -19px -19px; }
+.stone-marker--6 { left: 86%; top: 14%; }
+.stone-marker--7 { left: 50%; top: 22%; width: 38px; height: 38px; translate: -19px -19px; }
+
+.stone-marker--altar {
+    left: 50%;
+    top: 50%;
+    width: 52px;
+    height: 52px;
+    translate: -26px -26px;
+    display: none;
+}
+
+.stone-marker--altar.stone-marker--current {
+    display: flex;
+}
+
+.stone-marker--current {
+    border-width: 2px;
+    border-color: var(--gold-bright);
+    border-radius: 50%;
+    scale: 1.12 1.12;
 }
 
 .forge-stage__label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -16px;
     font-size: 9px;
     color: var(--autumn-accent);
     -unity-text-align: middle-center;
-    margin-top: 4px;
     white-space: normal;
-    max-width: 190px;
 }
 
 .forge-stage__hint {
     margin-top: 10px;
+}
+
+.cauldron-mini {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 112px;
+    height: 112px;
+    background-image: url("project://database/Assets/_Project/Art/cauldrons/cauldronBG.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.cauldron-mini__reagent {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    -unity-background-scale-mode: scale-to-fit;
+    display: none;
+}
+
+.cauldron-mini__reagent--lit {
+    display: flex;
+}
+
+.cauldron-mini__reagent--wands {
+    left: 14%;
+    top: 14%;
+}
+
+.cauldron-mini__reagent--cups {
+    right: 14%;
+    top: 14%;
+}
+
+.cauldron-mini__reagent--pentacles {
+    left: 14%;
+    bottom: 14%;
+}
+
+.cauldron-mini__reagent--swords {
+    right: 14%;
+    bottom: 14%;
 }

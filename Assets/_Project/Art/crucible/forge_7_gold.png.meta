@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e5af78a79da6af14b88fd380293eeb11
+guid: 764c394614c25d14288a6d78ece2a6a2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4814574606719700507
-    second: forge_Bronze_0
+      213: -2626823545766626411
+    second: forge_7_gold_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: forge_Bronze_0
+      name: forge_7_gold_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5e13bd567e13f2db0800000000000000
-      internalID: -4814574606719700507
+      spriteID: 59bb2f217e5ab8bd0800000000000000
+      internalID: -2626823545766626411
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      forge_Bronze_0: -4814574606719700507
+      forge_7_gold_0: -2626823545766626411
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 083ffb6c4c91db246bf88e3f6150c7d2
+guid: 70a2c9c726bc4734f83658baf74aa334
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7137667347662465797
-    second: forge_4_0
+      213: 1759966174324012599
+    second: cauldron_yellow_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: forge_4_0
+      name: cauldron_yellow_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 50b635eb2a61e0360800000000000000
-      internalID: 7137667347662465797
+      spriteID: 736394d29e7ac6810800000000000000
+      internalID: 1759966174324012599
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      forge_4_0: 7137667347662465797
+      cauldron_yellow_0: 1759966174324012599
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
