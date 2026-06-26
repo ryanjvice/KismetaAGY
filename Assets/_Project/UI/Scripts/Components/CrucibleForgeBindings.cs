@@ -67,35 +67,51 @@ namespace Kismeta.UI.Components
             stonesHost.Clear();
             ResetStasisSlots(stasisRow);
 
-            var stackIndexAtPosition = new Dictionary<int, int>();
+            var trackPlayers = new List<(int playerId, PlayerState player)>();
+            var countByPosition = new Dictionary<int, int>();
 
             for (int i = 0; i < session.Players.Count; i++)
             {
                 var player = session.Players[i];
-                var sprite = art?.PlayerStoneFor(player.Color);
-                if (sprite == null)
-                    continue;
-
-                bool isLocal = i == localPlayerId;
 
                 if (player.StoneState == StoneState.Stasis)
                 {
-                    ApplyStasisStone(stasisRow, i, sprite, isLocal);
+                    var sprite = art?.PlayerStoneFor(player.Color);
+                    if (sprite != null)
+                        ApplyStasisStone(stasisRow, i, sprite, i == localPlayerId);
                     continue;
                 }
 
                 int pos = player.StonePosition.Value;
-                stackIndexAtPosition.TryGetValue(pos, out int stackIndex);
-                stackIndexAtPosition[pos] = stackIndex + 1;
+                trackPlayers.Add((i, player));
+                countByPosition[pos] = countByPosition.GetValueOrDefault(pos) + 1;
+            }
+
+            var indexByPosition = new Dictionary<int, int>();
+
+            foreach (var (playerId, player) in trackPlayers)
+            {
+                var sprite = art?.PlayerStoneFor(player.Color);
+                if (sprite == null)
+                    continue;
+
+                int pos = player.StonePosition.Value;
+                int index = indexByPosition.GetValueOrDefault(pos);
+                indexByPosition[pos] = index + 1;
+                int count = countByPosition[pos];
+                bool isLocal = playerId == localPlayerId;
 
                 var stone = new VisualElement();
                 stone.AddToClassList("player-stone");
                 stone.AddToClassList("forge-pos");
                 stone.AddToClassList(pos >= 8 ? "forge-pos--altar" : $"forge-pos--{pos}");
-                if (stackIndex > 0)
-                    stone.AddToClassList($"player-stone--stack-{stackIndex}");
                 if (isLocal)
                     stone.AddToClassList("player-stone--local");
+
+                if (IsMantlePosition(pos) && count > 1)
+                    ApplyMantleRadialOffset(stone, pos, index, count);
+                else if (index > 0)
+                    stone.AddToClassList($"player-stone--stack-{index}");
 
                 ApplyMarkerSprite(stone, sprite);
                 stonesHost.Add(stone);
@@ -130,6 +146,33 @@ namespace Kismeta.UI.Components
                     slot.style.backgroundImage = StyleKeyword.None;
                 }
             }
+        }
+
+        static bool IsMantlePosition(int position) =>
+            position >= 0 && position < 8 && position % 2 == 0;
+
+        static float MantleRadialCenterAngle(int position) => position switch
+        {
+            0 => 225f,
+            2 => 135f,
+            4 => 45f,
+            6 => 315f,
+            _ => 0f
+        };
+
+        const float MantleRadialRadiusPx = 18f;
+        const float PlayerStoneHalfSizePx = 14f;
+
+        static void ApplyMantleRadialOffset(VisualElement stone, int position, int index, int count)
+        {
+            float centerRad = MantleRadialCenterAngle(position) * Mathf.Deg2Rad;
+            float angle = centerRad + (2f * Mathf.PI * index / count);
+            float dx = MantleRadialRadiusPx * Mathf.Cos(angle);
+            float dy = MantleRadialRadiusPx * Mathf.Sin(angle);
+
+            stone.style.translate = new Translate(
+                new Length(-PlayerStoneHalfSizePx + dx, LengthUnit.Pixel),
+                new Length(-PlayerStoneHalfSizePx + dy, LengthUnit.Pixel));
         }
 
         static VisualElement? FindTrackMarker(VisualElement forgeStage, int position)
