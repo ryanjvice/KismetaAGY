@@ -56,6 +56,7 @@ namespace Kismeta.UI.Controllers
                 OnArcanumToggle = OnArcanumToggle,
                 OnOpenCardTable = () => OnOpenCardTable?.Invoke()
             });
+            HeaderOverlayBindings.Wire(Root);
         }
 
         void OnHandToggle()
@@ -97,8 +98,8 @@ namespace Kismeta.UI.Controllers
             bool isCommune = hint == ActionHint.Commune;
 
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
-            MainSceneBindings.BindStatusBar(Root, session, loop);
-            MainSceneBindings.BindCosmicAgeBanner(Root, session);
+            HeaderOverlayBindings.RefreshHeader(
+                Root, session, loop, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
             MainSceneBindings.BindStepRail(
                 El("step-rail"), ResolveStepIndex(session, player, hint), 5, "step__dot--active");
 
@@ -114,8 +115,6 @@ namespace Kismeta.UI.Controllers
 
             if (!isCommune)
                 RefreshDock();
-
-            RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
         }
 
         void BindPhaseVisibility(bool isCommune)

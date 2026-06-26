@@ -129,10 +129,18 @@ namespace Kismeta.UI.Controllers
         {
             if (rail == null) return;
 
-            for (int i = 0; i < stepCount; i++)
+            for (int i = 0; i < StepRailBuilder.MaxStepSlots; i++)
             {
                 var step = rail.Q<VisualElement>($"step-{i}");
                 if (step == null) continue;
+
+                if (i >= stepCount)
+                {
+                    step.style.display = DisplayStyle.None;
+                    continue;
+                }
+
+                step.style.display = DisplayStyle.Flex;
 
                 var dot = step.Q(className: "step__dot");
                 if (dot == null) continue;
@@ -158,10 +166,18 @@ namespace Kismeta.UI.Controllers
         {
             if (rail == null) return;
 
-            for (int i = 0; i < groupCount; i++)
+            for (int i = 0; i < StepRailBuilder.MaxStepSlots; i++)
             {
                 var step = rail.Q<VisualElement>($"step-{i}");
                 if (step == null) continue;
+
+                if (i >= groupCount)
+                {
+                    step.style.display = DisplayStyle.None;
+                    continue;
+                }
+
+                step.style.display = DisplayStyle.Flex;
 
                 var dot = step.Q(className: "step__dot");
                 if (dot == null) continue;

@@ -518,7 +518,8 @@ namespace Kismeta.UI
                 return;
 
             screen.style.paddingTop = 0;
-            var chrome = screen.Q(className: "screen__chrome");
+            var chrome = screen.Q<VisualElement>("game-header-overlay")
+                ?? screen.Q(className: "game-header-overlay");
             if (chrome != null)
                 chrome.style.paddingTop = 0;
         }
@@ -544,7 +545,8 @@ namespace Kismeta.UI
             if (screen == null)
                 return;
 
-            var chrome = screen.Q(className: "screen__chrome");
+            var chrome = screen.Q<VisualElement>("game-header-overlay")
+                ?? screen.Q(className: "game-header-overlay");
             if (chrome != null)
             {
                 screen.style.paddingTop = 0;

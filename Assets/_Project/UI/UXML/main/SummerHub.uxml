@@ -5,41 +5,14 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
+    <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
     <engine:Template src="../shell/CauldronHub.uxml" name="CauldronHub" />
 
     <engine:VisualElement name="summer-hub" class="screen screen--summer">
 
-        <engine:VisualElement class="screen__chrome">
-            <engine:VisualElement class="game-header">
-                <engine:VisualElement class="game-header__row">
-                    <engine:VisualElement class="game-header__age-cluster">
-                        <engine:VisualElement class="cosmic-age-banner__sigil" />
-                        <engine:Label text="cosmic age" class="eyebrow cosmic-age-banner__eyebrow" />
-                        <engine:VisualElement class="cosmic-age-banner__row">
-                            <engine:Label name="age-sign" text="Scorpio" class="cosmic-age-banner__sign" />
-                            <engine:Label text="·" class="cosmic-age-banner__sep" />
-                            <engine:Label name="age-planet" text="Mars" class="cosmic-age-banner__planet" />
-                            <engine:Label text="·" class="cosmic-age-banner__sep" />
-                            <engine:Label name="age-element" text="Water" class="cosmic-age-banner__element" />
-                        </engine:VisualElement>
-                    </engine:VisualElement>
-                    <engine:Label name="status-round" text="Round 1" class="statusbar__sub game-header__round" />
-                </engine:VisualElement>
-                <engine:VisualElement class="game-header__row game-header__row--phase">
-                    <engine:Label name="status-season" text="Summer" class="statusbar__title game-header__season" />
-                    <engine:VisualElement name="step-rail" class="steprail steprail--inline">
-                        <engine:VisualElement name="step-0" class="step step--inline"><engine:VisualElement class="step__dot" /><engine:Label text="craft" class="step__label" /></engine:VisualElement>
-                        <engine:VisualElement name="step-1" class="step step--inline"><engine:VisualElement class="step__dot" /><engine:Label text="consort" class="step__label" /></engine:VisualElement>
-                        <engine:VisualElement name="step-2" class="step step--inline"><engine:VisualElement class="step__dot" /><engine:Label text="activate" class="step__label" /></engine:VisualElement>
-                    </engine:VisualElement>
-                </engine:VisualElement>
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <engine:VisualElement name="rivals" class="rivals" />
-
         <engine:VisualElement class="screen__body">
+            <engine:Instance template="GameHeaderOverlay" />
             <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
                 <engine:Label name="turn-banner" text="Rivals are taking their turns…" style="font-size: 13px; color: rgb(240, 176, 96); -unity-font-style: bold; margin-bottom: 12px; -unity-text-align: middle-center;" />
                 <engine:Instance template="CauldronHub" />

@@ -33,6 +33,7 @@ namespace Kismeta.UI.Controllers
                 OnArcanumToggle = OnArcanumToggle,
                 OnOpenCardTable = () => OnOpenCardTable?.Invoke()
             });
+            HeaderOverlayBindings.Wire(Root);
         }
 
         void OnHandToggle()
@@ -63,8 +64,8 @@ namespace Kismeta.UI.Controllers
             var player = session.Players[_localPlayerId];
 
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
-            MainSceneBindings.BindStatusBar(Root, session, loop);
-            MainSceneBindings.BindCosmicAgeBanner(Root, session);
+            HeaderOverlayBindings.RefreshHeader(
+                Root, session, loop, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
             RefreshActionGroupRail();
             MainSceneBindings.BindSpectatorTurnBanner(Root, session, loop, "at the forge");
             RefreshDock();
@@ -74,9 +75,6 @@ namespace Kismeta.UI.Controllers
                 Lbl("stone-label"),
                 player.StonePosition,
                 AutumnActionBindings.StoneStatusLabel(player));
-
-            RivalStripBuilder.Populate(
-                El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, Season.Autumn);
         }
 
         public void RefreshActionGroupRail()

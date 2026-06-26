@@ -41,6 +41,7 @@ namespace Kismeta.UI.Controllers
                 OnArcanumToggle = OnArcanumToggle,
                 OnOpenCardTable = () => OnOpenCardTable?.Invoke()
             });
+            HeaderOverlayBindings.Wire(Root);
         }
 
         void OnHandToggle()
@@ -72,8 +73,8 @@ namespace Kismeta.UI.Controllers
 
             var view = GamePublicView.From(session);
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
-            MainSceneBindings.BindStatusBar(Root, session, loop);
-            MainSceneBindings.BindCosmicAgeBanner(Root, session);
+            HeaderOverlayBindings.RefreshHeader(
+                Root, session, loop, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
             MainSceneBindings.BindPassButton(Root, session, bridge);
             MainSceneBindings.BindStepRail(
                 El("step-rail"), session.Phase.CurrentStepIndex, 4, "step__dot--active");
@@ -88,7 +89,6 @@ namespace Kismeta.UI.Controllers
             RefreshDock();
 
             BindWinterCta(session, bridge);
-            RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
         }
 
         void BindWinterCta(GameSession session, CommandBridge bridge)

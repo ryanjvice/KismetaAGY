@@ -54,6 +54,7 @@ namespace Kismeta.UI.Controllers
                 OnArcanumToggle = OnArcanumToggle,
                 OnOpenCardTable = () => OnOpenCardTable?.Invoke()
             });
+            HeaderOverlayBindings.Wire(Root);
             CauldronHubBindings.WireCauldrons(
                 Root,
                 suit => OnCauldronClicked?.Invoke(suit),
@@ -87,16 +88,14 @@ namespace Kismeta.UI.Controllers
 
             var view = GamePublicView.From(session);
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
-            MainSceneBindings.BindStatusBar(Root, session, loop);
-            MainSceneBindings.BindCosmicAgeBanner(Root, session);
+            HeaderOverlayBindings.RefreshHeader(
+                Root, session, loop, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
             MainSceneBindings.BindPassButton(Root, session, bridge);
             RefreshActionGroupRail();
             RefreshDock();
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             MainSceneBindings.BindCauldrons(Root, local);
-
-            RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
         }
 
         public void RefreshActionGroupRail()

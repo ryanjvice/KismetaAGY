@@ -74,6 +74,26 @@ namespace Kismeta.UI.Components
             wheelHost.schedule.Execute(Tick).ExecuteLater(16);
         }
 
+        public static void AnimateHeaderToggle(VisualElement? overlayRoot, bool expanding)
+        {
+            if (overlayRoot == null || !expanding) return;
+            overlayRoot.style.translate = new Translate(0, -SheetRisePx, 0);
+            float start = Time.realtimeSinceStartup;
+            void Tick()
+            {
+                float t = (Time.realtimeSinceStartup - start) / SheetRiseSec;
+                if (t >= 1f)
+                {
+                    overlayRoot.style.translate = new Translate(0, 0, 0);
+                    return;
+                }
+                float y = Mathf.Lerp(-SheetRisePx, 0f, t);
+                overlayRoot.style.translate = new Translate(0, y, 0);
+                overlayRoot.schedule.Execute(Tick).ExecuteLater(16);
+            }
+            overlayRoot.schedule.Execute(Tick).ExecuteLater(16);
+        }
+
         public static void AnimateInventoryToggle(VisualElement? overlayRoot, bool expanding)
         {
             if (overlayRoot == null || !expanding) return;

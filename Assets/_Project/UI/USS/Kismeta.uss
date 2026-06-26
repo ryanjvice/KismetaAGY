@@ -275,7 +275,6 @@
 }
 
 .screen > .screen__content,
-.screen > .screen__chrome,
 .screen > .screen__body,
 .screen > .statusbar,
 .screen > .title-hero,
@@ -293,9 +292,13 @@
 
 .screen__body > .stage,
 .spring-hub__stage,
-.commune-stage {
+.commune-stage,
+.winter-hub__stage {
     flex-grow: 1;
     flex-shrink: 1;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Top safe-area inset applied at runtime by ViewportLayout (not on .kismeta-root). */
@@ -390,12 +393,109 @@
     flex-wrap: wrap;
 }
 
+/* Top safe-area inset applied at runtime by ViewportLayout (not on .kismeta-root). */
+.game-header-overlay {
+    flex-shrink: 0;
+    flex-direction: column;
+    overflow: hidden;
+    border-bottom-width: 2px;
+    border-bottom-color: var(--border-gold);
+    background-color: rgba(12, 8, 10, 0.92);
+}
+
+.game-header-overlay--hidden {
+    display: none;
+}
+
+.game-header-overlay--collapsed .header-detail {
+    display: none;
+}
+
+.header-summary-row {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 6px 10px;
+    min-height: 40px;
+}
+
+.header-summary__season {
+    font-size: var(--font-title);
+    color: var(--gold);
+    flex-shrink: 0;
+}
+
+.header-summary__round {
+    flex-shrink: 0;
+}
+
+.header-summary__sep {
+    font-size: var(--font-body);
+    color: var(--muted);
+    margin-left: 6px;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.header-summary__glyph {
+    font-size: 16px;
+    min-width: 22px;
+    -unity-text-align: middle-center;
+    flex-shrink: 0;
+}
+
+.header-summary__rivals {
+    font-size: 11px;
+    color: var(--muted);
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.header-toggle-btn {
+    flex-shrink: 0;
+    min-width: 36px;
+    min-height: 32px;
+    padding: 4px 8px;
+    font-size: 14px;
+    margin-left: 4px;
+}
+
+.header-detail {
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.header-detail .game-header {
+    border-bottom-width: 0;
+}
+
+.header-detail .rivals {
+    border-top-width: 1px;
+    border-top-color: var(--border-subtle);
+}
+
+.screen__body--header-pad > .stage,
+.screen__body--header-pad > .spring-hub__stage,
+.screen__body--header-pad > .commune-stage,
+.screen__body--header-pad > .winter-hub__stage,
+.screen__body--header-expanded > .stage,
+.screen__body--header-expanded > .spring-hub__stage,
+.screen__body--header-expanded > .commune-stage,
+.screen__body--header-expanded > .winter-hub__stage {
+    padding-top: 0;
+}
+
+.screen__body--header-pad > .stage-cta {
+    margin-top: 0;
+}
+
 .player-inventory-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 10;
+    z-index: 20;
     flex-direction: column;
     flex-shrink: 0;
     overflow: hidden;
