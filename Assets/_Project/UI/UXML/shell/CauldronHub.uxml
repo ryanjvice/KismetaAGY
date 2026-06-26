@@ -14,6 +14,8 @@
             <engine:VisualElement name="cauldron-n" class="cauldron cauldron--red cauldron--dormant cauldron--tappable">
                 <engine:VisualElement name="cauldron-n-art" class="cauldron__art" />
                 <engine:Label name="cauldron-n-color" text="RED" class="cauldron__color" />
+                <engine:Label name="cauldron-n-progress" text="0/3" class="cauldron__progress" />
+                <engine:Label name="cauldron-n-req" text="MARS" class="cauldron__req" />
                 <engine:Label name="cauldron-n-reagent" text="sulphur" class="cauldron__reagent" />
                 <engine:Label name="cauldron-n-state" text="dormant" class="cauldron__state" />
             </engine:VisualElement>
@@ -21,6 +23,8 @@
             <engine:VisualElement name="cauldron-e" class="cauldron cauldron--blue cauldron--dormant cauldron--tappable">
                 <engine:VisualElement name="cauldron-e-art" class="cauldron__art" />
                 <engine:Label name="cauldron-e-color" text="BLUE" class="cauldron__color" />
+                <engine:Label name="cauldron-e-progress" text="0/25" class="cauldron__progress" />
+                <engine:Label name="cauldron-e-req" text="CUPS" class="cauldron__req" />
                 <engine:Label name="cauldron-e-reagent" text="aqua regia" class="cauldron__reagent" />
                 <engine:Label name="cauldron-e-state" text="dormant" class="cauldron__state" />
             </engine:VisualElement>
@@ -28,6 +32,8 @@
             <engine:VisualElement name="cauldron-s" class="cauldron cauldron--green cauldron--dormant cauldron--tappable">
                 <engine:VisualElement name="cauldron-s-art" class="cauldron__art" />
                 <engine:Label name="cauldron-s-color" text="GREEN" class="cauldron__color" />
+                <engine:Label name="cauldron-s-progress" text="0/3" class="cauldron__progress" />
+                <engine:Label name="cauldron-s-req" text="JUPITER" class="cauldron__req" />
                 <engine:Label name="cauldron-s-reagent" text="vitriol" class="cauldron__reagent" />
                 <engine:Label name="cauldron-s-state" text="dormant" class="cauldron__state" />
             </engine:VisualElement>
@@ -35,6 +41,8 @@
             <engine:VisualElement name="cauldron-w" class="cauldron cauldron--yellow cauldron--dormant cauldron--tappable">
                 <engine:VisualElement name="cauldron-w-art" class="cauldron__art" />
                 <engine:Label name="cauldron-w-color" text="YEL" class="cauldron__color" />
+                <engine:Label name="cauldron-w-progress" text="0/25" class="cauldron__progress" />
+                <engine:Label name="cauldron-w-req" text="SWORDS" class="cauldron__req" />
                 <engine:Label name="cauldron-w-reagent" text="quicksilver" class="cauldron__reagent" />
                 <engine:Label name="cauldron-w-state" text="dormant" class="cauldron__state" />
             </engine:VisualElement>

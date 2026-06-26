@@ -70,7 +70,7 @@ namespace Kismeta.UI.Controllers
             RefreshDock();
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
-            MainSceneBindings.BindCauldrons(Root, local);
+            MainSceneBindings.BindCauldrons(Root, local, session);
         }
 
         public void RefreshActionGroupRail()

@@ -1,7 +1,6 @@
 using System;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
-using Kismeta.Core.Players;
 using Kismeta.Core.Views;
 using Kismeta.UI.Controllers;
 using UnityEngine.UIElements;
@@ -62,37 +61,9 @@ namespace Kismeta.UI.Components
             if (localPlayerId < 0 || localPlayerId >= session.Players.Count)
                 return;
 
-            var player = session.Players[localPlayerId];
-            var sign = player.CurrentSign;
-            var view = GamePublicView.From(session);
-            var local = MainSceneBindings.LocalPlayer(view, localPlayerId);
-            var privateView = PlayerPrivateView.From(session, localPlayerId);
-
-            int spreadCount = local?.Spread.Count ?? 0;
-            int handCount = privateView.Hand.Count;
-            int arcanumCount = player.Arcanum.Count;
-            int reagentTotal = 0;
-            foreach (ReagentType rt in Enum.GetValues(typeof(ReagentType)))
-                reagentTotal += player.GetReagent(rt);
-
-            var glyph = root.Q<Label>("summary-sign-glyph");
-            if (glyph != null)
-            {
-                SymbolGlyphs.TagZodiac(glyph);
-                glyph.text = sign == ZodiacSign.None ? "?" : SymbolGlyphs.Zodiac(sign);
-            }
-
-            SetSummaryLabel(root, "summary-spread-count", "S", spreadCount);
-            SetSummaryLabel(root, "summary-hand-count", "H", handCount);
-            SetSummaryLabel(root, "summary-arcanum-count", "A", arcanumCount);
-            SetSummaryLabel(root, "summary-reagent-total", "R", reagentTotal);
-        }
-
-        static void SetSummaryLabel(VisualElement root, string name, string prefix, int count)
-        {
-            var lbl = root.Q<Label>(name);
-            if (lbl != null)
-                lbl.text = $"{prefix} {count}";
+            PlayerSummaryRowBuilder.BindExisting(
+                root,
+                PublicPlayerView.From(session.Players[localPlayerId]));
         }
 
         public static void RefreshInventory(

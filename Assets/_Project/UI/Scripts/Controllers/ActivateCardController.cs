@@ -107,7 +107,7 @@ namespace Kismeta.UI.Controllers
             var db = _session.Rules?.CardDatabase;
             if (codexDb == null || db == null) return;
 
-            var spreadCards = CollectSpreadCards(db, player);
+            var spreadCards = CrucibleFormulaDisplay.CollectSpreadCards(_session, player);
 
             for (int i = 0; i < SlotIds.Length; i++)
             {
@@ -146,7 +146,7 @@ namespace Kismeta.UI.Controllers
                 }
 
                 reagentLbl.text = ReagentDisplayName(Correspondence.ReagentFor(formula.CauldronSuit));
-                var (progressText, ready) = SlotProgressText(formula, spreadCards);
+                var (progressText, ready) = CrucibleFormulaDisplay.FormatProgressLine(formula, spreadCards);
                 progressLbl.text = progressText;
                 progressLbl.style.color = ready
                     ? new StyleColor(ProgressReadyColor)
@@ -227,7 +227,7 @@ namespace Kismeta.UI.Controllers
             var statusLbl = Lbl("formula-status");
             if (statusLbl == null) return;
 
-            var spreadCards = CollectSpreadCards(db, player);
+            var spreadCards = CrucibleFormulaDisplay.CollectSpreadCards(_session, player);
 
             if (IsActivationReady(formula, spreadCards, db))
             {
@@ -263,7 +263,7 @@ namespace Kismeta.UI.Controllers
             if (chips == null) return;
             chips.Clear();
 
-            var spreadCards = CollectSpreadCards(db, player);
+            var spreadCards = CrucibleFormulaDisplay.CollectSpreadCards(_session, player);
             var colorKey = ColorKey(formula.Cauldron);
             bool ready = IsActivationReady(formula, spreadCards, db);
 
@@ -381,7 +381,7 @@ namespace Kismeta.UI.Controllers
                 return;
             }
 
-            var spreadCards = CollectSpreadCards(db, player);
+            var spreadCards = CrucibleFormulaDisplay.CollectSpreadCards(_session, player);
             bool ready = IsActivationReady(formula, spreadCards, db);
             btn.EnableInClassList("btn--disabled", !ready);
             btn.EnableInClassList("btn--primary", ready);
@@ -501,32 +501,6 @@ namespace Kismeta.UI.Controllers
             return null;
         }
 
-        List<(string id, CardDefinition def)> CollectSpreadCards(ICardDatabase db, PlayerState player)
-        {
-            var spreadCards = new List<(string id, CardDefinition def)>();
-            foreach (var id in player.Spread)
-            {
-                var inst = _session?.GetCard(id);
-                var def = inst != null ? db.GetById(inst.DefinitionId) : null;
-                if (def != null) spreadCards.Add((id, def));
-            }
-            return spreadCards;
-        }
-
-        static (string text, bool ready) SlotProgressText(
-            CodexFormulaDefinition formula,
-            List<(string id, CardDefinition def)> spreadCards)
-        {
-            if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
-            {
-                int count = CountMatchingPlanet(spreadCards, formula.RequiredPlanet);
-                return ($"{count} / 3 {formula.RequiredPlanet}", count >= 3);
-            }
-
-            int best = ActivationCardSuggester.BestRankSumFromSpread(spreadCards, formula.RequiredSuit);
-            return ($"{best} / {formula.MinRankSum} {formula.RequiredSuit}", best >= formula.MinRankSum);
-        }
-
         void OnActivate()
         {
             if (_bridge == null || _playerId < 0 || _slotIndex < 0) return;
@@ -541,7 +515,7 @@ namespace Kismeta.UI.Controllers
             var formula = codexDb.GetFormula(player.AssignedCodex, _slotIndex);
             if (formula == null) return;
 
-            var spreadCards = CollectSpreadCards(db, player);
+            var spreadCards = CrucibleFormulaDisplay.CollectSpreadCards(_session, player);
             var ids = ResolveActivationIds(formula, spreadCards, db);
             if (ids == null || ids.Count == 0) return;
 

@@ -863,10 +863,20 @@
     border-color: rgb(240, 176, 96);
     background-color: rgba(46, 28, 10, 0.85);
 }
-.rival--active .rival__name { color: rgb(243, 233, 210); }
-.rival__dot { width: 18px; height: 18px; border-radius: 9px; border-width: 1px; margin-right: 6px; }
-.rival__name { font-size: var(--font-body); color: var(--ink); }
-.rival__stat { font-size: var(--font-label); color: var(--muted); }
+.rival__dot { width: 18px; height: 18px; border-radius: 9px; border-width: 1px; margin-right: 6px; flex-shrink: 0; }
+.rival .inventory-summary-row {
+    padding: 0;
+    min-height: 0;
+}
+.rival .inventory-summary__glyph {
+    font-size: 14px;
+    min-width: 22px;
+    margin-right: 4px;
+}
+.rival .inventory-summary__count {
+    font-size: 10px;
+    margin-right: 6px;
+}
 
 /* Shell HUD placeholders (WaitingHud, GameplayHud) — use classes, not inline var() in UXML */
 .shell-hud__title {

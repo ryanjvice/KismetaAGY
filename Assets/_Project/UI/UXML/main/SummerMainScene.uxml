@@ -15,8 +15,8 @@
             <engine:Instance template="GameHeaderOverlay" />
             <engine:VisualElement class="central-panel">
             <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
+                <engine:Label name="hint-label" text="Your turn" class="text-hint summer-main__hint" />
                 <engine:Instance template="CauldronHub" />
-                <engine:Label name="hint-label" text="Your turn" class="text-hint" />
             </engine:VisualElement>
 
             <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />

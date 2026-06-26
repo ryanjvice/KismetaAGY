@@ -431,11 +431,19 @@
 .fslot-fill--yellow { background-color: rgb(184,148,31); }
 
 /* ---------- Summer main: cauldron hub (state center) ---------- */
+.summer-main__hint {
+    margin-bottom: 8px;
+    -unity-text-align: middle-center;
+    color: rgb(240, 176, 96);
+    -unity-font-style: bold;
+    white-space: normal;
+}
+
 .cauldron-hub {
     align-items: center;
     justify-content: center;
-    width: 244px;
-    height: 244px;
+    width: 320px;
+    height: 320px;
     align-self: center;
     margin-top: 4px;
     margin-bottom: 4px;
@@ -455,16 +463,16 @@
 
 .cauldron-stage {
     position: relative;
-    width: 244px;
-    height: 244px;
+    width: 320px;
+    height: 320px;
     align-items: center;
     justify-content: center;
 }
 
 .cauldron-hub .cauldron {
-    width: 72px;
-    height: 72px;
-    border-radius: 36px;
+    width: 96px;
+    height: 96px;
+    border-radius: 48px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -531,18 +539,31 @@
     scale: 0.96 0.96;
 }
 
-.cauldron-hub #cauldron-n { top: 25px; left: 25px; right: auto; bottom: auto; }
+.cauldron-hub #cauldron-n { top: 33px; left: 33px; right: auto; bottom: auto; }
 
-.cauldron-hub #cauldron-e { top: 25px; right: 25px; left: auto; bottom: auto; }
+.cauldron-hub #cauldron-e { top: 33px; right: 33px; left: auto; bottom: auto; }
 
-.cauldron-hub #cauldron-s { bottom: 25px; left: 25px; top: auto; right: auto; }
+.cauldron-hub #cauldron-s { bottom: 33px; left: 33px; top: auto; right: auto; }
 
-.cauldron-hub #cauldron-w { bottom: 25px; right: 25px; top: auto; left: auto; }
+.cauldron-hub #cauldron-w { bottom: 33px; right: 33px; top: auto; left: auto; }
 
 .cauldron__color {
-    font-size: 9px;
+    font-size: 10px;
     -unity-font-style: bold;
     color: rgb(255, 255, 255);
+    margin-bottom: 1px;
+}
+
+.cauldron__progress {
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: rgb(243, 233, 210);
+    margin-bottom: 1px;
+}
+
+.cauldron__req {
+    font-size: 9px;
+    color: rgb(243, 233, 210);
     margin-bottom: 1px;
 }
 
@@ -561,11 +582,23 @@
     display: none;
 }
 
+.cauldron--dormant .cauldron__state {
+    display: none;
+}
+
 .cauldron--dormant .cauldron__art {
     display: none;
 }
 
 .cauldron--lit .cauldron__color {
+    display: none;
+}
+
+.cauldron--lit .cauldron__progress {
+    display: none;
+}
+
+.cauldron--lit .cauldron__req {
     display: none;
 }
 
@@ -575,11 +608,11 @@
 
 .codex-hub {
     position: absolute;
-    width: 78px;
-    height: 78px;
-    border-radius: 39px;
-    top: 83px;
-    left: 83px;
+    width: 102px;
+    height: 102px;
+    border-radius: 51px;
+    top: 109px;
+    left: 109px;
     background-color: rgb(22, 10, 28);
     border-width: 2px;
     border-color: var(--gold-bright);

@@ -235,8 +235,8 @@ namespace Kismeta.UI.Controllers
                 hint.text = "Review your board while you wait";
         }
 
-        public static void BindCauldrons(VisualElement? root, PublicPlayerView? local) =>
-            CauldronHubBindings.Bind(root, local);
+        public static void BindCauldrons(VisualElement? root, PublicPlayerView? local, GameSession? session = null) =>
+            CauldronHubBindings.Bind(root, local, session);
 
         public static PublicPlayerView? LocalPlayer(GamePublicView view, int localPlayerId)
         {

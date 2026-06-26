@@ -4,6 +4,7 @@ using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
@@ -11,6 +12,9 @@ namespace Kismeta.UI.Components
     /// <summary>Binds the Summer main-scene cauldron hub from public player state.</summary>
     internal static class CauldronHubBindings
     {
+        static readonly Color ProgressReadyColor = new(93f / 255f, 202f / 255f, 165f / 255f);
+        static readonly Color ProgressMutedColor = new(243f / 255f, 233f / 255f, 210f / 255f);
+
         static readonly (string id, Suit suit, string abbrev, ReagentType reagent)[] Slots =
         {
             ("cauldron-n", Suit.Wands,     "RED",   ReagentType.Sulphur),
@@ -31,13 +35,17 @@ namespace Kismeta.UI.Components
             DecorApplied.Add(hub);
         }
 
-        public static void Bind(VisualElement? root, PublicPlayerView? player)
+        public static void Bind(VisualElement? root, PublicPlayerView? player, GameSession? session = null)
         {
             if (root == null) return;
 
             var hub = root.Q<VisualElement>("cauldron-hub") ?? root;
             EnsureDecor(hub);
             int activeCrucibles = 0;
+
+            List<(string id, CardDefinition def)>? spreadCards = null;
+            if (player != null && session != null)
+                spreadCards = CrucibleFormulaDisplay.CollectSpreadCards(session, player);
 
             foreach (var (id, suit, abbrev, reagent) in Slots)
             {
@@ -52,6 +60,8 @@ namespace Kismeta.UI.Components
                 UiArtBindings.ApplyCauldronSlotArt(hub.Q<VisualElement>($"{id}-art"), suit, lit);
 
                 var colorLbl = hub.Q<Label>($"{id}-color");
+                var progressLbl = hub.Q<Label>($"{id}-progress");
+                var reqLbl = hub.Q<Label>($"{id}-req");
                 var reagentLbl = hub.Q<Label>($"{id}-reagent");
                 var stateLbl = hub.Q<Label>($"{id}-state");
 
@@ -63,6 +73,30 @@ namespace Kismeta.UI.Components
 
                 if (stateLbl != null)
                     stateLbl.text = lit ? "\u2022 lit" : "dormant";
+
+                if (!lit && player != null && session != null && spreadCards != null
+                    && CrucibleFormulaDisplay.TryFormulaForSuit(session, player, suit, out var formula)
+                    && formula != null)
+                {
+                    var (countText, reqText, ready) = CrucibleFormulaDisplay.FormatProgress(formula, spreadCards);
+
+                    if (progressLbl != null)
+                    {
+                        progressLbl.text = countText;
+                        progressLbl.style.color = new StyleColor(ready ? ProgressReadyColor : ProgressMutedColor);
+                    }
+
+                    if (reqLbl != null)
+                        reqLbl.text = reqText.ToUpperInvariant();
+                }
+                else
+                {
+                    if (progressLbl != null)
+                        progressLbl.text = string.Empty;
+
+                    if (reqLbl != null)
+                        reqLbl.text = string.Empty;
+                }
             }
 
             if (player != null)

@@ -107,11 +107,9 @@ namespace Kismeta.UI.Components
             MainSceneBindings.BindCosmicAgeBanner(root, session);
             RivalStripBuilder.Populate(
                 root?.Q<VisualElement>("rivals"),
-                session,
                 GamePublicView.From(session),
                 localPlayerId,
-                activePlayerId,
-                season);
+                activePlayerId);
             ApplyHeaderPad(root);
         }
 
