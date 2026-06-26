@@ -61,6 +61,12 @@
     --radius-md: 9px;
     --radius-lg: 14px;
     --radius-xl: 18px;
+    --scrollbar-gutter: 8px;
+    --scrollbar-thumb: 3px;
+    --scrollbar-thumb-color: rgba(192, 160, 96, 0.85);
+    --scrollbar-track-color: rgba(192, 160, 96, 0.12);
+    --scrollbar-radius: 3px;
+    --scrollbar-min-thumb: 28px;
     /* Responsive defaults — static; scaled by PanelSettings */
     --ui-scale: 1;
     --space-xs: 4px;
@@ -473,6 +479,7 @@
 .header-summary__glyph {
     font-size: 16px;
     min-width: 22px;
+    color: var(--gold-bright);
     -unity-text-align: middle-center;
     flex-shrink: 0;
 }
@@ -559,6 +566,7 @@
 .inventory-summary__glyph {
     font-size: 18px;
     min-width: 28px;
+    color: var(--gold-bright);
     -unity-text-align: middle-center;
     margin-right: 8px;
     flex-shrink: 0;
@@ -846,7 +854,7 @@
 }
 .rival--active .rival__name { color: rgb(243, 233, 210); }
 .rival__dot { width: 18px; height: 18px; border-radius: 9px; border-width: 1px; margin-right: 6px; }
-.rival__name { font-size: var(--font-body); }
+.rival__name { font-size: var(--font-body); color: var(--ink); }
 .rival__stat { font-size: var(--font-label); color: var(--muted); }
 
 /* Shell HUD placeholders (WaitingHud, GameplayHud) — use classes, not inline var() in UXML */
@@ -1308,6 +1316,129 @@
 .text-hint { color: var(--ink); font-size: 11px; }
 .text-count { color: var(--muted); font-size: 10px; }
 .text-ok { color: var(--ok-text); }
+
+/* ---------- Scrollbars (ScrollView internals) ---------- */
+.kismeta-root .unity-scroll-view__vertical-scroller,
+.kismeta-scope .unity-scroll-view__vertical-scroller {
+    width: var(--scrollbar-gutter);
+    min-width: var(--scrollbar-gutter);
+    max-width: var(--scrollbar-gutter);
+    margin-left: 2px;
+    flex-shrink: 0;
+}
+
+.kismeta-root .unity-scroll-view__vertical-scroller .unity-scroller__low-button,
+.kismeta-root .unity-scroll-view__vertical-scroller .unity-scroller__high-button,
+.kismeta-scope .unity-scroll-view__vertical-scroller .unity-scroller__low-button,
+.kismeta-scope .unity-scroll-view__vertical-scroller .unity-scroller__high-button {
+    display: none;
+}
+
+.kismeta-root .unity-scroll-view__vertical-scroller .unity-slider,
+.kismeta-scope .unity-scroll-view__vertical-scroller .unity-slider {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.kismeta-root .unity-scroll-view__vertical-scroller .unity-base-slider__drag-container,
+.kismeta-scope .unity-scroll-view__vertical-scroller .unity-base-slider__drag-container {
+    width: 100%;
+    align-items: center;
+}
+
+.kismeta-root .unity-scroll-view__vertical-scroller .unity-base-slider__tracker,
+.kismeta-scope .unity-scroll-view__vertical-scroller .unity-base-slider__tracker {
+    width: var(--scrollbar-thumb);
+    align-self: center;
+    background-color: var(--scrollbar-track-color);
+    border-width: 0;
+}
+
+.kismeta-root .unity-scroll-view__vertical-scroller .unity-base-slider__dragger,
+.kismeta-scope .unity-scroll-view__vertical-scroller .unity-base-slider__dragger {
+    width: var(--scrollbar-thumb);
+    min-width: var(--scrollbar-thumb);
+    max-width: var(--scrollbar-thumb);
+    align-self: center;
+    background-color: var(--scrollbar-thumb-color);
+    border-width: 0;
+    border-top-left-radius: var(--scrollbar-radius);
+    border-top-right-radius: var(--scrollbar-radius);
+    border-bottom-right-radius: var(--scrollbar-radius);
+    border-bottom-left-radius: var(--scrollbar-radius);
+    min-height: var(--scrollbar-min-thumb);
+}
+
+.kismeta-root .unity-scroll-view__vertical-scroller .unity-base-slider__dragger-border,
+.kismeta-scope .unity-scroll-view__vertical-scroller .unity-base-slider__dragger-border {
+    display: none;
+}
+
+.kismeta-root .unity-scroll-view__horizontal-scroller,
+.kismeta-scope .unity-scroll-view__horizontal-scroller {
+    height: var(--scrollbar-gutter);
+    min-height: var(--scrollbar-gutter);
+    max-height: var(--scrollbar-gutter);
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.kismeta-root .unity-scroll-view__horizontal-scroller .unity-scroller__low-button,
+.kismeta-root .unity-scroll-view__horizontal-scroller .unity-scroller__high-button,
+.kismeta-scope .unity-scroll-view__horizontal-scroller .unity-scroller__low-button,
+.kismeta-scope .unity-scroll-view__horizontal-scroller .unity-scroller__high-button {
+    display: none;
+}
+
+.kismeta-root .unity-scroll-view__horizontal-scroller .unity-slider,
+.kismeta-scope .unity-scroll-view__horizontal-scroller .unity-slider {
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.kismeta-root .unity-scroll-view__horizontal-scroller .unity-base-slider__drag-container,
+.kismeta-scope .unity-scroll-view__horizontal-scroller .unity-base-slider__drag-container {
+    height: 100%;
+    justify-content: center;
+}
+
+.kismeta-root .unity-scroll-view__horizontal-scroller .unity-base-slider__tracker,
+.kismeta-scope .unity-scroll-view__horizontal-scroller .unity-base-slider__tracker {
+    height: var(--scrollbar-thumb);
+    align-self: center;
+    background-color: var(--scrollbar-track-color);
+    border-width: 0;
+}
+
+.kismeta-root .unity-scroll-view__horizontal-scroller .unity-base-slider__dragger,
+.kismeta-scope .unity-scroll-view__horizontal-scroller .unity-base-slider__dragger {
+    height: var(--scrollbar-thumb);
+    min-height: var(--scrollbar-thumb);
+    max-height: var(--scrollbar-thumb);
+    align-self: center;
+    background-color: var(--scrollbar-thumb-color);
+    border-width: 0;
+    border-top-left-radius: var(--scrollbar-radius);
+    border-top-right-radius: var(--scrollbar-radius);
+    border-bottom-right-radius: var(--scrollbar-radius);
+    border-bottom-left-radius: var(--scrollbar-radius);
+    min-width: var(--scrollbar-min-thumb);
+}
+
+.kismeta-root .unity-scroll-view__horizontal-scroller .unity-base-slider__dragger-border,
+.kismeta-scope .unity-scroll-view__horizontal-scroller .unity-base-slider__dragger-border {
+    display: none;
+}
 
 .menu-screen__title { margin-left: 4px; }
 .menu-screen__body { margin: 24px 18px; padding: 24px 18px; align-items: stretch; }
