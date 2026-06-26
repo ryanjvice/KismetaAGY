@@ -34,10 +34,13 @@ namespace Kismeta.UI.Controllers
             Btn("continue-btn")!.clicked += () => OnOpenUnlock?.Invoke();
             Btn("craft-btn")!.clicked += () => OnOpenCraft?.Invoke();
             Btn("wager-btn")!.clicked += () => OnOpenWager?.Invoke();
-            Btn("hand-btn")!.clicked += OnHandToggle;
-            Btn("arcanum-btn")!.clicked += OnArcanumToggle;
-            Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
             Btn("pass-btn")!.clicked += OnPass;
+            InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
+            {
+                OnHandToggle = OnHandToggle,
+                OnArcanumToggle = OnArcanumToggle,
+                OnOpenCardTable = () => OnOpenCardTable?.Invoke()
+            });
         }
 
         void OnHandToggle()
@@ -54,9 +57,8 @@ namespace Kismeta.UI.Controllers
 
         void RefreshDock()
         {
-            MainSceneBindings.SetDockZoneFabActive(Root, _dockZone);
             if (_session != null)
-                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
+                InventoryOverlayBindings.RefreshInventory(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -83,7 +85,6 @@ namespace Kismeta.UI.Controllers
                     $"Spread {local.Spread.Count}/5 · Hand {local.HandCardCount}/5";
             }
 
-            MainSceneBindings.BindPlayerStrip(Root, session, _localPlayerId);
             RefreshDock();
 
             BindWinterCta(session, bridge);

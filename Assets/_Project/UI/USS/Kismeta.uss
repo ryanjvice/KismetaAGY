@@ -277,7 +277,6 @@
 .screen > .screen__content,
 .screen > .screen__chrome,
 .screen > .screen__body,
-.screen > .screen__inventory,
 .screen > .statusbar,
 .screen > .title-hero,
 .screen > .title-menu {
@@ -391,15 +390,128 @@
     flex-wrap: wrap;
 }
 
-.screen__inventory {
-    flex-grow: 0;
-    flex-shrink: 0;
-    min-height: 0;
+.player-inventory-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
     flex-direction: column;
-    overflow: visible;
+    flex-shrink: 0;
+    overflow: hidden;
     border-top-width: 2px;
     border-top-color: var(--border-gold);
-    background-color: rgba(12, 8, 10, 0.45);
+    background-color: rgba(12, 8, 10, 0.92);
+}
+
+.player-inventory-overlay--hidden {
+    display: none;
+}
+
+.player-inventory-overlay--collapsed .inventory-detail,
+.player-inventory-overlay--collapsed .dock {
+    display: none;
+}
+
+.inventory-summary-row {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 6px 10px;
+    min-height: 40px;
+}
+
+.inventory-summary__glyph {
+    font-size: 18px;
+    min-width: 28px;
+    -unity-text-align: middle-center;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.inventory-summary__counts {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    flex-wrap: nowrap;
+}
+
+.inventory-summary__count {
+    font-size: 11px;
+    -unity-font-style: bold;
+    margin-right: 10px;
+    flex-shrink: 0;
+    color: var(--gold-bright);
+}
+
+.inventory-summary__count--hand {
+    color: rgb(127, 196, 168);
+}
+
+.inventory-summary__count--arcanum {
+    color: rgb(184, 154, 192);
+}
+
+.inventory-summary__count--reagent {
+    color: rgb(180, 210, 240);
+}
+
+.inventory-toggle-btn {
+    flex-shrink: 0;
+    min-width: 36px;
+    min-height: 32px;
+    padding: 4px 8px;
+    font-size: 14px;
+    margin-left: 4px;
+}
+
+.inventory-detail {
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.inventory-detail .player-strip {
+    margin: 0 8px 4px;
+}
+
+.inventory-detail .screen__inventory-bar {
+    border-top-width: 1px;
+    border-top-color: var(--border-subtle);
+}
+
+.player-inventory-overlay .dock {
+    border-top-width: 1px;
+    border-top-color: var(--border-subtle);
+    max-height: 140px;
+}
+
+.table-fab {
+    position: absolute;
+    right: 12px;
+    bottom: 52px;
+    z-index: 11;
+    min-width: 56px;
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 11px;
+    border-radius: var(--radius-md);
+}
+
+.table-fab--hidden {
+    display: none;
+}
+
+.screen__body--inventory-pad > .stage,
+.screen__body--inventory-pad > .spring-hub__stage,
+.screen__body--inventory-pad > .commune-stage,
+.screen__body--inventory-pad > .winter-hub__stage {
+    padding-bottom: 44px;
+}
+
+.screen__body--inventory-pad > .stage-cta {
+    margin-bottom: 44px;
 }
 
 /* ---------- Persistent in-game frame ---------- */
@@ -899,10 +1011,6 @@
 .reagent-chip--vitriol { background-color: var(--reagent-vitriol); border-color: rgb(93, 202, 165); }
 .reagent-chip--aqua { background-color: var(--reagent-aqua); border-color: rgb(111, 168, 212); }
 .reagent-chip--quick { background-color: var(--reagent-quick); border-color: rgb(224, 192, 96); }
-
-.screen__inventory .dock {
-    border-top-width: 0;
-}
 
 .menu-btn-fab--active {
     border-color: var(--gold);

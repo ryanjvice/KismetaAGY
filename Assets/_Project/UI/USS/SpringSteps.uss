@@ -178,7 +178,7 @@
 }
 .commune-stage--hidden { display: none; }
 .spring-hub__stage--hidden { display: none; }
-.screen__inventory--hidden { display: none; }
+.player-inventory-overlay--hidden { display: none; }
 .commune-stage__readout-wrap { flex-shrink: 0; padding-top: 4px; }
 .commune-stage__zone-wrap { flex-shrink: 0; }
 .commune-stage__tip {

@@ -49,9 +49,12 @@ namespace Kismeta.UI.Controllers
             WireBtn("oppose-btn", OnOpposeClicked);
             WireBtn("manage-cards-btn", OnManageCardsClicked);
             WireBtn("pass-btn", OnPassClicked);
-            Btn("hand-btn")?.RegisterCallback<ClickEvent>(_ => OnHandToggle());
-            Btn("arcanum-btn")?.RegisterCallback<ClickEvent>(_ => OnArcanumToggle());
-            Btn("menu-btn")?.RegisterCallback<ClickEvent>(_ => OnOpenCardTable?.Invoke());
+            InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
+            {
+                OnHandToggle = OnHandToggle,
+                OnArcanumToggle = OnArcanumToggle,
+                OnOpenCardTable = () => OnOpenCardTable?.Invoke()
+            });
         }
 
         void OnHandToggle()
@@ -68,9 +71,8 @@ namespace Kismeta.UI.Controllers
 
         void RefreshDock()
         {
-            MainSceneBindings.SetDockZoneFabActive(Root, _dockZone);
             if (_session != null)
-                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
+                InventoryOverlayBindings.RefreshInventory(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
         }
 
         void WireBtn(string name, Action handler)
@@ -171,7 +173,6 @@ namespace Kismeta.UI.Controllers
                     : "Waiting…";
             }
 
-            MainSceneBindings.BindPlayerStrip(Root, session, _localPlayerId);
             RefreshDock();
             RivalStripBuilder.Populate(El("rivals"), session, view, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
         }

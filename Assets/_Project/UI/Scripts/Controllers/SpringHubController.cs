@@ -50,9 +50,12 @@ namespace Kismeta.UI.Controllers
         protected override void Wire()
         {
             Btn("commune-btn")!.clicked += OnPrimaryAction;
-            Btn("hand-btn")!.clicked += OnHandToggle;
-            Btn("arcanum-btn")!.clicked += OnArcanumToggle;
-            Btn("menu-btn")!.clicked += () => OnOpenCardTable?.Invoke();
+            InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
+            {
+                OnHandToggle = OnHandToggle,
+                OnArcanumToggle = OnArcanumToggle,
+                OnOpenCardTable = () => OnOpenCardTable?.Invoke()
+            });
         }
 
         void OnHandToggle()
@@ -69,9 +72,8 @@ namespace Kismeta.UI.Controllers
 
         void RefreshDock()
         {
-            MainSceneBindings.SetDockZoneFabActive(Root, _dockZone);
             if (_session != null)
-                MainSceneBindings.BindDockStrip(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
+                InventoryOverlayBindings.RefreshInventory(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -110,8 +112,6 @@ namespace Kismeta.UI.Controllers
             BindHintLabel(hint, bridge, player);
             BindSpringCta(bridge, loop);
 
-            MainSceneBindings.BindPlayerStrip(Root, session, _localPlayerId);
-
             if (!isCommune)
                 RefreshDock();
 
@@ -122,7 +122,7 @@ namespace Kismeta.UI.Controllers
         {
             El("commune-stage")?.EnableInClassList("commune-stage--hidden", !isCommune);
             El("wheel-stage")?.EnableInClassList("spring-hub__stage--hidden", isCommune);
-            Root?.Q(className: "screen__inventory")?.EnableInClassList("screen__inventory--hidden", isCommune);
+            InventoryOverlayBindings.SetVisible(Root, !isCommune);
         }
 
         void BindCommune(GameSession session, CommandBridge bridge)

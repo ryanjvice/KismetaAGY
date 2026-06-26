@@ -5,7 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
-    <engine:Template src="../shell/InventoryToolbar.uxml" name="InventoryToolbar" />
+    <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
     <engine:Template src="../shell/CauldronHub.uxml" name="CauldronHub" />
 
     <engine:VisualElement name="summer-main" class="screen screen--summer">
@@ -39,22 +39,6 @@
 
         <engine:VisualElement name="rivals" class="rivals" />
 
-        <engine:VisualElement name="player-strip" class="player-strip panel">
-            <engine:VisualElement name="player-strip-dot" class="player-strip__dot" />
-            <engine:VisualElement class="player-strip__sigil">
-                <engine:Label name="player-sign-glyph" text="?" class="player-strip__glyph font-zodiac" />
-            </engine:VisualElement>
-            <engine:VisualElement class="player-strip__body">
-                <engine:Label name="player-strip-label" text="you" class="eyebrow player-strip__eyebrow" />
-                <engine:VisualElement class="player-strip__row">
-                    <engine:Label name="player-sign" text="no sign" class="player-strip__sign" />
-                    <engine:Label text="·" class="player-strip__sep" />
-                    <engine:Label name="player-planet" text="—" class="player-strip__aspect player-strip__aspect--planet" />
-                    <engine:Label name="player-element" text="—" class="player-strip__aspect player-strip__aspect--element" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-        </engine:VisualElement>
-
         <engine:VisualElement class="screen__body">
             <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
                 <engine:Instance template="CauldronHub" />
@@ -71,18 +55,9 @@
                     <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
                 </engine:VisualElement>
             </engine:VisualElement>
-        </engine:VisualElement>
 
-        <engine:VisualElement class="screen__inventory">
-            <engine:Instance template="InventoryToolbar" />
-
-            <engine:VisualElement class="dock">
-                <engine:VisualElement class="dock__header">
-                    <engine:Label name="dock-zone-label" text="spread" class="eyebrow" style="margin-bottom: 0;" />
-                    <engine:Label name="spread-count" text="0" class="text-count" />
-                </engine:VisualElement>
-                <engine:VisualElement name="spread-strip" class="dock__strip" />
-            </engine:VisualElement>
+            <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+            <engine:Instance template="PlayerInventoryOverlay" />
         </engine:VisualElement>
 
     </engine:VisualElement>

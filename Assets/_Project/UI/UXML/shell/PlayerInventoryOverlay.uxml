@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+
+    <engine:VisualElement name="player-inventory-overlay" class="player-inventory-overlay player-inventory-overlay--collapsed">
+        <engine:VisualElement class="inventory-summary-row">
+            <engine:Label name="summary-sign-glyph" text="?" class="inventory-summary__glyph font-zodiac" />
+            <engine:VisualElement class="inventory-summary__counts">
+                <engine:Label name="summary-spread-count" text="S 0" class="inventory-summary__count inventory-summary__count--spread" />
+                <engine:Label name="summary-hand-count" text="H 0" class="inventory-summary__count inventory-summary__count--hand" />
+                <engine:Label name="summary-arcanum-count" text="A 0" class="inventory-summary__count inventory-summary__count--arcanum" />
+                <engine:Label name="summary-reagent-total" text="R 0" class="inventory-summary__count inventory-summary__count--reagent" />
+            </engine:VisualElement>
+            <engine:Button name="inventory-toggle-btn" text="⌃" class="inventory-toggle-btn btn btn--secondary" />
+        </engine:VisualElement>
+
+        <engine:VisualElement class="inventory-detail">
+            <engine:VisualElement name="player-strip" class="player-strip panel">
+                <engine:VisualElement name="player-strip-dot" class="player-strip__dot" />
+                <engine:VisualElement class="player-strip__sigil">
+                    <engine:Label name="player-sign-glyph" text="?" class="player-strip__glyph font-zodiac" />
+                </engine:VisualElement>
+                <engine:VisualElement class="player-strip__body">
+                    <engine:Label name="player-strip-label" text="you" class="eyebrow player-strip__eyebrow" />
+                    <engine:VisualElement class="player-strip__row">
+                        <engine:Label name="player-sign" text="no sign" class="player-strip__sign" />
+                        <engine:Label text="·" class="player-strip__sep" />
+                        <engine:Label name="player-planet" text="—" class="player-strip__aspect player-strip__aspect--planet" />
+                        <engine:Label name="player-element" text="—" class="player-strip__aspect player-strip__aspect--element" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="screen__inventory-bar">
+                <engine:VisualElement class="screen__zone-toggles">
+                    <engine:Button name="hand-btn" text="Hand" class="menu-btn-fab btn btn--secondary" />
+                    <engine:Button name="arcanum-btn" text="Arcanum" class="menu-btn-fab btn btn--secondary menu-btn-fab--arcanum" />
+                </engine:VisualElement>
+                <engine:VisualElement name="player-hud" class="inventory-reagents">
+                    <engine:VisualElement class="reagent-chip reagent-chip--sulphur">
+                        <engine:Label name="hud-reagent-sulphur" text="0" class="reagent-chip__count" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="reagent-chip reagent-chip--aqua">
+                        <engine:Label name="hud-reagent-aquaregia" text="0" class="reagent-chip__count" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="reagent-chip reagent-chip--vitriol">
+                        <engine:Label name="hud-reagent-vitriol" text="0" class="reagent-chip__count" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="reagent-chip reagent-chip--quick">
+                        <engine:Label name="hud-reagent-quicksilver" text="0" class="reagent-chip__count" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="reagent-chip reagent-chip--salt">
+                        <engine:Label name="hud-reagent-salt" text="0" class="reagent-chip__count" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="dock">
+            <engine:VisualElement class="dock__header">
+                <engine:Label name="dock-zone-label" text="spread" class="eyebrow" style="margin-bottom: 0;" />
+                <engine:Label name="spread-count" text="0" class="text-count" />
+            </engine:VisualElement>
+            <engine:VisualElement name="spread-strip" class="dock__strip" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

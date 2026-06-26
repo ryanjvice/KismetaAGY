@@ -74,6 +74,12 @@ namespace Kismeta.UI.Components
             wheelHost.schedule.Execute(Tick).ExecuteLater(16);
         }
 
+        public static void AnimateInventoryToggle(VisualElement? overlayRoot, bool expanding)
+        {
+            if (overlayRoot == null || !expanding) return;
+            AnimateSheetRise(overlayRoot);
+        }
+
         public static void PulseChip(VisualElement chip)
         {
             chip.style.scale = new Scale(new Vector3(1.08f, 1.08f, 1f));
