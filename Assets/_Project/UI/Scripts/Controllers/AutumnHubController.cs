@@ -75,6 +75,8 @@ namespace Kismeta.UI.Controllers
                 Lbl("stone-label"),
                 player,
                 AutumnActionBindings.StoneStatusLabel(player));
+            CrucibleForgeBindings.ApplyAllPlayerStones(
+                El("board-stage"), El("stasis-row"), session, _localPlayerId);
             CrucibleForgeBindings.ApplyCauldronReagents(El("cauldron-mini"), player);
         }
 

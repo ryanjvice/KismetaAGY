@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace Kismeta.UI.Components
     public static class CrucibleForgeBindings
     {
         const string CatalogResourcePath = "CrucibleForgeArt";
+        const int MaxStasisSlots = 4;
 
         static readonly (Suit suit, string classSuffix)[] ReagentSlots =
         {
@@ -33,23 +35,70 @@ namespace Kismeta.UI.Components
                 return;
 
             var catalog = ResolveCatalog();
-            int current = player.StonePosition.Value;
 
             for (int i = 0; i < 8; i++)
             {
-                var marker = forgeStage.Q<VisualElement>(className: $"stone-marker--{i}");
+                var marker = FindTrackMarker(forgeStage, i);
                 if (marker == null)
                     continue;
 
                 ApplyMarkerSprite(marker, catalog?.Get(new StonePosition(i)));
-                marker.EnableInClassList("stone-marker--current", current == i);
             }
 
             var altar = forgeStage.Q<VisualElement>("stone-marker-altar");
             if (altar != null)
-            {
                 ApplyMarkerSprite(altar, catalog?.Get(StonePosition.Altar));
-                altar.EnableInClassList("stone-marker--current", current == 8);
+        }
+
+        public static void ApplyAllPlayerStones(
+            VisualElement? forgeStage,
+            VisualElement? stasisRow,
+            GameSession session,
+            int localPlayerId)
+        {
+            if (forgeStage == null || stasisRow == null)
+                return;
+
+            var art = UiArtBindings.Catalog;
+            var stonesHost = forgeStage.Q<VisualElement>("player-stones");
+            if (stonesHost == null)
+                return;
+
+            stonesHost.Clear();
+            ResetStasisSlots(stasisRow);
+
+            var stackIndexAtPosition = new Dictionary<int, int>();
+
+            for (int i = 0; i < session.Players.Count; i++)
+            {
+                var player = session.Players[i];
+                var sprite = art?.PlayerStoneFor(player.Color);
+                if (sprite == null)
+                    continue;
+
+                bool isLocal = i == localPlayerId;
+
+                if (player.StoneState == StoneState.Stasis)
+                {
+                    ApplyStasisStone(stasisRow, i, sprite, isLocal);
+                    continue;
+                }
+
+                int pos = player.StonePosition.Value;
+                stackIndexAtPosition.TryGetValue(pos, out int stackIndex);
+                stackIndexAtPosition[pos] = stackIndex + 1;
+
+                var stone = new VisualElement();
+                stone.AddToClassList("player-stone");
+                stone.AddToClassList("forge-pos");
+                stone.AddToClassList(pos >= 8 ? "forge-pos--altar" : $"forge-pos--{pos}");
+                if (stackIndex > 0)
+                    stone.AddToClassList($"player-stone--stack-{stackIndex}");
+                if (isLocal)
+                    stone.AddToClassList("player-stone--local");
+
+                ApplyMarkerSprite(stone, sprite);
+                stonesHost.Add(stone);
             }
         }
 
@@ -81,6 +130,58 @@ namespace Kismeta.UI.Components
                     slot.style.backgroundImage = StyleKeyword.None;
                 }
             }
+        }
+
+        static VisualElement? FindTrackMarker(VisualElement forgeStage, int position)
+        {
+            foreach (var child in forgeStage.Children())
+            {
+                if (!child.ClassListContains("stone-marker"))
+                    continue;
+                if (child.ClassListContains($"forge-pos--{position}"))
+                    return child;
+            }
+
+            return null;
+        }
+
+        static void ResetStasisSlots(VisualElement stasisRow)
+        {
+            for (int i = 0; i < MaxStasisSlots; i++)
+            {
+                var slot = stasisRow.Q<VisualElement>($"stasis-slot-{i}");
+                if (slot == null)
+                    continue;
+
+                slot.EnableInClassList("stasis-slot--occupied", false);
+                slot.EnableInClassList("stasis-slot--local", false);
+
+                var gem = slot.Q<VisualElement>(className: "stasis-slot__stone");
+                if (gem != null)
+                {
+                    gem.style.backgroundImage = StyleKeyword.None;
+                    gem.style.display = DisplayStyle.None;
+                }
+            }
+        }
+
+        static void ApplyStasisStone(VisualElement stasisRow, int playerId, Sprite sprite, bool isLocal)
+        {
+            if (playerId < 0 || playerId >= MaxStasisSlots)
+                return;
+
+            var slot = stasisRow.Q<VisualElement>($"stasis-slot-{playerId}");
+            if (slot == null)
+                return;
+
+            slot.EnableInClassList("stasis-slot--occupied", true);
+            slot.EnableInClassList("stasis-slot--local", isLocal);
+
+            var gem = slot.Q<VisualElement>(className: "stasis-slot__stone");
+            if (gem == null)
+                return;
+
+            ApplyMarkerSprite(gem, sprite);
         }
 
         static void ApplyMarkerSprite(VisualElement marker, Sprite? sprite)

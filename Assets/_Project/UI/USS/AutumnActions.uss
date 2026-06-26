@@ -176,6 +176,28 @@
 }
 
 /* Autumn main/hub — crucible forge mandala + stone markers + cauldron mini */
+.forge-panel {
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.forge-panel__hint {
+    font-size: 11px;
+    color: rgb(243, 233, 210);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-bottom: 4px;
+}
+
+.forge-panel__status {
+    font-size: 9px;
+    color: var(--autumn-accent);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-bottom: 8px;
+}
+
 .forge-stage {
     align-items: center;
     justify-content: center;
@@ -183,7 +205,6 @@
     width: 280px;
     height: 280px;
     flex-shrink: 0;
-    margin-bottom: 18px;
 }
 
 .forge-mandala {
@@ -196,66 +217,133 @@
     -unity-background-scale-mode: scale-to-fit;
 }
 
-.stone-marker {
+.forge-pos {
     position: absolute;
-    width: 34px;
-    height: 34px;
-    -unity-background-scale-mode: scale-to-fit;
     translate: -17px -17px;
 }
 
-.stone-marker--0 { left: 14%; top: 14%; }
-.stone-marker--1 { left: 22%; top: 50%; width: 38px; height: 38px; translate: -19px -19px; }
-.stone-marker--2 { left: 14%; top: 86%; }
-.stone-marker--3 { left: 50%; top: 78%; width: 38px; height: 38px; translate: -19px -19px; }
-.stone-marker--4 { left: 86%; top: 86%; }
-.stone-marker--5 { left: 78%; top: 50%; width: 38px; height: 38px; translate: -19px -19px; }
-.stone-marker--6 { left: 86%; top: 14%; }
-.stone-marker--7 { left: 50%; top: 22%; width: 38px; height: 38px; translate: -19px -19px; }
-
-.stone-marker--altar {
+.forge-pos--0 { left: 14%; top: 14%; }
+.forge-pos--1 { left: 22%; top: 50%; translate: -19px -19px; }
+.forge-pos--2 { left: 14%; top: 86%; }
+.forge-pos--3 { left: 50%; top: 78%; translate: -19px -19px; }
+.forge-pos--4 { left: 86%; top: 86%; }
+.forge-pos--5 { left: 78%; top: 50%; translate: -19px -19px; }
+.forge-pos--6 { left: 86%; top: 14%; }
+.forge-pos--7 { left: 50%; top: 22%; translate: -19px -19px; }
+.forge-pos--altar {
     left: 50%;
     top: 50%;
+    translate: -26px -26px;
+}
+
+.stone-marker {
+    width: 34px;
+    height: 34px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.stone-marker--inner {
+    width: 38px;
+    height: 38px;
+}
+
+.stone-marker.forge-pos--altar {
     width: 52px;
     height: 52px;
-    translate: -26px -26px;
     display: none;
 }
 
-.stone-marker--altar.stone-marker--current {
-    display: flex;
-}
-
-.stone-marker--current {
-    border-width: 2px;
-    border-color: var(--gold-bright);
-    border-radius: 50%;
-    scale: 1.12 1.12;
-}
-
-.forge-stage__label {
+.player-stones {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -16px;
-    font-size: 9px;
-    color: var(--autumn-accent);
-    -unity-text-align: middle-center;
-    white-space: normal;
+    top: 0;
+    bottom: 0;
 }
 
-.forge-stage__hint {
-    margin-top: 10px;
+.player-stone {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    -unity-background-scale-mode: scale-to-fit;
+    translate: -14px -14px;
+}
+
+.player-stone.forge-pos--1,
+.player-stone.forge-pos--3,
+.player-stone.forge-pos--5,
+.player-stone.forge-pos--7 {
+    translate: -14px -14px;
+}
+
+.player-stone.forge-pos--altar {
+    width: 36px;
+    height: 36px;
+    translate: -18px -18px;
+}
+
+.player-stone--stack-0 { margin-left: -6px; margin-top: -6px; }
+.player-stone--stack-1 { margin-left: 6px; margin-top: -6px; }
+.player-stone--stack-2 { margin-left: -6px; margin-top: 6px; }
+.player-stone--stack-3 { margin-left: 6px; margin-top: 6px; }
+
+.player-stone--local {
+    border-width: 2px;
+    border-color: var(--gold-bright);
+    border-radius: 50%;
+    scale: 1.1 1.1;
+}
+
+.forge-bottom-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    width: 100%;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.forge-bottom-row > .stasis-slot,
+.forge-bottom-row > .cauldron-mini {
+    margin-left: 6px;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.stasis-slot {
+    width: 52px;
+    height: 52px;
+    align-items: center;
+    justify-content: center;
+    background-image: url("project://database/Assets/_Project/Art/crucible/stasis_zone.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.stasis-slot__stone {
+    width: 28px;
+    height: 28px;
+    -unity-background-scale-mode: scale-to-fit;
+    display: none;
+}
+
+.stasis-slot--occupied .stasis-slot__stone {
+    display: flex;
+}
+
+.stasis-slot--local {
+    border-width: 2px;
+    border-color: rgb(90, 200, 120);
+    border-radius: 8px;
 }
 
 .cauldron-mini {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    width: 112px;
-    height: 112px;
+    position: relative;
+    width: 88px;
+    height: 88px;
     background-image: url("project://database/Assets/_Project/Art/cauldrons/cauldronBG.png");
     -unity-background-scale-mode: scale-to-fit;
+    flex-shrink: 0;
 }
 
 .cauldron-mini__reagent {

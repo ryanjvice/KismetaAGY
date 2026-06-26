@@ -28,6 +28,13 @@ namespace Kismeta.UI.Components
         [SerializeField] Sprite? _cauldronSwords;
         [SerializeField] Sprite? _cauldronPentacles;
 
+        [Header("Player stones & stasis")]
+        [SerializeField] Sprite? _playerStoneRed;
+        [SerializeField] Sprite? _playerStoneGreen;
+        [SerializeField] Sprite? _playerStoneBlue;
+        [SerializeField] Sprite? _playerStoneYellow;
+        [SerializeField] Sprite? _stasisZone;
+
         public Sprite? TableFeltVignette => _tableFeltVignette;
         public Sprite? HeroBurgundy => _heroBurgundy;
         public Sprite? StarChart => _starChart;
@@ -46,5 +53,16 @@ namespace Kismeta.UI.Components
             Suit.Pentacles => _cauldronPentacles,
             _ => null
         };
+
+        public Sprite? PlayerStoneFor(PlayerColor color) => color switch
+        {
+            PlayerColor.Red => _playerStoneRed,
+            PlayerColor.Green => _playerStoneGreen,
+            PlayerColor.Blue => _playerStoneBlue,
+            PlayerColor.White => _playerStoneYellow,
+            _ => null
+        };
+
+        public Sprite? StasisZone => _stasisZone;
     }
 }

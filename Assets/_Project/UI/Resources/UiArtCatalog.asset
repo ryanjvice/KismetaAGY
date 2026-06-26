@@ -25,3 +25,8 @@ MonoBehaviour:
   _cauldronCups: {fileID: -5882453728256855975, guid: cdcb065070f349540b59b5cf15a19334, type: 3}
   _cauldronSwords: {fileID: 1759966174324012599, guid: 70a2c9c726bc4734f83658baf74aa334, type: 3}
   _cauldronPentacles: {fileID: -5842517257979005973, guid: e8dca0e5d2bd91043869c4ef6da1ed18, type: 3}
+  _playerStoneRed: {fileID: -6967707856250732947, guid: 965f6d6cb93eca3469397284c7e03dc8, type: 3}
+  _playerStoneGreen: {fileID: 3796904395346585013, guid: e4162901dda1ba149898d78c517e109a, type: 3}
+  _playerStoneBlue: {fileID: -3808777230678835794, guid: a4bcac7622263e74ca2bb61b8aaccaee, type: 3}
+  _playerStoneYellow: {fileID: -8968202291876279056, guid: 17f31132122d7d040bb9f54cb2421f61, type: 3}
+  _stasisZone: {fileID: -7415603010551009464, guid: d0c96ffe1a425d04fa27ac46e36df6b3, type: 3}

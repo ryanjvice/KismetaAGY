@@ -35,6 +35,11 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_cauldronCups").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_blue.png");
             so.FindProperty("_cauldronSwords").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_yellow.png");
             so.FindProperty("_cauldronPentacles").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_green.png");
+            so.FindProperty("_playerStoneRed").objectReferenceValue = LoadSprite("Assets/_Project/Art/player/player_red.png");
+            so.FindProperty("_playerStoneGreen").objectReferenceValue = LoadSprite("Assets/_Project/Art/player/player_green.png");
+            so.FindProperty("_playerStoneBlue").objectReferenceValue = LoadSprite("Assets/_Project/Art/player/player_blue.png");
+            so.FindProperty("_playerStoneYellow").objectReferenceValue = LoadSprite("Assets/_Project/Art/player/player_yellow.png");
+            so.FindProperty("_stasisZone").objectReferenceValue = LoadSprite("Assets/_Project/Art/crucible/stasis_zone.png");
 
             so.ApplyModifiedPropertiesWithoutUndo();
             AssetDatabase.SaveAssets();
