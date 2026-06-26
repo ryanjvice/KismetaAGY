@@ -12,6 +12,7 @@
 
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
+            <engine:VisualElement class="central-panel">
             <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
                 <engine:VisualElement name="board-stage" class="forge-stage">
                     <engine:VisualElement name="forge-mantle-ring" class="forge-stage__mantle" />
@@ -19,6 +20,9 @@
                     <engine:Label name="stone-label" class="forge-stage__label" text="stone · lead" />
                 </engine:VisualElement>
                 <engine:Label name="hint-label" text="Your turn" class="text-hint forge-stage__hint" />
+            </engine:VisualElement>
+
+            <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--multi">
@@ -33,7 +37,6 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
             <engine:Instance template="PlayerInventoryOverlay" />
         </engine:VisualElement>
 

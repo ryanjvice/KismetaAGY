@@ -12,11 +12,15 @@
 
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
+            <engine:VisualElement class="central-panel">
             <engine:VisualElement name="winter-stage" class="stage winter-hub__stage">
                 <engine:VisualElement name="winter-seal" class="winter-seal" />
                 <engine:Label text="closing rites" class="eyebrow winter-hub__title" />
                 <engine:Label name="limits-line" text="Spread 0/5 · Hand 0/5" class="text-muted winter-hub__limits" />
                 <engine:Label name="hint-label" text="Your turn" class="text-hint winter-hub__hint" />
+            </engine:VisualElement>
+
+            <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--multi stage-cta--winter">
@@ -28,7 +32,6 @@
                 <engine:Button name="pass-btn" text="Pass" class="actionbtn actionbtn--tight btn btn--secondary" />
             </engine:VisualElement>
 
-            <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
             <engine:Instance template="PlayerInventoryOverlay" />
         </engine:VisualElement>
 

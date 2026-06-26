@@ -196,7 +196,7 @@ namespace Kismeta.UI
                 return;
             }
 
-            _layout.ShowBottomSheet(_setupSheet);
+            _layout.ShowBottomSheet(_setupSheet, ViewportLayout.SheetVerticalAlign.Center);
 
             var root = _layout.Root;
             var sheetRoot = root?.Q<VisualElement>("setup-sheet");

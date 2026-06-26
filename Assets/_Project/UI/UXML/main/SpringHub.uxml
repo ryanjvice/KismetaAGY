@@ -13,6 +13,7 @@
 
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
+            <engine:VisualElement class="central-panel">
             <engine:VisualElement name="wheel-stage" class="stage spring-hub__stage">
                 <engine:VisualElement name="wheel-stack" class="wheel-stack">
                     <engine:VisualElement name="wheel-star-chart" class="wheel-stack__star" />
@@ -79,11 +80,13 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
+            <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+            </engine:VisualElement>
+
             <engine:VisualElement class="stage-cta stage-cta--single">
                 <engine:Button name="commune-btn" text="Roll your zodiac die" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 
-            <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
             <engine:Instance template="PlayerInventoryOverlay" />
         </engine:VisualElement>
 

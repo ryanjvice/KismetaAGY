@@ -80,6 +80,13 @@
     --card-chip-planet: 11px;
     --overlay-max-width: 520px;
     --overlay-inset-x: var(--space-xl);
+    --inventory-summary-h: 52px;
+    --inventory-border-h: 2px;
+    --inventory-collapsed-h: 54px;
+    --inventory-action-gap: var(--space-sm);
+    --inventory-reserved-bottom: 62px;
+    --table-fab-offset-top: 12px;
+    --table-fab-offset-right: 20px;
 }
 
 /* ---------- Typography (Assets/_Project/UI/Fonts) ---------- */
@@ -224,6 +231,23 @@
     align-items: center;
 }
 
+.overlay-layer--sheet-center {
+    justify-content: center;
+}
+
+.overlay-layer--sheet-center .overlay-clone-host {
+    padding-top: 0;
+}
+
+.overlay-layer--sheet-bottom {
+    justify-content: flex-end;
+}
+
+.overlay-layer--sheet-bottom .overlay-clone-host {
+    padding-top: 0;
+    padding-bottom: var(--space-lg);
+}
+
 /* ---------- Full-bleed screens ---------- */
 .screen {
     width: 100%;
@@ -291,6 +315,7 @@
 }
 
 .screen__body > .stage,
+.central-panel > .stage,
 .spring-hub__stage,
 .commune-stage,
 .winter-hub__stage {
@@ -299,6 +324,14 @@
     min-height: 0;
     align-items: center;
     justify-content: center;
+}
+
+.central-panel {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    position: relative;
+    flex-direction: column;
 }
 
 /* Top safe-area inset applied at runtime by ViewportLayout (not on .kismeta-root). */
@@ -476,13 +509,15 @@
 }
 
 .screen__body--header-pad > .stage,
-.screen__body--header-pad > .spring-hub__stage,
-.screen__body--header-pad > .commune-stage,
-.screen__body--header-pad > .winter-hub__stage,
+.screen__body--header-pad > .central-panel,
+.screen__body--header-pad .spring-hub__stage,
+.screen__body--header-pad .commune-stage,
+.screen__body--header-pad .winter-hub__stage,
 .screen__body--header-expanded > .stage,
-.screen__body--header-expanded > .spring-hub__stage,
-.screen__body--header-expanded > .commune-stage,
-.screen__body--header-expanded > .winter-hub__stage {
+.screen__body--header-expanded > .central-panel,
+.screen__body--header-expanded .spring-hub__stage,
+.screen__body--header-expanded .commune-stage,
+.screen__body--header-expanded .winter-hub__stage {
     padding-top: 0;
 }
 
@@ -573,12 +608,17 @@
 }
 
 .inventory-detail .player-strip {
-    margin: 0 8px 4px;
+    margin: 0;
+    padding: 6px 10px;
+    border-width: 0;
+    border-bottom-width: 2px;
+    border-bottom-color: var(--border-gold);
+    border-radius: 0;
+    background-color: transparent;
 }
 
 .inventory-detail .screen__inventory-bar {
-    border-top-width: 1px;
-    border-top-color: var(--border-subtle);
+    border-top-width: 0;
 }
 
 .player-inventory-overlay .dock {
@@ -589,9 +629,9 @@
 
 .table-fab {
     position: absolute;
-    right: 12px;
-    bottom: 52px;
-    z-index: 11;
+    top: var(--table-fab-offset-top);
+    right: var(--table-fab-offset-right);
+    z-index: 5;
     min-width: 56px;
     min-height: 36px;
     padding: 6px 12px;
@@ -603,15 +643,19 @@
     display: none;
 }
 
+.screen__body--inventory-pad > .central-panel {
+    padding-bottom: var(--inventory-reserved-bottom);
+}
+
 .screen__body--inventory-pad > .stage,
 .screen__body--inventory-pad > .spring-hub__stage,
 .screen__body--inventory-pad > .commune-stage,
 .screen__body--inventory-pad > .winter-hub__stage {
-    padding-bottom: 44px;
+    padding-bottom: var(--inventory-reserved-bottom);
 }
 
 .screen__body--inventory-pad > .stage-cta {
-    margin-bottom: 44px;
+    margin-bottom: var(--inventory-reserved-bottom);
 }
 
 /* ---------- Persistent in-game frame ---------- */
@@ -739,12 +783,6 @@
     flex-direction: row;
     align-items: center;
     flex-shrink: 0;
-    margin: 4px 10px 4px;
-    padding: 6px 10px;
-    background-color: var(--panel-dark);
-    border-width: 1px;
-    border-color: var(--border-subtle);
-    border-radius: var(--radius-md);
 }
 
 .player-strip__dot {
@@ -757,76 +795,36 @@
     margin-right: 8px;
 }
 
-.player-strip__sigil {
-    width: 24px;
-    height: 24px;
-    border-radius: 12px;
-    flex-shrink: 0;
+.player-strip__age-cluster {
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    margin-right: 8px;
-    background-color: rgb(240, 176, 96);
-    border-width: 1px;
-    border-color: var(--border-gold);
-}
-
-.player-strip__glyph {
-    font-size: 14px;
-    color: rgb(22, 32, 58);
-    -unity-text-align: middle-center;
-    margin: 0;
-    padding: 0;
-}
-
-.player-strip__body {
     flex-grow: 1;
     flex-shrink: 1;
     min-width: 0;
-    flex-direction: column;
 }
 
-.player-strip__eyebrow {
-    margin-bottom: 2px;
-}
-
-.player-strip__row {
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.player-strip__sign {
-    font-size: var(--font-body);
-    color: var(--gold-bright);
-    -unity-font-style: bold;
-}
-
-.player-strip__sep {
-    font-size: var(--font-body);
-    color: var(--muted);
-    margin-left: 4px;
-    margin-right: 4px;
-}
-
-.player-strip__aspect {
-    font-size: 10px;
-    -unity-font-style: bold;
-    padding: 2px 6px;
-    border-radius: var(--radius-sm);
+.player-strip .cosmic-age-banner__sigil {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    margin-right: 6px;
     border-width: 1px;
-    margin-right: 4px;
+    border-color: var(--gold-deep);
+    background-color: var(--gold-deep);
+    align-items: center;
+    justify-content: center;
 }
 
-.player-strip__aspect--planet {
-    background-color: rgba(46, 28, 10, 0.85);
-    border-color: var(--border-gold);
-    color: var(--gold-bright);
+.player-strip .cosmic-age-banner__glyph {
+    font-size: 11px;
+    color: rgb(26, 14, 31);
+    -unity-text-align: middle-center;
 }
 
-.player-strip__aspect--element {
-    background-color: rgba(22, 32, 58, 0.85);
-    border-color: rgb(111, 168, 212);
-    color: rgb(180, 210, 240);
+.player-strip .cosmic-age-banner__eyebrow {
+    margin-bottom: 0;
+    margin-right: 6px;
+    flex-shrink: 0;
 }
 
 .rival {

@@ -270,7 +270,7 @@ namespace Kismeta.UI.Controllers
 
             var signLbl = root.Q<Label>("player-sign");
             if (signLbl != null)
-                signLbl.text = sign == ZodiacSign.None ? "no sign" : sign.ToString();
+                signLbl.text = sign == ZodiacSign.None ? "—" : sign.ToString();
 
             var planetLbl = root.Q<Label>("player-planet");
             if (planetLbl != null)

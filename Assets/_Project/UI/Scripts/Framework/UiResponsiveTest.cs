@@ -51,7 +51,7 @@ namespace Kismeta.UI
         private void OnNewGame()
         {
             if (_setupSheet == null) return;
-            _layout.ShowBottomSheet(_setupSheet);
+            _layout.ShowBottomSheet(_setupSheet, ViewportLayout.SheetVerticalAlign.Center);
             var root = _layout.Root;
             var close = root?.Q<Button>("close-btn");
             if (close != null)

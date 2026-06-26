@@ -122,7 +122,14 @@ namespace Kismeta.UI
             SetOverlayBackdropBlur(true);
         }
 
-        public void ShowBottomSheet(VisualTreeAsset asset)
+        public enum SheetVerticalAlign
+        {
+            Top,
+            Center,
+            Bottom
+        }
+
+        public void ShowBottomSheet(VisualTreeAsset asset, SheetVerticalAlign verticalAlign = SheetVerticalAlign.Top)
         {
             if (asset == null) return;
             var overlay = EnsureOverlayLayer();
@@ -130,6 +137,17 @@ namespace Kismeta.UI
 
             overlay.Clear();
             overlay.AddToClassList("overlay-layer--sheet");
+            overlay.RemoveFromClassList("overlay-layer--sheet-center");
+            overlay.RemoveFromClassList("overlay-layer--sheet-bottom");
+            switch (verticalAlign)
+            {
+                case SheetVerticalAlign.Center:
+                    overlay.AddToClassList("overlay-layer--sheet-center");
+                    break;
+                case SheetVerticalAlign.Bottom:
+                    overlay.AddToClassList("overlay-layer--sheet-bottom");
+                    break;
+            }
             overlay.style.display = DisplayStyle.Flex;
             InstantiateOverlay(overlay, asset, _tokenStylesheet);
             if (_overlayContentRoot != null)
@@ -239,6 +257,8 @@ namespace Kismeta.UI
             _overlayLayer.Clear();
             _overlayLayer.style.display = DisplayStyle.None;
             _overlayLayer.RemoveFromClassList("overlay-layer--sheet");
+            _overlayLayer.RemoveFromClassList("overlay-layer--sheet-center");
+            _overlayLayer.RemoveFromClassList("overlay-layer--sheet-bottom");
             _overlayContentRoot = null;
             SetOverlayBackdropBlur(false);
         }
