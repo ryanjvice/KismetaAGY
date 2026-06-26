@@ -11,6 +11,7 @@ namespace Kismeta.UI.Components
     public static class HeaderOverlayBindings
     {
         const float CollapsedHeaderFallbackPx = 52f;
+        const float HeaderContentGapPx = 8f;
 
         static bool s_expanded;
         static readonly HashSet<VisualElement> s_geometryWired = new();
@@ -148,7 +149,7 @@ namespace Kismeta.UI.Components
             float headerReserve = headerHeight > 0f ? headerHeight : CollapsedHeaderFallbackPx;
             // Margin (not padding) keeps the panel's hit area below the header overlay.
             contentHost.style.paddingTop = StyleKeyword.Null;
-            contentHost.style.marginTop = headerReserve;
+            contentHost.style.marginTop = headerReserve + HeaderContentGapPx;
 
             if (tableFab != null)
                 tableFab.style.top = StyleKeyword.Null;

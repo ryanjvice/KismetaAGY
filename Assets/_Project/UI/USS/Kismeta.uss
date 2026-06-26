@@ -93,6 +93,7 @@
     --inventory-reserved-bottom: 62px;
     --table-fab-offset-top: 12px;
     --table-fab-offset-right: 20px;
+    --header-content-gap: var(--space-sm);
 }
 
 /* ---------- Typography (Assets/_Project/UI/Fonts) ---------- */
