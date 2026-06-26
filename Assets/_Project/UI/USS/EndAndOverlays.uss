@@ -137,8 +137,18 @@
 .player-block__zone {
     flex-direction: row;
     flex-wrap: wrap;
-    min-height: 48px;
+    min-height: var(--card-chip-h);
     margin-bottom: 8px;
+}
+.player-block__zone > .card-chip {
+    width: var(--card-chip-w);
+    min-width: var(--card-chip-w);
+    max-width: var(--card-chip-w);
+    height: var(--card-chip-h);
+    min-height: var(--card-chip-h);
+    max-height: var(--card-chip-h);
+    margin-right: 4px;
+    margin-bottom: 4px;
 }
 .card-chip--hidden {
     background-color: rgb(32, 28, 36);

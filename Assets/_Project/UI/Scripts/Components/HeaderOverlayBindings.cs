@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
@@ -9,12 +10,24 @@ namespace Kismeta.UI.Components
 {
     public static class HeaderOverlayBindings
     {
+        const float CollapsedHeaderFallbackPx = 52f;
+
         static bool s_expanded;
+        static readonly HashSet<VisualElement> s_geometryWired = new();
 
         public static void Wire(VisualElement? root)
         {
             if (root == null) return;
             root.Q<Button>("header-toggle-btn")?.RegisterCallback<ClickEvent>(_ => ToggleExpanded(root));
+
+            var overlay = OverlayRoot(root);
+            if (overlay != null)
+            {
+                if (s_geometryWired.Add(overlay))
+                    overlay.RegisterCallback<GeometryChangedEvent>(_ => ApplyHeaderPad(root));
+                overlay.BringToFront();
+            }
+
             SetExpanded(root, s_expanded, animate: false);
         }
 
@@ -112,8 +125,42 @@ namespace Kismeta.UI.Components
             var body = root?.Q(className: "screen__body");
             if (body == null) return;
 
-            body.EnableInClassList("screen__body--header-pad", false);
-            body.EnableInClassList("screen__body--header-expanded", false);
+            var overlay = OverlayRoot(root);
+            bool hidden = overlay == null || overlay.ClassListContains("game-header-overlay--hidden");
+
+            body.EnableInClassList("screen__body--header-pad", !hidden && !s_expanded);
+            body.EnableInClassList("screen__body--header-expanded", !hidden && s_expanded);
+
+            var contentHost = body.Q(className: "central-panel") ?? body.Q(className: "stage");
+            var tableFab = root?.Q<Button>("table-fab");
+            if (contentHost == null) return;
+
+            if (hidden)
+            {
+                contentHost.style.paddingTop = StyleKeyword.Null;
+                contentHost.style.marginTop = StyleKeyword.Null;
+                if (tableFab != null)
+                    tableFab.style.top = StyleKeyword.Null;
+                return;
+            }
+
+            float headerHeight = overlay!.resolvedStyle.height;
+            float headerReserve = headerHeight > 0f ? headerHeight : CollapsedHeaderFallbackPx;
+            // Margin (not padding) keeps the panel's hit area below the header overlay.
+            contentHost.style.paddingTop = StyleKeyword.Null;
+            contentHost.style.marginTop = headerReserve;
+
+            if (tableFab != null)
+                tableFab.style.top = StyleKeyword.Null;
+
+            if (headerHeight <= 0f)
+            {
+                overlay.schedule.Execute(() => ApplyHeaderPad(root)).ExecuteLater(0);
+            }
+            else
+            {
+                overlay.BringToFront();
+            }
         }
     }
 }

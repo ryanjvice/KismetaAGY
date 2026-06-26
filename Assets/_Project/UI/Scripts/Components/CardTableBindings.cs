@@ -193,17 +193,12 @@ namespace Kismeta.UI.Components
         static VisualElement MakeChip(CardDefinition def, string cardId, bool aligned, Action<string>? onInspect,
             string? rankLabel = null)
         {
-            var chip = CardChipFactory.CreateFromDefinition(
+            return CardChipFactory.CreateFromDefinition(
                 def,
                 aligned: aligned,
                 instanceId: cardId,
                 onInspect: onInspect,
                 rankLabelOverride: rankLabel);
-            chip.style.width = 30;
-            chip.style.height = 42;
-            chip.style.marginRight = 4;
-            chip.style.marginBottom = 4;
-            return chip;
         }
 
         static VisualElement MakeHiddenChip()
@@ -211,10 +206,6 @@ namespace Kismeta.UI.Components
             var chip = new VisualElement();
             chip.AddToClassList("card-chip");
             chip.AddToClassList("card-chip--hidden");
-            chip.style.width = 30;
-            chip.style.height = 42;
-            chip.style.marginRight = 4;
-            chip.style.marginBottom = 4;
             var rank = new Label("?");
             rank.AddToClassList("card-chip__rank");
             rank.style.color = new StyleColor(new Color(0.55f, 0.5f, 0.58f));

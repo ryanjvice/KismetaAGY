@@ -49,10 +49,10 @@
                     <engine:Label text="hand 4" style="font-size: 9px; color: rgb(122,138,154);" />
                 </engine:VisualElement>
                 <engine:Label text="spread" style="font-size: 8px; color: rgb(138, 106, 122); margin-bottom: 4px;" />
-                <engine:VisualElement style="flex-direction: row; flex-wrap: wrap; margin-bottom: 8px;">
-                    <engine:VisualElement class="card-chip card-chip--cups card-chip--selected" style="width: 30px; height: 42px; margin-right: 4px;"><engine:Label text="Q" class="card-chip__rank" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--cups card-chip--selected" style="width: 30px; height: 42px; margin-right: 4px;"><engine:Label text="5" class="card-chip__rank" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--swords" style="width: 30px; height: 42px;"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="player-block__zone">
+                    <engine:VisualElement class="card-chip card-chip--cups card-chip--selected"><engine:Label text="Q" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--cups card-chip--selected"><engine:Label text="5" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
                 </engine:VisualElement>
                 <engine:VisualElement style="flex-direction: row;">
                     <engine:Button name="duel-iolanthe" text="duel" class="table-action" style="background-color: rgb(42,18,18); border-color: rgb(90,40,40); color: rgb(240,176,160);" />
@@ -70,9 +70,9 @@
                     <engine:VisualElement style="flex-grow: 1;" />
                     <engine:Label text="hand 3" style="font-size: 9px; color: rgb(122,138,154);" />
                 </engine:VisualElement>
-                <engine:VisualElement style="flex-direction: row; flex-wrap: wrap; margin-bottom: 6px;">
-                    <engine:VisualElement class="card-chip card-chip--swords" style="width: 30px; height: 42px; margin-right: 4px;"><engine:Label text="4" class="card-chip__rank" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--pentacles" style="width: 30px; height: 42px;"><engine:Label text="6" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="player-block__zone" style="margin-bottom: 6px;">
+                    <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="4" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--pentacles"><engine:Label text="6" class="card-chip__rank" /></engine:VisualElement>
                 </engine:VisualElement>
                 <engine:Label text="in stasis — cannot be opposed this age" style="font-size: 9px; color: rgb(122,138,154);" />
             </engine:VisualElement>
@@ -86,10 +86,10 @@
                     <engine:VisualElement style="flex-grow: 1;" />
                     <engine:Label text="hand 5" style="font-size: 9px; color: rgb(184, 154, 110);" />
                 </engine:VisualElement>
-                <engine:VisualElement style="flex-direction: row; flex-wrap: wrap;">
-                    <engine:VisualElement class="card-chip card-chip--wands card-chip--selected" style="width: 30px; height: 42px; margin-right: 4px;"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--cups card-chip--selected" style="width: 30px; height: 42px; margin-right: 4px;"><engine:Label text="K" class="card-chip__rank" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--pentacles" style="width: 30px; height: 42px;"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
+                <engine:VisualElement class="player-block__zone">
+                    <engine:VisualElement class="card-chip card-chip--wands card-chip--selected"><engine:Label text="7" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--cups card-chip--selected"><engine:Label text="K" class="card-chip__rank" /></engine:VisualElement>
+                    <engine:VisualElement class="card-chip card-chip--pentacles"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
 

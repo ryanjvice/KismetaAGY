@@ -434,6 +434,11 @@
 
 /* Top safe-area inset applied at runtime by ViewportLayout (not on .kismeta-root). */
 .game-header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 15;
     flex-shrink: 0;
     flex-direction: column;
     overflow: hidden;
@@ -499,6 +504,8 @@
     padding: 4px 8px;
     font-size: 14px;
     margin-left: 4px;
+    position: relative;
+    z-index: 1;
 }
 
 .header-detail {
@@ -516,12 +523,10 @@
 }
 
 .screen__body--header-pad > .stage,
-.screen__body--header-pad > .central-panel,
 .screen__body--header-pad .spring-hub__stage,
 .screen__body--header-pad .commune-stage,
 .screen__body--header-pad .winter-hub__stage,
 .screen__body--header-expanded > .stage,
-.screen__body--header-expanded > .central-panel,
 .screen__body--header-expanded .spring-hub__stage,
 .screen__body--header-expanded .commune-stage,
 .screen__body--header-expanded .winter-hub__stage {
@@ -639,7 +644,7 @@
     position: absolute;
     top: var(--table-fab-offset-top);
     right: var(--table-fab-offset-right);
-    z-index: 5;
+    z-index: 4;
     min-width: 56px;
     min-height: 36px;
     padding: 6px 12px;
@@ -1761,6 +1766,12 @@
 /* ---------- Viewport classes (toggled by ViewportLayout) ---------- */
 .viewport--tablet .stage { margin-left: var(--space-xl); margin-right: var(--space-xl); }
 .viewport--compact .title-flavor { max-width: 90%; }
+
+/* Phone: lift bottom stage CTAs slightly above the screen edge */
+.viewport--compact .stage-cta,
+.viewport--regular .stage-cta {
+    padding-bottom: 22px;
+}
 
 /* Multi-button action bars: wrap on phone, single row on tablet */
 .viewport--tablet .actionbar--multi,

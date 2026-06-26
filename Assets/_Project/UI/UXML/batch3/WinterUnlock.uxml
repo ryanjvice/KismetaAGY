@@ -29,68 +29,75 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <!-- live readout -->
-        <engine:VisualElement style="padding: 10px 14px 4px;">
-            <engine:VisualElement class="readout">
-                <engine:VisualElement class="readout__metric">
-                    <engine:Label name="spread-align" text="+4" class="readout__value" style="color: rgb(244, 211, 94);" />
-                    <engine:Label text="spread alignment" class="readout__label" />
-                </engine:VisualElement>
-                <engine:VisualElement class="readout__metric">
-                    <engine:Label name="hand-safe" text="5" class="readout__value" style="color: rgb(127, 196, 168);" />
-                    <engine:Label text="safe in hand" class="readout__label" />
-                </engine:VisualElement>
-                <engine:VisualElement class="readout__metric">
-                    <engine:Label name="verdict" text="balanced" class="readout__value" style="color: rgb(243, 233, 210); font-size: 12px;" />
-                    <engine:Label text="verdict" class="readout__label" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-        </engine:VisualElement>
+        <engine:VisualElement class="tap-swap-body">
+            <engine:Label text="Commune with your Tableau" class="commune-stage__heading h3" />
 
-        <!-- spread zone (visible, duel-exposed) -->
-        <engine:VisualElement style="padding: 4px 14px 0;">
-            <engine:VisualElement class="swap-zone swap-zone--spread">
-                <engine:VisualElement class="swap-zone__header">
-                    <engine:VisualElement style="flex-direction: row; align-items: center;">
-                        <engine:VisualElement style="width: 12px; height: 12px; border-radius: 6px; background-color: rgb(244, 211, 94); margin-right: 6px;" />
-                        <engine:Label text="Spread" style="font-size: 12px; color: rgb(244, 211, 94);" />
-                        <engine:Label text="visible · duel-exposed" style="font-size: 9px; color: rgb(154,122,122); margin-left: 6px;" />
+            <engine:VisualElement class="tip tip--arcanum commune-stage__tip">
+                <engine:Label text="Tap a card to move it between zones. Spread cards score alignment but can be dueled; Hand cards are safe but idle. Locks until Winter."
+                              class="tip__text" style="color: rgb(184,154,192);" />
+            </engine:VisualElement>
+
+            <engine:VisualElement class="commune-stage__zone-wrap">
+                <engine:VisualElement class="swap-zone swap-zone--spread">
+                    <engine:VisualElement class="swap-zone__header">
+                        <engine:VisualElement style="flex-direction: row; align-items: center;">
+                            <engine:VisualElement style="width: 12px; height: 12px; border-radius: 6px; background-color: rgb(244, 211, 94); margin-right: 6px;" />
+                            <engine:Label text="Spread" style="font-size: 12px; color: rgb(244, 211, 94);" />
+                            <engine:Label text="visible · duel-exposed" style="font-size: 9px; color: rgb(154,122,122); margin-left: 6px;" />
+                        </engine:VisualElement>
+                        <engine:Label name="spread-count" text="4" class="text-count" />
                     </engine:VisualElement>
-                    <engine:Label name="spread-count" text="4" style="font-size: 10px; color: rgb(184, 154, 110);" />
-                </engine:VisualElement>
-                <engine:VisualElement name="spread-cards" class="swap-zone__cards">
-                    <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="7" class="card-chip__rank" /><engine:Label text="+1" class="card-chip__tag" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--cups"><engine:Label text="K" class="card-chip__rank" /><engine:Label text="+1" class="card-chip__tag" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--pentacles"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="A" class="card-chip__rank" /><engine:Label text="+1" class="card-chip__tag" /></engine:VisualElement>
-                </engine:VisualElement>
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <!-- hand zone (hidden, safe) -->
-        <engine:VisualElement style="padding: 0 14px;">
-            <engine:VisualElement class="swap-zone swap-zone--hand">
-                <engine:VisualElement class="swap-zone__header">
-                    <engine:VisualElement style="flex-direction: row; align-items: center;">
-                        <engine:VisualElement style="width: 12px; height: 12px; border-radius: 6px; background-color: rgb(127, 196, 168); margin-right: 6px;" />
-                        <engine:Label text="Hand" style="font-size: 12px; color: rgb(127, 196, 168);" />
-                        <engine:Label text="hidden · safe" style="font-size: 9px; color: rgb(122,138,122); margin-left: 6px;" />
+                    <engine:VisualElement name="spread-cards" class="swap-zone__cards">
+                        <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="7" class="card-chip__rank" /><engine:Label text="+1" class="card-chip__tag" /></engine:VisualElement>
+                        <engine:VisualElement class="card-chip card-chip--cups"><engine:Label text="K" class="card-chip__rank" /><engine:Label text="+1" class="card-chip__tag" /></engine:VisualElement>
+                        <engine:VisualElement class="card-chip card-chip--pentacles"><engine:Label text="3" class="card-chip__rank" /></engine:VisualElement>
+                        <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="A" class="card-chip__rank" /><engine:Label text="+1" class="card-chip__tag" /></engine:VisualElement>
                     </engine:VisualElement>
-                    <engine:Label name="hand-count" text="5" style="font-size: 10px; color: rgb(184, 154, 110);" />
-                </engine:VisualElement>
-                <engine:VisualElement name="hand-cards" class="swap-zone__cards">
-                    <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--pentacles"><engine:Label text="J" class="card-chip__rank" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--cups"><engine:Label text="2" class="card-chip__rank" /><engine:Label text="+1" class="card-chip__tag" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="5" class="card-chip__rank" /></engine:VisualElement>
-                    <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="4" class="card-chip__rank" /><engine:Label text="+1" class="card-chip__tag" /></engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
-        </engine:VisualElement>
 
-        <engine:VisualElement class="tip tip--arcanum">
-            <engine:Label text="Tap a card to move it between zones. Spread cards score alignment but can be dueled; Hand cards are safe but idle. Locks until Winter."
-                          class="tip__text" style="color: rgb(184,154,192);" />
+            <engine:VisualElement class="commune-stage__swap-indicator" picking-mode="Ignore">
+                <engine:VisualElement class="commune-stage__swap-badge">
+                    <engine:Label text="&#xedb6;" class="ti-icon commune-stage__swap-icon" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="commune-stage__zone-wrap">
+                <engine:VisualElement class="swap-zone swap-zone--hand">
+                    <engine:VisualElement class="swap-zone__header">
+                        <engine:VisualElement style="flex-direction: row; align-items: center;">
+                            <engine:VisualElement style="width: 12px; height: 12px; border-radius: 6px; background-color: rgb(127, 196, 168); margin-right: 6px;" />
+                            <engine:Label text="Hand" style="font-size: 12px; color: rgb(127, 196, 168);" />
+                            <engine:Label text="hidden · safe" style="font-size: 9px; color: rgb(122,138,122); margin-left: 6px;" />
+                        </engine:VisualElement>
+                        <engine:Label name="hand-count" text="5" class="text-count" />
+                    </engine:VisualElement>
+                    <engine:VisualElement name="hand-cards" class="swap-zone__cards">
+                        <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
+                        <engine:VisualElement class="card-chip card-chip--pentacles"><engine:Label text="J" class="card-chip__rank" /></engine:VisualElement>
+                        <engine:VisualElement class="card-chip card-chip--cups"><engine:Label text="2" class="card-chip__rank" /><engine:Label text="+1" class="card-chip__tag" /></engine:VisualElement>
+                        <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="5" class="card-chip__rank" /></engine:VisualElement>
+                        <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="4" class="card-chip__rank" /><engine:Label text="+1" class="card-chip__tag" /></engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="commune-stage__readout-wrap">
+                <engine:VisualElement class="readout">
+                    <engine:VisualElement class="readout__metric">
+                        <engine:Label name="spread-align" text="+4" class="readout__value" style="color: rgb(244, 211, 94);" />
+                        <engine:Label text="spread alignment" class="readout__label" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="readout__metric">
+                        <engine:Label name="hand-safe" text="5" class="readout__value" style="color: rgb(127, 196, 168);" />
+                        <engine:Label text="safe in hand" class="readout__label" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="readout__metric">
+                        <engine:Label name="verdict" text="balanced" class="readout__value" style="color: rgb(243, 233, 210); font-size: 12px;" />
+                        <engine:Label text="verdict" class="readout__label" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 2px 14px 16px;">

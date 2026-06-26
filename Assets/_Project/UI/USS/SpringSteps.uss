@@ -12,6 +12,7 @@
 .swap-zone--spread {
     background-color: rgb(19,32,26);
     border-color: rgb(43,74,58);
+    margin-bottom: 4px;
 }
 .swap-zone--hand {
     background-color: rgb(22,16,28);
@@ -175,16 +176,74 @@
     padding-left: 14px;
     padding-right: 14px;
     padding-bottom: 4px;
+    align-items: stretch;
+    align-self: stretch;
+    justify-content: flex-start;
+    width: 100%;
 }
 .commune-stage--hidden { display: none; }
 .spring-hub__stage--hidden { display: none; }
 .player-inventory-overlay--hidden { display: none; }
-.commune-stage__readout-wrap { flex-shrink: 0; padding-top: 4px; }
+
+.commune-stage__heading {
+    flex-shrink: 0;
+    align-self: stretch;
+    -unity-text-align: middle-center;
+    color: var(--arcanum-text);
+    font-size: var(--font-title);
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+.commune-stage__readout-wrap {
+    flex-shrink: 0;
+    padding-top: 0;
+    margin-top: 4px;
+}
 .commune-stage__zone-wrap { flex-shrink: 0; }
 .commune-stage__tip {
     flex-shrink: 0;
-    margin-top: 4px;
-    margin-bottom: 4px;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 8px;
+}
+
+.commune-stage__swap-indicator {
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    margin-bottom: 10px;
+}
+.commune-stage__swap-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    border-width: 1px;
+    border-color: var(--arcanum-border);
+    background-color: var(--arcanum-bg);
+    align-items: center;
+    justify-content: center;
+}
+.commune-stage__swap-icon {
+    font-size: 14px;
+    color: var(--arcanum-text);
+}
+
+/* Winter Unlock tap-to-swap body (standalone screen) */
+.tap-swap-body {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-direction: column;
+    overflow: hidden;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-bottom: 4px;
+    align-items: stretch;
+    align-self: stretch;
+    justify-content: flex-start;
+    width: 100%;
 }
 
 /* Spring harvest compare row */
