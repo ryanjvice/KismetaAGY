@@ -194,11 +194,14 @@ namespace Kismeta.UI.Controllers
             }
         }
 
-        public static int ResolveLocalPlayerId(GameSession session, GameLoop loop, CommandBridge bridge)
+        public static int ResolveLocalPlayerId(GameSession session, GameLoop? loop, CommandBridge bridge)
         {
-            int humanId = loop.LocalHumanPlayerId;
-            if (humanId >= 0 && humanId < session.Players.Count)
-                return humanId;
+            if (loop != null)
+            {
+                int humanId = loop.LocalHumanPlayerId;
+                if (humanId >= 0 && humanId < session.Players.Count)
+                    return humanId;
+            }
 
             var hs = bridge.PendingController;
             if (hs != null && hs.Slot.Index >= 0 && hs.Slot.Index < session.Players.Count)

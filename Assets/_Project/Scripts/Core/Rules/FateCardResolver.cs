@@ -33,28 +33,40 @@ namespace Kismeta.Core.Rules
         {
             switch (arcanaNumber)
             {
-                case 16: ResolveTower(session, drawerId);      break;
-                case 13: ResolveDeath(session, drawerId);      break;
-                case 19: ResolveSun(session);                  break;
-                case 20: ResolveJudgement(session, drawerId);  break;
-                case 11: ResolveJustice(session);              break;
-                case 10: ResolveWheelOfFortune(session);       break;
-                case 12: ResolveHangedMan(session);            break;
+                case 16: ResolveTower(session, drawerId, fateCardId);      break;
+                case 13: ResolveDeath(session, drawerId, fateCardId);      break;
+                case 19: ResolveSun(session, fateCardId);                  break;
+                case 20: ResolveJudgement(session, drawerId, fateCardId);  break;
+                case 11: ResolveJustice(session, fateCardId);              break;
+                case 10: ResolveWheelOfFortune(session, fateCardId);       break;
+                case 12: ResolveHangedMan(session, fateCardId);            break;
 
                 // Async: Moon, Fool, Lovers — defer to GameLoop
                 case 18:
                 case  0:
                 case  6:
-                    // Leave entry in PendingFateDecisions (caller already added it)
+                    SetFateNote(session, fateCardId, PendingFateNote(arcanaNumber));
                     return false;
 
                 default:
-                    break; // Unknown fate — silently resolved
+                    SetFateNote(session, fateCardId, "Resolved when drawn — no further effect.");
+                    break;
             }
 
             session.EmitEvent(new FateResolvedEvent(drawerId, fateCardId, arcanaNumber));
             return true;
         }
+
+        static void SetFateNote(GameSession session, string fateCardId, string note) =>
+            session.GetCard(fateCardId)?.SetFateResolutionNote(note);
+
+        static string PendingFateNote(int arcanaNumber) => arcanaNumber switch
+        {
+            18 => "Awaiting your keep-2 decision from the Moon draw.",
+            0 => "Opponents are choosing a reagent gift from the Fool.",
+            6 => "Awaiting the Lovers choice — draw two cards or take a reagent.",
+            _ => "Awaiting resolution."
+        };
 
         // ── Auto-resolving fates ──────────────────────────────────────────────────
 
@@ -62,7 +74,7 @@ namespace Kismeta.Core.Rules
         /// Tower (16): All Adept cards in every player's Arcanum are arrested (turned face-down).
         /// Arrested Adepts no longer contribute to alignment scoring until refreshed (1 Salt each).
         /// </summary>
-        private void ResolveTower(GameSession session, int drawerId)
+        private void ResolveTower(GameSession session, int drawerId, string fateCardId)
         {
             int totalArrested = 0;
             foreach (var player in session.Players)
@@ -78,12 +90,15 @@ namespace Kismeta.Core.Rules
                     }
                 }
             }
+            SetFateNote(session, fateCardId,
+                $"Already resolved: arrested {totalArrested} Adept{(totalArrested == 1 ? "" : "s")} table-wide. Now face-up in Arcanum.");
             session.EmitEvent(new TowerFateResolvedEvent(drawerId, totalArrested));
         }
 
         /// <summary>Death (13): All players discard their entire Hand to the Common Deck.</summary>
-        private static void ResolveDeath(GameSession session, int drawerId)
+        private static void ResolveDeath(GameSession session, int drawerId, string fateCardId)
         {
+            int discarded = 0;
             var toReturn = new List<string>();
             foreach (var player in session.Players)
             {
@@ -91,17 +106,19 @@ namespace Kismeta.Core.Rules
                 {
                     session.GetCard(id)?.MoveTo(CardZone.Deck, -1);
                     toReturn.Add(id);
+                    discarded++;
                 }
                 player.Hand.Clear();
             }
-            // Shuffle all returned cards into the common deck
             Shuffle(toReturn, new Random());
             foreach (var id in toReturn)
                 session.Board.CommonDeck.Push(id);
+            SetFateNote(session, fateCardId,
+                $"Already resolved: all hands returned to the deck ({discarded} cards). Now face-up in Arcanum.");
         }
 
         /// <summary>Sun (19): All players receive 1 of each Reagent.</summary>
-        private static void ResolveSun(GameSession session)
+        private static void ResolveSun(GameSession session, string fateCardId)
         {
             foreach (var player in session.Players)
             {
@@ -111,10 +128,12 @@ namespace Kismeta.Core.Rules
                 player.AddReagent(ReagentType.Vitriol);
                 player.AddReagent(ReagentType.Quicksilver);
             }
+            SetFateNote(session, fateCardId,
+                "Already resolved: every player received one of each reagent. Now face-up in Arcanum.");
         }
 
         /// <summary>Judgement (20): Drawing player draws 1 card per lit Cauldron.</summary>
-        private static void ResolveJudgement(GameSession session, int drawerId)
+        private static void ResolveJudgement(GameSession session, int drawerId, string fateCardId)
         {
             var player  = session.Players[drawerId];
             var harvest = session.Rules?.Harvest;
@@ -123,6 +142,7 @@ namespace Kismeta.Core.Rules
                 if (suit != Suit.None && player.IsCauldronLit(suit))
                     count++;
 
+            int drawn = 0;
             for (int i = 0; i < count; i++)
             {
                 if (session.Board.CommonDeck.Count == 0)
@@ -130,6 +150,7 @@ namespace Kismeta.Core.Rules
                 if (session.Board.CommonDeck.Count == 0) break;
 
                 var id = session.Board.CommonDeck.Pop();
+                drawn++;
                 if (harvest != null)
                     harvest.RouteDrawnCard(session, drawerId, id);
                 else
@@ -140,21 +161,27 @@ namespace Kismeta.Core.Rules
                     player.Hand.Add(id);
                 }
             }
+            SetFateNote(session, fateCardId,
+                $"Already resolved: drew {drawn} card{(drawn == 1 ? "" : "s")} from lit cauldrons. Now face-up in Arcanum.");
         }
 
         /// <summary>Justice (11): Duels this round resolve as best-of-3.</summary>
-        private static void ResolveJustice(GameSession session) =>
+        private static void ResolveJustice(GameSession session, string fateCardId)
+        {
             session.Board.BestOfThreeDuels = true;
+            SetFateNote(session, fateCardId,
+                "Already resolved: duels are best-of-three this age. Now face-up in Arcanum.");
+        }
 
         /// <summary>Wheel of Fortune (10): All re-roll Zodiac; highest gets 2 Salt, lowest discards 1.</summary>
-        private void ResolveWheelOfFortune(GameSession session)
+        private void ResolveWheelOfFortune(GameSession session, string fateCardId)
         {
             int highest = -1, lowest = 13;
             int highPid = -1, lowPid = -1;
 
             foreach (var player in session.Players)
             {
-                int roll = _rng.Next(1, 13); // 1–12
+                int roll = _rng.Next(1, 13);
                 player.CurrentSign = (ZodiacSign)roll;
                 session.EmitEvent(new ZodiacRolledEvent(player.PlayerId, player.CurrentSign));
 
@@ -165,17 +192,24 @@ namespace Kismeta.Core.Rules
             if (highPid >= 0)
                 session.Players[highPid].AddReagent(ReagentType.Salt, 2);
 
+            int discarded = 0;
             if (lowPid >= 0 && session.Players[lowPid].Hand.Count > 0)
             {
                 var id = session.Players[lowPid].Hand[0];
                 session.Players[lowPid].Hand.RemoveAt(0);
                 session.Board.CommonDiscard.Add(id);
                 session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
+                discarded = 1;
             }
+
+            SetFateNote(session, fateCardId,
+                discarded > 0
+                    ? "Already resolved: all players re-rolled zodiac; highest gained 2 Salt, lowest lost 1 card. Now face-up in Arcanum."
+                    : "Already resolved: all players re-rolled zodiac; highest gained 2 Salt. Now face-up in Arcanum.");
         }
 
         /// <summary>Hanged Man (12): Each player passes their Hand to the left (lower player id, wrapping).</summary>
-        private static void ResolveHangedMan(GameSession session)
+        private static void ResolveHangedMan(GameSession session, string fateCardId)
         {
             int n = session.Players.Count;
             var hands = new List<List<string>>(n);
@@ -184,7 +218,7 @@ namespace Kismeta.Core.Rules
 
             for (int i = 0; i < n; i++)
             {
-                int target = (i + 1) % n; // pass to next player (clockwise)
+                int target = (i + 1) % n;
                 session.Players[target].Hand.Clear();
                 foreach (var id in hands[i])
                 {
@@ -192,6 +226,9 @@ namespace Kismeta.Core.Rules
                     session.Players[target].Hand.Add(id);
                 }
             }
+
+            SetFateNote(session, fateCardId,
+                "Already resolved: every hand passed clockwise. Now face-up in Arcanum.");
         }
 
         // ── Async fate resolution (called by GameLoop after RequestAsync returns) ──
@@ -240,6 +277,8 @@ namespace Kismeta.Core.Rules
             foreach (var id in deckList)
                 session.Board.CommonDeck.Push(id);
 
+            SetFateNote(session, FindFateCardId(session, playerId, 18),
+                "Already resolved: kept 2 Moon cards; unchosen cards returned to the deck. Now face-up in Arcanum.");
             return CommandResult.Ok("Moon resolved.");
         }
 
@@ -248,6 +287,8 @@ namespace Kismeta.Core.Rules
             ReagentType reagentType)
         {
             session.Players[chooserId].AddReagent(reagentType);
+            SetFateNote(session, FindDrawerFateCardId(session, 0),
+                $"Already resolved: opponents received reagents from the Fool. Now face-up in Arcanum.");
             return CommandResult.Ok($"P{chooserId} received 1 {reagentType} (Fool).");
         }
 
@@ -282,7 +323,47 @@ namespace Kismeta.Core.Rules
             {
                 session.Players[drawerId].AddReagent(chosenReagent);
             }
+
+            SetFateNote(session, FindFateCardId(session, drawerId, 6),
+                drawCards
+                    ? "Already resolved: Lovers choice drew two cards. Now face-up in Arcanum."
+                    : $"Already resolved: Lovers choice granted {chosenReagent}. Now face-up in Arcanum.");
             return CommandResult.Ok("Lovers resolved.");
+        }
+
+        static string? FindFateCardId(GameSession session, int playerId, int arcanaNumber)
+        {
+            foreach (var (pid, fateId, num) in session.Board.PendingFateDecisions)
+            {
+                if (pid == playerId && num == arcanaNumber)
+                    return fateId;
+            }
+
+            foreach (var player in session.Players)
+            {
+                if (player.PlayerId != playerId) continue;
+                foreach (var id in player.Arcanum)
+                {
+                    var inst = session.GetCard(id);
+                    if (inst == null) continue;
+                    var def = session.Rules?.CardDatabase.GetById(inst.DefinitionId);
+                    if (def?.MajorArcanaType == MajorArcanaType.Fate && def.ArcanaNumber == arcanaNumber)
+                        return id;
+                }
+            }
+
+            return null;
+        }
+
+        static string? FindDrawerFateCardId(GameSession session, int arcanaNumber)
+        {
+            foreach (var (pid, fateId, num) in session.Board.PendingFateDecisions)
+            {
+                if (num == arcanaNumber)
+                    return fateId;
+            }
+
+            return null;
         }
 
         private static void Shuffle<T>(IList<T> list, Random rng)

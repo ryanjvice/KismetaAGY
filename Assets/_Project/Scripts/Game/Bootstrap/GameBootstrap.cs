@@ -86,6 +86,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _chronicle;
         [SerializeField] private VisualTreeAsset _cardTable;
         [SerializeField] private VisualTreeAsset _cardModals;
+        [SerializeField] private VisualTreeAsset _activeEffects;
 
         private CardDatabase? _db;
         private CrucibleCodexDatabase? _codexDb;
@@ -213,6 +214,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<ChronicleController>();
             EnsureController<CardTableController>();
             EnsureController<CardModalsController>();
+            EnsureController<ActiveEffectsController>();
             EnsureController<EndOverlayHost>();
             EnsureController<GameChronicle>();
 
@@ -233,7 +235,7 @@ namespace Kismeta.Game.Bootstrap
                 _fireStone, _temperStone, _manageCards, _leaveStasis, _endAutumn);
 
             var endOverlays = GetComponent<EndOverlayHost>();
-            endOverlays?.Configure(_cardTable, _cardModals);
+            endOverlays?.Configure(_cardTable, _cardModals, _activeEffects);
 
             GetComponent<PlayerHudController>()?.Configure(_playerHud);
 

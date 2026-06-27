@@ -93,6 +93,8 @@
     --inventory-reserved-bottom: 62px;
     --table-fab-offset-top: 12px;
     --table-fab-offset-right: 20px;
+    --table-fab-block-height: 48px;
+    --fab-stack-gap: 8px;
     --header-content-gap: var(--space-sm);
 }
 
@@ -666,6 +668,57 @@
 }
 
 .table-fab--hidden {
+    display: none;
+}
+
+.effects-fab {
+    position: absolute;
+    top: var(--table-fab-offset-top);
+    right: var(--table-fab-offset-right);
+    z-index: 4;
+    min-width: 56px;
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 10px;
+    border-radius: var(--radius-md);
+}
+
+.effects-fab--hidden {
+    display: none;
+}
+
+.hub-fab-stack {
+    position: absolute;
+    top: var(--table-fab-offset-top);
+    right: var(--table-fab-offset-right);
+    z-index: 4;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.hub-fab-stack .table-fab,
+.hub-fab-stack .effects-fab {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.hub-fab-stack .table-fab {
+    margin-bottom: var(--fab-stack-gap);
+}
+
+.hub-fab-stack .table-fab--hidden {
+    display: none;
+    margin-bottom: 0;
+}
+
+.hub-fab-stack .effects-fab--hidden {
+    display: none;
+}
+
+.hub-fab-stack--hidden {
     display: none;
 }
 

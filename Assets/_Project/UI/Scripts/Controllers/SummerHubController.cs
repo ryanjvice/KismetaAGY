@@ -15,6 +15,7 @@ namespace Kismeta.UI.Controllers
         public override string ScreenId => ScreenIds.SummerHub;
 
         public Action? OnOpenCardTable;
+        public Action? OnOpenActiveEffects;
         public Action<string>? OnInspectCard;
 
         GameSession? _session;
@@ -32,7 +33,8 @@ namespace Kismeta.UI.Controllers
             {
                 OnHandToggle = OnHandToggle,
                 OnArcanumToggle = OnArcanumToggle,
-                OnOpenCardTable = () => OnOpenCardTable?.Invoke()
+                OnOpenCardTable = () => OnOpenCardTable?.Invoke(),
+                OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root);
         }

@@ -14,6 +14,7 @@ namespace Kismeta.UI
     {
         VisualTreeAsset? _cardTable;
         VisualTreeAsset? _cardModals;
+        VisualTreeAsset? _activeEffects;
 
         ViewportLayout? _layout;
         GameSession? _session;
@@ -22,8 +23,9 @@ namespace Kismeta.UI
 
         CardTableController? _table;
         CardModalsController? _modals;
+        ActiveEffectsController? _activeEffectsCtrl;
 
-        enum ActiveOverlay { None, CardTable, CardModals }
+        enum ActiveOverlay { None, CardTable, CardModals, ActiveEffects }
         ActiveOverlay _active = ActiveOverlay.None;
         bool _reopenCardTableAfterInspect;
 
@@ -36,10 +38,11 @@ namespace Kismeta.UI
 
         void Awake() => EnsureControllers();
 
-        public void Configure(VisualTreeAsset cardTable, VisualTreeAsset cardModals)
+        public void Configure(VisualTreeAsset cardTable, VisualTreeAsset cardModals, VisualTreeAsset? activeEffects = null)
         {
             _cardTable = cardTable;
             _cardModals = cardModals;
+            _activeEffects = activeEffects;
             EnsureControllers();
         }
 
@@ -48,6 +51,7 @@ namespace Kismeta.UI
             _layout ??= GetComponent<ViewportLayout>();
             _table ??= GetComponent<CardTableController>();
             _modals ??= GetComponent<CardModalsController>();
+            _activeEffectsCtrl ??= GetComponent<ActiveEffectsController>();
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -61,6 +65,19 @@ namespace Kismeta.UI
         {
             if (_bridge != null && _bridge.CanSubmit) return;
             Dismiss();
+        }
+
+        public void ShowActiveEffects()
+        {
+            EnsureControllers();
+            if (_activeEffects == null)
+            {
+                Debug.LogWarning("[EndOverlayHost] ActiveEffects UXML not assigned — run Kismeta → UI → Wire Bootstrap UI References.");
+                return;
+            }
+
+            _reopenCardTableAfterInspect = false;
+            ShowOverlay(_activeEffects, _activeEffectsCtrl, WireActiveEffects, ActiveOverlay.ActiveEffects);
         }
 
         public void ShowCardTable()
@@ -139,6 +156,7 @@ namespace Kismeta.UI
             _active = ActiveOverlay.None;
             _table?.Detach();
             _modals?.Detach();
+            _activeEffectsCtrl?.Detach();
             _layout?.DismissOverlay();
         }
 
@@ -160,6 +178,14 @@ namespace Kismeta.UI
             if (_session == null || _bridge == null) return;
             if (_active == ActiveOverlay.CardTable)
                 _table?.BindState(_session, _bridge);
+            else if (_active == ActiveOverlay.ActiveEffects)
+                _activeEffectsCtrl?.BindState(_session, _loop, _bridge!);
+        }
+
+        void WireActiveEffects()
+        {
+            if (_activeEffectsCtrl == null) return;
+            _activeEffectsCtrl.OnClose = Dismiss;
         }
 
         void WireTable()

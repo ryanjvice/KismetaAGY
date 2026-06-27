@@ -260,6 +260,7 @@ namespace Kismeta.Core.Rules
                 player.ReturnedFromStasisThisRound = false;
                 player.BesiegedBonusCount          = 0;
                 player.ArrestedAdepts.Clear();
+                player.UsedAdeptInstanceIdsThisAge.Clear();
             }
 
             int newAgekeeper = RotateAgekeeper(session);

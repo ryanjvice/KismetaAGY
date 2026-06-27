@@ -2,6 +2,7 @@ using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
+using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -161,22 +162,11 @@ namespace Kismeta.UI.Controllers
             root.AddToClassList($"intro--{season.ToString().ToLowerInvariant()}");
         }
 
-        static (string name, string desc) DescribeCosmicEffect(ZodiacSign sign) => sign switch
+        static (string name, string desc) DescribeCosmicEffect(ZodiacSign sign)
         {
-            ZodiacSign.Aries => ("+1 Base Harvest", "while Aries reigns, every player draws one extra harvest card"),
-            ZodiacSign.Libra => ("+1 Base Harvest", "while Libra reigns, every player draws one extra harvest card"),
-            ZodiacSign.Taurus => ("Court Pentacles are a Wild Suit", "every Court Pentacle counts as any suit you need"),
-            ZodiacSign.Leo => ("Court Wands are a Wild Suit", "every Court Wand counts as any suit you need"),
-            ZodiacSign.Scorpio => ("Court Cups are a Wild Suit", "every Court Cup counts as any suit you need"),
-            ZodiacSign.Aquarius => ("Court Swords are a Wild Suit", "every Court Sword counts as any suit you need"),
-            ZodiacSign.Cancer => ("Salt costs 2 cards", "craft Salt from any two cards while Cancer reigns"),
-            ZodiacSign.Capricorn => ("Salt costs 2 cards", "craft Salt from any two cards while Capricorn reigns"),
-            ZodiacSign.Gemini => ("Quicksilver costs 2 Swords", "craft Quicksilver from two Swords with the Swords cauldron lit"),
-            ZodiacSign.Virgo => ("Vitriol costs 2 Pentacles", "craft Vitriol from two Pentacles with the Pentacles cauldron lit"),
-            ZodiacSign.Sagittarius => ("Sulphur costs 2 Wands", "craft Sulphur from two Wands with the Wands cauldron lit"),
-            ZodiacSign.Pisces => ("Aqua Regia costs 2 Cups", "craft Aqua Regia from two Cups with the Cups cauldron lit"),
-            _ => ("No cosmic effect", "the heavens are still this round")
-        };
+            var (name, desc) = CosmicEffectDescriber.DescribeCosmicAge(sign);
+            return (name, desc);
+        }
 
         static Color PlayerDotColor(PlayerColor color) => color switch
         {

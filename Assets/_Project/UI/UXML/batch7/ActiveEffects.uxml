@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/ActiveEffects.uss" />
+
+    <engine:VisualElement name="active-effects" class="modal active-effects">
+        <engine:VisualElement class="active-effects__header">
+            <engine:Label text="&#xee73;" class="ti-icon active-effects__sparkle" />
+            <engine:VisualElement class="active-effects__header-text">
+                <engine:Label text="Active effects" class="active-effects__title" />
+                <engine:Label name="active-effects-subtitle" text="Age of Scorpio · Mars · Water" class="active-effects__subtitle" />
+            </engine:VisualElement>
+            <engine:Button name="active-effects-close" text="&#10005;" class="active-effects__close" />
+        </engine:VisualElement>
+
+        <engine:ScrollView name="active-effects-scroll" class="active-effects__scroll">
+            <engine:VisualElement name="cosmic-age-featured" class="active-effects-featured" />
+            <engine:VisualElement name="sections-list" class="active-effects-sections" />
+        </engine:ScrollView>
+    </engine:VisualElement>
+</engine:UXML>

@@ -19,6 +19,7 @@ namespace Kismeta.UI.Controllers
         public override string ScreenId => ScreenIds.SpringHub;
 
         public System.Action? OnOpenCardTable;
+        public System.Action? OnOpenActiveEffects;
         public System.Action<string>? OnInspectCard;
 
         readonly List<string> _spreadIds = new();
@@ -55,7 +56,8 @@ namespace Kismeta.UI.Controllers
             {
                 OnHandToggle = OnHandToggle,
                 OnArcanumToggle = OnArcanumToggle,
-                OnOpenCardTable = () => OnOpenCardTable?.Invoke()
+                OnOpenCardTable = () => OnOpenCardTable?.Invoke(),
+                OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root);
         }

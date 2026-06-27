@@ -18,6 +18,7 @@ namespace Kismeta.UI.Controllers
         public System.Action? OnOpenCraft;
         public System.Action? OnOpenWager;
         public System.Action? OnOpenCardTable;
+        public System.Action? OnOpenActiveEffects;
         public System.Action<string>? OnInspectCard;
 
         CommandBridge? _bridge;
@@ -40,7 +41,8 @@ namespace Kismeta.UI.Controllers
             {
                 OnHandToggle = OnHandToggle,
                 OnArcanumToggle = OnArcanumToggle,
-                OnOpenCardTable = () => OnOpenCardTable?.Invoke()
+                OnOpenCardTable = () => OnOpenCardTable?.Invoke(),
+                OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root);
         }

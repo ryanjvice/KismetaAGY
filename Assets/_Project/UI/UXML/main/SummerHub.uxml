@@ -20,7 +20,10 @@
                 <engine:Label name="hint-label" text="Review your board while you wait" style="font-size: 11px; color: rgb(243, 233, 210); margin-top: 8px;" />
             </engine:VisualElement>
 
-            <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+            <engine:VisualElement class="hub-fab-stack">
+                <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+                <engine:Button name="effects-fab" text="Effects" class="effects-fab btn btn--secondary" />
+            </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:Instance template="PlayerInventoryOverlay" />

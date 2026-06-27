@@ -19,6 +19,8 @@ namespace Kismeta.Core.Entities
         public bool IsFired { get; private set; }
         /// <summary>Crucible cards seized via a failed Gambit.</summary>
         public bool IsArrested { get; private set; }
+        /// <summary>Human-readable summary set when a Fate resolves; shown in Active Effects.</summary>
+        public string? FateResolutionNote { get; private set; }
 
         public CardInstance(string instanceId, string definitionId, CardZone initialZone, int ownerId)
         {
@@ -38,5 +40,6 @@ namespace Kismeta.Core.Entities
         public void SetFaceDown(bool faceDown) => IsFaceDown = faceDown;
         public void SetFired(bool fired) => IsFired = fired;
         public void SetArrested(bool arrested) => IsArrested = arrested;
+        public void SetFateResolutionNote(string? note) => FateResolutionNote = note;
     }
 }

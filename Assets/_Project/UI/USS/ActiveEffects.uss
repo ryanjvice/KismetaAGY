@@ -1,0 +1,308 @@
+/* Active Effects panel — quick reference overlay */
+
+.active-effects {
+    width: 100%;
+    max-width: 360px;
+    height: 88%;
+    max-height: 92%;
+    align-self: stretch;
+    flex-grow: 1;
+    flex-shrink: 0;
+    background-color: rgb(18, 16, 22);
+    border-width: 2px;
+    border-color: var(--border-gold);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.active-effects__header {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 14px 14px 10px;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--border-subtle);
+}
+
+.active-effects__sparkle {
+    font-size: 16px;
+    color: var(--gold-bright);
+    margin-right: 8px;
+    margin-top: 2px;
+}
+
+.active-effects__header-text {
+    flex-grow: 1;
+}
+
+.active-effects__title {
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: rgb(243, 233, 210);
+}
+
+.active-effects__subtitle {
+    font-size: 10px;
+    color: rgb(154, 138, 172);
+    margin-top: 2px;
+    white-space: normal;
+}
+
+.active-effects__close {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: rgb(184, 154, 110);
+    font-size: 16px;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 0;
+}
+
+.active-effects__scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    padding: 10px 12px 14px;
+}
+
+.active-effects-featured {
+    background-color: rgb(42, 28, 18);
+    border-width: 1px;
+    border-color: rgb(92, 62, 34);
+    border-radius: var(--radius-md);
+    padding: 10px 11px 11px;
+    margin-bottom: 10px;
+}
+
+.active-effects-featured__row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.active-effects-featured__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    background-color: rgba(201, 150, 47, 0.2);
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+}
+
+.active-effects-featured__icon-glyph {
+    font-size: 14px;
+    color: var(--gold-bright);
+}
+
+.active-effects-featured__pill {
+    background-color: rgb(201, 150, 47);
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin-right: 6px;
+}
+
+.active-effects-featured__pill-label {
+    font-size: 9px;
+    -unity-font-style: bold;
+    color: rgb(28, 18, 8);
+}
+
+.active-effects-featured__expires {
+    font-size: 9px;
+    color: rgb(184, 154, 110);
+    margin-left: auto;
+}
+
+.active-effects-featured__body {
+    font-size: 12px;
+    color: rgb(243, 233, 210);
+    white-space: normal;
+    margin-bottom: 8px;
+}
+
+.active-effects-featured__footer {
+    font-size: 10px;
+    color: rgb(224, 138, 106);
+    white-space: normal;
+}
+
+.active-effects-sections {
+    flex-direction: column;
+}
+
+.active-effects-section {
+    border-top-width: 1px;
+    border-top-color: var(--border-subtle);
+}
+
+.active-effects-section__header {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 2px;
+}
+
+.active-effects-section__icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.04);
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+}
+
+.active-effects-section__icon-glyph {
+    font-size: 11px;
+    color: rgb(184, 154, 110);
+}
+
+.active-effects-section__title {
+    font-size: 12px;
+    color: rgb(243, 233, 210);
+    flex-grow: 1;
+}
+
+.active-effects-section__badge {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    padding: 2px 7px;
+    margin-right: 6px;
+}
+
+.active-effects-section__badge-label {
+    font-size: 9px;
+    color: rgb(184, 154, 110);
+}
+
+.active-effects-section__chevron {
+    font-size: 11px;
+    color: rgb(122, 138, 154);
+    min-width: 14px;
+    -unity-text-align: middle-center;
+}
+
+.active-effects-section__body {
+    display: none;
+    padding: 0 0 8px 2px;
+}
+
+.active-effects-section--expanded .active-effects-section__body {
+    display: flex;
+    flex-direction: column;
+}
+
+.active-effects-section--expanded .active-effects-section__chevron {
+    color: rgb(201, 150, 47);
+}
+
+.active-effects-item {
+    background-color: rgba(16, 10, 18, 0.65);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    padding: 9px 10px;
+    margin-bottom: 6px;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.active-effects-item__icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 9px;
+    flex-shrink: 0;
+}
+
+.active-effects-item__icon--wands { background-color: rgb(58, 28, 18); }
+.active-effects-item__icon--cups { background-color: rgb(34, 24, 48); }
+.active-effects-item__icon--pentacles { background-color: rgb(34, 38, 18); }
+.active-effects-item__icon--swords { background-color: rgb(22, 30, 42); }
+.active-effects-item__icon--major { background-color: rgb(34, 24, 48); }
+.active-effects-item__icon--house { background-color: rgb(28, 24, 40); }
+.active-effects-item__icon--fate { background-color: rgb(58, 22, 28); }
+
+.active-effects-item__icon-glyph {
+    font-size: 13px;
+    color: rgb(243, 233, 210);
+}
+
+.active-effects-item__content {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.active-effects-item__title {
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: rgb(243, 233, 210);
+    white-space: normal;
+}
+
+.active-effects-item__desc {
+    font-size: 10px;
+    color: rgb(154, 138, 172);
+    white-space: normal;
+    margin-top: 3px;
+}
+
+.active-effects-item__badge {
+    align-self: flex-start;
+    border-radius: 999px;
+    padding: 2px 7px;
+    margin-top: 6px;
+}
+
+.active-effects-item__badge-label {
+    font-size: 9px;
+}
+
+.active-effects-badge--permanent { background-color: rgb(42, 28, 58); }
+.active-effects-badge--permanent .active-effects-item__badge-label { color: rgb(196, 168, 224); }
+
+.active-effects-badge--active { background-color: rgb(58, 34, 18); }
+.active-effects-badge--active .active-effects-item__badge-label { color: rgb(224, 138, 106); }
+
+.active-effects-badge--available { background-color: rgb(22, 34, 58); }
+.active-effects-badge--available .active-effects-item__badge-label { color: rgb(158, 201, 224); }
+
+.active-effects-badge--used { background-color: rgba(255, 255, 255, 0.08); }
+.active-effects-badge--used .active-effects-item__badge-label { color: rgb(154, 138, 172); }
+
+.active-effects-badge--resolved { background-color: rgba(255, 255, 255, 0.08); }
+.active-effects-badge--resolved .active-effects-item__badge-label { color: rgb(154, 138, 172); }
+
+.active-effects-badge--aligned { background-color: rgb(58, 34, 18); }
+.active-effects-badge--aligned .active-effects-item__badge-label { color: rgb(224, 138, 106); }
+
+.active-effects-badge--pending { background-color: rgb(42, 34, 18); }
+.active-effects-badge--pending .active-effects-item__badge-label { color: rgb(244, 211, 94); }
+
+.active-effects-badge--arrested { background-color: rgb(42, 18, 18); }
+.active-effects-badge--arrested .active-effects-item__badge-label { color: rgb(208, 144, 128); }
+
+.active-effects-badge--neutral { background-color: rgba(255, 255, 255, 0.08); }
+.active-effects-badge--neutral .active-effects-item__badge-label { color: rgb(184, 154, 110); }
+
+.active-effects-section__footer {
+    font-size: 9px;
+    color: rgb(122, 138, 154);
+    white-space: normal;
+    padding: 0 2px 4px 32px;
+}
+
+.overlay-clone-host--active-effects {
+    height: 88%;
+    max-height: 92%;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.overlay-clone-host--active-effects > .active-effects {
+    height: 100%;
+    max-height: none;
+    min-height: 0;
+}

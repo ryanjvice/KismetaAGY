@@ -523,6 +523,7 @@ namespace Kismeta.UI
             if (summer != null)
             {
                 summer.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                summer.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
@@ -557,6 +558,7 @@ namespace Kismeta.UI
             if (summerHub != null)
             {
                 summerHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                summerHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 summerHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
@@ -564,6 +566,7 @@ namespace Kismeta.UI
             if (autumnHub != null)
             {
                 autumnHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                autumnHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 autumnHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
         }
@@ -599,6 +602,7 @@ namespace Kismeta.UI
             autumn.OnPass = () => _autumnOverlays.ShowEndAutumn();
             autumn.OnOppose = () => _contestOverlays?.ShowOpposition();
             autumn.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+            autumn.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
             autumn.OnInspectCard = id => _endOverlays?.ShowInspect(id);
         }
 
@@ -665,6 +669,7 @@ namespace Kismeta.UI
             if (spring != null)
             {
                 spring.OnOpenCardTable = () => _endOverlays.ShowCardTable();
+                spring.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
                 spring.OnInspectCard = id => _endOverlays.ShowInspect(id);
             }
 
@@ -672,6 +677,7 @@ namespace Kismeta.UI
             if (winter != null)
             {
                 winter.OnOpenCardTable = () => _endOverlays.ShowCardTable();
+                winter.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
                 winter.OnInspectCard = id => _endOverlays.ShowInspect(id);
             }
         }

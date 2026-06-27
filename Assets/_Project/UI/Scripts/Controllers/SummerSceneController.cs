@@ -21,6 +21,7 @@ namespace Kismeta.UI.Controllers
         public Action OnActivate;
         public Action OnPass;
         public Action OnOpenCardTable;
+        public Action OnOpenActiveEffects;
         public Action<string> OnInspectCard;
         public Action<Suit>? OnCauldronClicked;
 
@@ -53,7 +54,8 @@ namespace Kismeta.UI.Controllers
             {
                 OnHandToggle = OnHandToggle,
                 OnArcanumToggle = OnArcanumToggle,
-                OnOpenCardTable = () => OnOpenCardTable?.Invoke()
+                OnOpenCardTable = () => OnOpenCardTable?.Invoke(),
+                OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root);
             CauldronHubBindings.WireCauldrons(

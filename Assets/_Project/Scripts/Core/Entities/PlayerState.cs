@@ -59,6 +59,9 @@ namespace Kismeta.Core.Entities
         /// <summary>Adept cards in Arcanum that are arrested by The Tower and cannot contribute to alignment.</summary>
         public HashSet<string> ArrestedAdepts { get; } = new();
 
+        /// <summary>Adept instance IDs whose once-per-age power was used this cosmic age.</summary>
+        public HashSet<string> UsedAdeptInstanceIdsThisAge { get; } = new();
+
         // Astral Houses placed (ZodiacSign values the player has claimed)
         public HashSet<ZodiacSign> AstralHouses { get; } = new();
         public int UnplacedAstralHouses { get; set; } = 4;

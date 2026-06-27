@@ -57,6 +57,7 @@ namespace Kismeta.UI.Editor
         private const string ChroniclePath = "Assets/_Project/UI/UXML/batch7/Chronicle.uxml";
         private const string CardTablePath = "Assets/_Project/UI/UXML/batch7/CardTable.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
+        private const string ActiveEffectsPath = "Assets/_Project/UI/UXML/batch7/ActiveEffects.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string WaitingHudPath = "Assets/_Project/UI/UXML/shell/WaitingHud.uxml";
         private const string TablerTtfPath = "Assets/_Project/UI/Fonts/tabler-icons.ttf";
@@ -282,6 +283,7 @@ namespace Kismeta.UI.Editor
             var chronicle = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ChroniclePath);
             var cardTable = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardTablePath);
             var cardModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
+            var activeEffects = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ActiveEffectsPath);
 
             var so = new SerializedObject(bootstrap);
             so.FindProperty("_panelSettings").objectReferenceValue = panelSettings;
@@ -328,6 +330,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_chronicle").objectReferenceValue = chronicle;
             so.FindProperty("_cardTable").objectReferenceValue = cardTable;
             so.FindProperty("_cardModals").objectReferenceValue = cardModals;
+            so.FindProperty("_activeEffects").objectReferenceValue = activeEffects;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
 

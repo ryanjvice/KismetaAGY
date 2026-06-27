@@ -24,7 +24,10 @@
                 <engine:Label name="hint-label" text="Your turn" class="text-hint winter-hub__hint" />
             </engine:VisualElement>
 
-            <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+            <engine:VisualElement class="hub-fab-stack">
+                <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+                <engine:Button name="effects-fab" text="Effects" class="effects-fab btn btn--secondary" />
+            </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--multi stage-cta--winter">
