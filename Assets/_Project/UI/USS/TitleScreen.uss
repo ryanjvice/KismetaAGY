@@ -7,10 +7,10 @@
 
 .title-screen__star-field {
     position: absolute;
-    left: -35%;
-    right: -35%;
-    top: -20%;
-    bottom: -20%;
+    left: -30%;
+    right: -30%;
+    top: -30%;
+    bottom: -30%;
     opacity: 0.15;
     background-image: url("project://database/Assets/_Project/Art/GameSplash/starChart.png");
     -unity-background-scale-mode: scale-to-fit;

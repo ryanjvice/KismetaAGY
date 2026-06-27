@@ -16,9 +16,9 @@ namespace Kismeta.UI.Controllers
         public Action OnHowToPlay;
         public Action OnCodex;
 
-        const float StarChartSpeedDegPerSec = 3f;
-        const float ZodiacWheelSpeedDegPerSec = -18f;
-        const float MantleRingSpeedDegPerSec = 12f;
+        const float StarChartSpeedDegPerSec = -3f;
+        const float ZodiacWheelSpeedDegPerSec = 18f;
+        const float MantleRingSpeedDegPerSec = -12f;
 
         VisualElement? _starChart;
         VisualElement? _zodiacWheel;
