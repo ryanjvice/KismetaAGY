@@ -1529,7 +1529,7 @@
 
 .narrative-charge {
     font-size: var(--font-body);
-    color: var(--text);
+    color: var(--ink);
     white-space: normal;
     margin-bottom: 6px;
 }

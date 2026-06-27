@@ -79,6 +79,14 @@
 /* Spring hub — roll scene */
 .spring-hub__stage { align-items: center; }
 
+.spring-hub__narrative .narrative-beat,
+.spring-hub__narrative .narrative-charge,
+.commune-stage .narrative-beat,
+.commune-stage .narrative-charge {
+    -unity-text-align: middle-center;
+    align-self: stretch;
+}
+
 .wheel-stack {
     position: relative;
     width: 180px;
@@ -153,7 +161,7 @@
 }
 .spring-hub__sign-match {
     font-size: 10px;
-    color: rgb(154, 172, 146);
+    color: var(--muted);
     -unity-text-align: middle-center;
     margin-bottom: 4px;
 }
