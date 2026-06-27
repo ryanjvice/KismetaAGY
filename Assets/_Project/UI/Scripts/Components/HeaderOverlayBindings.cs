@@ -4,6 +4,7 @@ using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.Core.Views;
 using Kismeta.UI.Controllers;
+using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
@@ -91,6 +92,37 @@ namespace Kismeta.UI.Components
             var rivalsLbl = root.Q<Label>("summary-rival-count");
             if (rivalsLbl != null)
                 rivalsLbl.text = rivalCount == 1 ? "1 rival" : $"{rivalCount} rivals";
+
+            BindStoneBreadcrumb(root, session, localPlayerId, season);
+        }
+
+        static void BindStoneBreadcrumb(
+            VisualElement root,
+            GameSession session,
+            int localPlayerId,
+            Season season)
+        {
+            var stoneSep = root.Q<Label>("summary-stone-sep");
+            var stoneLbl = root.Q<Label>("summary-stone");
+
+            string? stoneWord = null;
+            if (season == Season.Autumn
+                && localPlayerId >= 0
+                && localPlayerId < session.Players.Count)
+            {
+                stoneWord = NarrativeStepResolver.StoneBreadcrumbLabel(
+                    session.Players[localPlayerId].StoneState);
+            }
+
+            bool show = !string.IsNullOrEmpty(stoneWord);
+            if (stoneSep != null)
+                stoneSep.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
+            if (stoneLbl != null)
+            {
+                stoneLbl.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
+                if (show)
+                    stoneLbl.text = stoneWord!;
+            }
         }
 
         public static void RefreshHeader(

@@ -26,6 +26,16 @@
             <engine:Button name="temper-close" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
         </engine:VisualElement>
 
+        <engine:VisualElement style="padding: 12px 14px 0;">
+            <engine:VisualElement class="narrative-slots">
+                <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+                <engine:Label name="narrative-charge" text="" class="narrative-charge" />
+                <engine:VisualElement name="narrative-stakes-wrap" class="narrative-stakes-wrap tip tip--danger">
+                    <engine:Label name="narrative-stakes" text="" class="narrative-stakes tip__text" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
         <engine:VisualElement style="padding: 16px 14px 4px;">
             <!-- stage track Lead..Altar -->
             <engine:VisualElement class="stage-track">

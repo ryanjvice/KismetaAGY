@@ -3,6 +3,7 @@ using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -35,6 +36,7 @@ namespace Kismeta.UI.Controllers
             RefreshWinTip();
             RefreshTemperBtn();
             UiMotion.PulseTrackNode(Root?.Q(className: "stage-node--now"));
+            NarrativeSlotBindings.BindById(Root, "autumn.temper");
         }
 
         void BuildForgedCards()

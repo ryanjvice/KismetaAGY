@@ -5,6 +5,7 @@ using Kismeta.Core.Players;
 using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -167,6 +168,10 @@ namespace Kismeta.UI.Controllers
             CrucibleForgeBindings.ApplyAllPlayerStones(
                 El("board-stage"), El("stasis-row"), session, _localPlayerId);
             CrucibleForgeBindings.ApplyCauldronReagents(El("cauldron-mini"), player);
+
+            var stepId = NarrativeStepResolver.ResolveAutumnAction(
+                player.StoneState, _autumnOverlays, _contestOverlays);
+            NarrativeSlotBindings.BindById(Root, stepId);
 
             if (Lbl("hint-label") != null)
             {

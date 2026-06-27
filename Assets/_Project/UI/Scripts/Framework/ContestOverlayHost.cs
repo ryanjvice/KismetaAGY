@@ -41,6 +41,12 @@ namespace Kismeta.UI
 
         public int? ActiveAutumnGroupIndex => _active == ActiveContest.Opposition ? 2 : null;
 
+        public string? ActiveNarrativeStepId => _active switch
+        {
+            ActiveContest.Opposition => "autumn.oppose",
+            _ => null
+        };
+
         public Action? OverlayChanged;
 
         void Awake() => EnsureControllers();

@@ -15,8 +15,9 @@
             </engine:VisualElement>
             <engine:Label text="AUTUMN" class="intro-name" />
             <engine:Label text="THE FORGE SEASON · TRANSMUTE &amp; CLASH" class="intro-tagline" />
-            <engine:Label text="The crucible runs hot. Drive your stone toward gold — but a forging stone is a stone exposed."
-                          class="intro-couplet" />
+            <engine:Label name="narrative-beat"
+                          text="The crucible runs hot. Drive your stone toward gold — but a forging stone is a stone exposed."
+                          class="intro-couplet narrative-beat" />
         </engine:VisualElement>
 
         <engine:VisualElement class="ceremony-reveal-body">
@@ -27,7 +28,9 @@
                     </engine:VisualElement>
                     <engine:VisualElement class="intro-info-panel__body">
                         <engine:Label text="the crucible step" class="eyebrow intro-info-panel__eyebrow" />
-                        <engine:Label text="advance your stone — and oppose any that dare to forge" class="intro-info-panel__subtitle" />
+                        <engine:Label name="narrative-charge"
+                                      text="advance your stone — and oppose any that dare to forge"
+                                      class="intro-info-panel__subtitle narrative-charge" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
@@ -68,9 +71,10 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
-                <engine:VisualElement class="panel tip--danger">
-                    <engine:Label text="The moment your stone enters the forge it can be Opposed. Ward it first, and weigh whether to advance now or wait for a safer age."
-                                  class="tip__text intro-tip__text" />
+                <engine:VisualElement name="narrative-stakes-wrap" class="panel tip--danger narrative-stakes-wrap">
+                    <engine:Label name="narrative-stakes"
+                                  text="The moment your stone enters the forge it can be Opposed. Ward it first, and weigh whether to advance now or wait for a safer age."
+                                  class="tip__text intro-tip__text narrative-stakes" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>

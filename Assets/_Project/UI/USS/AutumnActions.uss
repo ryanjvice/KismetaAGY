@@ -182,6 +182,18 @@
     flex-shrink: 0;
 }
 
+.forge-panel__narrative {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 6px;
+    -unity-text-align: middle-center;
+}
+
+.forge-panel__narrative .narrative-beat,
+.forge-panel__narrative .narrative-charge {
+    -unity-text-align: middle-center;
+}
+
 .forge-panel__hint {
     font-size: 11px;
     color: rgb(243, 233, 210);

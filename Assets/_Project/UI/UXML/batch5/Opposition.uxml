@@ -33,6 +33,14 @@
             <engine:VisualElement name="wo-4" class="wizard-dot" />
         </engine:VisualElement>
 
+        <engine:VisualElement class="narrative-slots" style="padding: 4px 14px 0;">
+            <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+            <engine:Label name="narrative-charge" text="" class="narrative-charge" />
+            <engine:VisualElement name="narrative-stakes-wrap" class="narrative-stakes-wrap tip tip--danger">
+                <engine:Label name="narrative-stakes" text="" class="narrative-stakes tip__text" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
         <!-- step 0: target rival -->
         <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
             <engine:Label text="choose a rival forging stone" class="eyebrow" />

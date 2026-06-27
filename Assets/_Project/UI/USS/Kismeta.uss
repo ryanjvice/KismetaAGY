@@ -495,6 +495,13 @@
     flex-shrink: 0;
 }
 
+.header-summary__stone {
+    flex-shrink: 0;
+    font-size: var(--font-label);
+    color: var(--muted);
+    -unity-font-style: italic;
+}
+
 .header-toggle-btn {
     flex-shrink: 0;
     min-width: 36px;
@@ -1503,6 +1510,42 @@
     flex-grow: 1;
     min-width: 0;
     white-space: normal;
+}
+
+/* ---------- Narrative slots (beat / charge / stakes) ---------- */
+.narrative-slots {
+    flex-direction: column;
+    flex-shrink: 0;
+    margin-bottom: var(--space-sm);
+}
+
+.narrative-beat {
+    font-size: var(--font-label);
+    -unity-font-style: italic;
+    color: var(--muted);
+    white-space: normal;
+    margin-bottom: 4px;
+}
+
+.narrative-charge {
+    font-size: var(--font-body);
+    color: var(--text);
+    white-space: normal;
+    margin-bottom: 6px;
+}
+
+.narrative-stakes-wrap {
+    margin: 0;
+    padding: 8px 10px;
+}
+
+.narrative-stakes-wrap.tip--danger {
+    background-color: var(--caution-bg);
+    border-color: var(--caution-border);
+}
+
+.narrative-stakes {
+    color: rgb(212, 168, 96);
 }
 
 .eyebrow {

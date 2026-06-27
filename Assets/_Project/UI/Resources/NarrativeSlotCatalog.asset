@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0bf90f96773687418d2d0ad8d599d18, type: 3}
+  m_Name: NarrativeSlotCatalog
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Narrative.NarrativeSlotCatalog
+  _entries:
+  - _id: autumn.intro
+    _season: 2
+    _tier: 0
+    _order: 0
+    _beat: "The crucible runs hot. Drive your stone toward gold \u2014 but a forging
+      stone is a stone exposed."
+    _charge: "Advance your stone through the forge \u2014 and oppose any rival that
+      dares to forge."
+    _stakes: The moment your stone enters the forge it can be Opposed. Weigh advancing
+      now against waiting for a safer age.
+    _verbs:
+    - Begin Autumn
+    _breadcrumb: Forging
+  - _id: autumn.survey
+    _season: 2
+    _tier: 1
+    _order: 1
+    _beat: Read the forge before you move.
+    _charge: "Note every stone's position \u2014 Mantle (safe), Forge (vulnerable),
+      Stasis (frozen), or the Altar."
+    _stakes: 
+    _verbs:
+    - Survey
+    _breadcrumb: Survey
+  - _id: autumn.oppose
+    _season: 2
+    _tier: 1
+    _order: 2
+    _beat: Align against a rival and break their forging.
+    _charge: Pay the defender's ward fee, roll, and total your Aspect alignment.
+      Win, and their stone falls to Stasis.
+    _stakes: "Each defense the rival survives grants them a stacking Besieged Bonus
+      \u2014 a dogpile on the leader can backfire."
+    _verbs:
+    - Oppose
+    _breadcrumb: Opposing
+  - _id: autumn.fire
+    _season: 2
+    _tier: 1
+    _order: 3
+    _beat: Commit your stone to the flames.
+    _charge: "Satisfy an Active Crucible card's formula \u2014 alignment + reagents
+      \u2014 and advance your stone into the forge."
+    _stakes: A stone Fired this Autumn is safe this round, but Forging next round
+      leaves it open to Opposition. Ward as you advance.
+    _verbs:
+    - Fire
+    _breadcrumb: Forging
+  - _id: autumn.temper
+    _season: 2
+    _tier: 1
+    _order: 4
+    _beat: A full round in the fire, and the stage is sealed forever.
+    _charge: Advance a stone that has forged a full round to the next Mantle space
+      and discard its Crucible card.
+    _stakes: "A stone that returned from Stasis this round cannot Temper yet \u2014
+      it must forge a full round first."
+    _verbs:
+    - Temper
+    _breadcrumb: Tempering
+  - _id: autumn.leavestasis
+    _season: 2
+    _tier: 1
+    _order: 5
+    _beat: Rekindle a stalled stone.
+    _charge: Pay 2 Salt to return your stone to its old forge position and resume
+      forging.
+    _stakes: If your old position is taken, you must wait a round or win a Stasis
+      Opposition to swap into it.
+    _verbs:
+    - Leave Stasis
+    _breadcrumb: In Stasis

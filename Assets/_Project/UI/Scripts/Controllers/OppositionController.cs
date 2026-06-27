@@ -4,6 +4,7 @@ using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -50,6 +51,7 @@ namespace Kismeta.UI.Controllers
             SetWizard("wo", 4, 1);
             El("stasis-result")!.style.display = DisplayStyle.None;
             RefreshTargetStep();
+            NarrativeSlotBindings.BindById(Root, "autumn.oppose");
         }
 
         void RefreshTargetStep()

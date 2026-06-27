@@ -39,6 +39,14 @@ namespace Kismeta.UI
             _ => null
         };
 
+        public string? ActiveNarrativeStepId => _active switch
+        {
+            ActiveOverlay.Fire => "autumn.fire",
+            ActiveOverlay.Temper => "autumn.temper",
+            ActiveOverlay.LeaveStasis => "autumn.leavestasis",
+            _ => null
+        };
+
         public Action? OverlayChanged;
 
         void Awake() => EnsureControllers();
