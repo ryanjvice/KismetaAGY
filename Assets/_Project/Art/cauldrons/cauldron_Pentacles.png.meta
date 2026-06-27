@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 70a2c9c726bc4734f83658baf74aa334
+guid: 690a3f7e3f4f8464c8c41f23e1bae3f0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1759966174324012599
-    second: cauldron_yellow_0
+      213: 2557807417015286818
+    second: cauldron_Pentacles_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cauldron_yellow_0
+      name: cauldron_Pentacles_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 736394d29e7ac6810800000000000000
-      internalID: 1759966174324012599
+      spriteID: 22c3e0f3b482f7320800000000000000
+      internalID: 2557807417015286818
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      cauldron_yellow_0: 1759966174324012599
+      cauldron_Pentacles_0: 2557807417015286818
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
