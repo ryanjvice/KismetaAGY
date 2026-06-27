@@ -72,8 +72,13 @@ namespace Kismeta.UI.Components
             var body = new VisualElement();
             body.AddToClassList("active-effects-section__body");
 
-            foreach (var item in section.Items)
-                body.Add(BuildItem(item));
+            if (section.SectionId == "spread-cards")
+                PopulateSpreadBody(body, section.Items);
+            else
+            {
+                foreach (var item in section.Items)
+                    body.Add(BuildItem(item));
+            }
 
             container.Add(header);
             container.Add(body);
@@ -126,6 +131,35 @@ namespace Kismeta.UI.Components
             row.Add(icon);
             row.Add(content);
             return row;
+        }
+
+        static void PopulateSpreadBody(VisualElement body, IReadOnlyList<ActiveEffectItem> items)
+        {
+            ActiveEffectPolarity? currentGroup = null;
+            foreach (var item in items)
+            {
+                if (currentGroup != item.Polarity)
+                {
+                    currentGroup = item.Polarity;
+                    body.Add(BuildSpreadGroupEyebrow(currentGroup.Value));
+                }
+
+                body.Add(BuildItem(item));
+            }
+        }
+
+        static VisualElement BuildSpreadGroupEyebrow(ActiveEffectPolarity polarity)
+        {
+            string text = polarity switch
+            {
+                ActiveEffectPolarity.Buff => "buffs",
+                ActiveEffectPolarity.Debuff => "debuffs",
+                _ => "neutral"
+            };
+
+            var eyebrow = new Label(text);
+            eyebrow.AddToClassList("active-effects-spread-group__eyebrow");
+            return eyebrow;
         }
 
         static void ToggleSection(VisualElement section, string sectionId)
@@ -207,6 +241,8 @@ namespace Kismeta.UI.Components
             ActiveEffectBadgeTone.Aligned => "active-effects-badge--aligned",
             ActiveEffectBadgeTone.Pending => "active-effects-badge--pending",
             ActiveEffectBadgeTone.Arrested => "active-effects-badge--arrested",
+            ActiveEffectBadgeTone.Buff => "active-effects-badge--buff",
+            ActiveEffectBadgeTone.Debuff => "active-effects-badge--debuff",
             _ => "active-effects-badge--neutral"
         };
     }

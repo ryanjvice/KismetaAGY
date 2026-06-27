@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
@@ -42,6 +43,15 @@ namespace Kismeta.Core.Tests
                 validator: new ActionValidator());
             return new GameSession("test", GameMode.Quickplay, players, rules, CrucibleBuildMode.Curated);
         }
+
+        static void AddSpreadCard(GameSession session, int playerId, string instanceId, string definitionId)
+        {
+            var inst = new CardInstance(instanceId, definitionId, CardZone.Spread, playerId);
+            session.RegisterCard(inst);
+            session.Players[playerId].Spread.Add(instanceId);
+        }
+
+        static ActiveEffectSection SpreadSection(ActiveEffectsSnapshot snapshot) => snapshot.Sections[3];
 
         [Test]
         public void Build_CosmicAgeFeatured_IncludesSubtitleAndFooter()
@@ -126,21 +136,141 @@ namespace Kismeta.Core.Tests
             var session = BuildSession(db, codexDb);
             session.Board.CosmicAgeSign = ZodiacSign.Scorpio;
 
-            var aligned = new CardInstance("spread-mars", "minor.cups.seven.1", CardZone.Spread, 0);
-            var inactive = new CardInstance("spread-idle", "minor.pentacles.two.1", CardZone.Spread, 0);
-            session.RegisterCard(aligned);
-            session.RegisterCard(inactive);
-            session.Players[0].Spread.Add(aligned.InstanceId);
-            session.Players[0].Spread.Add(inactive.InstanceId);
+            AddSpreadCard(session, 0, "spread-mars", "minor.cups.seven.1");
+            AddSpreadCard(session, 0, "spread-idle", "minor.pentacles.two.1");
 
-            var snapshot = ActiveEffectsService.Build(session, 0);
-            var spread = snapshot.Sections[3];
+            var spread = SpreadSection(ActiveEffectsService.Build(session, 0));
 
             Assert.AreEqual("1 active", spread.BadgeText);
             Assert.AreEqual(1, spread.Items.Count);
-            Assert.AreEqual("aligned this age", spread.Items[0].Badge.Text);
+            StringAssert.Contains("forge · active", spread.Items[0].Badge.Text);
+            Assert.AreEqual(ActiveEffectPolarity.Buff, spread.Items[0].Polarity);
             Assert.IsNotNull(spread.FooterNote);
             StringAssert.Contains("1 other spread card", spread.FooterNote);
+        }
+
+        [Test]
+        public void Build_SpreadCards_Reversed_IsDebuff()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Cancer;
+
+            AddSpreadCard(session, 0, "spread-reversed", "minor.pentacles.four.1");
+
+            var item = SpreadSection(ActiveEffectsService.Build(session, 0)).Items[0];
+
+            StringAssert.Contains("reversed", item.Badge.Text);
+            Assert.AreEqual(ActiveEffectPolarity.Debuff, item.Polarity);
+            StringAssert.Contains("offer +2 Resources", item.Description);
+        }
+
+        [Test]
+        public void Build_SpreadCards_PassiveCosmicMatch_IsBuff()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Cancer;
+
+            AddSpreadCard(session, 0, "spread-passive", "minor.cups.ace.2");
+
+            var item = SpreadSection(ActiveEffectsService.Build(session, 0)).Items[0];
+
+            Assert.AreEqual(ActiveEffectPolarity.Buff, item.Polarity);
+            StringAssert.Contains("Bonus Harvest Cards", item.Description);
+            StringAssert.Contains("passive · active", item.Badge.Text);
+        }
+
+        [Test]
+        public void Build_SpreadCards_PassiveCosmicMismatch_IsInactive()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+
+            AddSpreadCard(session, 0, "spread-passive", "minor.cups.ace.2");
+
+            var spread = SpreadSection(ActiveEffectsService.Build(session, 0));
+
+            Assert.AreEqual("0 active", spread.BadgeText);
+            Assert.AreEqual(0, spread.Items.Count);
+        }
+
+        [Test]
+        public void Build_SpreadCards_Gambit_IsBuff()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+
+            AddSpreadCard(session, 0, "spread-gambit", "minor.wands.princess.1");
+
+            var item = SpreadSection(ActiveEffectsService.Build(session, 0)).Items[0];
+
+            Assert.AreEqual(ActiveEffectPolarity.Buff, item.Polarity);
+            StringAssert.Contains("gambit · active", item.Badge.Text);
+        }
+
+        [Test]
+        public void Build_SpreadCards_WildcardLink_IsNeutral()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+
+            AddSpreadCard(session, 0, "spread-wildcard", "minor.pentacles.princess.2");
+
+            var item = SpreadSection(ActiveEffectsService.Build(session, 0)).Items[0];
+
+            Assert.AreEqual(ActiveEffectPolarity.Neutral, item.Polarity);
+            StringAssert.Contains("wildcard link", item.Badge.Text);
+        }
+
+        [Test]
+        public void Build_SpreadCards_ActionCard_IsNeutral()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+
+            AddSpreadCard(session, 0, "spread-action", "minor.cups.three.1");
+
+            var item = SpreadSection(ActiveEffectsService.Build(session, 0)).Items[0];
+
+            Assert.AreEqual(ActiveEffectPolarity.Neutral, item.Polarity);
+            Assert.AreEqual("action · available", item.Badge.Text);
+        }
+
+        [Test]
+        public void Build_SpreadCards_SortsBuffsBeforeDebuffs()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Cancer;
+
+            AddSpreadCard(session, 0, "spread-reversed", "minor.pentacles.four.1");
+            AddSpreadCard(session, 0, "spread-gambit", "minor.wands.princess.1");
+            AddSpreadCard(session, 0, "spread-wildcard", "minor.pentacles.princess.2");
+
+            var items = SpreadSection(ActiveEffectsService.Build(session, 0)).Items;
+
+            Assert.AreEqual(3, items.Count);
+            Assert.AreEqual(ActiveEffectPolarity.Buff, items[0].Polarity);
+            Assert.AreEqual(ActiveEffectPolarity.Neutral, items[1].Polarity);
+            Assert.AreEqual(ActiveEffectPolarity.Debuff, items[2].Polarity);
+            Assert.IsTrue(items.Select(i => i.Polarity).SequenceEqual(new[]
+            {
+                ActiveEffectPolarity.Buff,
+                ActiveEffectPolarity.Neutral,
+                ActiveEffectPolarity.Debuff
+            }));
         }
     }
 }

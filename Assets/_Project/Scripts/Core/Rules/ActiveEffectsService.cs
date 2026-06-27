@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Kismeta.Core.Domain;
@@ -215,26 +216,12 @@ namespace Kismeta.Core.Rules
                 int alignPts = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);
                 crucibleMatches.TryGetValue(id, out var slotLabel);
 
-                bool isActive = alignPts > 0 || slotLabel != null;
-                if (!isActive)
+                var state = SpreadCardEffectEvaluator.Evaluate(player, def, cosmic, alignPts, slotLabel);
+                if (state.IsInactive)
                 {
                     inactiveCount++;
                     continue;
                 }
-
-                string alignLabel = DescribeSpreadAlignment(alignPts, def, cosmic);
-                string description = "In spread";
-                if (alignPts > 0)
-                    description += $" · {alignLabel} this age.";
-                else
-                    description += ".";
-
-                if (slotLabel != null)
-                    description += $" Contributes to {slotLabel}.";
-
-                ActiveEffectBadge badge = alignPts > 0
-                    ? new ActiveEffectBadge("aligned this age", ActiveEffectBadgeTone.Aligned)
-                    : new ActiveEffectBadge("in activation set", ActiveEffectBadgeTone.Neutral);
 
                 string title = def.IsMinorArcana
                     ? $"{def.Rank} of {def.Suit}"
@@ -243,10 +230,13 @@ namespace Kismeta.Core.Rules
                 activeItems.Add(new ActiveEffectItem(
                     id,
                     title,
-                    description,
-                    badge,
-                    iconKey: SuitIconKey(def.Suit)));
+                    state.Description,
+                    state.Badge,
+                    iconKey: SuitIconKey(def.Suit),
+                    polarity: state.Polarity));
             }
+
+            activeItems.Sort(CompareSpreadItems);
 
             string? footer = inactiveCount > 0
                 ? $"{inactiveCount} other spread card{(inactiveCount == 1 ? "" : "s")} have no active effect this age."
@@ -259,6 +249,22 @@ namespace Kismeta.Core.Rules
                 activeItems,
                 footer);
         }
+
+        static int CompareSpreadItems(ActiveEffectItem a, ActiveEffectItem b)
+        {
+            int polarity = PolaritySortKey(a.Polarity).CompareTo(PolaritySortKey(b.Polarity));
+            if (polarity != 0)
+                return polarity;
+
+            return string.Compare(a.Title, b.Title, StringComparison.OrdinalIgnoreCase);
+        }
+
+        static int PolaritySortKey(ActiveEffectPolarity polarity) => polarity switch
+        {
+            ActiveEffectPolarity.Buff => 0,
+            ActiveEffectPolarity.Neutral => 1,
+            _ => 2
+        };
 
         static Dictionary<string, string> BuildCrucibleContributions(
             GameSession session,
@@ -293,17 +299,6 @@ namespace Kismeta.Core.Rules
             }
 
             return result;
-        }
-
-        static string DescribeSpreadAlignment(int points, CardDefinition def, ZodiacSign cosmic)
-        {
-            if (points >= 3)
-                return $"{cosmic} alignment +3";
-            if (points >= 2)
-                return $"{def.Planet} alignment +2";
-            if (points >= 1)
-                return $"{Correspondence.ElementFor(def.Suit)} alignment +1";
-            return "no alignment";
         }
 
         static string ReagentLabel(CodexFormulaDefinition formula)

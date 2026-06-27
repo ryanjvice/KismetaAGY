@@ -2,6 +2,13 @@ using System.Collections.Generic;
 
 namespace Kismeta.Core.Rules
 {
+    public enum ActiveEffectPolarity
+    {
+        Buff,
+        Neutral,
+        Debuff
+    }
+
     public enum ActiveEffectBadgeTone
     {
         Neutral,
@@ -12,7 +19,9 @@ namespace Kismeta.Core.Rules
         Resolved,
         Aligned,
         Pending,
-        Arrested
+        Arrested,
+        Buff,
+        Debuff
     }
 
     public readonly struct ActiveEffectBadge
@@ -35,6 +44,7 @@ namespace Kismeta.Core.Rules
         public readonly string? Footer;
         public readonly ActiveEffectBadge Badge;
         public readonly string? IconKey;
+        public readonly ActiveEffectPolarity Polarity;
 
         public ActiveEffectItem(
             string id,
@@ -42,7 +52,8 @@ namespace Kismeta.Core.Rules
             string description,
             ActiveEffectBadge badge,
             string? iconKey = null,
-            string? footer = null)
+            string? footer = null,
+            ActiveEffectPolarity polarity = ActiveEffectPolarity.Neutral)
         {
             Id = id;
             Title = title;
@@ -50,6 +61,7 @@ namespace Kismeta.Core.Rules
             Footer = footer;
             Badge = badge;
             IconKey = iconKey;
+            Polarity = polarity;
         }
     }
 
