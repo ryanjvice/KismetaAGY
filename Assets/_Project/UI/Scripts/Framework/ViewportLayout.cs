@@ -121,6 +121,8 @@ namespace Kismeta.UI
 
             overlay.Clear();
             overlay.RemoveFromClassList("overlay-layer--sheet");
+            overlay.RemoveFromClassList("overlay-layer--sheet-center");
+            overlay.RemoveFromClassList("overlay-layer--sheet-bottom");
             overlay.style.display = DisplayStyle.Flex;
             InstantiateOverlay(overlay, asset, _tokenStylesheet);
             SetOverlayBackdropBlur(true);

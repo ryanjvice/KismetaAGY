@@ -180,7 +180,7 @@ namespace Kismeta.UI
         void ShowSheet(bool craftBuild)
         {
             if (_layout == null || _summerSheets == null || _sheets == null) return;
-            _layout.ShowBottomSheet(_summerSheets, ViewportLayout.SheetVerticalAlign.Bottom);
+            _layout.ShowModal(_summerSheets);
             var root = _layout.OverlayContentRoot;
             if (root == null) return;
 
