@@ -298,6 +298,29 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
+        public void HarvestBreakdown_Omits_NoMatch_Sources_Includes_Base()
+        {
+            var db      = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Scorpio;
+            session.Players[0].CurrentSign = ZodiacSign.Taurus;
+
+            var breakdown = HarvestBreakdownService.Build(session, 0);
+
+            var hasBase = false;
+            var hasZodiacDie = false;
+            foreach (var row in breakdown.Sources)
+            {
+                if (row.Title == "Base harvest") hasBase = true;
+                if (row.Title.StartsWith("Zodiac die:")) hasZodiacDie = true;
+            }
+
+            Assert.IsTrue(hasBase, "Base harvest row should always appear.");
+            Assert.IsFalse(hasZodiacDie, "Non-matching zodiac die should not appear in sources.");
+        }
+
+        [Test]
         public void Commune_Moves_Cards_To_Correct_Zones()
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();

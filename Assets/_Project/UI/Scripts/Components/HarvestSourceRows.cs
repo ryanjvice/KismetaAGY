@@ -13,7 +13,11 @@ namespace Kismeta.UI.Components
             listHost.Clear();
 
             foreach (var row in rows)
+            {
+                if (row.ShowDash || (row.Points <= 0 && row.Title != "Base harvest"))
+                    continue;
                 listHost.Add(BuildRow(row));
+            }
         }
 
         static VisualElement BuildRow(HarvestSourceRow row)

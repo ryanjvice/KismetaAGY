@@ -6,13 +6,11 @@
 
     <engine:VisualElement name="game-header-overlay" class="game-header-overlay game-header-overlay--collapsed">
         <engine:VisualElement class="header-summary-row">
+            <engine:Label name="summary-age-glyph" text="?" class="header-summary__glyph font-zodiac" />
+            <engine:Label text="·" class="header-summary__sep" />
             <engine:Label name="summary-season" text="Summer" class="header-summary__season statusbar__title" />
             <engine:Label text="·" class="header-summary__sep" />
             <engine:Label name="summary-round" text="Round 1" class="header-summary__round statusbar__sub" />
-            <engine:Label text="·" class="header-summary__sep" />
-            <engine:Label name="summary-age-glyph" text="?" class="header-summary__glyph font-zodiac" />
-            <engine:Label text="·" class="header-summary__sep" />
-            <engine:Label name="summary-rival-count" text="0 rivals" class="header-summary__rivals" />
             <engine:Button name="header-toggle-btn" text="⌄" class="header-toggle-btn btn btn--secondary" />
         </engine:VisualElement>
 
@@ -38,7 +36,10 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement name="rivals" class="rivals" />
+            <engine:VisualElement class="rivals-section">
+                <engine:Label name="summary-rival-count" text="0 rivals" class="rivals-section__heading" />
+                <engine:VisualElement name="rivals" class="rivals" />
+            </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

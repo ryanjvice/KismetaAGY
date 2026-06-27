@@ -13,6 +13,22 @@ namespace Kismeta.UI.Components
         const string ChipMatchPlanetClass = "harvest-compare__chip--match-planet";
         const string ChipMatchElementClass = "harvest-compare__chip--match-element";
 
+        static readonly string[] PanelElementClasses =
+        {
+            "harvest-compare__panel--fire",
+            "harvest-compare__panel--water",
+            "harvest-compare__panel--earth",
+            "harvest-compare__panel--air"
+        };
+
+        static readonly string[] ChipElementClasses =
+        {
+            "harvest-compare__chip--fire",
+            "harvest-compare__chip--water",
+            "harvest-compare__chip--earth",
+            "harvest-compare__chip--air"
+        };
+
         public static void Bind(VisualElement? root, GameSession session, int playerId)
         {
             if (root == null || playerId < 0 || playerId >= session.Players.Count)
@@ -36,6 +52,11 @@ namespace Kismeta.UI.Components
             SetAspectText(root.Q<Label>("compare-age-element"), cosmicElement);
             SetAspectText(root.Q<Label>("compare-player-planet"), playerPlanet);
             SetAspectText(root.Q<Label>("compare-player-element"), playerElement);
+
+            SetPanelElement(root.Q("compare-age-panel"), cosmicElement);
+            SetPanelElement(root.Q("compare-player-panel"), playerElement);
+            SetChipElement(root.Q<Label>("compare-age-element"), cosmicElement);
+            SetChipElement(root.Q<Label>("compare-player-element"), playerElement);
 
             bool signMatch = cosmic != ZodiacSign.None && playerSign != ZodiacSign.None && cosmic == playerSign;
             bool planetMatch = cosmicPlanet != Planet.None && playerPlanet != Planet.None && cosmicPlanet == playerPlanet;
@@ -112,6 +133,39 @@ namespace Kismeta.UI.Components
             else if (!isPlanet && elementMatch)
                 lbl.AddToClassList(ChipMatchElementClass);
         }
+
+        static void SetPanelElement(VisualElement? panel, Element element)
+        {
+            if (panel == null) return;
+
+            foreach (var cls in PanelElementClasses)
+                panel.RemoveFromClassList(cls);
+
+            var clsToAdd = ElementClassFor(element, PanelElementClasses);
+            if (clsToAdd != null)
+                panel.AddToClassList(clsToAdd);
+        }
+
+        static void SetChipElement(Label? lbl, Element element)
+        {
+            if (lbl == null) return;
+
+            foreach (var cls in ChipElementClasses)
+                lbl.RemoveFromClassList(cls);
+
+            var clsToAdd = ElementClassFor(element, ChipElementClasses);
+            if (clsToAdd != null)
+                lbl.AddToClassList(clsToAdd);
+        }
+
+        static string? ElementClassFor(Element element, string[] classes) => element switch
+        {
+            Element.Fire => classes[0],
+            Element.Water => classes[1],
+            Element.Earth => classes[2],
+            Element.Air => classes[3],
+            _ => null
+        };
 
         static string DescribeAlignment(ZodiacSign playerSign, ZodiacSign cosmicSign)
         {

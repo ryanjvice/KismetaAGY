@@ -247,10 +247,20 @@
 }
 
 /* Spring harvest compare row */
+.harvest-compare__heading {
+    flex-shrink: 0;
+    -unity-text-align: middle-left;
+    color: var(--arcanum-text);
+    font-size: var(--font-title);
+    margin-top: 4px;
+    margin-bottom: 8px;
+    margin-left: 14px;
+    margin-right: 14px;
+}
 .harvest-compare {
     flex-direction: row;
     flex-shrink: 0;
-    margin: 10px 14px 8px;
+    margin: 0 14px 8px;
 }
 .harvest-compare__panel {
     flex-grow: 1;
@@ -265,6 +275,22 @@
     margin-right: 8px;
 }
 .harvest-compare__panel:last-child { margin-right: 0; }
+.harvest-compare__panel--fire {
+    border-color: rgb(180, 72, 56);
+    background-color: rgba(52, 18, 16, 0.95);
+}
+.harvest-compare__panel--water {
+    border-color: rgb(111, 168, 212);
+    background-color: rgba(22, 32, 58, 0.95);
+}
+.harvest-compare__panel--earth {
+    border-color: rgb(59, 140, 96);
+    background-color: rgba(19, 36, 26, 0.95);
+}
+.harvest-compare__panel--air {
+    border-color: rgb(180, 150, 80);
+    background-color: rgba(42, 35, 14, 0.95);
+}
 .harvest-compare__eyebrow {
     font-size: 8px;
     color: rgb(122, 154, 130);
@@ -321,10 +347,25 @@
     border-color: var(--border-gold);
     color: rgb(224, 128, 96);
 }
-.harvest-compare__chip--element {
+.harvest-compare__chip--fire {
+    background-color: rgba(52, 28, 16, 0.95);
+    border-color: rgb(224, 128, 96);
+    color: rgb(240, 153, 123);
+}
+.harvest-compare__chip--water {
     background-color: rgba(22, 32, 58, 0.85);
     border-color: rgb(111, 168, 212);
+    color: rgb(111, 168, 212);
+}
+.harvest-compare__chip--earth {
+    background-color: rgba(19, 36, 26, 0.95);
+    border-color: rgb(59, 140, 96);
     color: rgb(127, 196, 168);
+}
+.harvest-compare__chip--air {
+    background-color: rgba(42, 35, 14, 0.95);
+    border-color: rgb(180, 150, 80);
+    color: rgb(224, 192, 96);
 }
 .harvest-compare__chip--match-sign {
     border-color: rgb(244, 211, 94);
@@ -336,10 +377,25 @@
     background-color: rgba(52, 28, 16, 0.95);
     color: rgb(240, 153, 123);
 }
-.harvest-compare__chip--match-element {
-    border-color: rgb(127, 196, 168);
-    background-color: rgba(22, 38, 31, 0.95);
-    color: rgb(127, 196, 168);
+.harvest-compare__chip--fire.harvest-compare__chip--match-element {
+    border-color: rgb(255, 180, 140);
+    background-color: rgba(72, 28, 20, 0.98);
+    color: rgb(255, 200, 160);
+}
+.harvest-compare__chip--water.harvest-compare__chip--match-element {
+    border-color: rgb(140, 190, 240);
+    background-color: rgba(28, 42, 72, 0.98);
+    color: rgb(160, 200, 255);
+}
+.harvest-compare__chip--earth.harvest-compare__chip--match-element {
+    border-color: rgb(100, 200, 150);
+    background-color: rgba(24, 48, 34, 0.98);
+    color: rgb(160, 230, 190);
+}
+.harvest-compare__chip--air.harvest-compare__chip--match-element {
+    border-color: rgb(220, 190, 110);
+    background-color: rgba(58, 48, 18, 0.98);
+    color: rgb(255, 220, 130);
 }
 .harvest-compare__alignment {
     font-size: 9px;
@@ -349,50 +405,76 @@
 }
 
 /* Spring harvest tally screen */
+.harvest-sources {
+    flex-shrink: 0;
+    flex-direction: column;
+    margin-left: 14px;
+    margin-right: 14px;
+    margin-bottom: 0;
+}
+.harvest-sources__title {
+    flex-shrink: 0;
+    -unity-text-align: middle-left;
+    color: var(--arcanum-text);
+    font-size: var(--font-title);
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+.harvest-source-scroll {
+    flex-shrink: 0;
+    max-height: 220px;
+}
+.harvest-source-list { flex-shrink: 0; }
+.harvest-footer {
+    flex-shrink: 0;
+    flex-direction: column;
+    margin-top: 8px;
+}
+.harvest-footnote {
+    flex-shrink: 0;
+    font-size: 9px;
+    color: rgb(122, 154, 130);
+    -unity-text-align: middle-center;
+    padding: 0 14px 6px;
+}
 .harvest-hero {
+    flex-shrink: 0;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 4px 14px 12px;
-    padding: 16px 12px;
+    margin: 0 14px 6px;
+    padding: 14px 12px;
     border-radius: var(--radius-lg);
     border-width: 1px;
     border-color: rgb(43, 106, 74);
     background-color: rgb(22, 38, 31);
 }
-.harvest-hero__total {
-    font-size: 36px;
-    -unity-font-style: bold;
-    color: rgb(127, 196, 168);
+.harvest-footer .actionbar {
+    padding-top: 0;
+    padding-bottom: var(--space-sm);
 }
-.harvest-hero__label {
-    font-size: 11px;
-    color: rgb(154, 172, 146);
+.viewport--compact .harvest-source-scroll {
+    max-height: 180px;
+}
+.viewport--compact .harvest-footer {
     margin-top: 4px;
 }
-.harvest-sources-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding-left: 14px;
-    padding-right: 14px;
-    margin-bottom: 6px;
+.viewport--compact .harvest-hero {
+    margin-bottom: 4px;
+    padding: 12px 10px;
 }
-.harvest-sources-header__title {
-    font-size: 9px;
-    color: rgb(122, 154, 130);
-    letter-spacing: 0.5px;
-}
-.harvest-sources-header__summary {
-    font-size: 9px;
+.harvest-hero__breakdown {
+    font-size: 11px;
     color: rgb(184, 154, 110);
+    -unity-text-align: middle-center;
 }
-.harvest-source-scroll {
-    flex-grow: 1;
-    max-height: 240px;
-    margin-left: 14px;
-    margin-right: 14px;
+.harvest-hero__total {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: rgb(127, 196, 168);
+    -unity-text-align: middle-center;
+    margin-top: 6px;
 }
-.harvest-source-list { flex-grow: 1; }
 .harvest-source-row {
     flex-direction: row;
     align-items: center;
@@ -425,12 +507,6 @@
 .tally__pts--sign { color: rgb(244, 211, 94); }
 .tally__pts--planet { color: rgb(224, 128, 96); }
 .tally__pts--element { color: rgb(127, 196, 168); }
-.harvest-footnote {
-    font-size: 9px;
-    color: rgb(122, 154, 130);
-    -unity-text-align: middle-center;
-    padding: 6px 14px 8px;
-}
 
 /* ---------- Winter wager sign grid (also used by Spring if needed) ---------- */
 .sign-cell {

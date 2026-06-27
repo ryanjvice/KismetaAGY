@@ -46,14 +46,14 @@ namespace Kismeta.UI.Controllers
 
             var breakdown = HarvestBreakdownService.Build(session, _playerId);
 
-            if (Lbl("harvest-total") != null)
-                Lbl("harvest-total")!.text = breakdown.Total.ToString();
-
             if (Lbl("harvest-summary") != null)
             {
                 Lbl("harvest-summary")!.text =
                     $"BASE {breakdown.Base} + BONUS {breakdown.BonusSubtotal} + BOON {breakdown.Boon}";
             }
+
+            if (Lbl("harvest-total-line") != null)
+                Lbl("harvest-total-line")!.text = $"{breakdown.Total} cards this harvest";
 
             HarvestSourceRows.Populate(El("source-list"), breakdown.Sources);
 

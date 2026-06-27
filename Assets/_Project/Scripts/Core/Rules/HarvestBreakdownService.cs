@@ -60,11 +60,23 @@ namespace Kismeta.Core.Rules
         {
             var db = session.Rules?.CardDatabase;
             if (db == null)
-                return new HarvestBreakdown(BaseDraw, 0, 0, BaseDraw, System.Array.Empty<HarvestSourceRow>());
+            {
+                return new HarvestBreakdown(BaseDraw, 0, 0, BaseDraw, new[]
+                {
+                    new HarvestSourceRow("Base harvest", "starting draw", BaseDraw, HarvestAspectTier.None)
+                });
+            }
 
             var player = session.Players[playerId];
             var cosmic = session.Board.CosmicAgeSign;
-            var rows = new List<HarvestSourceRow>();
+            var rows = new List<HarvestSourceRow>
+            {
+                new HarvestSourceRow(
+                    "Base harvest",
+                    "starting draw",
+                    BaseDraw,
+                    HarvestAspectTier.None)
+            };
 
             int boardCosmic = session.Board.CosmicEffect.HarvestBaseBonus;
             if (boardCosmic != 0)
@@ -87,20 +99,24 @@ namespace Kismeta.Core.Rules
             }
 
             int signPts = AlignmentBonus(player.CurrentSign, cosmic);
-            rows.Add(BuildSignRow(
+            var signRow = BuildSignRow(
                 $"Zodiac die: {player.CurrentSign}",
                 player.CurrentSign,
                 cosmic,
-                signPts));
+                signPts);
+            if (signRow != null)
+                rows.Add(signRow.Value);
 
             foreach (var houseSign in player.AstralHouses)
             {
                 int pts = AlignmentBonus(houseSign, cosmic);
-                rows.Add(BuildSignRow(
+                var houseRow = BuildSignRow(
                     $"Astral House: {houseSign}",
                     houseSign,
                     cosmic,
-                    pts));
+                    pts);
+                if (houseRow != null)
+                    rows.Add(houseRow.Value);
             }
 
             var cosmicElement = Correspondence.ElementFor(cosmic);
@@ -130,11 +146,13 @@ namespace Kismeta.Core.Rules
                     continue;
 
                 int pts = AlignmentBonus(def.Sign, cosmic);
-                rows.Add(BuildSignRow(
+                var adeptRow = BuildSignRow(
                     $"Adept: {def.Id}",
                     def.Sign,
                     cosmic,
-                    pts));
+                    pts);
+                if (adeptRow != null)
+                    rows.Add(adeptRow.Value);
             }
 
             int boon = AgekeeperMatchesCosmic(session) ? 2 : 0;
@@ -150,7 +168,7 @@ namespace Kismeta.Core.Rules
             int bonusSubtotal = boardCosmic + personalCosmic;
             foreach (var row in rows)
             {
-                if (row.Title == "Agekeeper's Boon") continue;
+                if (row.Title is "Agekeeper's Boon" or "Base harvest") continue;
                 if (!row.ShowDash)
                     bonusSubtotal += row.Points;
             }
@@ -159,12 +177,10 @@ namespace Kismeta.Core.Rules
             return new HarvestBreakdown(BaseDraw, bonusSubtotal, boon, total, rows);
         }
 
-        static HarvestSourceRow BuildSignRow(string title, ZodiacSign source, ZodiacSign cosmic, int points)
+        static HarvestSourceRow? BuildSignRow(string title, ZodiacSign source, ZodiacSign cosmic, int points)
         {
             if (points <= 0)
-            {
-                return new HarvestSourceRow(title, "no match", 0, HarvestAspectTier.None, showDash: true);
-            }
+                return null;
 
             var (label, tier) = DescribeAspect(source, cosmic, points);
             return new HarvestSourceRow(title, label, points, tier);

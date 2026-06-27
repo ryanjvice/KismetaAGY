@@ -495,21 +495,13 @@
     flex-shrink: 0;
 }
 
-.header-summary__rivals {
-    font-size: 11px;
-    color: var(--muted);
-    flex-grow: 1;
-    flex-shrink: 1;
-    min-width: 0;
-}
-
 .header-toggle-btn {
     flex-shrink: 0;
     min-width: 36px;
     min-height: 32px;
     padding: 4px 8px;
     font-size: 14px;
-    margin-left: 4px;
+    margin-left: auto;
     position: relative;
     z-index: 1;
 }
@@ -523,9 +515,17 @@
     border-bottom-width: 0;
 }
 
-.header-detail .rivals {
+.rivals-section {
+    flex-direction: column;
+    flex-shrink: 0;
     border-top-width: 1px;
     border-top-color: var(--border-subtle);
+}
+
+.rivals-section__heading {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 6px 10px 2px;
 }
 
 .screen__body--header-pad > .stage,
