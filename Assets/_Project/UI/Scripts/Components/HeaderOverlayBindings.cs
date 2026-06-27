@@ -163,13 +163,19 @@ namespace Kismeta.UI.Components
             body.EnableInClassList("screen__body--header-expanded", !hidden && s_expanded);
 
             var contentHost = body.Q(className: "central-panel") ?? body.Q(className: "stage");
+            var toolbar = body.Q(className: "spring-hub__toolbar");
             var tableFab = root?.Q<Button>("table-fab");
-            if (contentHost == null) return;
+            if (contentHost == null && toolbar == null) return;
 
             if (hidden)
             {
-                contentHost.style.paddingTop = StyleKeyword.Null;
-                contentHost.style.marginTop = StyleKeyword.Null;
+                if (contentHost != null)
+                {
+                    contentHost.style.paddingTop = StyleKeyword.Null;
+                    contentHost.style.marginTop = StyleKeyword.Null;
+                }
+                if (toolbar != null)
+                    toolbar.style.marginTop = StyleKeyword.Null;
                 if (tableFab != null)
                     tableFab.style.top = StyleKeyword.Null;
                 return;
@@ -177,9 +183,30 @@ namespace Kismeta.UI.Components
 
             float headerHeight = overlay!.resolvedStyle.height;
             float headerReserve = headerHeight > 0f ? headerHeight : CollapsedHeaderFallbackPx;
-            // Margin (not padding) keeps the panel's hit area below the header overlay.
-            contentHost.style.paddingTop = StyleKeyword.Null;
-            contentHost.style.marginTop = headerReserve + HeaderContentGapPx;
+            float topOffset = headerReserve + HeaderContentGapPx;
+
+            bool toolbarVisible = toolbar != null
+                && !toolbar.ClassListContains("spring-hub__toolbar--hidden");
+
+            if (toolbarVisible)
+            {
+                toolbar!.style.marginTop = topOffset;
+                if (contentHost != null)
+                {
+                    contentHost.style.paddingTop = StyleKeyword.Null;
+                    contentHost.style.marginTop = StyleKeyword.Null;
+                }
+            }
+            else
+            {
+                if (toolbar != null)
+                    toolbar.style.marginTop = StyleKeyword.Null;
+                if (contentHost != null)
+                {
+                    contentHost.style.paddingTop = StyleKeyword.Null;
+                    contentHost.style.marginTop = topOffset;
+                }
+            }
 
             if (tableFab != null)
                 tableFab.style.top = StyleKeyword.Null;

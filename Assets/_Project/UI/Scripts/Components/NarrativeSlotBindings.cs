@@ -1,14 +1,25 @@
+using System;
 using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
 {
+    [Flags]
+    public enum NarrativeSlotMask
+    {
+        Beat = 1,
+        Charge = 2,
+        Stakes = 4,
+        All = Beat | Charge | Stakes
+    }
+
     public static class NarrativeSlotBindings
     {
         public static bool BindById(
             VisualElement? root,
             string stepId,
-            NarrativeVerbosity? verbosity = null)
+            NarrativeVerbosity? verbosity = null,
+            NarrativeSlotMask mask = NarrativeSlotMask.All)
         {
             if (root == null || string.IsNullOrEmpty(stepId))
                 return false;
@@ -17,11 +28,15 @@ namespace Kismeta.UI.Components
             if (!catalog.TryGet(stepId, out var entry))
                 return false;
 
-            Bind(root, entry, verbosity ?? NarrativeVerbositySettings.Default);
+            Bind(root, entry, verbosity ?? NarrativeVerbositySettings.Default, mask);
             return true;
         }
 
-        public static void Bind(VisualElement? root, NarrativeSlotEntry entry, NarrativeVerbosity verbosity)
+        public static void Bind(
+            VisualElement? root,
+            NarrativeSlotEntry entry,
+            NarrativeVerbosity verbosity,
+            NarrativeSlotMask mask = NarrativeSlotMask.All)
         {
             if (root == null || entry == null)
                 return;
@@ -29,28 +44,35 @@ namespace Kismeta.UI.Components
             bool showBeat = verbosity != NarrativeVerbosity.Terse;
             bool showStakes = verbosity != NarrativeVerbosity.Terse && entry.HasStakes;
 
-            SetLabel(root, "narrative-beat", entry.Beat, showBeat);
-            SetLabel(root, "narrative-charge", entry.Charge, true);
+            if (mask.HasFlag(NarrativeSlotMask.Beat))
+                SetLabel(root, "narrative-beat", entry.Beat, showBeat);
 
-            var stakesWrap = root.Q<VisualElement>("narrative-stakes-wrap")
-                ?? root.Q(className: "narrative-stakes-wrap");
-            if (stakesWrap != null)
+            if (mask.HasFlag(NarrativeSlotMask.Charge))
+                SetLabel(root, "narrative-charge", entry.Charge, true);
+
+            if (mask.HasFlag(NarrativeSlotMask.Stakes))
             {
-                stakesWrap.style.display = showStakes ? DisplayStyle.Flex : DisplayStyle.None;
-                if (showStakes)
+                var stakesWrap = root.Q<VisualElement>("narrative-stakes-wrap")
+                    ?? root.Q(className: "narrative-stakes-wrap");
+                if (stakesWrap != null)
                 {
-                    var stakesLbl = stakesWrap.Q<Label>("narrative-stakes")
-                        ?? stakesWrap.Q<Label>(className: "narrative-stakes");
-                    if (stakesLbl != null)
-                        stakesLbl.text = entry.Stakes;
+                    stakesWrap.style.display = showStakes ? DisplayStyle.Flex : DisplayStyle.None;
+                    if (showStakes)
+                    {
+                        var stakesLbl = stakesWrap.Q<Label>("narrative-stakes")
+                            ?? stakesWrap.Q<Label>(className: "narrative-stakes");
+                        if (stakesLbl != null)
+                            stakesLbl.text = entry.Stakes;
+                    }
+                }
+                else
+                {
+                    SetLabel(root, "narrative-stakes", entry.Stakes, showStakes);
                 }
             }
-            else
-            {
-                SetLabel(root, "narrative-stakes", entry.Stakes, showStakes);
-            }
 
-            BindPrimaryVerb(root, entry);
+            if (mask == NarrativeSlotMask.All)
+                BindPrimaryVerb(root, entry);
         }
 
         static void SetLabel(VisualElement root, string name, string text, bool visible)

@@ -3,11 +3,10 @@
 .active-effects {
     width: 100%;
     max-width: 360px;
-    height: 88%;
-    max-height: 92%;
     align-self: stretch;
     flex-grow: 1;
-    flex-shrink: 0;
+    flex-shrink: 1;
+    min-height: 0;
     background-color: rgb(18, 16, 22);
     border-width: 2px;
     border-color: var(--border-gold);
@@ -315,9 +314,14 @@
 }
 
 .overlay-clone-host--active-effects {
-    height: 88%;
-    max-height: 92%;
+    height: auto;
+    max-height: none;
     flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    align-self: stretch;
+    padding-top: var(--space-sm);
+    padding-bottom: 0;
     overflow: hidden;
 }
 
@@ -325,4 +329,8 @@
     height: 100%;
     max-height: none;
     min-height: 0;
+}
+
+.overlay-layer--active-effects {
+    justify-content: flex-start;
 }

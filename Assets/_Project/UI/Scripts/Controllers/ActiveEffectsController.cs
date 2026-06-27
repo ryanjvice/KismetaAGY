@@ -26,8 +26,11 @@ namespace Kismeta.UI.Controllers
             _bindKey = int.MinValue;
         }
 
-        void ApplyHostLayout(bool tall) =>
+        void ApplyHostLayout(bool tall)
+        {
             Root?.parent?.EnableInClassList("overlay-clone-host--active-effects", tall);
+            Root?.parent?.parent?.EnableInClassList("overlay-layer--active-effects", tall);
+        }
 
         public void BindState(GameSession session, GameLoop? loop, CommandBridge bridge)
         {

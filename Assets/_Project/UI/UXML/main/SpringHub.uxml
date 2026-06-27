@@ -7,18 +7,21 @@
     <engine:Style src="../../USS/SpringSteps.uss" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
-    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <engine:VisualElement name="spring-hub" class="screen screen--spring">
         <engine:Label text="Spring hub — your sign, harvest tally, spread, and commune action." class="sr-only" />
 
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
+
+            <engine:VisualElement class="spring-hub__toolbar">
+                <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+                <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+                <engine:Button name="effects-fab" text="Effects" class="effects-fab btn btn--secondary" />
+            </engine:VisualElement>
+
             <engine:VisualElement class="central-panel">
             <engine:VisualElement name="wheel-stage" class="stage spring-hub__stage">
-                <engine:VisualElement class="spring-hub__narrative">
-                    <engine:Instance template="NarrativeSlots" />
-                </engine:VisualElement>
                 <engine:VisualElement name="wheel-stack" class="wheel-stack">
                     <engine:VisualElement name="wheel-star-chart" class="wheel-stack__star" />
                     <engine:VisualElement name="wheel-zodiac" class="wheel-stack__zodiac" />
@@ -28,13 +31,14 @@
                 </engine:VisualElement>
                 <engine:Label name="rolled-sign" text="" class="spring-hub__rolled-sign" />
                 <engine:Label name="sign-match" text="" class="spring-hub__sign-match" />
+                <engine:Label name="narrative-charge" text="" class="narrative-charge" />
                 <engine:Label name="harvest-count" text="Awaiting your roll" class="spring-hub__harvest-count" />
                 <engine:Label name="hint-label" text="Your turn" class="spring-hub__hint" />
             </engine:VisualElement>
 
             <engine:VisualElement name="commune-stage" class="commune-stage commune-stage--hidden">
                 <engine:Label text="Commune with your Tableau" class="commune-stage__heading h3" />
-                <engine:Instance template="NarrativeSlots" />
+                <engine:Label name="narrative-charge" text="" class="narrative-charge" />
 
                 <engine:VisualElement class="commune-stage__zone-wrap">
                     <engine:VisualElement class="swap-zone swap-zone--spread">
@@ -87,11 +91,12 @@
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
-
-            <engine:VisualElement class="hub-fab-stack">
-                <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
-                <engine:Button name="effects-fab" text="Effects" class="effects-fab btn btn--secondary" />
             </engine:VisualElement>
+
+            <engine:VisualElement class="spring-hub__stakes">
+                <engine:VisualElement name="narrative-stakes-wrap" class="narrative-stakes-wrap tip tip--ok">
+                    <engine:Label name="narrative-stakes" text="" class="narrative-stakes tip__text" />
+                </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--single">

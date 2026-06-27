@@ -92,7 +92,10 @@ namespace Kismeta.UI.Components
                 effectsFab.EnableInClassList("effects-fab--hidden", !visible);
             root?.Q(className: "hub-fab-stack")
                 ?.EnableInClassList("hub-fab-stack--hidden", !visible);
+            root?.Q(className: "spring-hub__toolbar")
+                ?.EnableInClassList("spring-hub__toolbar--hidden", !visible);
             ApplyInventoryPad(root);
+            HeaderOverlayBindings.ApplyHeaderPad(root);
         }
 
         static void ApplyInventoryPad(VisualElement? root)

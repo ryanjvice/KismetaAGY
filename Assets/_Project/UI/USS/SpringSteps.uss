@@ -77,14 +77,52 @@
 .tally-row__pts { font-size: 14px; -unity-font-style: bold; }
 
 /* Spring hub — roll scene */
+.spring-hub__toolbar {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0 var(--space-md);
+    margin: var(--space-xs) var(--space-md) 0;
+    min-height: 40px;
+}
+
+.spring-hub__toolbar--hidden {
+    display: none;
+}
+
+.spring-hub__toolbar .table-fab,
+.spring-hub__toolbar .effects-fab {
+    position: relative;
+    top: auto;
+    right: auto;
+    flex-shrink: 0;
+}
+
+.spring-hub__toolbar .narrative-beat {
+    flex-grow: 1;
+    flex-shrink: 1;
+    -unity-text-align: middle-center;
+    margin: 0 var(--space-sm);
+    margin-bottom: 0;
+}
+
 .spring-hub__stage { align-items: center; }
 
-.spring-hub__narrative .narrative-beat,
-.spring-hub__narrative .narrative-charge,
-.commune-stage .narrative-beat,
+.spring-hub__stage .narrative-charge,
 .commune-stage .narrative-charge {
     -unity-text-align: middle-center;
     align-self: stretch;
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+.spring-hub__stakes {
+    flex-shrink: 0;
+    margin: 0 var(--space-md) var(--space-sm);
+}
+
+.spring-hub__stakes .narrative-stakes-wrap {
+    margin: 0;
 }
 
 .wheel-stack {

@@ -116,13 +116,21 @@ namespace Kismeta.UI.Controllers
             BindHintLabel(hint, bridge, player);
             BindSpringCta(bridge, loop);
 
-            var narrativeRoot = isCommune ? El("commune-stage") : El("wheel-stage");
+            var stepId = NarrativeStepResolver.ResolveSpringHub(hint, isCommune);
             NarrativeSlotBindings.BindById(
-                narrativeRoot ?? Root,
-                NarrativeStepResolver.ResolveSpringHub(hint, isCommune));
+                Root,
+                stepId,
+                mask: NarrativeSlotMask.Beat | NarrativeSlotMask.Stakes);
+            var chargeRoot = isCommune ? El("commune-stage") : El("wheel-stage");
+            NarrativeSlotBindings.BindById(
+                chargeRoot,
+                stepId,
+                mask: NarrativeSlotMask.Charge);
 
             if (!isCommune)
                 RefreshDock();
+
+            HeaderOverlayBindings.ApplyHeaderPad(Root);
         }
 
         void BindPhaseVisibility(bool isCommune)
