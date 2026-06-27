@@ -57,8 +57,7 @@ MonoBehaviour:
     _beat: The age is generous to those who align with it.
     _charge: Tally your bonus from every source, then take your full harvest from
       the Agekeeper.
-    _stakes: "Each source scores only its single highest Aspect \u2014 Sign +3, Planet
-      +2, Element +1. Nothing stacks within a source."
+    _stakes: Sign +3, Planet +2, Element +1.
     _verbs:
     - Deal & commune
     _breadcrumb: 

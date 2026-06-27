@@ -97,7 +97,7 @@ namespace Kismeta.UI.Narrative
                 3,
                 "The age is generous to those who align with it.",
                 "Tally your bonus from every source, then take your full harvest from the Agekeeper.",
-                "Each source scores only its single highest Aspect — Sign +3, Planet +2, Element +1. Nothing stacks within a source.",
+                "Sign +3, Planet +2, Element +1.",
                 new[] { "Deal & commune" }),
             new NarrativeSlotEntry(
                 "spring.commune",

@@ -25,18 +25,13 @@ namespace Kismeta.UI.Components
             var container = new VisualElement();
             container.AddToClassList("harvest-source-row");
 
-            var textCol = new VisualElement();
-            textCol.AddToClassList("harvest-source-row__text");
-
             var title = new Label(row.Title);
             title.AddToClassList("harvest-source-row__title");
-            textCol.Add(title);
+            container.Add(title);
 
-            var subtitle = new Label(row.Subtitle);
-            subtitle.AddToClassList("harvest-source-row__subtitle");
-            textCol.Add(subtitle);
-
-            container.Add(textCol);
+            var match = new Label(row.Subtitle);
+            match.AddToClassList("harvest-source-row__match");
+            container.Add(match);
 
             var pts = new Label(row.ShowDash ? "—" : $"+{row.Points}");
             pts.AddToClassList("harvest-source-row__pts");

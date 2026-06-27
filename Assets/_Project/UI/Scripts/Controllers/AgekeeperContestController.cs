@@ -64,8 +64,10 @@ namespace Kismeta.UI.Controllers
                 var round = rounds[r];
                 if (r > 0)
                 {
+                    ShowPreRollHero();
                     if (Lbl("status-line") != null)
                         Lbl("status-line")!.text = FormatTieRerollMessage(round);
+                    ClearWinnerHighlight();
                     foreach (var roll in round)
                     {
                         var die = Root?.Q<Label>($"die-{roll.PlayerId}");
@@ -93,15 +95,7 @@ namespace Kismeta.UI.Controllers
             _resolved = true;
             _rolling = false;
             ShowRollResults(_pendingResult);
-            if (Lbl("status-line") != null)
-                Lbl("status-line")!.text = "The dice have spoken.";
-
-            var winnerLine = Lbl("winner-line");
-            if (winnerLine != null)
-            {
-                winnerLine.style.display = DisplayStyle.Flex;
-                winnerLine.text = $"{ColorNames[_winnerId]} alchemist becomes Agekeeper for the first round.";
-            }
+            ShowResultHero($"{ColorNames[_winnerId]} Alchemist becomes Agekeeper for the first round.");
 
             if (Btn("roll-btn") != null)
                 Btn("roll-btn").style.display = DisplayStyle.None;
@@ -115,7 +109,7 @@ namespace Kismeta.UI.Controllers
             var sorted = new List<AgekeeperContestService.RollResult>(round);
             sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
             foreach (var roll in sorted)
-                names.Add($"{ColorNames[roll.PlayerId]} alchemist");
+                names.Add($"{ColorNames[roll.PlayerId]} Alchemist");
             return names.Count switch
             {
                 1 => $"Tie — {names[0]} rerolls.",
@@ -142,23 +136,51 @@ namespace Kismeta.UI.Controllers
 
         private void ResetUi()
         {
-            if (Lbl("status-line") != null)
-                Lbl("status-line").text =
-                    "Each alchemist rolls their zodiac die — highest holds the key first.";
-
-            var winnerLine = Lbl("winner-line");
-            if (winnerLine != null)
-            {
-                winnerLine.text = "";
-                winnerLine.style.display = DisplayStyle.None;
-            }
+            ShowPreRollHero();
 
             if (Btn("roll-btn") != null)
+            {
                 Btn("roll-btn").style.display = DisplayStyle.Flex;
+                Btn("roll-btn").SetEnabled(true);
+            }
             if (Btn("continue-btn") != null)
                 Btn("continue-btn").style.display = DisplayStyle.None;
 
             El("player-rolls")?.Clear();
+        }
+
+        private void ShowPreRollHero()
+        {
+            var heroTitle = Lbl("hero-title");
+            if (heroTitle != null)
+                heroTitle.style.display = DisplayStyle.Flex;
+
+            var resultTitle = Lbl("result-title");
+            if (resultTitle != null)
+            {
+                resultTitle.text = "";
+                resultTitle.style.display = DisplayStyle.None;
+            }
+
+            if (Lbl("status-line") != null)
+                Lbl("status-line")!.text =
+                    "Each Alchemist rolls their zodiac die — highest holds the key first.";
+        }
+
+        private void ShowResultHero(string resultMessage)
+        {
+            if (Lbl("hero-title") != null)
+                Lbl("hero-title")!.style.display = DisplayStyle.None;
+
+            var resultTitle = Lbl("result-title");
+            if (resultTitle != null)
+            {
+                resultTitle.text = resultMessage;
+                resultTitle.style.display = DisplayStyle.Flex;
+            }
+
+            if (Lbl("status-line") != null)
+                Lbl("status-line")!.text = "The dice have spoken.";
         }
 
         private void BuildPlayerRows()
@@ -170,6 +192,7 @@ namespace Kismeta.UI.Controllers
             for (int i = 0; i < _playerCount; i++)
             {
                 var row = new VisualElement();
+                row.name = $"player-row-{i}";
                 row.AddToClassList("panel");
                 row.style.flexDirection = FlexDirection.Row;
                 row.style.alignItems = Align.Center;
@@ -184,7 +207,8 @@ namespace Kismeta.UI.Controllers
                 nameBlock.style.alignItems = Align.Center;
                 nameBlock.style.flexGrow = 1;
 
-                var name = new Label(PlayerUiNames.ForPlayer(i));
+                var name = new Label($"{ColorNames[i]} Alchemist");
+                name.name = $"player-name-{i}";
                 name.style.fontSize = 12;
                 name.style.color = new StyleColor(new Color(0.95f, 0.91f, 0.82f));
                 nameBlock.Add(name);
@@ -223,16 +247,65 @@ namespace Kismeta.UI.Controllers
                     die.text = roll.DieValue.ToString();
             }
 
+            ClearWinnerHighlight();
+
             for (int i = 0; i < _playerCount; i++)
             {
-                var row = Root?.Q<Label>($"die-{i}")?.parent;
+                var row = El($"player-row-{i}");
                 if (row == null) continue;
+
                 if (i == _winnerId)
-                    row.style.borderTopWidth = row.style.borderBottomWidth =
-                        row.style.borderLeftWidth = row.style.borderRightWidth = 2;
+                {
+                    row.AddToClassList("panel--winner");
+                    row.RemoveFromClassList("panel--dim");
+                    row.style.opacity = 1f;
+
+                    var gold = new StyleColor(UiTheme.GoldBright);
+                    row.style.borderTopColor = row.style.borderRightColor =
+                        row.style.borderBottomColor = row.style.borderLeftColor = gold;
+
+                    var name = Root?.Q<Label>($"player-name-{i}");
+                    if (name != null)
+                        name.style.color = new StyleColor(UiTheme.PlayerColor(i));
+
+                    var die = Root?.Q<Label>($"die-{i}");
+                    if (die != null)
+                        die.style.color = new StyleColor(UiTheme.GoldBright);
+                }
                 else
-                    row.style.borderTopWidth = row.style.borderBottomWidth =
-                        row.style.borderLeftWidth = row.style.borderRightWidth = 1;
+                {
+                    row.RemoveFromClassList("panel--winner");
+                    row.AddToClassList("panel--dim");
+                    row.style.borderTopColor = StyleKeyword.Null;
+                    row.style.borderRightColor = StyleKeyword.Null;
+                    row.style.borderBottomColor = StyleKeyword.Null;
+                    row.style.borderLeftColor = StyleKeyword.Null;
+                }
+            }
+        }
+
+        private void ClearWinnerHighlight()
+        {
+            for (int i = 0; i < _playerCount; i++)
+            {
+                var row = El($"player-row-{i}");
+                if (row == null) continue;
+
+                row.RemoveFromClassList("panel--winner");
+                row.RemoveFromClassList("panel--dim");
+                row.style.opacity = StyleKeyword.Null;
+                row.style.borderTopColor = StyleKeyword.Null;
+                row.style.borderRightColor = StyleKeyword.Null;
+                row.style.borderBottomColor = StyleKeyword.Null;
+                row.style.borderLeftColor = StyleKeyword.Null;
+
+                var name = Root?.Q<Label>($"player-name-{i}");
+                if (name != null)
+                    name.style.color = new StyleColor(new Color(0.95f, 0.91f, 0.82f));
+
+                var die = Root?.Q<Label>($"die-{i}");
+                if (die != null)
+                    die.style.color = new StyleColor(new Color(0.8f, 0.69f, 0.88f));
             }
         }
 

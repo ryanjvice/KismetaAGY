@@ -4,24 +4,26 @@
     xmlns:editor="UnityEditor.UIElements">
 
     <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/AgekeeperContest.uss" />
 
     <engine:VisualElement name="agekeeper-contest" class="screen screen--menu">
-        <engine:Label text="Agekeeper contest — each alchemist rolls; highest becomes first Agekeeper." class="sr-only" />
+        <engine:Label text="Agekeeper contest — each Alchemist rolls; highest becomes first Agekeeper." class="sr-only" />
 
         <engine:VisualElement class="menu-screen__hero panel--gold">
-            <engine:Label text="determine the agekeeper" class="eyebrow" />
-            <engine:Label text="Roll the dice" class="statusbar__title text-gold menu-screen__hero-title" />
-            <engine:Label name="status-line" text="Each alchemist rolls their zodiac die — highest holds the key first."
+            <engine:Label text="Determine the Agekeeper" class="h2 text-gold agekeeper-contest__heading" />
+            <engine:Label name="hero-title" text="Roll the dice" class="statusbar__title text-gold menu-screen__hero-title" />
+            <engine:Label name="result-title" text="" class="menu-screen__hero-result menu-screen__hero-result--hidden" />
+            <engine:Label name="status-line" text="Each Alchemist rolls their zodiac die — highest holds the key first."
                           class="text-muted menu-screen__hero-sub" />
         </engine:VisualElement>
 
-        <engine:ScrollView name="player-rolls" class="menu-screen__scroll menu-screen__scroll--grow" />
+        <engine:VisualElement class="agekeeper-contest__body">
+            <engine:VisualElement name="player-rolls" class="agekeeper-contest__players" />
 
-        <engine:VisualElement class="menu-screen__footer">
-            <engine:Label name="winner-line" text=""
-                          class="text-ok menu-screen__winner" />
-            <engine:Button name="roll-btn" text="Roll the dice" class="btn btn--primary menu-screen__cta" />
-            <engine:Button name="continue-btn" text="Begin the Great Year" class="btn btn--primary menu-screen__cta menu-screen__cta--hidden" />
+            <engine:VisualElement class="menu-screen__footer agekeeper-contest__footer">
+                <engine:Button name="roll-btn" text="Roll the dice" class="btn btn--primary menu-screen__cta" />
+                <engine:Button name="continue-btn" text="Begin the Great Year" class="btn btn--primary menu-screen__cta menu-screen__cta--hidden" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
     </engine:VisualElement>

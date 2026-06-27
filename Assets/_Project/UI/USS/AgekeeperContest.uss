@@ -1,0 +1,46 @@
+/* Kismeta — AgekeeperContest.uss (per-screen styling) */
+
+.agekeeper-contest__heading {
+    -unity-text-align: middle-center;
+    font-size: var(--font-title);
+    margin-bottom: var(--space-sm);
+    white-space: normal;
+}
+
+.menu-screen__hero-result {
+    font-size: 20px;
+    color: var(--gold-bright);
+    margin-top: 6px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+.menu-screen__hero-result--hidden {
+    display: none;
+}
+
+.agekeeper-contest__body {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-direction: column;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.agekeeper-contest__players {
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.agekeeper-contest__footer {
+    padding-top: 8px;
+    padding-bottom: 16px;
+}
+
+.panel--dim {
+    opacity: 0.42;
+    background-color: rgba(19, 16, 15, 0.72);
+    border-color: var(--border-subtle);
+}

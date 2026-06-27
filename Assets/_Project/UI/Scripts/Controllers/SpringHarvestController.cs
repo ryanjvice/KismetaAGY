@@ -58,9 +58,8 @@ namespace Kismeta.UI.Controllers
 
             HarvestSourceRows.Populate(El("source-list"), breakdown.Sources);
 
-            var dealBtn = Btn("deal-btn");
-            if (dealBtn != null)
-                dealBtn.text = $"→ Deal {breakdown.Total} & commune";
+            if (Lbl("deal-cta") != null)
+                Lbl("deal-cta")!.text = $"→ Deal {breakdown.Total} & commune";
 
             NarrativeSlotBindings.BindById(Root, "spring.harvest");
         }

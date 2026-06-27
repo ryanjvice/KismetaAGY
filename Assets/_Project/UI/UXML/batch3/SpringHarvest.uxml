@@ -5,7 +5,6 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
-    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <engine:VisualElement name="spring-harvest" class="screen screen--spring">
         <engine:Label text="Spring harvest — itemized tally before cards are dealt." class="sr-only" />
@@ -39,10 +38,9 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <engine:Label text="Harvest Results" class="h2 harvest-compare__heading" />
-
-        <engine:VisualElement style="padding: 0 14px 8px;">
-            <engine:Instance template="NarrativeSlots" />
+        <engine:VisualElement class="harvest-heading-row">
+            <engine:Label text="Harvest Results" class="h2 harvest-compare__heading" />
+            <engine:Label name="narrative-beat" text="" class="narrative-beat harvest-heading-row__beat" />
         </engine:VisualElement>
 
         <engine:VisualElement class="harvest-compare">
@@ -68,7 +66,10 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="harvest-sources">
-            <engine:Label text="your harvest sources" class="h2 harvest-sources__title" />
+            <engine:VisualElement class="harvest-sources-heading-row">
+                <engine:Label text="Harvest Sources" class="h2 harvest-sources__title" />
+                <engine:Label name="narrative-stakes" text="" class="narrative-stakes harvest-sources-heading-row__rule" />
+            </engine:VisualElement>
 
             <engine:ScrollView name="source-scroll" class="harvest-source-scroll">
                 <engine:VisualElement name="source-list" class="harvest-source-list" />
@@ -76,16 +77,11 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="harvest-footer">
-            <engine:Label name="harvest-footnote" text="each source counts only its single highest aspect — not stacked" class="harvest-footnote" />
-
-            <engine:VisualElement class="harvest-hero">
+            <engine:Button name="deal-btn" class="harvest-hero harvest-hero--action">
                 <engine:Label name="harvest-summary" text="BASE 3 + BONUS 0 + BOON 0" class="harvest-hero__breakdown" />
                 <engine:Label name="harvest-total-line" text="3 cards this harvest" class="harvest-hero__total" />
-            </engine:VisualElement>
-
-            <engine:VisualElement class="actionbar">
-                <engine:Button name="deal-btn" text="Deal harvest &amp; commune" class="actionbtn btn btn--primary" />
-            </engine:VisualElement>
+                <engine:Label name="deal-cta" text="→ Deal 3 &amp; commune" class="harvest-hero__cta" />
+            </engine:Button>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

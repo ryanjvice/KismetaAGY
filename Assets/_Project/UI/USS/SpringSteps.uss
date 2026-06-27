@@ -255,15 +255,32 @@
 }
 
 /* Spring harvest compare row */
+.harvest-heading-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    flex-shrink: 0;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    margin-left: 14px;
+    margin-right: 14px;
+}
+.harvest-heading-row__beat {
+    flex-shrink: 1;
+    min-width: 0;
+    margin-left: 8px;
+    margin-bottom: 0;
+    font-size: var(--font-label);
+}
 .harvest-compare__heading {
     flex-shrink: 0;
     -unity-text-align: middle-left;
     color: var(--arcanum-text);
     font-size: var(--font-title);
-    margin-top: 4px;
-    margin-bottom: 8px;
-    margin-left: 14px;
-    margin-right: 14px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
 }
 .harvest-compare {
     flex-direction: row;
@@ -420,13 +437,30 @@
     margin-right: 14px;
     margin-bottom: 0;
 }
+.harvest-sources-heading-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    flex-shrink: 0;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+.harvest-sources-heading-row__rule {
+    flex-shrink: 1;
+    min-width: 0;
+    margin-left: 8px;
+    margin-bottom: 0;
+    font-size: var(--font-label);
+    color: rgb(122, 154, 130);
+    white-space: normal;
+}
 .harvest-sources__title {
     flex-shrink: 0;
     -unity-text-align: middle-left;
     color: var(--arcanum-text);
     font-size: var(--font-title);
-    margin-top: 4px;
-    margin-bottom: 8px;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 .harvest-source-scroll {
     flex-shrink: 0;
@@ -437,29 +471,32 @@
     flex-shrink: 0;
     flex-direction: column;
     margin-top: 8px;
-}
-.harvest-footnote {
-    flex-shrink: 0;
-    font-size: 9px;
-    color: rgb(122, 154, 130);
-    -unity-text-align: middle-center;
-    padding: 0 14px 6px;
+    padding-bottom: var(--space-sm);
 }
 .harvest-hero {
     flex-shrink: 0;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 0 14px 6px;
+    margin: 0 14px 0;
     padding: 14px 12px;
     border-radius: var(--radius-lg);
     border-width: 1px;
     border-color: rgb(43, 106, 74);
     background-color: rgb(22, 38, 31);
 }
-.harvest-footer .actionbar {
-    padding-top: 0;
-    padding-bottom: var(--space-sm);
+.harvest-hero--action {
+    align-self: stretch;
+    min-height: var(--touch-min);
+    -unity-text-align: middle-center;
+}
+.harvest-hero--action:hover {
+    border-color: rgb(59, 140, 96);
+    background-color: rgb(28, 48, 38);
+}
+.harvest-hero--action:active {
+    border-color: rgb(43, 106, 74);
+    background-color: rgb(18, 32, 26);
 }
 .viewport--compact .harvest-source-scroll {
     max-height: 180px;
@@ -468,7 +505,6 @@
     margin-top: 4px;
 }
 .viewport--compact .harvest-hero {
-    margin-bottom: 4px;
     padding: 12px 10px;
 }
 .harvest-hero__breakdown {
@@ -482,6 +518,12 @@
     color: rgb(127, 196, 168);
     -unity-text-align: middle-center;
     margin-top: 6px;
+}
+.harvest-hero__cta {
+    font-size: 11px;
+    color: rgb(184, 154, 110);
+    -unity-text-align: middle-center;
+    margin-top: 8px;
 }
 .harvest-source-row {
     flex-direction: row;
@@ -497,19 +539,31 @@
     border-color: rgb(122, 100, 154);
     background-color: rgb(28, 22, 36);
 }
-.harvest-source-row__text { flex-grow: 1; }
 .harvest-source-row__title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-width: 0;
     font-size: 11px;
     color: rgb(243, 233, 210);
+    -unity-text-align: middle-left;
 }
-.harvest-source-row__subtitle {
+.harvest-source-row__match {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-width: 0;
     font-size: 9px;
     color: rgb(154, 172, 146);
-    margin-top: 2px;
+    -unity-text-align: middle-center;
 }
 .harvest-source-row__pts {
+    flex-shrink: 0;
+    flex-grow: 0;
+    min-width: 36px;
     font-size: 14px;
     -unity-font-style: bold;
+    -unity-text-align: middle-right;
 }
 .harvest-source-row__pts--neutral { color: rgb(184, 154, 110); }
 .tally__pts--sign { color: rgb(244, 211, 94); }
