@@ -57,8 +57,11 @@ namespace Kismeta.Core.Rules
             return true;
         }
 
-        static void SetFateNote(GameSession session, string fateCardId, string note) =>
+        static void SetFateNote(GameSession session, string? fateCardId, string note)
+        {
+            if (string.IsNullOrEmpty(fateCardId)) return;
             session.GetCard(fateCardId)?.SetFateResolutionNote(note);
+        }
 
         static string PendingFateNote(int arcanaNumber) => arcanaNumber switch
         {
@@ -361,6 +364,18 @@ namespace Kismeta.Core.Rules
             {
                 if (num == arcanaNumber)
                     return fateId;
+            }
+
+            foreach (var player in session.Players)
+            {
+                foreach (var id in player.Arcanum)
+                {
+                    var inst = session.GetCard(id);
+                    if (inst == null) continue;
+                    var def = session.Rules?.CardDatabase.GetById(inst.DefinitionId);
+                    if (def?.MajorArcanaType == MajorArcanaType.Fate && def.ArcanaNumber == arcanaNumber)
+                        return id;
+                }
             }
 
             return null;

@@ -101,7 +101,16 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindCauldrons(Root, local, session);
 
             var stepId = NarrativeStepResolver.ResolveSummerAction(_summerOverlays, _contestOverlays);
-            NarrativeSlotBindings.BindById(Root, stepId);
+            NarrativeSlotBindings.BindById(
+                Root,
+                stepId,
+                mask: NarrativeSlotMask.Beat | NarrativeSlotMask.Stakes);
+            NarrativeSlotBindings.BindById(
+                El("summer-main-stage"),
+                stepId,
+                mask: NarrativeSlotMask.Charge);
+
+            HeaderOverlayBindings.ApplyHeaderPad(Root);
         }
 
         public void RefreshActionGroupRail()

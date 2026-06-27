@@ -8,25 +8,30 @@
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
     <engine:Template src="../shell/CauldronHub.uxml" name="CauldronHub" />
-    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <engine:VisualElement name="summer-main" class="screen screen--summer">
 
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
-            <engine:VisualElement class="central-panel">
-            <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
-                <engine:VisualElement class="summer-main__narrative" style="width: 100%; padding: 0 14px;">
-                    <engine:Instance template="NarrativeSlots" />
-                </engine:VisualElement>
-                <engine:Label name="hint-label" text="Your turn" class="text-hint summer-main__hint" />
-                <engine:Instance template="CauldronHub" />
-            </engine:VisualElement>
 
-            <engine:VisualElement class="hub-fab-stack">
+            <engine:VisualElement class="summer-main__toolbar">
                 <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+                <engine:Label name="narrative-beat" text="" class="narrative-beat" />
                 <engine:Button name="effects-fab" text="Effects" class="effects-fab btn btn--secondary" />
             </engine:VisualElement>
+
+            <engine:VisualElement class="central-panel">
+            <engine:VisualElement name="summer-main-stage" class="stage" style="align-items: center; justify-content: center;">
+                <engine:Instance template="CauldronHub" />
+                <engine:Label name="narrative-charge" text="" class="narrative-charge" />
+                <engine:Label name="hint-label" text="Your turn" class="text-hint summer-main__hint" />
+            </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="summer-main__stakes">
+                <engine:VisualElement name="narrative-stakes-wrap" class="narrative-stakes-wrap tip tip--caution">
+                    <engine:Label name="narrative-stakes" text="" class="narrative-stakes tip__text" />
+                </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--multi">

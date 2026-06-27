@@ -65,8 +65,10 @@ namespace Kismeta.Core.Entities
 
         public void RegisterCard(CardInstance card) => _cards[card.InstanceId] = card;
 
-        public CardInstance? GetCard(string instanceId) =>
-            _cards.TryGetValue(instanceId, out var card) ? card : null;
+        public CardInstance? GetCard(string? instanceId) =>
+            string.IsNullOrEmpty(instanceId) || !_cards.TryGetValue(instanceId, out var card)
+                ? null
+                : card;
 
         public CardDefinition? GetDefinition(string instanceId, Func<string, CardDefinition?> resolver) =>
             _cards.TryGetValue(instanceId, out var card) ? resolver(card.DefinitionId) : null;

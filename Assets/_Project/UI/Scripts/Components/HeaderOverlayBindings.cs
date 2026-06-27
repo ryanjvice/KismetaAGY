@@ -163,7 +163,7 @@ namespace Kismeta.UI.Components
             body.EnableInClassList("screen__body--header-expanded", !hidden && s_expanded);
 
             var contentHost = body.Q(className: "central-panel") ?? body.Q(className: "stage");
-            var toolbar = body.Q(className: "spring-hub__toolbar");
+            var toolbar = FindNarrativeToolbar(body);
             var tableFab = root?.Q<Button>("table-fab");
             if (contentHost == null && toolbar == null) return;
 
@@ -185,12 +185,9 @@ namespace Kismeta.UI.Components
             float headerReserve = headerHeight > 0f ? headerHeight : CollapsedHeaderFallbackPx;
             float topOffset = headerReserve + HeaderContentGapPx;
 
-            bool toolbarVisible = toolbar != null
-                && !toolbar.ClassListContains("spring-hub__toolbar--hidden");
-
-            if (toolbarVisible)
+            if (toolbar != null && IsNarrativeToolbarVisible(toolbar))
             {
-                toolbar!.style.marginTop = topOffset;
+                toolbar.style.marginTop = topOffset;
                 if (contentHost != null)
                 {
                     contentHost.style.paddingTop = StyleKeyword.Null;
@@ -220,5 +217,15 @@ namespace Kismeta.UI.Components
                 overlay.BringToFront();
             }
         }
+
+        static VisualElement? FindNarrativeToolbar(VisualElement body) =>
+            body.Q(className: "spring-hub__toolbar")
+            ?? body.Q(className: "summer-main__toolbar")
+            ?? body.Q(className: "summer-hub__toolbar");
+
+        static bool IsNarrativeToolbarVisible(VisualElement toolbar) =>
+            !toolbar.ClassListContains("spring-hub__toolbar--hidden")
+            && !toolbar.ClassListContains("summer-main__toolbar--hidden")
+            && !toolbar.ClassListContains("summer-hub__toolbar--hidden");
     }
 }

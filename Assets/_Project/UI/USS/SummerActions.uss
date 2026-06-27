@@ -430,9 +430,64 @@
 .fslot-fill--green { background-color: rgb(43,106,74); }
 .fslot-fill--yellow { background-color: rgb(184,148,31); }
 
+/* ---------- Summer main / hub: narrative toolbar ---------- */
+.summer-main__toolbar,
+.summer-hub__toolbar {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0 var(--space-md);
+    margin: var(--space-xs) var(--space-md) 0;
+    min-height: 40px;
+}
+
+.summer-main__toolbar--hidden,
+.summer-hub__toolbar--hidden {
+    display: none;
+}
+
+.summer-main__toolbar .table-fab,
+.summer-main__toolbar .effects-fab,
+.summer-hub__toolbar .table-fab,
+.summer-hub__toolbar .effects-fab {
+    position: relative;
+    top: auto;
+    right: auto;
+    flex-shrink: 0;
+}
+
+.summer-hub__toolbar {
+    justify-content: space-between;
+}
+
+.summer-main__toolbar .narrative-beat {
+    flex-grow: 1;
+    flex-shrink: 1;
+    -unity-text-align: middle-center;
+    margin: 0 var(--space-sm);
+    margin-bottom: 0;
+}
+
+#summer-main-stage .narrative-charge {
+    -unity-text-align: middle-center;
+    align-self: stretch;
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+.summer-main__stakes {
+    flex-shrink: 0;
+    margin: 0 var(--space-md) var(--space-sm);
+}
+
+.summer-main__stakes .narrative-stakes-wrap {
+    margin: 0;
+}
+
 /* ---------- Summer main: cauldron hub (state center) ---------- */
 .summer-main__hint {
-    margin-bottom: 8px;
+    margin-top: 4px;
+    margin-bottom: 0;
     -unity-text-align: middle-center;
     color: rgb(240, 176, 96);
     -unity-font-style: bold;

@@ -92,10 +92,22 @@ namespace Kismeta.UI.Components
                 effectsFab.EnableInClassList("effects-fab--hidden", !visible);
             root?.Q(className: "hub-fab-stack")
                 ?.EnableInClassList("hub-fab-stack--hidden", !visible);
-            root?.Q(className: "spring-hub__toolbar")
-                ?.EnableInClassList("spring-hub__toolbar--hidden", !visible);
+            SetNarrativeToolbarVisible(root, visible);
             ApplyInventoryPad(root);
             HeaderOverlayBindings.ApplyHeaderPad(root);
+        }
+
+        static void SetNarrativeToolbarVisible(VisualElement? root, bool visible)
+        {
+            var body = root?.Q(className: "screen__body");
+            if (body == null) return;
+
+            body.Q(className: "spring-hub__toolbar")
+                ?.EnableInClassList("spring-hub__toolbar--hidden", !visible);
+            body.Q(className: "summer-main__toolbar")
+                ?.EnableInClassList("summer-main__toolbar--hidden", !visible);
+            body.Q(className: "summer-hub__toolbar")
+                ?.EnableInClassList("summer-hub__toolbar--hidden", !visible);
         }
 
         static void ApplyInventoryPad(VisualElement? root)
