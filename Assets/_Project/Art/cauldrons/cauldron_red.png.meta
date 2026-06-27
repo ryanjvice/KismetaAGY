@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 12b69bf089d387a47be82152d13b7492
+guid: 6f95540a586ccd94db8a678c844e0435
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7063132468708876849
-    second: cauldron_Swords_0
+      213: 292234787209184799
+    second: cauldron_red_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cauldron_Swords_0
+      name: cauldron_red_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fcd54191176bafd90800000000000000
-      internalID: -7063132468708876849
+      spriteID: f168d9a9df93e0400800000000000000
+      internalID: 292234787209184799
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      cauldron_Swords_0: -7063132468708876849
+      cauldron_red_0: 292234787209184799
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

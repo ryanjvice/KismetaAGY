@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: dfb1b174add93b74e90c42ee4e81a29d
+guid: cdcb065070f349540b59b5cf15a19334
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8098710064966682923
-    second: cauldron_Cups_0
+      213: -5882453728256855975
+    second: cauldron_blue_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cauldron_Cups_0
+      name: cauldron_blue_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b29483135e5646070800000000000000
-      internalID: 8098710064966682923
+      spriteID: 950f39f20835d5ea0800000000000000
+      internalID: -5882453728256855975
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      cauldron_Cups_0: 8098710064966682923
+      cauldron_blue_0: -5882453728256855975
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
