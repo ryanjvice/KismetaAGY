@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          CRAFT A REAGENT (#19) -> FORGE RESULT (#20)
@@ -23,6 +24,10 @@
                         <engine:Label text="3 matching cards → 1 reagent" class="statusbar__sub" />
                     </engine:VisualElement>
                 </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 4px 14px 0;">
+                <engine:Instance template="NarrativeSlots" />
             </engine:VisualElement>
 
             <engine:VisualElement class="craft-body">

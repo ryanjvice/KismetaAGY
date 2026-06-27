@@ -6,6 +6,7 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
     <engine:Style src="../../USS/AutumnActions.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          FIRE YOUR STONE (#31) — modal. Spend reagents (any type) to advance
@@ -26,13 +27,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 12px 14px 0;">
-            <engine:VisualElement class="narrative-slots">
-                <engine:Label name="narrative-beat" text="" class="narrative-beat" />
-                <engine:Label name="narrative-charge" text="" class="narrative-charge" />
-                <engine:VisualElement name="narrative-stakes-wrap" class="narrative-stakes-wrap tip tip--danger">
-                    <engine:Label name="narrative-stakes" text="" class="narrative-stakes tip__text" />
-                </engine:VisualElement>
-            </engine:VisualElement>
+            <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 16px 14px 6px;">

@@ -2,6 +2,8 @@ using Kismeta.Core.Commands;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI;
+using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 
 namespace Kismeta.UI.Controllers
 {
@@ -21,6 +23,7 @@ namespace Kismeta.UI.Controllers
         {
             _gate = gate;
             CeremonyBindings.BindAgeClosing(Root, session);
+            NarrativeSlotBindings.BindById(Root, "winter.transit");
         }
     }
 }

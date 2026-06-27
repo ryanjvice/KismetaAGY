@@ -7,6 +7,7 @@
     <engine:Style src="../../USS/SpringSteps.uss" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <engine:VisualElement name="spring-hub" class="screen screen--spring">
         <engine:Label text="Spring hub — your sign, harvest tally, spread, and commune action." class="sr-only" />
@@ -15,6 +16,9 @@
             <engine:Instance template="GameHeaderOverlay" />
             <engine:VisualElement class="central-panel">
             <engine:VisualElement name="wheel-stage" class="stage spring-hub__stage">
+                <engine:VisualElement class="spring-hub__narrative">
+                    <engine:Instance template="NarrativeSlots" />
+                </engine:VisualElement>
                 <engine:VisualElement name="wheel-stack" class="wheel-stack">
                     <engine:VisualElement name="wheel-star-chart" class="wheel-stack__star" />
                     <engine:VisualElement name="wheel-zodiac" class="wheel-stack__zodiac" />
@@ -30,11 +34,7 @@
 
             <engine:VisualElement name="commune-stage" class="commune-stage commune-stage--hidden">
                 <engine:Label text="Commune with your Tableau" class="commune-stage__heading h3" />
-
-                <engine:VisualElement class="tip tip--arcanum commune-stage__tip">
-                    <engine:Label text="Tap a card to move it between zones. Spread cards score alignment but can be dueled; Hand cards are safe but idle. Locks until Winter."
-                                  class="tip__text" style="color: rgb(184,154,192);" />
-                </engine:VisualElement>
+                <engine:Instance template="NarrativeSlots" />
 
                 <engine:VisualElement class="commune-stage__zone-wrap">
                     <engine:VisualElement class="swap-zone swap-zone--spread">

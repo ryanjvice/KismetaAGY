@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/AgeCeremony.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- AGE OPEN — cast (#7) + reveal (#8–9) on one screen. -->
     <engine:VisualElement name="round-open" class="screen screen--menu">
@@ -19,6 +20,9 @@
                 </engine:VisualElement>
 
                 <engine:Label text="the cosmic age die" class="ceremony-prelabel" />
+                <engine:VisualElement style="padding: 0 20px; width: 100%;">
+                    <engine:Instance template="NarrativeSlots" />
+                </engine:VisualElement>
                 <engine:Label text="one of twelve signs will rule the coming age" class="ceremony-couplet" />
             </engine:VisualElement>
 

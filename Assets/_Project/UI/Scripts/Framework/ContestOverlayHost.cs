@@ -43,6 +43,9 @@ namespace Kismeta.UI
 
         public string? ActiveNarrativeStepId => _active switch
         {
+            ActiveContest.Trade => "summer.trade",
+            ActiveContest.Duel => "summer.duel",
+            ActiveContest.Gambit => "summer.gambit",
             ActiveContest.Opposition => "autumn.oppose",
             _ => null
         };

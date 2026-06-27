@@ -13,6 +13,190 @@ MonoBehaviour:
   m_Name: NarrativeSlotCatalog
   m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Narrative.NarrativeSlotCatalog
   _entries:
+  - _id: spring.intro
+    _season: 0
+    _tier: 0
+    _order: 0
+    _beat: A new age dawns over Kismeta. The stars take their stations, and the alchemists
+      gather their fortune.
+    _charge: 'Open the round: set the cosmic age, find your sign, and gather your
+      harvest.'
+    _stakes: "This age's sign shapes everything \u2014 which cards harvest well,
+      which alignments score, and your own cosmic effect for the round."
+    _verbs:
+    - Begin Spring
+    _breadcrumb: 
+  - _id: spring.setage
+    _season: 0
+    _tier: 1
+    _order: 1
+    _beat: The Agekeeper rolls, and the heavens choose the age for all.
+    _charge: "Read the age's three Aspects \u2014 Sign, Planet, Element \u2014 and
+      its cosmic effect aloud."
+    _stakes: Every harvest bonus and alignment this round is measured against these
+      three Aspects.
+    _verbs:
+    - Cast the age
+    _breadcrumb: 
+  - _id: spring.sign
+    _season: 0
+    _tier: 1
+    _order: 2
+    _beat: Your own die falls, and the cosmos names you for the age.
+    _charge: "Roll your Zodiac die and move your meeple to your sign \u2014 your
+      identity for this round."
+    _stakes: Your sign is an alignment source AND grants a personal cosmic effect
+      that lasts until Winter.
+    _verbs:
+    - Roll your zodiac die
+    _breadcrumb: 
+  - _id: spring.harvest
+    _season: 0
+    _tier: 1
+    _order: 3
+    _beat: The age is generous to those who align with it.
+    _charge: Tally your bonus from every source, then take your full harvest from
+      the Agekeeper.
+    _stakes: "Each source scores only its single highest Aspect \u2014 Sign +3, Planet
+      +2, Element +1. Nothing stacks within a source."
+    _verbs:
+    - Deal & commune
+    _breadcrumb: 
+  - _id: spring.commune
+    _season: 0
+    _tier: 1
+    _order: 4
+    _beat: "Lay your fortune out \u2014 what you show, and what you keep."
+    _charge: Sort your cards into Spread (visible engine) and Hand (hidden reserve).
+      Major Arcana go to your Arcanum.
+    _stakes: Spread cards score alignment and activate Crucibles but can be stolen
+      in a Duel. Hand cards are safe but idle.
+    _verbs:
+    - "Lock the tableau \xB7 to Summer"
+    _breadcrumb: 
+  - _id: spring.lock
+    _season: 0
+    _tier: 1
+    _order: 5
+    _beat: The stars fix what you have wrought.
+    _charge: "Confirm your placement \u2014 cards freeze between Spread and Hand
+      until Winter."
+    _stakes: Over-load your Spread and you expose value to theft; under-load it and
+      you starve your engine. This is binding.
+    _verbs:
+    - "Lock \U0001F512"
+    _breadcrumb: 
+  - _id: summer.intro
+    _season: 1
+    _tier: 0
+    _order: 0
+    _beat: The sun rides high and the work is long. Forge your reagents, raise your
+      houses, and reckon with your rivals.
+    _charge: "Take any actions, in any order, as many as you can fuel \u2014 no fixed
+      order, no turn limit."
+    _stakes: This is where the round is won or lost. Repeat actions as long as you
+      have cards and reagents to spend.
+    _verbs:
+    - Begin Summer
+    _breadcrumb: 
+  - _id: summer.hub
+    _season: 1
+    _tier: 1
+    _order: 1
+    _beat: The sun rides high and the work is long.
+    _charge: "Take any actions, in any order, as many as you can fuel \u2014 no fixed
+      order, no turn limit."
+    _stakes: 
+    _verbs:
+    - Craft
+    - Consort
+    - Activate
+    - Pass
+    _breadcrumb: 
+  - _id: summer.activate
+    _season: 1
+    _tier: 1
+    _order: 2
+    _beat: The formula handed down by the Fates comes due.
+    _charge: Collect a Codex card set in your Spread, discard it, light the matching
+      cauldron, and flip the Crucible card face-up.
+    _stakes: "The coal can never be moved once placed \u2014 light the cauldron your
+      higher-tier cards will demand."
+    _verbs:
+    - Activate
+    _breadcrumb: 
+  - _id: summer.craft
+    _season: 1
+    _tier: 1
+    _order: 3
+    _beat: Raw cards become the fuel of transmutation.
+    _charge: "Discard 3 suit-matching cards into a lit cauldron to craft 1 elemental
+      reagent. Salt needs no cauldron \u2014 any 3 cards."
+    _stakes: Reagents only transfer by Trade. Each elemental type needs its own cauldron
+      lit first.
+    _verbs:
+    - Forge
+    _breadcrumb: 
+  - _id: summer.buildhouse
+    _season: 1
+    _tier: 1
+    _order: 4
+    _beat: A permanent anchor rises in an ever-turning sky.
+    _charge: "Pay 2 cards matching your sign's planet to raise a House \u2014 a permanent
+      harvest source, opposition boost, and cosmic effect."
+    _stakes: "Houses are permanent \u2014 the cards are spent for good and cannot
+      be reclaimed. Build deliberately."
+    _verbs:
+    - Raise the House
+    _breadcrumb: 
+  - _id: summer.wards
+    _season: 1
+    _tier: 1
+    _order: 5
+    _beat: Set your tolls before the rivals come.
+    _charge: Place reagents on your Active Crucible or Adept cards to set the fee
+      challengers must pay to Gambit them.
+    _stakes: Crucible wards are permanent; Adept wards return if the Adept leaves
+      play. An unwarded active card can be gambited for free.
+    _verbs:
+    - Seal the wards
+    _breadcrumb: 
+  - _id: summer.trade
+    _season: 1
+    _tier: 1
+    _order: 6
+    _beat: Bargains struck beneath the high sun.
+    _charge: "Exchange cards, reagents, or Active Crucible cards freely with a rival
+      \u2014 the only way to move reagents."
+    _stakes: Hidden Hand cards cannot be requested. In Magnus mode, misaligned players
+      trade 2:1.
+    _verbs:
+    - Complete trade
+    _breadcrumb: 
+  - _id: summer.duel
+    _season: 1
+    _tier: 1
+    _order: 7
+    _beat: Steel meets steel over a coveted card.
+    _charge: "Name a card in a rival's Spread, ante a card of your own, and roll
+      \u2014 higher roll takes the prize."
+    _stakes: Lose, and your ante returns to the deck. Only Spread cards can be targeted;
+      the Hand is safe.
+    _verbs:
+    - Ante & roll
+    _breadcrumb: 
+  - _id: summer.gambit
+    _season: 1
+    _tier: 1
+    _order: 8
+    _beat: A wager against the Fates themselves.
+    _charge: Stake one of your Active cards to seize a rival's Crucible or Adept
+      card. Pay their ward fee, then roll.
+    _stakes: "Lose, and your offered card is Arrested \u2014 pay 1 Salt to free it,
+      and you can't re-gambit that rival this round."
+    _verbs:
+    - Challenge this rival
+    _breadcrumb: 
   - _id: autumn.intro
     _season: 2
     _tier: 0
@@ -85,3 +269,64 @@ MonoBehaviour:
     _verbs:
     - Leave Stasis
     _breadcrumb: In Stasis
+  - _id: winter.intro
+    _season: 3
+    _tier: 0
+    _order: 0
+    _beat: The forge fires bank low. What was gained is reckoned, what was held is
+      loosed, and the wheel turns toward a new age.
+    _charge: 'Close the age: unlock your cards, place an optional wager, enforce
+      limits, and transit to the next age.'
+    _stakes: Only your cards reset. Lit cauldrons, astral houses, active Crucible
+      cards, and your stone's forge position all carry forward.
+    _verbs:
+    - Begin Winter
+    _breadcrumb: 
+  - _id: winter.unlock
+    _season: 3
+    _tier: 1
+    _order: 1
+    _beat: The stars release their hold.
+    _charge: Move cards freely between Hand and Spread one last time before the age
+      closes.
+    _stakes: 
+    _verbs:
+    - Unlock cards
+    _breadcrumb: 
+  - _id: winter.wager
+    _season: 3
+    _tier: 1
+    _order: 2
+    _beat: Bet on the sign the coming age will wear.
+    _charge: Predict the next cosmic sign and stake any cards from your Spread or
+      Hand. Guess right and your wager doubles.
+    _stakes: Guess wrong and the cards are lost to the Fates. Major Arcana in your
+      Arcanum cannot be wagered.
+    _verbs:
+    - Place wager
+    - Skip wager
+    _breadcrumb: 
+  - _id: winter.limits
+    _season: 3
+    _tier: 1
+    _order: 3
+    _beat: Pare back to what you can carry into the dark.
+    _charge: Discard down to 5 Spread and 5 Hand. Return all Fate cards to the deck;
+      Adepts remain.
+    _stakes: 
+    _verbs:
+    - Enforce limits
+    _breadcrumb: 
+  - _id: winter.transit
+    _season: 3
+    _tier: 1
+    _order: 4
+    _beat: The key passes, and the wheel turns toward a sign unknown until the dice
+      fall.
+    _charge: "The Agekeeper shuffles the deck and passes the key clockwise \u2014
+      a new age begins, unless the Great Work is done."
+    _stakes: 
+    _verbs:
+    - Turn the wheel
+    - cast the next age
+    _breadcrumb: 

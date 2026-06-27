@@ -4,6 +4,7 @@ using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -83,13 +84,15 @@ namespace Kismeta.UI.Controllers
                 SetIntroVisible(true);
                 DisableActivate("Select a card to activate");
             }
+
+            NarrativeSlotBindings.BindById(Root, "summer.activate");
         }
 
         void SetIntroVisible(bool visible)
         {
-            var intro = El("activate-intro-wrap");
-            if (intro != null)
-                intro.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            var slots = Root?.Q(className: "narrative-slots");
+            if (slots != null)
+                slots.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         static bool CanActivateSlot(PlayerCrucibleSlot slot) =>

@@ -8,6 +8,7 @@ using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -112,6 +113,11 @@ namespace Kismeta.UI.Controllers
 
             BindHintLabel(hint, bridge, player);
             BindSpringCta(bridge, loop);
+
+            var narrativeRoot = isCommune ? El("commune-stage") : El("wheel-stage");
+            NarrativeSlotBindings.BindById(
+                narrativeRoot ?? Root,
+                NarrativeStepResolver.ResolveSpringHub(hint, isCommune));
 
             if (!isCommune)
                 RefreshDock();

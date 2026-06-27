@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/AgeCeremony.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- AGE CLOSING — close ceremony + standings recap. -->
     <engine:VisualElement name="age-close" class="screen screen--menu">
@@ -25,6 +26,9 @@
         </engine:VisualElement>
 
         <engine:ScrollView class="menu-screen__scroll menu-screen__scroll--grow">
+            <engine:VisualElement class="ceremony-panel-wrap" style="padding: 0 14px;">
+                <engine:Instance template="NarrativeSlots" />
+            </engine:VisualElement>
             <engine:VisualElement class="ceremony-panel-wrap">
                 <engine:Label text="how the age moved the board" class="eyebrow" />
                 <engine:VisualElement name="standings-list" />

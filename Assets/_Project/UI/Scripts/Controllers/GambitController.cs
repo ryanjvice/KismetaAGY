@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -68,6 +69,7 @@ namespace Kismeta.UI.Controllers
                 SetWizard("wg", 4, 1);
                 RefreshTargetStep();
             }
+            NarrativeSlotBindings.BindById(Root, "summer.gambit");
         }
 
         void RefreshTargetStep()

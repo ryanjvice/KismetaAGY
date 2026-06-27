@@ -6,6 +6,7 @@ using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -96,6 +97,9 @@ namespace Kismeta.UI.Controllers
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             MainSceneBindings.BindCauldrons(Root, local, session);
+
+            var stepId = NarrativeStepResolver.ResolveSummerAction(_summerOverlays, _contestOverlays);
+            NarrativeSlotBindings.BindById(Root, stepId);
         }
 
         public void RefreshActionGroupRail()

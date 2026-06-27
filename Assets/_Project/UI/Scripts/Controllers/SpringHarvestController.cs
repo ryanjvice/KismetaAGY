@@ -4,6 +4,7 @@ using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -60,6 +61,8 @@ namespace Kismeta.UI.Controllers
             var dealBtn = Btn("deal-btn");
             if (dealBtn != null)
                 dealBtn.text = $"→ Deal {breakdown.Total} & commune";
+
+            NarrativeSlotBindings.BindById(Root, "spring.harvest");
         }
 
         static int ResolvePlayerId(GameSession session, CommandBridge bridge)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using Kismeta.UI.Controllers;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -55,6 +56,7 @@ namespace Kismeta.UI.Controllers
             SetWizard("wd", 2, 1);
             RefreshSetup();
             Lbl("roll-outcome")!.style.display = DisplayStyle.None;
+            NarrativeSlotBindings.BindById(Root, "summer.duel");
         }
 
         void RefreshSetup()

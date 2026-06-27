@@ -5,6 +5,7 @@ using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -52,6 +53,8 @@ namespace Kismeta.UI.Controllers
                 CeremonyBindings.BindRoundOpen(Root, session, LocalPlayerId);
             else
                 CeremonyBindings.BindAgeOpening(Root, session);
+
+            NarrativeSlotBindings.BindById(Root, "spring.setage");
         }
 
         void ResolveInitialPhase(GameSession session)

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:VisualElement class="narrative-slots">
+        <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+        <engine:Label name="narrative-charge" text="" class="narrative-charge" />
+        <engine:VisualElement name="narrative-stakes-wrap" class="narrative-stakes-wrap tip tip--danger">
+            <engine:Label name="narrative-stakes" text="" class="narrative-stakes tip__text" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

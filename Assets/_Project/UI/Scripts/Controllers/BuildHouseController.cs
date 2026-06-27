@@ -4,6 +4,7 @@ using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -34,6 +35,7 @@ namespace Kismeta.UI.Controllers
 
             _selected.Clear();
             RefreshUi();
+            NarrativeSlotBindings.BindById(Root, "summer.buildhouse");
         }
 
         void RefreshUi()

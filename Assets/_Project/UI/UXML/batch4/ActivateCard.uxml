@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          ACTIVATE A CRUCIBLE CARD (#21) — 2×2 slot grid + formula reveal.
@@ -22,13 +23,12 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
+        <engine:VisualElement style="padding: 4px 14px 0;">
+            <engine:Instance template="NarrativeSlots" />
+        </engine:VisualElement>
+
         <engine:ScrollView name="activate-scroll" class="screen__body activate-scroll">
             <engine:VisualElement style="flex-shrink: 0;">
-                <engine:VisualElement name="activate-intro-wrap" class="tip tip--caution">
-                    <engine:Label name="activate-intro"
-                                  text="Activating a crucible card moves its coal to the matching cauldron — lighting it. A lit cauldron lets you craft that element's reagent."
-                                  class="tip__text" style="color: rgb(212,184,122);" />
-                </engine:VisualElement>
                 <engine:VisualElement class="activate-section">
                     <engine:Label text="1 · choose a dormant crucible card" class="eyebrow" />
                     <engine:VisualElement name="crucible-slots" class="crucible-slots">

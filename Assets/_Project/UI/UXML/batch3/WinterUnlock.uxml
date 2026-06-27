@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          COMMUNE (#14) — tap-to-swap Minor Arcana between Spread and Hand.
@@ -31,11 +32,7 @@
 
         <engine:VisualElement class="tap-swap-body">
             <engine:Label text="Commune with your Tableau" class="commune-stage__heading h3" />
-
-            <engine:VisualElement class="tip tip--arcanum commune-stage__tip">
-                <engine:Label text="Tap a card to move it between zones. Spread cards score alignment but can be dueled; Hand cards are safe but idle. Locks until Winter."
-                              class="tip__text" style="color: rgb(184,154,192);" />
-            </engine:VisualElement>
+            <engine:Instance template="NarrativeSlots" />
 
             <engine:VisualElement class="commune-stage__zone-wrap">
                 <engine:VisualElement class="swap-zone swap-zone--spread">

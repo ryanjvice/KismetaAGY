@@ -61,6 +61,15 @@ namespace Kismeta.UI
             _ => null
         };
 
+        public string? ActiveNarrativeStepId => _active switch
+        {
+            ActiveOverlay.CraftReagent => "summer.craft",
+            ActiveOverlay.BuildHouse => "summer.buildhouse",
+            ActiveOverlay.PlaceWards => "summer.wards",
+            ActiveOverlay.Activate => "summer.activate",
+            _ => null
+        };
+
         void Awake() => EnsureControllers();
 
         public void Configure(

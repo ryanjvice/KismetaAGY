@@ -15,8 +15,9 @@
             </engine:VisualElement>
             <engine:Label text="SUMMER" class="intro-name" />
             <engine:Label text="THE HIGH SUN · BUILD &amp; PREPARE" class="intro-tagline" />
-            <engine:Label text="The sun rides high and the work is long. Forge your reagents, raise your houses, and reckon with your rivals."
-                          class="intro-couplet" />
+            <engine:Label name="narrative-beat"
+                          text="The sun rides high and the work is long. Forge your reagents, raise your houses, and reckon with your rivals."
+                          class="intro-couplet narrative-beat" />
         </engine:VisualElement>
 
         <engine:VisualElement class="ceremony-reveal-body">
@@ -27,7 +28,9 @@
                     </engine:VisualElement>
                     <engine:VisualElement class="intro-info-panel__body">
                         <engine:Label text="cards are locked · the work begins" class="eyebrow intro-info-panel__eyebrow" />
-                        <engine:Label text="take any actions, in any order, as many as you can fuel" class="intro-info-panel__subtitle" />
+                        <engine:Label name="narrative-charge"
+                                      text="take any actions, in any order, as many as you can fuel"
+                                      class="intro-info-panel__subtitle narrative-charge" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
@@ -68,9 +71,10 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
-                <engine:VisualElement class="panel tip--caution">
-                    <engine:Label text="No fixed order and no turn limit — repeat actions as long as you have the cards and reagents to spend. This is where the round is won or lost."
-                                  class="tip__text intro-tip__text" />
+                <engine:VisualElement name="narrative-stakes-wrap" class="panel tip--caution narrative-stakes-wrap">
+                    <engine:Label name="narrative-stakes"
+                                  text="No fixed order and no turn limit — repeat actions as long as you have the cards and reagents to spend. This is where the round is won or lost."
+                                  class="tip__text intro-tip__text narrative-stakes" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>

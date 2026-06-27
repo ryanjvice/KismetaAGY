@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/Contests.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          DUEL (#47) — 2-step wizard: combined setup (rival + target + ante)
@@ -25,6 +26,10 @@
         <engine:VisualElement class="wizard-steps">
             <engine:VisualElement name="wd-1" class="wizard-dot wizard-dot--active" />
             <engine:VisualElement name="wd-2" class="wizard-dot" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 4px 14px 0;">
+            <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
         <!-- combined setup: rival + target + ante -->

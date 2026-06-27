@@ -4,6 +4,7 @@ using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.UI;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -79,6 +80,7 @@ namespace Kismeta.UI.Controllers
             if (_forged)
             {
                 SetPhaseVisibility(showResult: true);
+                NarrativeSlotBindings.BindById(Root, "summer.craft");
                 return;
             }
 
@@ -95,6 +97,8 @@ namespace Kismeta.UI.Controllers
             }
             else
                 ApplyReagentUi();
+
+            NarrativeSlotBindings.BindById(Root, "summer.craft");
         }
 
         void SelectDefaultReagent()

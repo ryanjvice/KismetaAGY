@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/Contests.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          TRADE (#26) — two stacked trays. Request only from the rival's PUBLIC
@@ -21,6 +22,10 @@
                 <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
                 <engine:Label name="contest-title" text="Trade · Severin" class="statusbar__title" style="color: rgb(168,205,240); margin-left: 4px;" />
             </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 4px 14px 0;">
+            <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
         <engine:VisualElement name="rival-strip" style="padding: 8px 14px 0; flex-direction: row; flex-wrap: wrap;" />

@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          FATEFUL WAGER (#40) — predict next age's sign + stake cards.
@@ -24,6 +25,10 @@
                     <engine:Label text="optional · bet on the next age" class="statusbar__sub" style="color: rgb(122,138,154);" />
                 </engine:VisualElement>
             </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 4px 14px 0;">
+            <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
         <!-- sign grid: 12 buttons, populated/authored; samples below -->

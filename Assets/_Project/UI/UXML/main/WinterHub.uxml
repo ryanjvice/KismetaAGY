@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/WinterHub.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
 
@@ -14,6 +15,9 @@
             <engine:Instance template="GameHeaderOverlay" />
             <engine:VisualElement class="central-panel">
             <engine:VisualElement name="winter-stage" class="stage winter-hub__stage">
+                <engine:VisualElement class="winter-hub__narrative" style="width: 100%; padding: 0 14px 8px;">
+                    <engine:Instance template="NarrativeSlots" />
+                </engine:VisualElement>
                 <engine:VisualElement name="winter-seal" class="winter-seal" />
                 <engine:Label text="closing rites" class="eyebrow winter-hub__title" />
                 <engine:Label name="limits-line" text="Spread 0/5 · Hand 0/5" class="text-muted winter-hub__limits" />

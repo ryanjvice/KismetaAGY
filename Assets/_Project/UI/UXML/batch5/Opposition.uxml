@@ -6,6 +6,7 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
     <engine:Style src="../../USS/Contests.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          OPPOSITION (#49) -> STASIS RESULT (#33)
@@ -33,12 +34,8 @@
             <engine:VisualElement name="wo-4" class="wizard-dot" />
         </engine:VisualElement>
 
-        <engine:VisualElement class="narrative-slots" style="padding: 4px 14px 0;">
-            <engine:Label name="narrative-beat" text="" class="narrative-beat" />
-            <engine:Label name="narrative-charge" text="" class="narrative-charge" />
-            <engine:VisualElement name="narrative-stakes-wrap" class="narrative-stakes-wrap tip tip--danger">
-                <engine:Label name="narrative-stakes" text="" class="narrative-stakes tip__text" />
-            </engine:VisualElement>
+        <engine:VisualElement style="padding: 4px 14px 0;">
+            <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
         <!-- step 0: target rival -->

@@ -7,6 +7,7 @@ using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
 using Kismeta.UI;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -49,6 +50,7 @@ namespace Kismeta.UI.Controllers
 
             if (Root == null) return;
             Rebuild();
+            NarrativeSlotBindings.BindById(Root, "winter.limits");
         }
 
         void Rebuild()

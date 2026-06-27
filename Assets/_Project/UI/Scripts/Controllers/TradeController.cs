@@ -3,6 +3,7 @@ using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -45,6 +46,7 @@ namespace Kismeta.UI.Controllers
                     ContestBindings.RivalEligibleForSummerContest);
 
             RefreshAll();
+            NarrativeSlotBindings.BindById(Root, "summer.trade");
         }
 
         void RefreshAll()

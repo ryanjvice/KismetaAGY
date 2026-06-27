@@ -6,6 +6,7 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
     <engine:Style src="../../USS/Contests.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          GAMBIT (#48) — 4-step: target active card → pay ward fee → stake a
@@ -29,6 +30,10 @@
             <engine:VisualElement name="wg-2" class="wizard-dot" />
             <engine:VisualElement name="wg-3" class="wizard-dot" />
             <engine:VisualElement name="wg-4" class="wizard-dot" />
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 4px 14px 0;">
+            <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
         <!-- step 1: target active card -->

@@ -15,8 +15,9 @@
             </engine:VisualElement>
             <engine:Label text="WINTER" class="intro-name" />
             <engine:Label text="THE LONG NIGHT · CLOSE THE AGE" class="intro-tagline" />
-            <engine:Label text="The forge fires bank low. What was gained is reckoned, what was held is loosed, and the wheel turns toward a new age."
-                          class="intro-couplet" />
+            <engine:Label name="narrative-beat"
+                          text="The forge fires bank low. What was gained is reckoned, what was held is loosed, and the wheel turns toward a new age."
+                          class="intro-couplet narrative-beat" />
         </engine:VisualElement>
 
         <engine:VisualElement class="ceremony-reveal-body">
@@ -27,7 +28,9 @@
                     </engine:VisualElement>
                     <engine:VisualElement class="intro-info-panel__body">
                         <engine:Label text="the age of Scorpio ends" class="eyebrow intro-info-panel__eyebrow" />
-                        <engine:Label text="mars · water — a strong age for your forging run" class="intro-info-panel__subtitle" />
+                        <engine:Label name="narrative-charge"
+                                      text="mars · water — a strong age for your forging run"
+                                      class="intro-info-panel__subtitle narrative-charge" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
@@ -65,9 +68,10 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
-                <engine:VisualElement class="panel tip--ok">
-                    <engine:Label text="Only your cards reset. Lit cauldrons, astral houses, active crucible cards and your stone's forge position all carry into the next age."
-                                  class="tip__text intro-tip__text" />
+                <engine:VisualElement name="narrative-stakes-wrap" class="panel tip--ok narrative-stakes-wrap">
+                    <engine:Label name="narrative-stakes"
+                                  text="Only your cards reset. Lit cauldrons, astral houses, active crucible cards and your stone's forge position all carry into the next age."
+                                  class="tip__text intro-tip__text narrative-stakes" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>

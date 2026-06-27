@@ -5,6 +5,7 @@ using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI;
+using Kismeta.UI.Components;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -48,6 +49,7 @@ namespace Kismeta.UI.Controllers
             var hand = CollectMinor(session, player.Hand);
 
             RenderZonesIfNeeded(spread, hand);
+            NarrativeSlotBindings.BindById(Root, "winter.unlock");
         }
 
         static List<string> CollectMinor(GameSession session, IEnumerable<string> ids)

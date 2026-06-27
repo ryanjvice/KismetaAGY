@@ -6,6 +6,7 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          CARD LIMITS (#42) — rearrange, craft, discard down to 5/5.
@@ -24,6 +25,10 @@
                     <engine:Label text="rearrange, craft, discard down to 5 per zone" class="statusbar__sub" style="color: rgb(122,138,154);" />
                 </engine:VisualElement>
             </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 4px 14px 0;">
+            <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 10px 14px 4px;">

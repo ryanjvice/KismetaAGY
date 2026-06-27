@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <engine:VisualElement name="spring-harvest" class="screen screen--spring">
         <engine:Label text="Spring harvest — itemized tally before cards are dealt." class="sr-only" />
@@ -39,6 +40,10 @@
         </engine:VisualElement>
 
         <engine:Label text="Harvest Results" class="h2 harvest-compare__heading" />
+
+        <engine:VisualElement style="padding: 0 14px 8px;">
+            <engine:Instance template="NarrativeSlots" />
+        </engine:VisualElement>
 
         <engine:VisualElement class="harvest-compare">
             <engine:VisualElement name="compare-age-panel" class="harvest-compare__panel">

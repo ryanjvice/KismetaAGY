@@ -15,8 +15,9 @@
             </engine:VisualElement>
             <engine:Label text="SPRING" class="intro-name" />
             <engine:Label text="THE WHEEL TURNS · SET THE AGE" class="intro-tagline" />
-            <engine:Label text="A new age dawns over Kismeta. The stars take their stations, and the alchemists gather their fortune."
-                          class="intro-couplet" />
+            <engine:Label name="narrative-beat"
+                          text="A new age dawns over Kismeta. The stars take their stations, and the alchemists gather their fortune."
+                          class="intro-couplet narrative-beat" />
         </engine:VisualElement>
 
         <engine:VisualElement class="ceremony-reveal-body">
@@ -27,7 +28,9 @@
                     </engine:VisualElement>
                     <engine:VisualElement class="intro-info-panel__body">
                         <engine:Label text="a new age is cast" class="eyebrow intro-info-panel__eyebrow" />
-                        <engine:Label text="the Agekeeper rolls to set the cosmic age for all" class="intro-info-panel__subtitle" />
+                        <engine:Label name="narrative-charge"
+                                      text="the Agekeeper rolls to set the cosmic age for all"
+                                      class="intro-info-panel__subtitle narrative-charge" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
@@ -71,9 +74,10 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
-                <engine:VisualElement class="panel tip--ok">
-                    <engine:Label text="This age's sign shapes everything — which cards harvest well, which alignments score, and your own cosmic effect for the round."
-                                  class="tip__text intro-tip__text" />
+                <engine:VisualElement name="narrative-stakes-wrap" class="panel tip--ok narrative-stakes-wrap">
+                    <engine:Label name="narrative-stakes"
+                                  text="This age's sign shapes everything — which cards harvest well, which alignments score, and your own cosmic effect for the round."
+                                  class="tip__text intro-tip__text narrative-stakes" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>

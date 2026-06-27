@@ -4,6 +4,7 @@ using Kismeta.Core.Domain;
 using System.Linq;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Components;
+using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -36,6 +37,7 @@ namespace Kismeta.UI.Controllers
             _stepper.Reset();
             _slotReagentKeys.Clear();
             RebuildRows();
+            NarrativeSlotBindings.BindById(Root, "summer.wards");
         }
 
         void RebuildRows()

@@ -21,14 +21,14 @@ namespace Kismeta.UI.Editor
                 AssetDatabase.CreateAsset(catalog, AssetPath);
             }
 
-            catalog.SetEntries(NarrativeSlotCatalogDefaults.AutumnSlice);
+            catalog.SetEntries(NarrativeSlotCatalogDefaults.AllEntries);
             EditorUtility.SetDirty(catalog);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             NarrativeSlotCatalog.ClearCache();
 
             Debug.Log($"[Kismeta.UI] Narrative slot catalog saved to {AssetPath} " +
-                      $"({NarrativeSlotCatalogDefaults.AutumnSlice.Count} Autumn entries).");
+                      $"({NarrativeSlotCatalogDefaults.AllEntries.Count} entries).");
         }
     }
 }

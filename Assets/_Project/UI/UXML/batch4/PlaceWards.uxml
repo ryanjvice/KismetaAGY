@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          PLACE WARDS (#24)
@@ -22,6 +23,10 @@
                     <engine:Label text="defend cards against gambits" class="statusbar__sub" />
                 </engine:VisualElement>
             </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement style="padding: 4px 14px 0;">
+            <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 12px 14px 4px;">
