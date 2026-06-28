@@ -42,11 +42,13 @@
             </engine:VisualElement>
 
             <engine:VisualElement name="hub-stage" class="stage spring-hub__board-stage spring-hub__stage--hidden">
-                <engine:VisualElement name="spring-board" class="spring-board">
-                    <engine:VisualElement name="spring-board-wheel" class="spring-board__wheel" />
-                    <engine:VisualElement name="spring-board-tokens" class="spring-board__tokens" picking-mode="Ignore" />
+                <engine:VisualElement class="spring-board-panel">
+                    <engine:VisualElement name="spring-board" class="spring-board">
+                        <engine:VisualElement name="spring-board-wheel" class="spring-board__wheel" />
+                        <engine:VisualElement name="spring-board-tokens" class="spring-board__tokens" picking-mode="Ignore" />
+                    </engine:VisualElement>
+                    <engine:Label name="narrative-charge" text="" class="narrative-charge spring-board-panel__charge" />
                 </engine:VisualElement>
-                <engine:Label name="narrative-charge" text="" class="narrative-charge" />
             </engine:VisualElement>
 
             <engine:VisualElement name="commune-stage" class="commune-stage commune-stage--hidden">

@@ -110,28 +110,64 @@
 
 .spring-hub__actionbar {
     flex-shrink: 0;
-    padding: 0 var(--space-md);
-    margin: var(--space-xs) var(--space-md) 0;
+    padding: 8px var(--space-md) 6px;
+    margin: 0 var(--space-md);
+    border-top-width: 1px;
+    border-top-color: var(--border-gold);
+}
+
+.spring-hub__actionbar .actionbar__row--primary > .actionbtn {
+    min-height: var(--touch-min);
 }
 
 .spring-hub__actionbar--hidden { display: none; }
 
+.central-panel > .spring-hub__board-stage {
+    flex-grow: 0;
+    flex-shrink: 0;
+    min-height: auto;
+    overflow: hidden;
+}
+
 .spring-hub__board-stage {
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-grow: 1;
+    flex-grow: 0;
     align-self: stretch;
+    flex-shrink: 0;
+    min-height: auto;
+    overflow: hidden;
+    padding: var(--space-md) var(--space-md) var(--space-lg);
+    margin: 0 var(--space-md);
+    border-radius: var(--radius-lg);
+    border-width: 2px;
+    border-color: var(--border-gold);
+    background-color: rgba(28, 18, 38, 0.92);
+}
+
+.spring-board-panel {
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    align-self: stretch;
+    overflow: visible;
+    padding: var(--space-xs) var(--space-sm) var(--space-sm);
 }
 
 .spring-board {
     position: relative;
-    width: 280px;
-    height: 280px;
-    max-width: 90%;
-    aspect-ratio: 1;
+    width: 272px;
+    height: 272px;
+    max-width: 84%;
+    min-width: 220px;
+    min-height: 220px;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    margin: 4px 0 8px;
+    margin: var(--space-sm) 0 var(--space-xs);
+    align-self: center;
+    overflow: visible;
 }
 
 .spring-board__wheel {
@@ -140,6 +176,7 @@
     right: 0;
     top: 0;
     bottom: 0;
+    background-image: url("project://database/Assets/_Project/Art/zodiacWheel_springHub.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
@@ -153,6 +190,29 @@
 
 .spring-board__token {
     position: absolute;
+    z-index: 1;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.spring-board__token--pawn {
+    z-index: 2;
+    background-image: url("project://database/Assets/_Project/Art/meeple/cosmicAge_pawn.png");
+}
+
+.spring-board__token--meeple-red {
+    background-image: url("project://database/Assets/_Project/Art/meeple/meeple_Red.png");
+}
+
+.spring-board__token--meeple-green {
+    background-image: url("project://database/Assets/_Project/Art/meeple/meeple_Green.png");
+}
+
+.spring-board__token--meeple-blue {
+    background-image: url("project://database/Assets/_Project/Art/meeple/meeple_Blue.png");
+}
+
+.spring-board__token--meeple-white {
+    background-image: url("project://database/Assets/_Project/Art/meeple/meeple_White.png");
 }
 
 .spring-hub__hub-cta--hidden,
@@ -160,11 +220,13 @@
 
 .spring-hub__stage .narrative-charge,
 .commune-stage .narrative-charge,
-.spring-hub__board-stage .narrative-charge {
+.spring-board-panel__charge {
+    flex-shrink: 0;
     -unity-text-align: middle-center;
     align-self: stretch;
-    margin-top: 4px;
-    margin-bottom: 6px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0 var(--space-xs) var(--space-xs);
 }
 
 .spring-hub__stakes {
