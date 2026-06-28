@@ -221,3 +221,14 @@
 .ceremony-callout__text {
     color: rgb(168, 176, 216);
 }
+
+/* Age Opening: group the callout + CTA directly under the cosmic effect panel
+   instead of pushing them to the bottom of the screen. */
+#age-open .ceremony-reveal-body {
+    flex-grow: 0;
+}
+
+#age-open .ceremony-panel-wrap--callout {
+    flex-grow: 0;
+    justify-content: flex-start;
+}

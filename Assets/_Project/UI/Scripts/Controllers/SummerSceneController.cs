@@ -104,11 +104,7 @@ namespace Kismeta.UI.Controllers
             NarrativeSlotBindings.BindById(
                 Root,
                 stepId,
-                mask: NarrativeSlotMask.Beat | NarrativeSlotMask.Stakes);
-            NarrativeSlotBindings.BindById(
-                El("summer-main-stage"),
-                stepId,
-                mask: NarrativeSlotMask.Charge);
+                mask: NarrativeSlotMask.Beat | NarrativeSlotMask.Stakes | NarrativeSlotMask.Charge);
 
             HeaderOverlayBindings.ApplyHeaderPad(Root);
         }

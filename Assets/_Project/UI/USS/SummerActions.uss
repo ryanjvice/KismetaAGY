@@ -468,11 +468,93 @@
     margin-bottom: 0;
 }
 
-#summer-main-stage .narrative-charge {
+.summer-main__actionbar {
+    flex-shrink: 0;
+    padding: 8px var(--space-md) 6px;
+    margin: 0 var(--space-md);
+    border-top-width: 1px;
+    border-top-color: var(--border-gold);
+}
+
+.summer-main__actionbar .actionbar__row--primary > .actionbtn {
+    min-height: var(--touch-min);
+}
+
+#summer-main-stage {
+    min-height: 340px;
+}
+
+.summer-main__pass-block {
+    padding-bottom: var(--space-xs);
+}
+
+.summer-main__charge {
+    flex-shrink: 0;
+    width: 100%;
     -unity-text-align: middle-center;
-    align-self: stretch;
-    margin-top: 4px;
-    margin-bottom: 6px;
+    margin: var(--space-sm) 0 0;
+    padding: 0 var(--space-sm);
+    color: var(--muted);
+    font-size: var(--font-label);
+    white-space: normal;
+}
+
+.summer-main__crucible-row {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    margin: 0 var(--space-md) var(--space-sm);
+    padding: 0 var(--space-xs);
+}
+
+.crucible-activate {
+    flex-shrink: 0;
+    flex-grow: 0;
+    min-height: var(--card-chip-h);
+    margin-right: var(--space-sm);
+}
+
+.crucible-cards {
+    flex-direction: row;
+    flex-grow: 1;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.crucible-card {
+    width: var(--card-chip-w);
+    height: var(--card-chip-h);
+    flex-shrink: 0;
+    flex-grow: 0;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(22, 10, 28);
+    border-width: 1px;
+    border-color: var(--gold-deep);
+    border-radius: var(--radius-sm);
+}
+
+.crucible-card__token {
+    width: 36px;
+    height: 36px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.crucible-card__token--red {
+    background-image: url("project://database/Assets/_Project/Art/cauldrons/cauldron_red.png");
+}
+
+.crucible-card__token--blue {
+    background-image: url("project://database/Assets/_Project/Art/cauldrons/cauldron_blue.png");
+}
+
+.crucible-card__token--green {
+    background-image: url("project://database/Assets/_Project/Art/cauldrons/cauldron_green.png");
+}
+
+.crucible-card__token--yellow {
+    background-image: url("project://database/Assets/_Project/Art/cauldrons/cauldron_yellow.png");
 }
 
 .summer-main__stakes {
@@ -485,24 +567,16 @@
 }
 
 /* ---------- Summer main: cauldron hub (state center) ---------- */
-.summer-main__hint {
-    margin-top: 4px;
-    margin-bottom: 0;
-    -unity-text-align: middle-center;
-    color: rgb(240, 176, 96);
-    -unity-font-style: bold;
-    white-space: normal;
-}
-
 .cauldron-hub {
     align-items: center;
     justify-content: center;
     width: 320px;
     height: 320px;
     align-self: center;
-    margin-top: 4px;
-    margin-bottom: 4px;
+    margin-top: 0;
+    margin-bottom: 0;
     position: relative;
+    flex-shrink: 0;
 }
 
 .cauldron-hub__mantle {
@@ -525,9 +599,9 @@
 }
 
 .cauldron-hub .cauldron {
-    width: 96px;
-    height: 96px;
-    border-radius: 48px;
+    width: 78px;
+    height: 78px;
+    border-radius: 39px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -594,13 +668,13 @@
     scale: 0.96 0.96;
 }
 
-.cauldron-hub #cauldron-n { top: 33px; left: 33px; right: auto; bottom: auto; }
+.cauldron-hub #cauldron-n { top: 10px; left: 10px; right: auto; bottom: auto; }
 
-.cauldron-hub #cauldron-e { top: 33px; right: 33px; left: auto; bottom: auto; }
+.cauldron-hub #cauldron-e { top: 10px; right: 10px; left: auto; bottom: auto; }
 
-.cauldron-hub #cauldron-s { bottom: 33px; left: 33px; top: auto; right: auto; }
+.cauldron-hub #cauldron-s { bottom: 10px; left: 10px; top: auto; right: auto; }
 
-.cauldron-hub #cauldron-w { bottom: 33px; right: 33px; top: auto; left: auto; }
+.cauldron-hub #cauldron-w { bottom: 10px; right: 10px; top: auto; left: auto; }
 
 .cauldron__color {
     font-size: 10px;
@@ -663,11 +737,11 @@
 
 .codex-hub {
     position: absolute;
-    width: 102px;
-    height: 102px;
-    border-radius: 51px;
-    top: 109px;
-    left: 109px;
+    width: 76px;
+    height: 76px;
+    border-radius: 38px;
+    top: 122px;
+    left: 122px;
     background-color: rgb(22, 10, 28);
     border-width: 2px;
     border-color: var(--gold-bright);

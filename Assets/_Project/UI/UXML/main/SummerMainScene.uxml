@@ -20,12 +20,35 @@
                 <engine:Button name="effects-fab" text="Effects" class="effects-fab btn btn--secondary" />
             </engine:VisualElement>
 
+            <engine:VisualElement class="summer-main__actionbar">
+                <engine:VisualElement class="actionbar__row actionbar__row--primary">
+                    <engine:Button name="craftbuild-btn" text="Craft" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="consort-btn" text="Consort" class="actionbtn btn btn--secondary" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
             <engine:VisualElement class="central-panel">
             <engine:VisualElement name="summer-main-stage" class="stage" style="align-items: center; justify-content: center;">
                 <engine:Instance template="CauldronHub" />
-                <engine:Label name="narrative-charge" text="" class="narrative-charge" />
-                <engine:Label name="hint-label" text="Your turn" class="text-hint summer-main__hint" />
             </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="summer-main__crucible-row">
+                <engine:Button name="activate-btn" text="Activate" class="actionbtn btn btn--primary crucible-activate" />
+                <engine:VisualElement class="crucible-cards">
+                    <engine:VisualElement class="crucible-card crucible-card--red">
+                        <engine:VisualElement class="crucible-card__token crucible-card__token--red" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="crucible-card crucible-card--blue">
+                        <engine:VisualElement class="crucible-card__token crucible-card__token--blue" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="crucible-card crucible-card--green">
+                        <engine:VisualElement class="crucible-card__token crucible-card__token--green" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="crucible-card crucible-card--yellow">
+                        <engine:VisualElement class="crucible-card__token crucible-card__token--yellow" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:VisualElement class="summer-main__stakes">
@@ -34,15 +57,9 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement class="stage-cta stage-cta--multi">
-                <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                    <engine:Button name="craftbuild-btn" text="Craft" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="consort-btn" text="Consort" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="activate-btn" text="Activate" class="actionbtn btn btn--primary" />
-                </engine:VisualElement>
-                <engine:VisualElement class="actionbar__row actionbar__row--pass">
-                    <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
-                </engine:VisualElement>
+            <engine:VisualElement class="stage-cta stage-cta--single summer-main__pass-block">
+                <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
+                <engine:Label name="narrative-charge" text="" class="narrative-charge summer-main__charge" />
             </engine:VisualElement>
 
             <engine:Instance template="PlayerInventoryOverlay" />
