@@ -41,10 +41,11 @@
 }
 
 .title-wordmark-img {
-    width: 240px;
-    height: 62px;
-    margin-top: 8px;
-    margin-bottom: 6px;
+    /* GameSplashScreen Kismeta: 500×124 canvas units at 1080 ref → ~46% screen width */
+    width: 438px;
+    height: 110px;
+    margin-top: 24px;
+    margin-bottom: 2px;
     background-image: url("project://database/Assets/_Project/Art/GameSplash/kismeta_metallic_1.png");
     -unity-background-scale-mode: scale-to-fit;
     flex-shrink: 0;
@@ -81,27 +82,28 @@
 
 .title-wheel-stack__mantle {
     position: absolute;
-    left: 16.9%;
-    right: 16.9%;
-    top: 16.9%;
-    bottom: 16.9%;
+    left: 2%;
+    right: 2%;
+    top: 2%;
+    bottom: 2%;
     background-image: url("project://database/Assets/_Project/Art/GameSplash/mantleRing.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .title-wheel-stack__forge {
     position: absolute;
-    left: 30%;
-    right: 30%;
-    top: 30%;
-    bottom: 30%;
+    left: 25%;
+    right: 25%;
+    top: 25%;
+    bottom: 25%;
     background-image: url("project://database/Assets/_Project/Art/GameSplash/crucibleForge.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .title-tagline-img {
-    width: 260px;
-    height: 42px;
+    /* GameSplashScreen AGY: 500×141 canvas units — height must match ~3.5:1 sprite aspect */
+    width: 375px;
+    height: 106px;
     margin-top: 6px;
     margin-bottom: 12px;
     background-image: url("project://database/Assets/_Project/Art/GameSplash/alchemists_metallic.png");
@@ -124,14 +126,14 @@
 .title-menu__row {
     flex-direction: row;
     margin-top: 8px;
-}
-
-.title-menu__row--secondary {
-    margin-top: 2px;
+    column-gap: 8px;
 }
 
 .btn--menu {
     flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-width: 0;
     background-color: rgba(28, 18, 8, 0.92);
     border-width: 2px;
     border-color: var(--gold-deep);
@@ -139,23 +141,7 @@
     border-radius: var(--radius-md);
     padding: 11px;
     -unity-text-align: middle-center;
-    margin-right: 8px;
 }
-.btn--menu:last-child { margin-right: 0; }
-
-.btn--menu-sm {
-    flex-grow: 1;
-    background-color: rgba(16, 10, 18, 0.9);
-    border-width: 1px;
-    border-color: var(--border-gold);
-    color: rgb(184, 154, 138);
-    border-radius: var(--radius-md);
-    padding: 10px;
-    font-size: 11px;
-    -unity-text-align: middle-center;
-    margin-right: 8px;
-}
-.btn--menu-sm:last-child { margin-right: 0; }
 
 /* Tablet+: larger art, wheel centered between wordmark and tagline */
 .viewport--tablet .title-hero__content {
@@ -164,8 +150,8 @@
 }
 
 .viewport--tablet .title-wordmark-img {
-    width: 280px;
-    height: 72px;
+    width: 500px;
+    height: 125px;
     margin-top: 0;
     margin-bottom: 4px;
 }
@@ -182,8 +168,8 @@
 }
 
 .viewport--tablet .title-tagline-img {
-    width: 300px;
-    height: 48px;
+    width: 425px;
+    height: 120px;
     margin-top: 4px;
     margin-bottom: 4px;
 }
@@ -195,11 +181,11 @@
 }
 
 .viewport--compact .title-wordmark-img {
-    width: 220px;
-    height: 56px;
+    width: 391px;
+    height: 98px;
 }
 
 .viewport--compact .title-tagline-img {
-    width: 240px;
-    height: 38px;
+    width: 338px;
+    height: 95px;
 }

@@ -72,6 +72,7 @@ namespace Kismeta.UI
             VisualTreeAsset? join = null,
             VisualTreeAsset? resume = null,
             VisualTreeAsset? codex = null,
+            VisualTreeAsset? settings = null,
             VisualTreeAsset? agekeeperContest = null,
             VisualTreeAsset? springHub = null,
             VisualTreeAsset? summerMain = null,
@@ -106,6 +107,8 @@ namespace Kismeta.UI
                 screens.Add(new ScreenAsset { Id = ScreenIds.Resume, Uxml = resume });
             if (codex != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.Codex, Uxml = codex });
+            if (settings != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.Settings, Uxml = settings });
             if (agekeeperContest != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.AgekeeperContest, Uxml = agekeeperContest });
             if (springHub != null)

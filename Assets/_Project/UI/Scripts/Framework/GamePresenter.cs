@@ -390,8 +390,8 @@ namespace Kismeta.UI
             };
             title.OnResume = () => _router.GoTo(ScreenIds.Resume);
             title.OnJoin = () => _router.GoTo(ScreenIds.Join);
-            title.OnHowToPlay = OpenHowToPlay;
             title.OnCodex = OpenCodex;
+            title.OnSettings = OpenSettings;
         }
 
         private void WireShellScreens()
@@ -416,6 +416,10 @@ namespace Kismeta.UI
             var codex = _router.GetController<CodexScreenController>(ScreenIds.Codex);
             if (codex != null)
                 codex.OnBack = ReturnToTitle;
+
+            var settings = _router.GetController<SettingsScreenController>(ScreenIds.Settings);
+            if (settings != null)
+                settings.OnBack = ReturnToTitle;
         }
 
         private void OpenCodex()
@@ -424,11 +428,7 @@ namespace Kismeta.UI
             _router.GetController<CodexScreenController>(ScreenIds.Codex)?.ShowTab(CodexTabs.Cards);
         }
 
-        private void OpenHowToPlay()
-        {
-            _router.GoTo(ScreenIds.Codex);
-            _router.GetController<CodexScreenController>(ScreenIds.Codex)?.ShowTab(CodexTabs.Terms);
-        }
+        private void OpenSettings() => _router.GoTo(ScreenIds.Settings);
 
         private void WireAgekeeperContest()
         {

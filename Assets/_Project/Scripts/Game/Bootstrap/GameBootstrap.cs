@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Kismeta.UI.Settings;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
@@ -50,6 +51,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _joinScreen;
         [SerializeField] private VisualTreeAsset _resumeScreen;
         [SerializeField] private VisualTreeAsset _codexScreen;
+        [SerializeField] private VisualTreeAsset _settingsScreen;
         [SerializeField] private VisualTreeAsset _agekeeperContest;
         [SerializeField] private VisualTreeAsset _springHub;
         [SerializeField] private VisualTreeAsset _summerMain;
@@ -113,6 +115,8 @@ namespace Kismeta.Game.Bootstrap
         {
             try
             {
+                GameSettings.Load();
+
                 _db = CardDatabase.Load();
                 _codexDb = CrucibleCodexDatabase.Load();
 
@@ -176,6 +180,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<JoinScreenController>();
             EnsureController<ResumeScreenController>();
             EnsureController<CodexScreenController>();
+            EnsureController<SettingsScreenController>();
             EnsureController<AgekeeperContestController>();
             EnsureController<SpringHubController>();
             EnsureController<SummerSceneController>();
@@ -255,7 +260,7 @@ namespace Kismeta.Game.Bootstrap
 
                 router.ConfigureScreens(
                     _titleScreen, null, _waitingHud, _setupSheet,
-                    _joinScreen, _resumeScreen, _codexScreen, _agekeeperContest,
+                    _joinScreen, _resumeScreen, _codexScreen, _settingsScreen, _agekeeperContest,
                     _springHub, _summerMain, _summerHub, _autumnMain, _autumnHub, _winterHub,
                     _roundOpen, _springIntro, _summerIntro,
                     _autumnIntro, _winterIntro, _ageClosing,

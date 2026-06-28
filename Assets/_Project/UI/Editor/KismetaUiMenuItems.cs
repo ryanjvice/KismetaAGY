@@ -21,6 +21,7 @@ namespace Kismeta.UI.Editor
         private const string JoinScreenPath = "Assets/_Project/UI/UXML/batch1/JoinScreen.uxml";
         private const string ResumeScreenPath = "Assets/_Project/UI/UXML/batch1/ResumeScreen.uxml";
         private const string CodexScreenPath = "Assets/_Project/UI/UXML/batch1/CodexScreen.uxml";
+        private const string SettingsScreenPath = "Assets/_Project/UI/UXML/batch1/SettingsScreen.uxml";
         private const string AgekeeperContestPath = "Assets/_Project/UI/UXML/batch1/AgekeeperContest.uxml";
         private const string SpringHubPath = "Assets/_Project/UI/UXML/main/SpringHub.uxml";
         private const string SummerMainPath = "Assets/_Project/UI/UXML/main/SummerMainScene.uxml";
@@ -175,6 +176,7 @@ namespace Kismeta.UI.Editor
             EnsureComponent<JoinScreenController>(bootstrap.gameObject);
             EnsureComponent<ResumeScreenController>(bootstrap.gameObject);
             EnsureComponent<CodexScreenController>(bootstrap.gameObject);
+            EnsureComponent<SettingsScreenController>(bootstrap.gameObject);
             EnsureComponent<AgekeeperContestController>(bootstrap.gameObject);
             EnsureComponent<SpringHubController>(bootstrap.gameObject);
             EnsureComponent<SummerSceneController>(bootstrap.gameObject);
@@ -249,6 +251,7 @@ namespace Kismeta.UI.Editor
             var join = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(JoinScreenPath);
             var resume = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResumeScreenPath);
             var codex = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CodexScreenPath);
+            var settings = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SettingsScreenPath);
             var agekeeperContest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgekeeperContestPath);
             var springHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHubPath);
             var summerMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerMainPath);
@@ -297,6 +300,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_joinScreen").objectReferenceValue = join;
             so.FindProperty("_resumeScreen").objectReferenceValue = resume;
             so.FindProperty("_codexScreen").objectReferenceValue = codex;
+            so.FindProperty("_settingsScreen").objectReferenceValue = settings;
             so.FindProperty("_agekeeperContest").objectReferenceValue = agekeeperContest;
             so.FindProperty("_springHub").objectReferenceValue = springHub;
             so.FindProperty("_summerMain").objectReferenceValue = summerMain;
@@ -358,7 +362,7 @@ namespace Kismeta.UI.Editor
             {
                 router.ConfigureScreens(
                     title, null, waiting, setup,
-                    join, resume, codex, agekeeperContest,
+                    join, resume, codex, settings, agekeeperContest,
                     springHub, summerMain, summerHub, autumnMain, autumnHub, winterHub,
                     roundOpen, springIntro, summerIntro,
                     autumnIntro, winterIntro, ageClosing,
@@ -391,6 +395,7 @@ namespace Kismeta.UI.Editor
             host.AddComponent<JoinScreenController>();
             host.AddComponent<ResumeScreenController>();
             host.AddComponent<CodexScreenController>();
+            host.AddComponent<SettingsScreenController>();
             host.AddComponent<AgekeeperContestController>();
             host.AddComponent<SpringHubController>();
             host.AddComponent<SummerSceneController>();
@@ -439,6 +444,7 @@ namespace Kismeta.UI.Editor
             var joinScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(JoinScreenPath);
             var resumeScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResumeScreenPath);
             var codexScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CodexScreenPath);
+            var settingsScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SettingsScreenPath);
             var agekeeperContest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgekeeperContestPath);
             var springHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHubPath);
             var summerMain = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerMainPath);
@@ -463,7 +469,7 @@ namespace Kismeta.UI.Editor
             var router = host.GetComponent<ScreenRouter>();
             router.ConfigureScreens(
                 titleScreen, null, waitingHud, setupSheet,
-                joinScreen, resumeScreen, codexScreen, agekeeperContest,
+                joinScreen, resumeScreen, codexScreen, settingsScreen, agekeeperContest,
                 springHub, summerMain, summerHub, autumnMain, autumnHub, winterHub,
                 roundOpen, springIntro, summerIntro,
                 autumnIntro, winterIntro, ageClosing,

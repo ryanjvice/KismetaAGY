@@ -6,7 +6,7 @@
     <engine:Style src="../../USS/Kismeta.uss" />
 
     <!-- ============================================================
-         CODEX — searchable reference (how-to-play uses the same shell).
+         CODEX — searchable reference.
          NATIVE NOTE: content is data-driven. Bind the search TextField
          and populate #codex-list from a ScriptableObject/JSON of cards,
          ages, states, and glossary terms in C#. Rows shown are samples.

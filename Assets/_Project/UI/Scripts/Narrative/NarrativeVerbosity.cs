@@ -7,7 +7,7 @@ namespace Kismeta.UI.Narrative
         Terse = 2
     }
 
-    /// <summary>Global narrative verbosity until a player setting exists.</summary>
+    /// <summary>Global narrative verbosity; driven by <see cref="Settings.GameSettings"/>.</summary>
     public static class NarrativeVerbositySettings
     {
         public static NarrativeVerbosity Default { get; set; } = NarrativeVerbosity.Light;

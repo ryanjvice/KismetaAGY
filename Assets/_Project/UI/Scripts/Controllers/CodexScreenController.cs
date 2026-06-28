@@ -52,7 +52,6 @@ namespace Kismeta.UI.Controllers
                 ("Magnus Alchemist", "Hard mode — misaligned trades cost 2:1; tighter economy."),
                 ("Opposition", "Contest to swap forge positions with a rival."),
                 ("Fateful Wager", "Spring bet on the cosmic age sign for bonus harvest."),
-                ("How to play", "Start with New game, choose players and mode, then follow season hints on screen."),
             },
         };
 

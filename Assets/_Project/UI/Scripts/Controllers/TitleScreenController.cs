@@ -1,4 +1,5 @@
 using System;
+using Kismeta.UI.Settings;
 using Kismeta.UI.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -13,8 +14,8 @@ namespace Kismeta.UI.Controllers
         public Action OnNewGame;
         public Action OnResume;
         public Action OnJoin;
-        public Action OnHowToPlay;
         public Action OnCodex;
+        public Action OnSettings;
 
         const float StarChartSpeedDegPerSec = -3f;
         const float ZodiacWheelSpeedDegPerSec = 18f;
@@ -45,8 +46,8 @@ namespace Kismeta.UI.Controllers
             Btn("new-game-btn")!.clicked += () => OnNewGame?.Invoke();
             Btn("resume-btn")!.clicked += () => OnResume?.Invoke();
             Btn("join-btn")!.clicked += () => OnJoin?.Invoke();
-            Btn("howto-btn")!.clicked += () => OnHowToPlay?.Invoke();
             Btn("codex-btn")!.clicked += () => OnCodex?.Invoke();
+            Btn("settings-btn")!.clicked += () => OnSettings?.Invoke();
         }
 
         void StartWheelRotation()
@@ -81,6 +82,13 @@ namespace Kismeta.UI.Controllers
         {
             if (Root == null)
                 return;
+
+            if (GameSettings.ReducedMotion)
+            {
+                _rotationTick = Root.schedule.Execute(TickWheelRotation);
+                _rotationTick.ExecuteLater(16);
+                return;
+            }
 
             float now = Time.realtimeSinceStartup;
             float delta = now - _lastTickTime;

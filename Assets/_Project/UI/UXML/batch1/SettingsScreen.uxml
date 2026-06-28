@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+
+    <engine:VisualElement name="settings-screen" class="screen screen--menu">
+
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" class="btn-back" />
+                <engine:Label text="Settings" class="statusbar__title menu-screen__title" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:ScrollView class="menu-screen__scroll--grow settings-scroll">
+            <engine:VisualElement class="settings-section">
+                <engine:Label text="accessibility" class="eyebrow settings-section__eyebrow" />
+                <engine:VisualElement class="panel settings-row">
+                    <engine:Label text="Reduced motion" class="settings-row__label" />
+                    <engine:Toggle name="reduced-motion-toggle" class="settings-toggle" />
+                </engine:VisualElement>
+                <engine:Label text="narrative detail" class="eyebrow settings-section__eyebrow settings-section__eyebrow--sub" />
+                <engine:VisualElement class="setup-section settings-verbosity">
+                    <engine:Button name="verbosity-full" text="Full" class="player-pip" />
+                    <engine:Button name="verbosity-light" text="Light" class="player-pip player-pip--active" />
+                    <engine:Button name="verbosity-terse" text="Terse" class="player-pip" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="settings-section">
+                <engine:Label text="audio" class="eyebrow settings-section__eyebrow" />
+                <engine:VisualElement class="panel settings-slider-row">
+                    <engine:Label text="Master volume" class="settings-row__label" />
+                    <engine:Slider name="master-volume" low-value="0" high-value="1" value="1" class="settings-slider" />
+                </engine:VisualElement>
+                <engine:VisualElement class="panel settings-slider-row">
+                    <engine:Label text="Music" class="settings-row__label" />
+                    <engine:Slider name="music-volume" low-value="0" high-value="1" value="1" class="settings-slider" />
+                </engine:VisualElement>
+                <engine:VisualElement class="panel settings-slider-row">
+                    <engine:Label text="Sound effects" class="settings-row__label" />
+                    <engine:Slider name="sfx-volume" low-value="0" high-value="1" value="1" class="settings-slider" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="settings-section">
+                <engine:Label text="general" class="eyebrow settings-section__eyebrow" />
+                <engine:VisualElement class="setup-section settings-verbosity">
+                    <engine:Button name="rules-link-btn" text="Full rules at kismeta.fun" class="player-pip" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:ScrollView>
+
+    </engine:VisualElement>
+</engine:UXML>
