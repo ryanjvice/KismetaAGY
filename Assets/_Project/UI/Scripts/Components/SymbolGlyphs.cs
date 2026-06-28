@@ -10,6 +10,8 @@ namespace Kismeta.UI.Components
         public const string ZodiacFontClass = "font-zodiac";
         public const string TablerIconClass = "ti-icon";
         public const string InfoCircleGlyph = "\ueac5";
+        public const string ChevronDownGlyph = "\uea5f";
+        public const string ChevronUpGlyph = "\uea62";
 
         public static readonly ZodiacSign[] AllSigns =
         {

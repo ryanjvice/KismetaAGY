@@ -15,9 +15,7 @@
             <engine:Instance template="GameHeaderOverlay" />
 
             <engine:VisualElement class="spring-hub__toolbar">
-                <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
                 <engine:Label name="narrative-beat" text="" class="narrative-beat" />
-                <engine:Button name="effects-fab" text="Effects" class="effects-fab btn btn--secondary" />
             </engine:VisualElement>
 
             <engine:VisualElement class="central-panel">

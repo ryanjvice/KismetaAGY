@@ -13,7 +13,8 @@
             <engine:Label name="summary-round" text="Round 1" class="header-summary__round statusbar__sub" />
             <engine:Label name="summary-stone-sep" text="·" class="header-summary__sep header-summary__sep--stone" />
             <engine:Label name="summary-stone" text="" class="header-summary__stone statusbar__sub" />
-            <engine:Button name="header-toggle-btn" text="⌄" class="header-toggle-btn btn btn--secondary" />
+            <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+            <engine:Button name="header-toggle-btn" text="&#xea5f;" class="header-toggle-btn btn btn--secondary" />
         </engine:VisualElement>
 
         <engine:VisualElement class="header-detail">

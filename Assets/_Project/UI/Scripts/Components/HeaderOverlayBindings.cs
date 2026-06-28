@@ -50,7 +50,7 @@ namespace Kismeta.UI.Components
 
             var toggle = root?.Q<Button>("header-toggle-btn");
             if (toggle != null)
-                toggle.text = expanded ? "⌃" : "⌄";
+                toggle.text = expanded ? SymbolGlyphs.ChevronUpGlyph : SymbolGlyphs.ChevronDownGlyph;
 
             ApplyHeaderPad(root);
 
@@ -221,11 +221,15 @@ namespace Kismeta.UI.Components
         static VisualElement? FindNarrativeToolbar(VisualElement body) =>
             body.Q(className: "spring-hub__toolbar")
             ?? body.Q(className: "summer-main__toolbar")
-            ?? body.Q(className: "summer-hub__toolbar");
+            ?? body.Q(className: "summer-hub__toolbar")
+            ?? body.Q(className: "autumn-main__toolbar")
+            ?? body.Q(className: "autumn-hub__toolbar");
 
         static bool IsNarrativeToolbarVisible(VisualElement toolbar) =>
             !toolbar.ClassListContains("spring-hub__toolbar--hidden")
             && !toolbar.ClassListContains("summer-main__toolbar--hidden")
-            && !toolbar.ClassListContains("summer-hub__toolbar--hidden");
+            && !toolbar.ClassListContains("summer-hub__toolbar--hidden")
+            && !toolbar.ClassListContains("autumn-main__toolbar--hidden")
+            && !toolbar.ClassListContains("autumn-hub__toolbar--hidden");
     }
 }

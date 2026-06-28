@@ -49,7 +49,7 @@ namespace Kismeta.UI.Components
 
             var toggle = root?.Q<Button>("inventory-toggle-btn");
             if (toggle != null)
-                toggle.text = expanded ? "⌄" : "⌃";
+                toggle.text = expanded ? SymbolGlyphs.ChevronDownGlyph : SymbolGlyphs.ChevronUpGlyph;
 
             ApplyInventoryPad(root);
 
@@ -108,6 +108,10 @@ namespace Kismeta.UI.Components
                 ?.EnableInClassList("summer-main__toolbar--hidden", !visible);
             body.Q(className: "summer-hub__toolbar")
                 ?.EnableInClassList("summer-hub__toolbar--hidden", !visible);
+            body.Q(className: "autumn-main__toolbar")
+                ?.EnableInClassList("autumn-main__toolbar--hidden", !visible);
+            body.Q(className: "autumn-hub__toolbar")
+                ?.EnableInClassList("autumn-hub__toolbar--hidden", !visible);
         }
 
         static void ApplyInventoryPad(VisualElement? root)

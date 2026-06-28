@@ -14,11 +14,6 @@
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
 
-            <engine:VisualElement class="summer-hub__toolbar">
-                <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
-                <engine:Button name="effects-fab" text="Effects" class="effects-fab btn btn--secondary" />
-            </engine:VisualElement>
-
             <engine:VisualElement class="central-panel">
             <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
                 <engine:Label name="turn-banner" text="Rivals are taking their turns…" style="font-size: 13px; color: rgb(240, 176, 96); -unity-font-style: bold; margin-bottom: 12px; -unity-text-align: middle-center;" />

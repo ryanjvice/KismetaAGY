@@ -175,6 +175,81 @@
     color: var(--autumn-accent);
 }
 
+/* ---------- Autumn main / hub: narrative toolbar ---------- */
+.autumn-main__toolbar,
+.autumn-hub__toolbar {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0 var(--space-md);
+    margin: var(--space-xs) var(--space-md) 0;
+    min-height: 40px;
+}
+
+.autumn-main__toolbar--hidden,
+.autumn-hub__toolbar--hidden {
+    display: none;
+}
+
+.autumn-main__toolbar .table-fab,
+.autumn-main__toolbar .effects-fab,
+.autumn-hub__toolbar .table-fab,
+.autumn-hub__toolbar .effects-fab {
+    position: relative;
+    top: auto;
+    right: auto;
+    flex-shrink: 0;
+}
+
+.autumn-hub__toolbar {
+    justify-content: space-between;
+}
+
+.autumn-main__toolbar .narrative-beat {
+    flex-grow: 1;
+    flex-shrink: 1;
+    -unity-text-align: middle-center;
+    margin: 0 var(--space-sm);
+    margin-bottom: 0;
+}
+
+.autumn-main__stakes {
+    flex-shrink: 0;
+    margin: 0 var(--space-md) var(--space-sm);
+}
+
+.autumn-main__stakes .narrative-stakes-wrap {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0;
+}
+
+.autumn-main__stakes .narrative-stakes {
+    -unity-text-align: middle-center;
+}
+
+.autumn-main__charge {
+    flex-shrink: 0;
+    width: 100%;
+    -unity-text-align: middle-center;
+    margin: var(--space-sm) 0 0;
+    padding: 0;
+    color: var(--muted);
+    font-size: var(--font-label);
+    white-space: normal;
+}
+
+/* Forge stage must not shrink below mandala + stasis row height */
+.screen--autumn .central-panel > .stage {
+    min-height: 460px;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.screen--autumn .forge-panel {
+    flex-shrink: 0;
+}
+
 /* Autumn main/hub — crucible forge mandala + stone markers + cauldron mini */
 .forge-panel {
     flex-direction: column;
