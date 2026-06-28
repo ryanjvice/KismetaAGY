@@ -415,6 +415,10 @@
     border-radius: var(--radius-md);
     padding: 12px;
 }
+.formula-card.slot-sel--red { border-width: 2px; border-color: rgb(229,115,115); }
+.formula-card.slot-sel--blue { border-width: 2px; border-color: rgb(111,168,212); }
+.formula-card.slot-sel--green { border-width: 2px; border-color: rgb(93,202,165); }
+.formula-card.slot-sel--yellow { border-width: 2px; border-color: rgb(224,192,96); }
 .formula-card__head { flex-direction: row; align-items: center; margin-bottom: 11px; }
 .formula-card__ring {
     width: 34px; height: 34px; border-radius: 17px;
@@ -533,6 +537,12 @@
     border-width: 1px;
     border-color: var(--gold-deep);
     border-radius: var(--radius-sm);
+}
+
+.crucible-card--active {
+    border-color: rgb(201, 150, 47);
+    border-width: 2px;
+    background-color: rgb(32, 18, 38);
 }
 
 .crucible-card__token {

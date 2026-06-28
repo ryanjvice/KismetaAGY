@@ -183,6 +183,7 @@ MonoBehaviour:
   _summerSheets: {fileID: 9197481963319205126, guid: df597b49f21bebf42b0bf53e578598ef, type: 3}
   _craftReagent: {fileID: 9197481963319205126, guid: 3ad25c1bbbe875f4a8f4d0d6afd0654a, type: 3}
   _activateCard: {fileID: 9197481963319205126, guid: c2bc9df204537bf4785068ed5a32f5a1, type: 3}
+  _crucibleCardDetail: {fileID: 9197481963319205126, guid: a7f3c8e21b4d5690a8e2f1c3d5b6a789, type: 3}
   _buildHouse: {fileID: 9197481963319205126, guid: 17d1b9ef5e64d044294754e593412e12, type: 3}
   _placeWards: {fileID: 9197481963319205126, guid: 5cc5e001c98bd3547b1f0181ea83ee3b, type: 3}
   _endSummer: {fileID: 9197481963319205126, guid: 230850dabc890f644bd6284cf7cac3ee, type: 3}

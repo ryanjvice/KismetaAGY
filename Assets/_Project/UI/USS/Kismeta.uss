@@ -74,10 +74,10 @@
     --space-md: 12px;
     --space-lg: 16px;
     --space-xl: 24px;
-    --font-micro: 8px;
-    --font-label: 10px;
-    --font-body: 12px;
-    --font-title: 14px;
+    --font-micro: 9px;
+    --font-label: 12px;
+    --font-body: 14px;
+    --font-title: 15px;
     --font-display: 34px;
     --touch-min: 44px;
     --card-chip-w: 44px;

@@ -561,6 +561,20 @@ namespace Kismeta.UI
                 else
                     _summerOverlays.ShowActivate();
             };
+            summer.OnCrucibleCardClicked = slotIndex =>
+            {
+                if (_session == null || _loop == null) return;
+
+                var localId = MainSceneBindings.ResolveLocalPlayerId(_session, _loop, _bridge);
+                if (localId < 0 || localId >= _session.Players.Count) return;
+                if (slotIndex < 0 || slotIndex >= _session.Players[localId].CrucibleSlots.Count) return;
+
+                var slot = _session.Players[localId].CrucibleSlots[slotIndex];
+                if (slot.State >= CrucibleCardState.Active)
+                    _summerOverlays.ShowCrucibleDetail(slotIndex);
+                else
+                    _summerOverlays.ShowActivate(slotIndex);
+            };
         }
 
         private void WireSeasonHubNavigation()

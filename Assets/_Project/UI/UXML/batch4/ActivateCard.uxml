@@ -89,8 +89,8 @@
 
                     <engine:VisualElement name="formula-card-panel" class="formula-card">
                         <engine:VisualElement class="formula-card__head">
-                            <engine:VisualElement class="formula-card__ring ring--red">
-                                <engine:Label text="&#xec3a;" class="ti-icon" style="font-size: 16px; color: rgb(229,115,115);" />
+                            <engine:VisualElement name="formula-card-ring" class="formula-card__ring">
+                                <engine:Label name="formula-reagent-icon" text="&#xec3a;" class="ti-icon" style="font-size: 16px;" />
                             </engine:VisualElement>
                             <engine:VisualElement style="flex-grow: 1;">
                                 <engine:Label name="formula-reagent" text="Sulphur" style="font-size: 14px; -unity-font-style: bold; color: rgb(243, 233, 210);" />

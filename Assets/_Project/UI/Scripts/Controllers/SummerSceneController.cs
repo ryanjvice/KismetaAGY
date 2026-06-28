@@ -25,6 +25,7 @@ namespace Kismeta.UI.Controllers
         public Action<string> OnInspectCard;
         public Action<int>? OnRivalSelected;
         public Action<Suit>? OnCauldronClicked;
+        public Action<int>? OnCrucibleCardClicked;
 
         CommandBridge? _bridge;
         GameSession? _session;
@@ -43,6 +44,7 @@ namespace Kismeta.UI.Controllers
         {
             _dockZone = DockZone.Spread;
             CauldronHubBindings.UnwireCauldrons(Root);
+            SummerCrucibleRowBindings.Unwire(Root);
         }
 
         protected override void Wire()
@@ -101,6 +103,7 @@ namespace Kismeta.UI.Controllers
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             MainSceneBindings.BindCauldrons(Root, local, session);
+            SummerCrucibleRowBindings.Bind(Root, local, session, slotIndex => OnCrucibleCardClicked?.Invoke(slotIndex));
 
             var stepId = NarrativeStepResolver.ResolveSummerAction(_summerOverlays, _contestOverlays);
             NarrativeSlotBindings.BindById(

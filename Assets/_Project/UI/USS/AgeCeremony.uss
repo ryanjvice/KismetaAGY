@@ -10,7 +10,7 @@
 }
 
 .ceremony-eyebrow {
-    font-size: 10px;
+    font-size: var(--font-body);
     letter-spacing: 4px;
     color: rgb(184, 154, 186);
     margin-bottom: 12px;
@@ -56,7 +56,7 @@
 }
 
 .ceremony-prelabel {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--muted);
     letter-spacing: 2px;
     -unity-text-align: middle-center;
@@ -82,7 +82,7 @@
 }
 
 .ceremony-couplet {
-    font-size: 10px;
+    font-size: var(--font-body);
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
     -unity-font-style: normal;
     white-space: normal;
@@ -208,12 +208,12 @@
 }
 
 .ceremony-effect-panel__title {
-    font-size: 13px;
+    font-size: 15px;
     color: rgb(243, 233, 210);
 }
 
 .ceremony-effect-panel__desc {
-    font-size: 10px;
+    font-size: var(--font-body);
     color: rgb(154, 138, 172);
     white-space: normal;
 }

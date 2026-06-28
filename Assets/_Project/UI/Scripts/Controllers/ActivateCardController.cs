@@ -204,6 +204,8 @@ namespace Kismeta.UI.Controllers
                 panel.AddToClassList($"slot-sel--{colorKey}");
             }
 
+            ApplyFormulaRingStyle(colorKey);
+
             if (Lbl("formula-reagent") != null)
                 Lbl("formula-reagent")!.text = reagent;
 
@@ -528,6 +530,39 @@ namespace Kismeta.UI.Controllers
 
         static string ColorKey(string cauldron) =>
             string.IsNullOrEmpty(cauldron) ? "red" : cauldron.ToLowerInvariant();
+
+        void ApplyFormulaRingStyle(string colorKey)
+        {
+            var ring = El("formula-card-ring");
+            if (ring != null)
+            {
+                foreach (var key in ColorKeys)
+                    ring.EnableInClassList($"ring--{key}", false);
+                ring.AddToClassList($"ring--{colorKey}");
+            }
+
+            var icon = Lbl("formula-reagent-icon");
+            if (icon == null) return;
+
+            icon.text = ReagentRingGlyph(colorKey);
+            icon.style.color = new StyleColor(ReagentRingIconColor(colorKey));
+        }
+
+        static string ReagentRingGlyph(string colorKey) => colorKey switch
+        {
+            "blue" => "\uea77",
+            "green" => "\uea5e",
+            "yellow" => "\uec3a",
+            _ => "\uec3a"
+        };
+
+        static Color ReagentRingIconColor(string colorKey) => colorKey switch
+        {
+            "blue" => new Color(111f / 255f, 168f / 255f, 212f / 255f),
+            "green" => new Color(93f / 255f, 202f / 255f, 165f / 255f),
+            "yellow" => new Color(224f / 255f, 192f / 255f, 96f / 255f),
+            _ => new Color(229f / 255f, 115f / 255f, 115f / 255f)
+        };
 
         static string ReagentDisplayName(ReagentType reagent) => reagent switch
         {

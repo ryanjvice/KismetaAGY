@@ -59,20 +59,55 @@ namespace Kismeta.UI.Components
             {
                 int n = player.GetReagent(rt);
                 if (n <= 0) continue;
-                var row = new VisualElement();
-                row.style.flexDirection = FlexDirection.Row;
-                row.style.alignItems = Align.Center;
-                row.style.marginRight = 14;
-
-                var dot = new VisualElement();
-                dot.AddToClassList("reagent-dot");
-                dot.AddToClassList($"reagent-dot--{rt.ToString().ToLowerInvariant()}");
-                dot.style.marginRight = 4;
-                row.Add(dot);
-                row.Add(new Label(n.ToString()) { style = { fontSize = 11 } });
-                host.Add(row);
+                host.Add(BuildReagentRow(rt, n));
             }
         }
+
+        public static void PopulateReagentCost(VisualElement? host, ReagentCost cost)
+        {
+            if (host == null) return;
+            host.Clear();
+            host.style.flexDirection = FlexDirection.Row;
+            host.style.alignItems = Align.Center;
+            host.style.flexWrap = Wrap.Wrap;
+
+            if (cost.Total == 0)
+            {
+                host.Add(new Label("no reagent cost") { style = { fontSize = 11, color = new UnityEngine.Color(184f / 255f, 154f / 255f, 110f / 255f) } });
+                return;
+            }
+
+            if (cost.Sulphur > 0) host.Add(BuildReagentRow(ReagentType.Sulphur, cost.Sulphur));
+            if (cost.AquaRegia > 0) host.Add(BuildReagentRow(ReagentType.AquaRegia, cost.AquaRegia));
+            if (cost.Vitriol > 0) host.Add(BuildReagentRow(ReagentType.Vitriol, cost.Vitriol));
+            if (cost.Quicksilver > 0) host.Add(BuildReagentRow(ReagentType.Quicksilver, cost.Quicksilver));
+            if (cost.Salt > 0) host.Add(BuildReagentRow(ReagentType.Salt, cost.Salt));
+        }
+
+        static VisualElement BuildReagentRow(ReagentType rt, int count)
+        {
+            var row = new VisualElement();
+            row.style.flexDirection = FlexDirection.Row;
+            row.style.alignItems = Align.Center;
+            row.style.marginRight = 14;
+
+            var dot = new VisualElement();
+            dot.AddToClassList("reagent-dot");
+            dot.AddToClassList(ReagentDotClass(rt));
+            dot.style.marginRight = 4;
+            row.Add(dot);
+            row.Add(new Label(count.ToString()) { style = { fontSize = 11 } });
+            return row;
+        }
+
+        static string ReagentDotClass(ReagentType rt) => rt switch
+        {
+            ReagentType.Sulphur => "reagent-dot--sulphur",
+            ReagentType.Vitriol => "reagent-dot--vitriol",
+            ReagentType.AquaRegia => "reagent-dot--aqua",
+            ReagentType.Quicksilver => "reagent-dot--quick",
+            _ => "reagent-dot--salt"
+        };
 
         public static string BuildContextNote(GameSession session, PlayerState player)
         {

@@ -70,6 +70,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _summerSheets;
         [SerializeField] private VisualTreeAsset _craftReagent;
         [SerializeField] private VisualTreeAsset _activateCard;
+        [SerializeField] private VisualTreeAsset _crucibleCardDetail;
         [SerializeField] private VisualTreeAsset _buildHouse;
         [SerializeField] private VisualTreeAsset _placeWards;
         [SerializeField] private VisualTreeAsset _endSummer;
@@ -196,6 +197,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<SummerSheetsController>();
             EnsureController<CraftReagentController>();
             EnsureController<ActivateCardController>();
+            EnsureController<CrucibleCardDetailController>();
             EnsureController<BuildHouseController>();
             EnsureController<PlaceWardsController>();
             EnsureController<EndSummerController>();
@@ -224,7 +226,7 @@ namespace Kismeta.Game.Bootstrap
 
             var summerOverlays = GetComponent<SummerOverlayHost>();
             summerOverlays?.Configure(
-                _summerSheets, _craftReagent, _activateCard,
+                _summerSheets, _craftReagent, _activateCard, _crucibleCardDetail,
                 _buildHouse, _placeWards, _endSummer);
 
             var contestOverlays = GetComponent<ContestOverlayHost>();

@@ -34,17 +34,17 @@
             <engine:VisualElement class="summer-main__crucible-row">
                 <engine:Button name="activate-btn" text="Activate" class="actionbtn btn btn--primary crucible-activate" />
                 <engine:VisualElement class="crucible-cards">
-                    <engine:VisualElement class="crucible-card crucible-card--red">
-                        <engine:VisualElement class="crucible-card__token crucible-card__token--red" />
+                    <engine:VisualElement name="crucible-card-0" class="crucible-card">
+                        <engine:VisualElement name="crucible-token-0" class="crucible-card__token" />
                     </engine:VisualElement>
-                    <engine:VisualElement class="crucible-card crucible-card--blue">
-                        <engine:VisualElement class="crucible-card__token crucible-card__token--blue" />
+                    <engine:VisualElement name="crucible-card-1" class="crucible-card">
+                        <engine:VisualElement name="crucible-token-1" class="crucible-card__token" />
                     </engine:VisualElement>
-                    <engine:VisualElement class="crucible-card crucible-card--green">
-                        <engine:VisualElement class="crucible-card__token crucible-card__token--green" />
+                    <engine:VisualElement name="crucible-card-2" class="crucible-card">
+                        <engine:VisualElement name="crucible-token-2" class="crucible-card__token" />
                     </engine:VisualElement>
-                    <engine:VisualElement class="crucible-card crucible-card--yellow">
-                        <engine:VisualElement class="crucible-card__token crucible-card__token--yellow" />
+                    <engine:VisualElement name="crucible-card-3" class="crucible-card">
+                        <engine:VisualElement name="crucible-token-3" class="crucible-card__token" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>

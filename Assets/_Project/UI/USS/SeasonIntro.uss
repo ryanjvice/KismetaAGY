@@ -38,7 +38,7 @@
 .intro--winter .intro-name { color: var(--winter-accent); }
 
 .intro-tagline {
-    font-size: 10px;
+    font-size: var(--font-body);
     letter-spacing: 3px;
     margin-top: 6px;
     -unity-text-align: middle-center;
@@ -51,7 +51,7 @@
 .intro--winter .intro-tagline { color: rgb(111, 154, 196); }
 
 .intro-couplet {
-    font-size: 10px;
+    font-size: var(--font-body);
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
     -unity-font-style: normal;
     white-space: normal;
@@ -97,7 +97,7 @@
 }
 
 .intro-info-panel__subtitle {
-    font-size: 12px;
+    font-size: 14px;
     white-space: normal;
 }
 
@@ -251,7 +251,7 @@
 }
 
 .intro-action-row__subtitle {
-    font-size: 10px;
+    font-size: var(--font-body);
     white-space: normal;
 }
 

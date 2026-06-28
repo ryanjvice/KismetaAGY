@@ -15,6 +15,7 @@ namespace Kismeta.UI
         VisualTreeAsset? _summerSheets;
         VisualTreeAsset? _craftReagent;
         VisualTreeAsset? _activateCard;
+        VisualTreeAsset? _crucibleCardDetail;
         VisualTreeAsset? _buildHouse;
         VisualTreeAsset? _placeWards;
         VisualTreeAsset? _endSummer;
@@ -26,6 +27,7 @@ namespace Kismeta.UI
         SummerSheetsController? _sheets;
         CraftReagentController? _craft;
         ActivateCardController? _activate;
+        CrucibleCardDetailController? _crucibleDetail;
         BuildHouseController? _build;
         PlaceWardsController? _wards;
         EndSummerController? _endSummerCtrl;
@@ -39,6 +41,7 @@ namespace Kismeta.UI
             BuildHouse,
             PlaceWards,
             Activate,
+            CrucibleDetail,
             EndSummer
         }
 
@@ -58,6 +61,7 @@ namespace Kismeta.UI
                 or ActiveOverlay.PlaceWards => 0,
             ActiveOverlay.ConsortSheet => 1,
             ActiveOverlay.Activate => 2,
+            ActiveOverlay.CrucibleDetail => 2,
             _ => null
         };
 
@@ -76,6 +80,7 @@ namespace Kismeta.UI
             VisualTreeAsset summerSheets,
             VisualTreeAsset craftReagent,
             VisualTreeAsset activateCard,
+            VisualTreeAsset crucibleCardDetail,
             VisualTreeAsset buildHouse,
             VisualTreeAsset placeWards,
             VisualTreeAsset endSummer)
@@ -83,6 +88,7 @@ namespace Kismeta.UI
             _summerSheets = summerSheets;
             _craftReagent = craftReagent;
             _activateCard = activateCard;
+            _crucibleCardDetail = crucibleCardDetail;
             _buildHouse = buildHouse;
             _placeWards = placeWards;
             _endSummer = endSummer;
@@ -95,6 +101,7 @@ namespace Kismeta.UI
             _sheets ??= GetComponent<SummerSheetsController>();
             _craft ??= GetComponent<CraftReagentController>();
             _activate ??= GetComponent<ActivateCardController>();
+            _crucibleDetail ??= GetComponent<CrucibleCardDetailController>();
             _build ??= GetComponent<BuildHouseController>();
             _wards ??= GetComponent<PlaceWardsController>();
             _endSummerCtrl ??= GetComponent<EndSummerController>();
@@ -140,6 +147,15 @@ namespace Kismeta.UI
             RefreshOpenOverlay();
         }
 
+        public void ShowCrucibleDetail(int slotIndex)
+        {
+            if (!ShowModal(_crucibleCardDetail, _crucibleDetail, ActiveOverlay.CrucibleDetail)) return;
+            if (_crucibleDetail != null)
+                _crucibleDetail.SlotIndex = slotIndex;
+            WireCrucibleDetail();
+            RefreshOpenOverlay();
+        }
+
         public void ShowBuildHouse()
         {
             if (!ShowModal(_buildHouse, _build, ActiveOverlay.BuildHouse)) return;
@@ -179,6 +195,7 @@ namespace Kismeta.UI
             _craft?.Detach();
             _sheets?.Detach();
             _activate?.Detach();
+            _crucibleDetail?.Detach();
             _build?.Detach();
             _wards?.Detach();
             _endSummerCtrl?.Detach();
@@ -221,6 +238,7 @@ namespace Kismeta.UI
             if (_session == null || _bridge == null) return;
             _craft?.BindState(_session, _bridge);
             _activate?.BindState(_session, _bridge);
+            _crucibleDetail?.BindState(_session, _bridge);
             _build?.BindState(_session, _bridge);
             _wards?.BindState(_session, _bridge);
             _endSummerCtrl?.BindState(_session, _bridge);
@@ -251,6 +269,12 @@ namespace Kismeta.UI
             if (_activate == null) return;
             _activate.OnBack = Dismiss;
             _activate.OnCompleted = Dismiss;
+        }
+
+        void WireCrucibleDetail()
+        {
+            if (_crucibleDetail == null) return;
+            _crucibleDetail.OnClose = Dismiss;
         }
 
         void WireBuild()

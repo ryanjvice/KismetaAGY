@@ -41,6 +41,7 @@ namespace Kismeta.UI.Editor
         private const string SummerSheetsPath = "Assets/_Project/UI/UXML/batch4/SummerSheets.uxml";
         private const string CraftReagentPath = "Assets/_Project/UI/UXML/batch4/CraftReagent.uxml";
         private const string ActivateCardPath = "Assets/_Project/UI/UXML/batch4/ActivateCard.uxml";
+        private const string CrucibleCardDetailPath = "Assets/_Project/UI/UXML/batch4/CrucibleCardDetail.uxml";
         private const string BuildHousePath = "Assets/_Project/UI/UXML/batch4/BuildHouse.uxml";
         private const string PlaceWardsPath = "Assets/_Project/UI/UXML/batch4/PlaceWards.uxml";
         private const string EndSummerPath = "Assets/_Project/UI/UXML/batch4/EndSummer.uxml";
@@ -267,6 +268,7 @@ namespace Kismeta.UI.Editor
             var summerSheets = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerSheetsPath);
             var craftReagent = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CraftReagentPath);
             var activateCard = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ActivateCardPath);
+            var crucibleCardDetail = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CrucibleCardDetailPath);
             var buildHouse = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(BuildHousePath);
             var placeWards = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PlaceWardsPath);
             var endSummer = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(EndSummerPath);
@@ -314,6 +316,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_summerSheets").objectReferenceValue = summerSheets;
             so.FindProperty("_craftReagent").objectReferenceValue = craftReagent;
             so.FindProperty("_activateCard").objectReferenceValue = activateCard;
+            so.FindProperty("_crucibleCardDetail").objectReferenceValue = crucibleCardDetail;
             so.FindProperty("_buildHouse").objectReferenceValue = buildHouse;
             so.FindProperty("_placeWards").objectReferenceValue = placeWards;
             so.FindProperty("_endSummer").objectReferenceValue = endSummer;
