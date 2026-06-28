@@ -18,7 +18,6 @@
                 <engine:Label name="turn-banner" text="Rivals are taking their turns…" style="font-size: 13px; color: rgb(224, 138, 74); -unity-font-style: bold; margin-bottom: 12px; -unity-text-align: middle-center;" />
                 <engine:VisualElement class="forge-panel">
                     <engine:Label name="hint-label" text="Review your board while you wait" class="forge-panel__hint" style="font-size: 11px; color: rgb(243, 233, 210);" />
-                    <engine:Label name="stone-label" class="forge-panel__status" text="stone · lead" />
                     <engine:VisualElement name="board-stage" class="forge-stage">
                         <engine:VisualElement name="forge-mandala" class="forge-mandala" />
                         <engine:VisualElement class="stone-marker forge-pos forge-pos--0" />

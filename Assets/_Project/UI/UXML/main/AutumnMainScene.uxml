@@ -17,11 +17,18 @@
                 <engine:Label name="narrative-beat" text="" class="narrative-beat" />
             </engine:VisualElement>
 
+            <engine:VisualElement class="autumn-main__actionbar">
+                <engine:VisualElement class="actionbar__row actionbar__row--primary">
+                    <engine:Button name="fire-btn" text="Fire" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="temper-btn" text="Temper" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="oppose-btn" text="Oppose" class="actionbtn btn btn--secondary" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
             <engine:VisualElement class="central-panel">
             <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
                 <engine:VisualElement class="forge-panel">
                     <engine:Label name="hint-label" text="Your turn" class="text-hint forge-panel__hint" />
-                    <engine:Label name="stone-label" class="forge-panel__status" text="stone · lead" />
                     <engine:VisualElement name="board-stage" class="forge-stage">
                         <engine:VisualElement name="forge-mandala" class="forge-mandala" />
                         <engine:VisualElement class="stone-marker forge-pos forge-pos--0" />
@@ -67,11 +74,6 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--multi">
-                <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                    <engine:Button name="fire-btn" text="Fire" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="temper-btn" text="Temper" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="oppose-btn" text="Oppose" class="actionbtn btn btn--secondary" />
-                </engine:VisualElement>
                 <engine:VisualElement class="actionbar__row actionbar__row--primary">
                     <engine:Button name="manage-cards-btn" text="Cards" class="actionbtn btn btn--secondary" />
                     <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />

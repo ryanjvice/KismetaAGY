@@ -182,8 +182,8 @@
     align-items: center;
     flex-shrink: 0;
     padding: 0 var(--space-md);
-    margin: var(--space-xs) var(--space-md) 0;
-    min-height: 40px;
+    margin: 2px var(--space-md) 0;
+    min-height: 28px;
 }
 
 .autumn-main__toolbar--hidden,
@@ -213,9 +213,21 @@
     margin-bottom: 0;
 }
 
+.autumn-main__actionbar {
+    flex-shrink: 0;
+    padding: 6px var(--space-md) 4px;
+    margin: 0 var(--space-md);
+    border-top-width: 1px;
+    border-top-color: var(--border-gold);
+}
+
+.autumn-main__actionbar .actionbar__row--primary > .actionbtn {
+    min-height: var(--touch-min);
+}
+
 .autumn-main__stakes {
     flex-shrink: 0;
-    margin: 0 var(--space-md) var(--space-sm);
+    margin: 0 var(--space-md) 4px;
 }
 
 .autumn-main__stakes .narrative-stakes-wrap {
@@ -232,18 +244,24 @@
     flex-shrink: 0;
     width: 100%;
     -unity-text-align: middle-center;
-    margin: var(--space-sm) 0 0;
+    margin: 4px 0 0;
     padding: 0;
     color: var(--muted);
     font-size: var(--font-label);
     white-space: normal;
 }
 
-/* Forge stage must not shrink below mandala + stasis row height */
+.screen--autumn .central-panel {
+    flex-grow: 0;
+}
+
 .screen--autumn .central-panel > .stage {
-    min-height: 460px;
-    flex-shrink: 0;
-    overflow: visible;
+    min-height: 400px;
+    flex-shrink: 1;
+}
+
+.screen--autumn .stage-cta {
+    padding: 4px 14px 6px;
 }
 
 .screen--autumn .forge-panel {
