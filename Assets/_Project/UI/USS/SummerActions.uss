@@ -685,6 +685,10 @@
     margin-bottom: 4px;
 }
 
+.screen--summer .player-block .card-chip--inspectable {
+    cursor: pointer;
+}
+
 .player-block__sign-glyph {
     color: var(--gold);
     font-size: 14px;
