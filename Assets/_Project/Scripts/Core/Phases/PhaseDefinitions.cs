@@ -32,32 +32,29 @@ namespace Kismeta.Core.Phases
                 "Cards are locked between Hand and Spread until Phase 4: Winter.")
         };
 
-        // Summer steps are a free-order pool. IsOrdered = false marks each as pooled.
+        // Summer steps are a free-order pool of alchemist interactions. IsOrdered = false marks each as pooled.
         public static readonly IReadOnlyList<PhaseStepDefinition> SummerSteps = new[]
         {
-            new PhaseStepDefinition(1, "ActivateCrucible",
-                "Collect card sets listed on the Codex & discard to activate a Crucible Card.",
-                isOrdered: false),
-            new PhaseStepDefinition(2, "CraftReagent",
-                "Discard 3 matching-Suit cards into a lit Cauldron to craft 1 Reagent.",
-                isOrdered: false),
-            new PhaseStepDefinition(3, "Trade",
+            new PhaseStepDefinition(1, "Trade",
                 "Exchange Kismeta Cards, Reagents, or Active Crucible Cards freely.",
                 isOrdered: false),
-            new PhaseStepDefinition(4, "Duel",
+            new PhaseStepDefinition(2, "Duel",
                 "Wager cards and roll dice against a rival to steal a card from their Spread.",
                 isOrdered: false),
-            new PhaseStepDefinition(5, "Gambit",
+            new PhaseStepDefinition(3, "Gambit",
                 "Pay any Ward cost and roll dice to seize a rival's Active Crucible Card or Adept.",
+                isOrdered: false),
+            new PhaseStepDefinition(4, "Opposition",
+                "Attempt to send an opponent's Forging Stone into Stasis via an Alignment contest.",
                 isOrdered: false)
         };
 
         public static readonly IReadOnlyList<PhaseStepDefinition> AutumnSteps = new[]
         {
-            new PhaseStepDefinition(1, "SurveyCrucible",
-                "Take note of everyone's current positions in the Crucible."),
-            new PhaseStepDefinition(2, "Opposition",
-                "Attempt to send an opponent's Forging Stone into Stasis via an Alignment contest."),
+            new PhaseStepDefinition(1, "CraftReagent",
+                "Discard 3 matching-Suit cards into a lit Cauldron to craft 1 Reagent."),
+            new PhaseStepDefinition(2, "ActivateCrucible",
+                "Collect card sets listed on the Codex & discard to activate a Crucible Card."),
             new PhaseStepDefinition(3, "FireStone",
                 "Complete an active Crucible card and move your Stone into the Forge."),
             new PhaseStepDefinition(4, "Temper",

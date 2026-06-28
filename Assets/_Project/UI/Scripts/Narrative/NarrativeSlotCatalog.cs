@@ -294,10 +294,10 @@ namespace Kismeta.UI.Narrative
                 new[] { "Survey" },
                 "Survey"),
             new NarrativeSlotEntry(
-                "autumn.oppose",
-                Season.Autumn,
+                "summer.opposition",
+                Season.Summer,
                 NarrativeSlotTier.Action,
-                2,
+                9,
                 "Align against a rival and break their forging.",
                 "Pay the defender's ward fee, roll, and total your Aspect alignment. Win, and their stone falls to Stasis.",
                 "Each defense the rival survives grants them a stacking Besieged Bonus — a dogpile on the leader can backfire.",

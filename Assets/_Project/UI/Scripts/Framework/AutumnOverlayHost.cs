@@ -32,10 +32,11 @@ namespace Kismeta.UI
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
 
+        // Autumn rail groups: Craft (0), Activate (1), Forge (2).
+        // Fire / Temper / Leave Stasis are all forge-stage actions.
         public int? ActiveActionGroupIndex => _active switch
         {
-            ActiveOverlay.Fire or ActiveOverlay.LeaveStasis => 0,
-            ActiveOverlay.Temper => 1,
+            ActiveOverlay.Fire or ActiveOverlay.Temper or ActiveOverlay.LeaveStasis => 2,
             _ => null
         };
 

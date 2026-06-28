@@ -1,8 +1,7 @@
 using System;
-using Kismeta.Core.Domain;
+using System.Collections.Generic;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
-using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
@@ -16,21 +15,31 @@ namespace Kismeta.UI.Controllers
     {
         public override string ScreenId => ScreenIds.SummerMain;
 
-        public Action OnCraftBuild;
-        public Action OnConsort;
-        public Action OnActivate;
-        public Action OnPass;
-        public Action OnOpenCardTable;
-        public Action OnOpenActiveEffects;
-        public Action<string> OnInspectCard;
+        // Top contest buttons (open target-selecting overlays).
+        public Action? OnTrade;
+        public Action? OnDuel;
+        public Action? OnGambit;
+        public Action? OnOpposition;
+        public Action? OnPass;
+
+        // Per-rival roster shortcuts.
+        public Action<int>? OnTradeRival;
+        public Action<int>? OnDuelRival;
+        public Action<int>? OnGambitRival;
+        public Action<int>? OnOpposeRival;
+
+        // Inventory / table.
+        public Action? OnOpenCardTable;
+        public Action? OnOpenActiveEffects;
+        public Action<string>? OnInspectCard;
         public Action<int>? OnRivalSelected;
-        public Action<Suit>? OnCauldronClicked;
-        public Action<int>? OnCrucibleCardClicked;
 
         CommandBridge? _bridge;
         GameSession? _session;
         int _localPlayerId;
         DockZone _dockZone = DockZone.Spread;
+        CardTableBindings.SortMode _sort = CardTableBindings.SortMode.Threat;
+        readonly HashSet<int> _expandedBlocks = new();
         SummerOverlayHost? _summerOverlays;
         ContestOverlayHost? _contestOverlays;
 
@@ -43,16 +52,20 @@ namespace Kismeta.UI.Controllers
         protected override void Unwire()
         {
             _dockZone = DockZone.Spread;
-            CauldronHubBindings.UnwireCauldrons(Root);
-            SummerCrucibleRowBindings.Unwire(Root);
         }
 
         protected override void Wire()
         {
-            Btn("craftbuild-btn")!.clicked += () => OnCraftBuild?.Invoke();
-            Btn("consort-btn")!.clicked += () => OnConsort?.Invoke();
-            Btn("activate-btn")!.clicked += () => OnActivate?.Invoke();
-            Btn("pass-btn")!.clicked += () => OnPass?.Invoke();
+            WireBtn("trade-btn", () => OnTrade?.Invoke());
+            WireBtn("duel-btn", () => OnDuel?.Invoke());
+            WireBtn("gambit-btn", () => OnGambit?.Invoke());
+            WireBtn("opposition-btn", () => OnOpposition?.Invoke());
+            WireBtn("pass-btn", () => OnPass?.Invoke());
+
+            HookSort("sort-threat", CardTableBindings.SortMode.Threat);
+            HookSort("sort-turn", CardTableBindings.SortMode.Turn);
+            HookSort("sort-arcanum", CardTableBindings.SortMode.Arcanum);
+
             InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
             {
                 OnHandToggle = OnHandToggle,
@@ -61,10 +74,28 @@ namespace Kismeta.UI.Controllers
                 OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
-            CauldronHubBindings.WireCauldrons(
-                Root,
-                suit => OnCauldronClicked?.Invoke(suit),
-                onCodexTap: () => OnActivate?.Invoke());
+        }
+
+        void WireBtn(string name, Action handler)
+        {
+            var btn = Btn(name);
+            if (btn == null)
+            {
+                Debug.LogWarning($"[UI] SummerMain missing button '{name}'.");
+                return;
+            }
+            btn.clicked += () => handler();
+        }
+
+        void HookSort(string btnName, CardTableBindings.SortMode mode)
+        {
+            Btn(btnName)?.RegisterCallback<ClickEvent>(_ =>
+            {
+                _sort = mode;
+                foreach (var n in new[] { "sort-threat", "sort-turn", "sort-arcanum" })
+                    Btn(n)?.EnableInClassList("table-action--active", n == btnName);
+                RefreshRoster();
+            });
         }
 
         void OnHandToggle()
@@ -85,6 +116,13 @@ namespace Kismeta.UI.Controllers
                 InventoryOverlayBindings.RefreshInventory(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
         }
 
+        void ToggleDetail(int playerId)
+        {
+            if (!_expandedBlocks.Add(playerId))
+                _expandedBlocks.Remove(playerId);
+            RefreshRoster();
+        }
+
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
         {
             _session = session;
@@ -92,7 +130,6 @@ namespace Kismeta.UI.Controllers
             _localPlayerId = MainSceneBindings.ResolveLocalPlayerId(session, loop, bridge);
             if (Root == null) return;
 
-            var view = GamePublicView.From(session);
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             HeaderOverlayBindings.RefreshHeader(
                 Root, session, loop, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason,
@@ -101,9 +138,15 @@ namespace Kismeta.UI.Controllers
             RefreshActionGroupRail();
             RefreshDock();
 
-            var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
-            MainSceneBindings.BindCauldrons(Root, local, session);
-            SummerCrucibleRowBindings.Bind(Root, local, session, OnCrucibleCardTapped);
+            bool summerAction = bridge.CanSubmit && bridge.PendingHint == ActionHint.SummerAction;
+            Btn("trade-btn")?.SetEnabled(summerAction);
+            Btn("duel-btn")?.SetEnabled(summerAction);
+            Btn("gambit-btn")?.SetEnabled(summerAction);
+            Btn("opposition-btn")?.SetEnabled(
+                summerAction && AutumnActionBindings.HasOpposeTargets(session, _localPlayerId));
+
+            Btn("sort-threat")?.EnableInClassList("table-action--active", _sort == CardTableBindings.SortMode.Threat);
+            RefreshRoster();
 
             var stepId = NarrativeStepResolver.ResolveSummerAction(_summerOverlays, _contestOverlays);
             NarrativeSlotBindings.BindById(
@@ -114,24 +157,24 @@ namespace Kismeta.UI.Controllers
             HeaderOverlayBindings.ApplyHeaderPad(Root);
         }
 
-        void OnCrucibleCardTapped(int slotIndex)
+        void RefreshRoster()
         {
-            if (_session == null || _localPlayerId < 0) return;
-            if (slotIndex < 0 || slotIndex >= _session.Players[_localPlayerId].CrucibleSlots.Count) return;
-
-            var slot = _session.Players[_localPlayerId].CrucibleSlots[slotIndex];
-            if (slot.State >= CrucibleCardState.Active)
-                _summerOverlays?.ShowCrucibleDetail(slotIndex);
-            else
-                _summerOverlays?.ShowActivate(slotIndex);
-
-            OnCrucibleCardClicked?.Invoke(slotIndex);
+            if (Root == null || _session == null) return;
+            CardTableBindings.Populate(
+                Root, _session, _localPlayerId, _session.Phase.CurrentSeason, _sort,
+                _expandedBlocks, focusPlayerId: -1,
+                onInspect: OnInspectCard,
+                onDuel: id => OnDuelRival?.Invoke(id),
+                onGambit: id => OnGambitRival?.Invoke(id),
+                onTrade: id => OnTradeRival?.Invoke(id),
+                onToggleDetail: ToggleDetail,
+                onOppose: id => OnOpposeRival?.Invoke(id));
         }
 
         public void RefreshActionGroupRail()
         {
             MainSceneBindings.BindActionGroupRail(
-                El("step-rail"), 3,
+                El("step-rail"), 4,
                 ActionGroupRailBindings.ResolveSummerActiveGroup(_summerOverlays, _contestOverlays));
         }
     }

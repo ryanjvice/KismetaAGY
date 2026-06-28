@@ -35,18 +35,24 @@ namespace Kismeta.UI
         public bool IsOpen => _active != ActiveContest.None
             && _layout != null && _layout.IsOverlayVisible;
 
-        public int? ActiveSummerGroupIndex => _active is ActiveContest.Trade or ActiveContest.Duel or ActiveContest.Gambit
-            ? 1
-            : null;
+        public int? ActiveSummerGroupIndex => _active switch
+        {
+            ActiveContest.Trade => 0,
+            ActiveContest.Duel => 1,
+            ActiveContest.Gambit => 2,
+            ActiveContest.Opposition => 3,
+            _ => null
+        };
 
-        public int? ActiveAutumnGroupIndex => _active == ActiveContest.Opposition ? 2 : null;
+        // Opposition moved to Summer; no contest belongs to the Autumn rail.
+        public int? ActiveAutumnGroupIndex => null;
 
         public string? ActiveNarrativeStepId => _active switch
         {
             ActiveContest.Trade => "summer.trade",
             ActiveContest.Duel => "summer.duel",
             ActiveContest.Gambit => "summer.gambit",
-            ActiveContest.Opposition => "autumn.oppose",
+            ActiveContest.Opposition => "summer.opposition",
             _ => null
         };
 

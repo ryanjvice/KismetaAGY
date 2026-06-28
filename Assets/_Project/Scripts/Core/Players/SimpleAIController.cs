@@ -14,10 +14,11 @@ namespace Kismeta.Core.Players
     /// Greedy heuristic AI for hot-seat testing without a human player.
     ///
     /// Commune  — puts all available cards into Spread.
-    /// Summer   — activates the first Dormant Crucible slot if it has cards, else crafts Salt,
-    ///            else passes. Each activation costs any 3 Spread cards.
-    /// Autumn   — tempers if eligible, else fires the first Active slot if it can afford the cost,
+    /// Summer   — alchemist interactions: duels, gambits, then Opposition against a Forging rival,
     ///            else passes.
+    /// Autumn   — leaves Stasis or tempers if eligible, else activates a Dormant Crucible slot,
+    ///            else fires the first Active slot if it can afford the cost, else crafts Salt,
+    ///            else passes. Each activation costs any 3 Spread cards.
     /// </summary>
     public sealed class SimpleAIController : IPlayerController
     {
@@ -132,31 +133,13 @@ namespace Kismeta.Core.Players
             return null;
         }
 
-        // ─── Summer: Activate or Craft or Pass ────────────────────────────────────
+        // ─── Summer: Duel, Gambit, Opposition, or Pass ────────────────────────────
 
         private IGameCommand DecideSummer(GameContext ctx)
         {
             var pid     = Slot.Index;
             var player  = ctx.PublicView.Players[pid];
             var spreadIds = new List<string>(player.Spread);
-
-            // Try to activate each Dormant slot by finding a valid card set from Spread.
-            for (int i = 0; i < player.CrucibleSlots.Count; i++)
-            {
-                var slot = player.CrucibleSlots[i];
-                if (slot.State != CrucibleCardState.Dormant || !slot.HasCoal) continue;
-
-                var payment = FindActivationCards(ctx, player.AssignedCodex, i, spreadIds);
-                if (payment != null)
-                    return new ActivateCrucibleCommand(pid, i, payment);
-            }
-
-            // Try to craft Salt (needs any 3 cards from Spread)
-            if (spreadIds.Count >= 3)
-            {
-                var payment = spreadIds.GetRange(0, 3);
-                return new CraftReagentCommand(pid, ReagentType.Salt, payment);
-            }
 
             // Duel an opponent if we have at least 2 Spread cards (ante 1, keep 1)
             if (spreadIds.Count >= 2)
@@ -175,10 +158,19 @@ namespace Kismeta.Core.Players
             if (gambitTarget.TargetId >= 0 && gambitTarget.OfferedCardId != null)
                 return new InitiateGambitCommand(pid, gambitTarget.TargetId, gambitTarget.OfferedCardId);
 
+            // Opposition: target the opponent who is Forging and furthest ahead,
+            // but only if our stone is not in Stasis and not fresh out of Stasis.
+            if (player.StoneState != StoneState.Stasis && !player.ReturnedFromStasisThisRound)
+            {
+                var oppTarget = FindOppositionTarget(ctx, pid);
+                if (oppTarget >= 0)
+                    return new InitiateOppositionCommand(pid, oppTarget);
+            }
+
             return new PassCrucibleActionCommand(pid);
         }
 
-        // ─── Autumn: Temper, Fire, or Pass ────────────────────────────────────────
+        // ─── Autumn: Leave Stasis, Temper, Activate, Fire, Craft, or Pass ─────────
 
         private IGameCommand DecideAutumn(GameContext ctx)
         {
@@ -186,16 +178,27 @@ namespace Kismeta.Core.Players
             var player    = ctx.PublicView.Players[pid];
             var spreadIds = new List<string>(player.Spread);
 
+            // Leave Stasis
+            if (player.StoneState == StoneState.Stasis
+                && player.Reagents.TryGetValue(ReagentType.Salt, out int salt) && salt >= 2)
+                return new LeaveStasisCommand(pid);
+
             // Temper: stone must be Forging AND at a Forge position AND not returned from Stasis this round
             if (player.StoneState == StoneState.Forging
                 && player.StonePosition.IsForge
                 && !player.ReturnedFromStasisThisRound)
                 return new TemperCommand(pid);
 
-            // Leave Stasis
-            if (player.StoneState == StoneState.Stasis
-                && player.Reagents.TryGetValue(ReagentType.Salt, out int salt) && salt >= 2)
-                return new LeaveStasisCommand(pid);
+            // Try to activate each Dormant slot by finding a valid card set from Spread.
+            for (int i = 0; i < player.CrucibleSlots.Count; i++)
+            {
+                var slot = player.CrucibleSlots[i];
+                if (slot.State != CrucibleCardState.Dormant || !slot.HasCoal) continue;
+
+                var payment = FindActivationCards(ctx, player.AssignedCodex, i, spreadIds);
+                if (payment != null)
+                    return new ActivateCrucibleCommand(pid, i, payment);
+            }
 
             // Fire: stone must be at Mantle and we need reagents + an Active slot.
             if (player.StoneState == StoneState.Tempering && player.StonePosition.IsMantle)
@@ -219,13 +222,11 @@ namespace Kismeta.Core.Players
                 }
             }
 
-            // Opposition: target the opponent who is Forging and furthest ahead
-            // but only if our stone is not in Stasis and not fresh out of Stasis
-            if (player.StoneState != StoneState.Stasis && !player.ReturnedFromStasisThisRound)
+            // Try to craft Salt (needs any 3 cards from Spread)
+            if (spreadIds.Count >= 3)
             {
-                var oppTarget = FindOppositionTarget(ctx, pid);
-                if (oppTarget >= 0)
-                    return new InitiateOppositionCommand(pid, oppTarget);
+                var payment = spreadIds.GetRange(0, 3);
+                return new CraftReagentCommand(pid, ReagentType.Salt, payment);
             }
 
             return new PassCrucibleActionCommand(pid);

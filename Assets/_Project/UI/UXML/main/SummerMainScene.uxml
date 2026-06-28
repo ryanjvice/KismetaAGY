@@ -5,9 +5,9 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
+    <engine:Style src="../../USS/EndAndOverlays.uss" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
-    <engine:Template src="../shell/CauldronHub.uxml" name="CauldronHub" />
 
     <engine:VisualElement name="summer-main" class="screen screen--summer">
 
@@ -20,44 +20,21 @@
 
             <engine:VisualElement class="summer-main__actionbar">
                 <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                    <engine:Button name="craftbuild-btn" text="Craft" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="consort-btn" text="Consort" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="trade-btn" text="Trade" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="duel-btn" text="Duel" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="gambit-btn" text="Gambit" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="opposition-btn" text="Opposition" class="actionbtn btn btn--secondary" />
                 </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:VisualElement class="central-panel">
-            <engine:VisualElement name="summer-main-stage" class="stage" style="align-items: center; justify-content: center;">
-                <engine:Instance template="CauldronHub" />
-            </engine:VisualElement>
-            </engine:VisualElement>
-
-            <engine:VisualElement class="summer-main__crucible-row">
-                <engine:Button name="activate-btn" text="Activate" class="actionbtn btn btn--primary crucible-activate" />
-                <engine:VisualElement class="crucible-cards">
-                    <engine:VisualElement name="crucible-card-0" class="crucible-card">
-                        <engine:VisualElement name="crucible-token-0" class="crucible-card__token" />
-                        <engine:VisualElement name="crucible-face-0" class="crucible-card__face" style="display: none;">
-                            <engine:Label name="crucible-numeral-0" text="" class="crucible-card__numeral" />
-                        </engine:VisualElement>
+                <engine:VisualElement name="summer-roster" class="summer-roster" style="flex-grow: 1;">
+                    <engine:VisualElement class="summer-roster__sort" style="padding: 6px 12px; flex-direction: row;">
+                        <engine:Button name="sort-threat" text="by threat" class="table-action" style="background-color: rgb(42, 31, 14); border-color: rgb(90, 68, 32); color: rgb(224, 200, 120);" />
+                        <engine:Button name="sort-turn" text="turn order" class="table-action" style="background-color: rgb(16, 10, 18); border-color: rgb(58, 36, 64); color: rgb(184, 154, 110);" />
+                        <engine:Button name="sort-arcanum" text="arcanum" class="table-action" style="background-color: rgb(16, 10, 18); border-color: rgb(58, 36, 64); color: rgb(184, 154, 110);" />
                     </engine:VisualElement>
-                    <engine:VisualElement name="crucible-card-1" class="crucible-card">
-                        <engine:VisualElement name="crucible-token-1" class="crucible-card__token" />
-                        <engine:VisualElement name="crucible-face-1" class="crucible-card__face" style="display: none;">
-                            <engine:Label name="crucible-numeral-1" text="" class="crucible-card__numeral" />
-                        </engine:VisualElement>
-                    </engine:VisualElement>
-                    <engine:VisualElement name="crucible-card-2" class="crucible-card">
-                        <engine:VisualElement name="crucible-token-2" class="crucible-card__token" />
-                        <engine:VisualElement name="crucible-face-2" class="crucible-card__face" style="display: none;">
-                            <engine:Label name="crucible-numeral-2" text="" class="crucible-card__numeral" />
-                        </engine:VisualElement>
-                    </engine:VisualElement>
-                    <engine:VisualElement name="crucible-card-3" class="crucible-card">
-                        <engine:VisualElement name="crucible-token-3" class="crucible-card__token" />
-                        <engine:VisualElement name="crucible-face-3" class="crucible-card__face" style="display: none;">
-                            <engine:Label name="crucible-numeral-3" text="" class="crucible-card__numeral" />
-                        </engine:VisualElement>
-                    </engine:VisualElement>
+                    <engine:ScrollView name="players" class="card-table__players" style="flex-grow: 1;" />
                 </engine:VisualElement>
             </engine:VisualElement>
 

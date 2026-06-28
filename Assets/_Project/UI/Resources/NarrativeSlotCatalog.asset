@@ -245,10 +245,10 @@ MonoBehaviour:
     _verbs:
     - Survey
     _breadcrumb: Survey
-  - _id: autumn.oppose
-    _season: 2
+  - _id: summer.opposition
+    _season: 1
     _tier: 1
-    _order: 2
+    _order: 9
     _beat: Align against a rival and break their forging.
     _charge: Pay the defender's ward fee, roll, and total your Aspect alignment.
       Win, and their stone falls to Stasis.

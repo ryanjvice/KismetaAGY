@@ -385,7 +385,7 @@ namespace Kismeta.Core.Tests
             session.Players[0].CrucibleSlots[0].Activate();
             session.Players[0].AssignedCodex = CodexVariant.A;
             GiveMarsCards(session, 0, 3);
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Autumn);
 
             var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
@@ -398,7 +398,7 @@ namespace Kismeta.Core.Tests
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Autumn);
             var result  = session.Apply(new ActivateCrucibleCommand(0, 0,
                 new List<string> { "x", "y" }));
             Assert.IsFalse(result.IsOk);
@@ -413,7 +413,7 @@ namespace Kismeta.Core.Tests
             // Force Codex A so slot 0 = "Any Three Mars". Give 3 Mars cards (minor.cups.seven.1).
             session.Players[0].AssignedCodex = CodexVariant.A;
             GiveMarsCards(session, 0, 3);
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Autumn);
             var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsTrue(result.IsOk, result.Message);
@@ -480,13 +480,56 @@ namespace Kismeta.Core.Tests
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
             session.Players[1].StoneState = StoneState.Forging;
-            SetSeason(session, Season.Autumn);
+            SetSeason(session, Season.Summer);
             var result = session.Apply(new InitiateOppositionCommand(0, 1));
             Assert.IsTrue(result.IsOk, result.Message);
             // One of the two players must be in Stasis
             bool someoneInStasis = session.Players[0].StoneState == StoneState.Stasis
                                 || session.Players[1].StoneState == StoneState.Stasis;
             Assert.IsTrue(someoneInStasis);
+        }
+
+        // ─── Season-gating tests (ActionValidator) ─────────────────────────────────
+
+        [Test]
+        public void Activate_Rejected_Outside_Autumn()
+        {
+            var db      = LoadDb();            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Players[0].AssignedCodex = CodexVariant.A;
+            GiveMarsCards(session, 0, 3);
+            SetSeason(session, Season.Summer);
+
+            var cards  = LastSpreadCards(session.Players[0], 3);
+            var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
+            Assert.IsFalse(result.IsOk, "Activate should be rejected outside Autumn.");
+            StringAssert.Contains("Autumn", result.Message);
+        }
+
+        [Test]
+        public void Opposition_Rejected_Outside_Summer()
+        {
+            var db      = LoadDb();            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Players[1].StoneState = StoneState.Forging;
+            SetSeason(session, Season.Autumn);
+
+            var result = session.Apply(new InitiateOppositionCommand(0, 1));
+            Assert.IsFalse(result.IsOk, "Opposition should be rejected outside Summer.");
+            StringAssert.Contains("Summer", result.Message);
+        }
+
+        [Test]
+        public void BuildAstralHouse_Rejected_Outside_Spring()
+        {
+            var db      = LoadDb();            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+
+            var result = session.Apply(new BuildAstralHouseCommand(
+                0, ZodiacSign.Aries, new List<string>()));
+            Assert.IsFalse(result.IsOk, "Build Astral House should be rejected outside Spring.");
+            StringAssert.Contains("Spring", result.Message);
         }
 
         // ─── CraftingRules tests ───────────────────────────────────────────────────
@@ -637,7 +680,7 @@ namespace Kismeta.Core.Tests
             // Slot 0 = Any Three Mars, Slot 1 = Any Three Venus, etc.
             session.Players[playerId].AssignedCodex = CodexVariant.A;
             GiveMarsCards(session, playerId, 3);
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Autumn);
             var spread = session.Players[playerId].Spread;
             var cards  = LastSpreadCards(session.Players[playerId], 3);
             var result = session.Apply(new ActivateCrucibleCommand(playerId, slotIdx, cards));
@@ -737,7 +780,7 @@ namespace Kismeta.Core.Tests
                 session.RegisterCard(inst);
                 session.Players[0].Spread.Add(id);
             }
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Autumn);
             var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsFalse(result.IsOk, "Wrong planet cards should not satisfy the formula.");
@@ -753,7 +796,7 @@ namespace Kismeta.Core.Tests
             session.Players[0].AssignedCodex = CodexVariant.A;
             Assert.IsTrue(session.Players[0].CrucibleSlots[0].HasCoal, "Slot should start with coal.");
             GiveMarsCards(session, 0, 3);
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Autumn);
             var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsTrue(result.IsOk, result.Message);
@@ -778,7 +821,7 @@ namespace Kismeta.Core.Tests
             }
             var spread = session.Players[0].Spread;
             var cards  = spread.GetRange(spread.Count - 3, 3);
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Autumn);
             var result = session.Apply(new ActivateCrucibleCommand(0, 1, cards));
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.IsTrue(session.Players[0].IsCauldronLit(Suit.Cups),
@@ -803,7 +846,7 @@ namespace Kismeta.Core.Tests
                 session.Players[0].Spread.Add(id);
                 wandsIds.Add(id);
             }
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Autumn);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, wandsIds));
             Assert.IsTrue(result.IsOk, result.Message);
         }
@@ -826,6 +869,7 @@ namespace Kismeta.Core.Tests
                 session.Players[0].Spread.Add(id);
                 wandsIds.Add(id);
             }
+            SetSeason(session, Season.Autumn);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, wandsIds));
             Assert.IsFalse(result.IsOk, "Insufficient rank sum should fail.");
         }
@@ -839,6 +883,7 @@ namespace Kismeta.Core.Tests
             session.Players[0].AssignedCodex = CodexVariant.A;
             session.Players[0].CrucibleSlots[0].RemoveCoal();
             GiveMarsCards(session, 0, 3);
+            SetSeason(session, Season.Autumn);
             var cards  = LastSpreadCards(session.Players[0], 3);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, cards));
             Assert.IsFalse(result.IsOk, "Cannot activate a slot with no coal.");
@@ -861,6 +906,7 @@ namespace Kismeta.Core.Tests
                 session.Players[0].Hand.Add(id);
                 handIds.Add(id);
             }
+            SetSeason(session, Season.Autumn);
             var result = session.Apply(new ActivateCrucibleCommand(0, 0, handIds));
             Assert.IsFalse(result.IsOk, "Hand cards should not be usable for activation.");
         }

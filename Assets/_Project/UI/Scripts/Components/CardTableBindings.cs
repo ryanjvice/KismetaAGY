@@ -26,7 +26,8 @@ namespace Kismeta.UI.Components
             Action<int>? onDuel,
             Action<int>? onGambit,
             Action<int>? onTrade,
-            Action<int>? onToggleDetail)
+            Action<int>? onToggleDetail,
+            Action<int>? onOppose = null)
         {
             var scroll = root.Q<ScrollView>("players");
             if (scroll == null) return;
@@ -198,6 +199,9 @@ namespace Kismeta.UI.Components
                         new Color(0.16f, 0.14f, 0.05f), () => onGambit?.Invoke(p.PlayerId)));
                     actions.Add(MakeAction($"trade-{p.PlayerId}", "trade",
                         new Color(0.09f, 0.13f, 0.18f), () => onTrade?.Invoke(p.PlayerId)));
+                    if (onOppose != null && ContestBindings.CanTargetForOpposition(session, localPlayerId, p.PlayerId))
+                        actions.Add(MakeAction($"oppose-{p.PlayerId}", "oppose",
+                            new Color(0.18f, 0.06f, 0.16f), () => onOppose.Invoke(p.PlayerId)));
                     block.Add(actions);
                 }
 

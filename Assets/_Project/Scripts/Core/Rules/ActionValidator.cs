@@ -24,10 +24,11 @@ namespace Kismeta.Core.Rules
                 HarvestCommand       cmd    => CommandResult.Ok(),
                 CommuneCommand       cmd    => CommandResult.Ok(),
                 SetCardLockCommand   _      => CommandResult.Ok(),
-                ActivateCrucibleCommand cmd => ValidateSeasonSummerOrAutumn(session),
+                ActivateCrucibleCommand cmd => ValidateSeason(session, Season.Autumn),
                 FireStoneCommand     _      => ValidateSeason(session, Season.Autumn),
                 TemperCommand        _      => ValidateSeason(session, Season.Autumn),
-                InitiateOppositionCommand _ => ValidateSeason(session, Season.Autumn),
+                InitiateOppositionCommand _ => ValidateSeason(session, Season.Summer),
+                BuildAstralHouseCommand _   => ValidateSeason(session, Season.Spring),
                 CraftReagentCommand  _      => CommandResult.Ok(), // allowed any season
                 PassActionCommand    _      => CommandResult.Ok(),
                 PassCrucibleActionCommand _ => CommandResult.Ok(),
@@ -49,14 +50,6 @@ namespace Kismeta.Core.Rules
         {
             if (session.Phase.CurrentSeason != required)
                 return CommandResult.Invalid($"Action is only available during {required}.");
-            return CommandResult.Ok();
-        }
-
-        private static CommandResult ValidateSeasonSummerOrAutumn(GameSession session)
-        {
-            var s = session.Phase.CurrentSeason;
-            if (s != Season.Summer && s != Season.Autumn)
-                return CommandResult.Invalid("Activate Crucible is only available during Summer or Autumn.");
             return CommandResult.Ok();
         }
     }

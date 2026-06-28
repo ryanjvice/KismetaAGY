@@ -21,10 +21,10 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
-        public void Summer_Has_6_Steps_All_Unordered()
+        public void Summer_Has_4_Steps_All_Unordered()
         {
             var steps = PhaseDefinitions.SummerSteps;
-            Assert.AreEqual(6, steps.Count);
+            Assert.AreEqual(4, steps.Count);
             foreach (var step in steps)
                 Assert.IsFalse(step.IsOrdered, $"Summer step '{step.Name}' should be unordered (free-action pool).");
         }
@@ -79,7 +79,7 @@ namespace Kismeta.Core.Tests
         public void Full_Round_Cycle_Completes_Without_Error()
         {
             var pc = new PhaseController();
-            int totalSteps = 5 + 6 + 5 + 4; // Spring + Summer + Autumn + Winter
+            int totalSteps = 5 + 4 + 5 + 4; // Spring + Summer + Autumn + Winter
             for (int i = 0; i < totalSteps; i++)
                 pc.Advance();
 

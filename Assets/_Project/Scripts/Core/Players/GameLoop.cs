@@ -263,7 +263,7 @@ namespace Kismeta.Core.Players
             await WaitCeremonyUiAsync(CeremonyStep.SummerIntro, ct);
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
-            Log("Summer — Free-Action Pool");
+            Log("Summer — Free-Action Pool (Trade / Duel / Gambit / Opposition)");
             await RunFreeActionPool(ActionHint.SummerAction, ct);
         }
 
@@ -275,7 +275,7 @@ namespace Kismeta.Core.Players
             await WaitCeremonyUiAsync(CeremonyStep.AutumnIntro, ct);
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
-            Log("Autumn — Free-Action Pool");
+            Log("Autumn — Free-Action Pool (Craft / Activate / Forge)");
             await RunFreeActionPool(ActionHint.AutumnAction, ct);
         }
 

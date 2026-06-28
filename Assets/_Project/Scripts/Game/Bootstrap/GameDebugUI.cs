@@ -859,7 +859,9 @@ namespace Kismeta.Game.Bootstrap
 
         private void DrawActionPanel(HotSeatController hs, int pid, PlayerState player, ActionHint hint)
         {
-            if (hint == ActionHint.SummerAction)
+            if (hint == ActionHint.SpringAction)
+                DrawSpringActions(hs, pid, player);
+            else if (hint == ActionHint.SummerAction)
                 DrawSummerActions(hs, pid, player);
             else if (hint == ActionHint.AutumnAction)
                 DrawAutumnActions(hs, pid, player);
@@ -875,58 +877,26 @@ namespace Kismeta.Game.Bootstrap
             }
         }
 
+        // Build Astral House is a Spring Hub free action (Spring-only).
+        private void DrawSpringActions(HotSeatController hs, int pid, PlayerState player)
+        {
+            var selList = _selectedCards.ToList();
+
+            GUILayout.Label("── Build Astral House (current Sign · 1 planet-matching card) ──");
+            DrawBuildHouseButton(hs, pid, player, selList);
+
+            GUILayout.Space(4f);
+            if (GUILayout.Button("Pass / End Spring Action"))
+                SubmitAction(hs, new PassActionCommand(pid));
+        }
+
         private void DrawSummerActions(HotSeatController hs, int pid, PlayerState player)
         {
             int selCount = _selectedCards.Count;
             var selList  = _selectedCards.ToList();
 
-            // Activate Crucible (one button per Dormant slot; formula shown in tooltip label)
-            GUILayout.Label($"Activate Crucible [{selCount} selected]:");
-            for (int i = 0; i < player.CrucibleSlots.Count; i++)
-            {
-                var slot = player.CrucibleSlots[i];
-                if (slot.State != CrucibleCardState.Dormant) continue;
-
-                string formulaLabel = "?";
-                if (_codexDb != null && player.AssignedCodex != CodexVariant.None)
-                {
-                    var formula = _codexDb.GetFormula(player.AssignedCodex, i);
-                    if (formula != null) formulaLabel = formula.DisplayName;
-                }
-
-                int captured = i;
-                GUI.enabled = selCount >= 1;
-                if (GUILayout.Button($"Activate Slot {captured}  [{formulaLabel}]"))
-                    SubmitAction(hs, new ActivateCrucibleCommand(pid, captured, selList));
-            }
-            GUI.enabled = true;
-
-            GUILayout.Space(4f);
-
-            // Craft Salt (need 3+ selected)
-            GUI.enabled = selCount >= 3;
-            if (GUILayout.Button($"Craft Salt  ({selCount}/3 sel)"))
-                SubmitAction(hs, new CraftReagentCommand(pid, ReagentType.Salt, selList));
-            GUI.enabled = true;
-
-            // Craft Elemental (need 3+ same-suit selected AND cauldron lit)
-            Suit? uSuit = GetUniformSuit(selList);
-            bool cauldronLit = uSuit.HasValue && player.IsCauldronLit(uSuit.Value);
-            GUI.enabled = selCount >= 3 && uSuit.HasValue && cauldronLit;
-            string craftLabel = uSuit.HasValue
-                ? $"Craft {uSuit.Value} Reagent  (cauldron {(cauldronLit ? "lit" : "UNLIT")})"
-                : "Craft Elemental  (select 3+ same-suit)";
-            if (GUILayout.Button(craftLabel))
-            {
-                var rtype = SuitToReagent(uSuit!.Value);
-                SubmitAction(hs, new CraftReagentCommand(pid, rtype, selList));
-            }
-            GUI.enabled = true;
-
-            GUILayout.Space(4f);
-
-            // Build Astral House — only on current sign, needs 2 planet-matching cards, unplaced houses remaining
-            DrawBuildHouseButton(hs, pid, player, selList);
+            // NOTE: Activate Crucible and Craft Reagent moved to Autumn (see DrawAutumnActions).
+            // NOTE: Build Astral House moved to Spring (see DrawSpringActions).
 
             // Place Card Ward — for Active slots (no selection needed; choose reagent per slot)
             bool hasActiveSlots = player.CrucibleSlots.Exists(s =>
@@ -1000,6 +970,23 @@ namespace Kismeta.Game.Bootstrap
                     GUI.enabled = selIsOfferable;
                     if (GUILayout.Button($"Gambit P{opp.PlayerId}"))
                         SubmitAction(hs, new InitiateGambitCommand(pid, opp.PlayerId, selList[0]));
+                }
+            }
+            GUI.enabled = true;
+            GUILayout.EndHorizontal();
+
+            // ── Opposition — one button per opponent who is Forging ────────────────
+            GUILayout.Space(2f);
+            GUILayout.Label("── Opposition (send a Forging rival's Stone to Stasis) ──");
+            GUILayout.BeginHorizontal();
+            if (_session != null)
+            {
+                foreach (var opp in _session.Players)
+                {
+                    if (opp.PlayerId == pid) continue;
+                    GUI.enabled = opp.StoneState == StoneState.Forging;
+                    if (GUILayout.Button($"Oppose P{opp.PlayerId}"))
+                        SubmitAction(hs, new InitiateOppositionCommand(pid, opp.PlayerId));
                 }
             }
             GUI.enabled = true;
@@ -1163,6 +1150,28 @@ namespace Kismeta.Game.Bootstrap
                 (player.ReturnedFromStasisThisRound ? "  (Returned from Stasis — cannot Temper)" : ""));
             GUILayout.Space(4f);
 
+            // ── Activate Crucible (Dormant slot; select cards from Spread) ─────────
+            GUILayout.Label($"Activate Crucible [{selCount} selected]:");
+            for (int i = 0; i < player.CrucibleSlots.Count; i++)
+            {
+                var aSlot = player.CrucibleSlots[i];
+                if (aSlot.State != CrucibleCardState.Dormant) continue;
+
+                string formulaLabel = "?";
+                if (_codexDb != null && player.AssignedCodex != CodexVariant.None)
+                {
+                    var formula = _codexDb.GetFormula(player.AssignedCodex, i);
+                    if (formula != null) formulaLabel = formula.DisplayName;
+                }
+
+                int captured = i;
+                GUI.enabled = selCount >= 1;
+                if (GUILayout.Button($"Activate Slot {captured}  [{formulaLabel}]"))
+                    SubmitAction(hs, new ActivateCrucibleCommand(pid, captured, selList));
+            }
+            GUI.enabled = true;
+            GUILayout.Space(4f);
+
             // ── Fire Stone ────────────────────────────────────────────────────────
             // Fire requires: stone at Mantle, slot Active, selection = alignment cards
             bool canFire = player.StonePosition.IsMantle;
@@ -1224,19 +1233,7 @@ namespace Kismeta.Game.Bootstrap
             GUI.enabled = true;
             GUILayout.EndHorizontal();
 
-            // ── Oppose — one button per opponent who is Forging ───────────────────
-            GUILayout.Space(2f);
-            GUILayout.Label("Oppose (select Forging opponent):");
-            GUILayout.BeginHorizontal();
-            foreach (var opp in _session!.Players)
-            {
-                if (opp.PlayerId == pid) continue;
-                GUI.enabled = opp.StoneState == StoneState.Forging;
-                if (GUILayout.Button($"Oppose P{opp.PlayerId}"))
-                    SubmitAction(hs, new InitiateOppositionCommand(pid, opp.PlayerId));
-            }
-            GUI.enabled = true;
-            GUILayout.EndHorizontal();
+            // NOTE: Opposition moved to Summer (see DrawSummerActions).
 
             GUILayout.Space(2f);
 

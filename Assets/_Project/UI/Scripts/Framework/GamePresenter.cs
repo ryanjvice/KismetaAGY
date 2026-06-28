@@ -534,37 +534,26 @@ namespace Kismeta.UI
         private void WireSummerNavigation()
         {
             var summer = _router.GetController<SummerSceneController>(ScreenIds.SummerMain);
-            if (summer != null)
-            {
-                summer.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
-                summer.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
-                summer.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
-                summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
-            }
-
-            if (_summerOverlays == null) return;
-
             if (summer == null) return;
 
-            summer.OnCraftBuild = () => _summerOverlays.ShowCraftBuildSheet();
-            summer.OnConsort = () => _summerOverlays.ShowConsortSheet();
-            summer.OnActivate = () => _summerOverlays.ShowActivate();
-            summer.OnPass = () => _summerOverlays.ShowEndSummer();
-            summer.OnCauldronClicked = suit =>
-            {
-                if (_session == null || _loop == null) return;
+            summer.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+            summer.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
+            summer.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+            summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
 
-                var localId = MainSceneBindings.ResolveLocalPlayerId(_session, _loop, _bridge);
-                if (localId < 0 || localId >= _session.Players.Count) return;
+            summer.OnPass = () => _summerOverlays?.ShowEndSummer();
 
-                var player = _session.Players[localId];
-                if (player.IsCauldronLit(suit))
-                    _summerOverlays.ShowCraftReagent(Correspondence.ReagentFor(suit));
-                else if (CauldronHubBindings.TrySlotIndexForSuit(_session, localId, suit, out int slot))
-                    _summerOverlays.ShowActivate(slot);
-                else
-                    _summerOverlays.ShowActivate();
-            };
+            // Summer is now a contest hub: Trade / Duel / Gambit / Opposition.
+            summer.OnTrade = () => _contestOverlays?.ShowTrade();
+            summer.OnDuel = () => _contestOverlays?.ShowDuel();
+            summer.OnGambit = () => _contestOverlays?.ShowGambit();
+            summer.OnOpposition = () => _contestOverlays?.ShowOpposition();
+
+            // Per-rival shortcuts from the embedded roster.
+            summer.OnTradeRival = id => _contestOverlays?.ShowTrade(id);
+            summer.OnDuelRival = id => _contestOverlays?.ShowDuel(id);
+            summer.OnGambitRival = id => _contestOverlays?.ShowGambit(id);
+            summer.OnOpposeRival = _ => _contestOverlays?.ShowOpposition();
         }
 
         private void WireSeasonHubNavigation()
@@ -595,10 +584,6 @@ namespace Kismeta.UI
             _summerOverlays.OnTrade = () => _contestOverlays.ShowTrade();
             _summerOverlays.OnDuel = () => _contestOverlays.ShowDuel();
             _summerOverlays.OnGambit = () => _contestOverlays.ShowGambit();
-
-            var autumn = _router.GetController<AutumnSceneController>(ScreenIds.AutumnMain);
-            if (autumn != null && autumn.OnOppose == null)
-                autumn.OnOppose = () => _contestOverlays.ShowOpposition();
         }
 
         private void WireAutumnNavigation()
@@ -612,12 +597,33 @@ namespace Kismeta.UI
             var autumn = _router.GetController<AutumnSceneController>(ScreenIds.AutumnMain);
             if (autumn == null) return;
 
+            // Contextual forge actions hosted by the Autumn overlay host.
             autumn.OnFire = () => _autumnOverlays.ShowFire();
             autumn.OnTemper = () => _autumnOverlays.ShowTemper();
-            autumn.OnManageCards = () => _autumnOverlays.ShowManageCards();
             autumn.OnLeaveStasis = () => _autumnOverlays.ShowLeaveStasis();
             autumn.OnPass = () => _autumnOverlays.ShowEndAutumn();
-            autumn.OnOppose = () => _contestOverlays?.ShowOpposition();
+
+            // Craft / Activate reuse the season-agnostic Summer overlay controllers.
+            autumn.OnCraft = () => _summerOverlays?.ShowCraftReagent();
+            autumn.OnActivate = () => _summerOverlays?.ShowActivate();
+            autumn.OnActivateSlot = slot => _summerOverlays?.ShowActivate(slot);
+            autumn.OnCrucibleDetail = slot => _summerOverlays?.ShowCrucibleDetail(slot);
+            autumn.OnCauldronClicked = suit =>
+            {
+                if (_session == null || _loop == null || _summerOverlays == null) return;
+
+                var localId = MainSceneBindings.ResolveLocalPlayerId(_session, _loop, _bridge);
+                if (localId < 0 || localId >= _session.Players.Count) return;
+
+                var player = _session.Players[localId];
+                if (player.IsCauldronLit(suit))
+                    _summerOverlays.ShowCraftReagent(Correspondence.ReagentFor(suit));
+                else if (CauldronHubBindings.TrySlotIndexForSuit(_session, localId, suit, out int slot))
+                    _summerOverlays.ShowActivate(slot);
+                else
+                    _summerOverlays.ShowActivate();
+            };
+
             autumn.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
             autumn.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
             autumn.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
@@ -840,6 +846,7 @@ namespace Kismeta.UI
             {
                 autumn.BindState(_session, _loop, _bridge);
                 _autumnOverlays?.BindState(_session, _bridge);
+                _summerOverlays?.BindState(_session, _bridge);
                 _contestOverlays?.BindState(_session, _bridge);
                 _endOverlays?.BindState(_session, _loop, _bridge);
             }

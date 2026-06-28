@@ -51,7 +51,7 @@ namespace Kismeta.UI.Controllers
             SetWizard("wo", 4, 1);
             El("stasis-result")!.style.display = DisplayStyle.None;
             RefreshTargetStep();
-            NarrativeSlotBindings.BindById(Root, "autumn.oppose");
+            NarrativeSlotBindings.BindById(Root, "summer.opposition");
         }
 
         void RefreshTargetStep()
