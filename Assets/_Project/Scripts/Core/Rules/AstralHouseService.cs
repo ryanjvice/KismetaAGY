@@ -6,7 +6,7 @@ using Kismeta.Core.Entities;
 namespace Kismeta.Core.Rules
 {
     /// <summary>
-    /// Validates and executes the "Build Astral House" Summer action.
+    /// Validates and executes the "Build Astral House" Spring Hub action.
     ///
     /// Quickplay rules:
     ///  - Player must have at least one unplaced Astral House token.

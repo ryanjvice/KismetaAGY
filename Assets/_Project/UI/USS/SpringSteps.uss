@@ -108,8 +108,59 @@
 
 .spring-hub__stage { align-items: center; }
 
+.spring-hub__actionbar {
+    flex-shrink: 0;
+    padding: 0 var(--space-md);
+    margin: var(--space-xs) var(--space-md) 0;
+}
+
+.spring-hub__actionbar--hidden { display: none; }
+
+.spring-hub__board-stage {
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    align-self: stretch;
+}
+
+.spring-board {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    max-width: 90%;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0 8px;
+}
+
+.spring-board__wheel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.spring-board__tokens {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.spring-board__token {
+    position: absolute;
+}
+
+.spring-hub__hub-cta--hidden,
+.spring-hub__commune-cta--hidden { display: none; }
+
 .spring-hub__stage .narrative-charge,
-.commune-stage .narrative-charge {
+.commune-stage .narrative-charge,
+.spring-hub__board-stage .narrative-charge {
     -unity-text-align: middle-center;
     align-self: stretch;
     margin-top: 4px;
@@ -119,6 +170,11 @@
 .spring-hub__stakes {
     flex-shrink: 0;
     margin: 0 var(--space-md) var(--space-sm);
+}
+
+#wheel-cta {
+    position: relative;
+    z-index: 21;
 }
 
 .spring-hub__stakes .narrative-stakes-wrap {

@@ -194,6 +194,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<FatefulWagerController>();
             EnsureController<CardLimitsController>();
             EnsureController<SummerOverlayHost>();
+            EnsureController<SpringOverlayHost>();
             EnsureController<SummerSheetsController>();
             EnsureController<CraftReagentController>();
             EnsureController<ActivateCardController>();
@@ -227,7 +228,10 @@ namespace Kismeta.Game.Bootstrap
             var summerOverlays = GetComponent<SummerOverlayHost>();
             summerOverlays?.Configure(
                 _summerSheets, _craftReagent, _activateCard, _crucibleCardDetail,
-                _buildHouse, _placeWards, _endSummer);
+                _placeWards, _endSummer);
+
+            var springOverlays = GetComponent<SpringOverlayHost>();
+            springOverlays?.Configure(_buildHouse);
 
             var contestOverlays = GetComponent<ContestOverlayHost>();
             contestOverlays?.Configure(_trade, _duel, _gambit, _opposition);

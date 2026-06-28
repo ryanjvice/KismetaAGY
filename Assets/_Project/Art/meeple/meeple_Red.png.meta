@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 17f31132122d7d040bb9f54cb2421f61
+guid: 6665c7fc9536eb144b40794be4099c06
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8968202291876279056
-    second: player_yellow_0
+      213: 4226715192190828546
+    second: meeple_Red_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player_yellow_0
+      name: meeple_Red_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0fcced6f78b8a8380800000000000000
-      internalID: -8968202291876279056
+      spriteID: 200084db21f48aa30800000000000000
+      internalID: 4226715192190828546
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      player_yellow_0: -8968202291876279056
+      meeple_Red_0: 4226715192190828546
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

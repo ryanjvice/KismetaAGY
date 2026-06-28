@@ -24,7 +24,7 @@ MonoBehaviour:
     _stakes: "This age's sign shapes everything \u2014 which cards harvest well,
       which alignments score, and your own cosmic effect for the round."
     _verbs:
-    - Begin Spring
+    - Set the cosmic age
     _breadcrumb: 
   - _id: spring.setage
     _season: 0
@@ -61,6 +61,20 @@ MonoBehaviour:
     _verbs:
     - Deal & commune
     _breadcrumb: 
+  - _id: spring.hub
+    _season: 0
+    _tier: 1
+    _order: 4
+    _beat: The wheel shows where every soul stands — study it before you choose.
+    _charge: Commune with your cards, build an Astral House on your sign, and review
+      the table before Summer.
+    _stakes: Spread cards score alignment and activate Crucibles but can be stolen
+      in a Duel. Hand cards are safe but idle.
+    _verbs:
+    - Commune with Cards
+    - Build a House
+    - Proceed to Summer
+    _breadcrumb: 
   - _id: spring.commune
     _season: 0
     _tier: 1
@@ -71,7 +85,18 @@ MonoBehaviour:
     _stakes: Spread cards score alignment and activate Crucibles but can be stolen
       in a Duel. Hand cards are safe but idle.
     _verbs:
-    - "Lock the tableau \xB7 to Summer"
+    - Lock the tableau
+    _breadcrumb: 
+  - _id: spring.buildhouse
+    _season: 0
+    _tier: 1
+    _order: 4
+    _beat: A permanent anchor rises in an ever-turning sky.
+    _charge: Pay 1 card matching your sign's planet to raise a House on your current sign.
+    _stakes: Houses are permanent — the card is spent for good. You may only build on the
+      sign you rolled this round.
+    _verbs:
+    - Raise the House
     _breadcrumb: 
   - _id: spring.lock
     _season: 0

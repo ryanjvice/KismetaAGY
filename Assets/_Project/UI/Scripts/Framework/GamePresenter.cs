@@ -26,6 +26,7 @@ namespace Kismeta.UI
         private ScreenRouter _router;
         private ViewportLayout _layout;
         private SummerOverlayHost? _summerOverlays;
+        private SpringOverlayHost? _springOverlays;
         private ContestOverlayHost? _contestOverlays;
         private AutumnOverlayHost? _autumnOverlays;
         private EndOverlayHost? _endOverlays;
@@ -63,6 +64,7 @@ namespace Kismeta.UI
             _router = GetComponent<ScreenRouter>();
             _layout = GetComponent<ViewportLayout>();
             _summerOverlays = GetComponent<SummerOverlayHost>();
+            _springOverlays = GetComponent<SpringOverlayHost>();
             _contestOverlays = GetComponent<ContestOverlayHost>();
             _autumnOverlays = GetComponent<AutumnOverlayHost>();
             _endOverlays = GetComponent<EndOverlayHost>();
@@ -486,6 +488,7 @@ namespace Kismeta.UI
 
             if (_loop.PendingHumanController == null)
             {
+                _springOverlays?.DismissIfNotHumanTurn();
                 _summerOverlays?.DismissIfNotHumanTurn();
                 _contestOverlays?.DismissIfNotHumanTurn();
                 _autumnOverlays?.DismissIfNotHumanTurn();
@@ -503,6 +506,7 @@ namespace Kismeta.UI
         private static string ResolveGameplayScreen(Season season, ActionHint hint) => hint switch
         {
             ActionHint.Commune => ScreenIds.SpringHub,
+            ActionHint.SpringAction => ScreenIds.SpringHub,
             ActionHint.ConfirmHarvest => ScreenIds.SpringHarvest,
             ActionHint.DiscardToLimit => ScreenIds.CardLimits,
             _ => ResolveSeasonMainScreen(season)
@@ -560,20 +564,6 @@ namespace Kismeta.UI
                     _summerOverlays.ShowActivate(slot);
                 else
                     _summerOverlays.ShowActivate();
-            };
-            summer.OnCrucibleCardClicked = slotIndex =>
-            {
-                if (_session == null || _loop == null) return;
-
-                var localId = MainSceneBindings.ResolveLocalPlayerId(_session, _loop, _bridge);
-                if (localId < 0 || localId >= _session.Players.Count) return;
-                if (slotIndex < 0 || slotIndex >= _session.Players[localId].CrucibleSlots.Count) return;
-
-                var slot = _session.Players[localId].CrucibleSlots[slotIndex];
-                if (slot.State >= CrucibleCardState.Active)
-                    _summerOverlays.ShowCrucibleDetail(slotIndex);
-                else
-                    _summerOverlays.ShowActivate(slotIndex);
             };
         }
 
@@ -687,6 +677,7 @@ namespace Kismeta.UI
                     spring.OnRivalSelected = id => _endOverlays.ShowCardTable(id);
                     spring.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
                     spring.OnInspectCard = id => _endOverlays.ShowInspect(id);
+                    spring.OnBuildHouse = () => _springOverlays?.ShowBuildHouse();
                 }
 
                 var winter = _router.GetController<WinterHubController>(ScreenIds.WinterHub);
@@ -718,6 +709,7 @@ namespace Kismeta.UI
         private void EnsureOverlayHosts()
         {
             _summerOverlays = GetComponent<SummerOverlayHost>();
+            _springOverlays = GetComponent<SpringOverlayHost>();
             _contestOverlays = GetComponent<ContestOverlayHost>();
             _autumnOverlays = GetComponent<AutumnOverlayHost>();
             _endOverlays = GetComponent<EndOverlayHost>();
@@ -725,6 +717,7 @@ namespace Kismeta.UI
 
         private void DismissAllOverlays()
         {
+            _springOverlays?.Dismiss();
             _summerOverlays?.Dismiss();
             _contestOverlays?.Dismiss();
             _autumnOverlays?.Dismiss();
@@ -828,6 +821,7 @@ namespace Kismeta.UI
             if (controller is SpringHubController spring)
             {
                 spring.BindState(_session, _loop, _bridge);
+                _springOverlays?.BindState(_session, _bridge);
                 _endOverlays?.BindState(_session, _loop, _bridge);
             }
             else if (controller is SummerSceneController summer)

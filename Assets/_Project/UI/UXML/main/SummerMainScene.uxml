@@ -36,15 +36,27 @@
                 <engine:VisualElement class="crucible-cards">
                     <engine:VisualElement name="crucible-card-0" class="crucible-card">
                         <engine:VisualElement name="crucible-token-0" class="crucible-card__token" />
+                        <engine:VisualElement name="crucible-face-0" class="crucible-card__face" style="display: none;">
+                            <engine:Label name="crucible-numeral-0" text="" class="crucible-card__numeral" />
+                        </engine:VisualElement>
                     </engine:VisualElement>
                     <engine:VisualElement name="crucible-card-1" class="crucible-card">
                         <engine:VisualElement name="crucible-token-1" class="crucible-card__token" />
+                        <engine:VisualElement name="crucible-face-1" class="crucible-card__face" style="display: none;">
+                            <engine:Label name="crucible-numeral-1" text="" class="crucible-card__numeral" />
+                        </engine:VisualElement>
                     </engine:VisualElement>
                     <engine:VisualElement name="crucible-card-2" class="crucible-card">
                         <engine:VisualElement name="crucible-token-2" class="crucible-card__token" />
+                        <engine:VisualElement name="crucible-face-2" class="crucible-card__face" style="display: none;">
+                            <engine:Label name="crucible-numeral-2" text="" class="crucible-card__numeral" />
+                        </engine:VisualElement>
                     </engine:VisualElement>
                     <engine:VisualElement name="crucible-card-3" class="crucible-card">
                         <engine:VisualElement name="crucible-token-3" class="crucible-card__token" />
+                        <engine:VisualElement name="crucible-face-3" class="crucible-card__face" style="display: none;">
+                            <engine:Label name="crucible-numeral-3" text="" class="crucible-card__numeral" />
+                        </engine:VisualElement>
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>

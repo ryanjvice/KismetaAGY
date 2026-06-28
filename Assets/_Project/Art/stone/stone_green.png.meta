@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e4162901dda1ba149898d78c517e109a
+guid: 6f2a2670af0437c43a9fa85633a56625
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3796904395346585013
-    second: player_green_0
+      213: -4613017150462057497
+    second: stone_green_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player_green_0
+      name: stone_green_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5b5a0c24e6051b430800000000000000
-      internalID: 3796904395346585013
+      spriteID: 7e3aceba7554bffb0800000000000000
+      internalID: -4613017150462057497
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      player_green_0: 3796904395346585013
+      stone_green_0: -4613017150462057497
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

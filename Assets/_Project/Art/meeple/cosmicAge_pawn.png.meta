@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a4bcac7622263e74ca2bb61b8aaccaee
+guid: 0ae6de85a8277754cbcec7cce0377396
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3808777230678835794
-    second: player_blue_0
+      213: -5067762616357596947
+    second: cosmicAge_pawn_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player_blue_0
+      name: cosmicAge_pawn_0
       rect:
         serializedVersion: 2
         x: 7
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eadbac8d941842bc0800000000000000
-      internalID: -3808777230678835794
+      spriteID: de0500620c0bba9b0800000000000000
+      internalID: -5067762616357596947
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      player_blue_0: -3808777230678835794
+      cosmicAge_pawn_0: -5067762616357596947
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

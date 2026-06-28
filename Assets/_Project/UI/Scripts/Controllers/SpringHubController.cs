@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Kismeta.Core.Commands;
@@ -22,6 +23,7 @@ namespace Kismeta.UI.Controllers
         public System.Action? OnOpenActiveEffects;
         public System.Action<string>? OnInspectCard;
         public System.Action<int>? OnRivalSelected;
+        public System.Action? OnBuildHouse;
 
         readonly List<string> _spreadIds = new();
         readonly List<string> _handIds = new();
@@ -35,12 +37,18 @@ namespace Kismeta.UI.Controllers
         bool _justFinishedRollSpin;
         bool _communeInitialized;
         bool _communeZonesBuilt;
+        bool _communeSubviewOpen;
         int _communePlayerId = -1;
         VisualElement? _communeBuiltForRoot;
         DockZone _dockZone = DockZone.Spread;
 
         protected override void Unwire()
         {
+            UnwireClick(Btn("wheel-action-btn"), OnWheelAction);
+            UnwireClick(Btn("commune-btn"), OnOpenCommuneSubview);
+            UnwireClick(Btn("build-house-btn"), OnBuildHouseClicked);
+            UnwireClick(Btn("proceed-btn"), OnProceedToSummer);
+            UnwireClick(Btn("commune-lock-btn"), OnCommuneLock);
             _wheelBindKey = int.MinValue;
             _rolling = false;
             _justFinishedRollSpin = false;
@@ -48,11 +56,17 @@ namespace Kismeta.UI.Controllers
             _communeZonesBuilt = false;
             _communeBuiltForRoot = null;
             _communePlayerId = -1;
+            _communeSubviewOpen = false;
         }
 
         protected override void Wire()
         {
-            Btn("commune-btn")!.clicked += OnPrimaryAction;
+            WireClick(Btn("wheel-action-btn"), OnWheelAction);
+            WireClick(Btn("commune-btn"), OnOpenCommuneSubview);
+            WireClick(Btn("build-house-btn"), OnBuildHouseClicked);
+            WireClick(Btn("proceed-btn"), OnProceedToSummer);
+            WireClick(Btn("commune-lock-btn"), OnCommuneLock);
+
             InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
             {
                 OnHandToggle = OnHandToggle,
@@ -61,6 +75,18 @@ namespace Kismeta.UI.Controllers
                 OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
+        }
+
+        static void WireClick(Button? btn, Action handler)
+        {
+            if (btn != null)
+                btn.clicked += handler;
+        }
+
+        static void UnwireClick(Button? btn, Action handler)
+        {
+            if (btn != null)
+                btn.clicked -= handler;
         }
 
         void OnHandToggle()
@@ -92,14 +118,18 @@ namespace Kismeta.UI.Controllers
                 _wheelBindKey = int.MinValue;
                 _communeInitialized = false;
                 _communeZonesBuilt = false;
+                _communeSubviewOpen = false;
             }
             _localPlayerId = resolvedPlayerId;
             if (Root == null) return;
 
-            var view = GamePublicView.From(session);
             var player = session.Players[_localPlayerId];
             var hint = bridge.PendingHint;
-            bool isCommune = hint == ActionHint.Commune;
+            bool isHub = hint == ActionHint.SpringAction;
+            bool isWheel = hint is ActionHint.RollZodiac or ActionHint.AcknowledgeSign;
+
+            if (!isHub)
+                _communeSubviewOpen = false;
 
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             HeaderOverlayBindings.RefreshHeader(
@@ -108,43 +138,58 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindStepRail(
                 El("step-rail"), ResolveStepIndex(session, player, hint), 5, "step__dot--active");
 
-            BindPhaseVisibility(isCommune);
+            BindPhaseVisibility(isHub, isWheel, _communeSubviewOpen);
 
-            if (isCommune)
+            if (_communeSubviewOpen && isHub)
                 BindCommune(session, bridge);
-            else
+            else if (isHub)
+                BindHubBoard(session);
+            else if (isWheel)
                 BindWheelAndHarvest(session, player, hint);
 
-            BindHintLabel(hint, bridge, player);
-            BindSpringCta(bridge, loop);
+            BindHintLabel(hint, bridge, player, isHub);
+            BindCtas(bridge, loop, hint, isHub);
 
-            var stepId = NarrativeStepResolver.ResolveSpringHub(hint, isCommune);
+            var stepId = NarrativeStepResolver.ResolveSpringHub(hint, _communeSubviewOpen);
             NarrativeSlotBindings.BindById(
                 Root,
                 stepId,
                 mask: NarrativeSlotMask.Beat | NarrativeSlotMask.Stakes);
-            var chargeRoot = isCommune ? El("commune-stage") : El("wheel-stage");
+
+            VisualElement? chargeRoot = _communeSubviewOpen ? El("commune-stage")
+                : isHub ? El("hub-stage")
+                : El("wheel-stage");
             NarrativeSlotBindings.BindById(
                 chargeRoot,
                 stepId,
                 mask: NarrativeSlotMask.Charge);
 
-            if (!isCommune)
+            if (isHub || _communeSubviewOpen)
                 RefreshDock();
 
             HeaderOverlayBindings.ApplyHeaderPad(Root);
         }
 
-        void BindPhaseVisibility(bool isCommune)
+        void BindPhaseVisibility(bool isHub, bool isWheel, bool communeSubview)
         {
-            El("commune-stage")?.EnableInClassList("commune-stage--hidden", !isCommune);
-            El("wheel-stage")?.EnableInClassList("spring-hub__stage--hidden", isCommune);
-            InventoryOverlayBindings.SetVisible(Root, !isCommune);
+            El("wheel-stage")?.EnableInClassList("spring-hub__stage--hidden", !isWheel);
+            El("hub-stage")?.EnableInClassList("spring-hub__stage--hidden", !isHub || communeSubview);
+            El("commune-stage")?.EnableInClassList("commune-stage--hidden", !communeSubview);
+            El("hub-actionbar")?.EnableInClassList("spring-hub__actionbar--hidden", !isHub || communeSubview);
+            El("wheel-cta")?.EnableInClassList("spring-hub__hub-cta--hidden", !isWheel);
+            El("hub-cta")?.EnableInClassList("spring-hub__hub-cta--hidden", !isHub || communeSubview);
+            El("commune-cta")?.EnableInClassList("spring-hub__commune-cta--hidden", !communeSubview);
+            InventoryOverlayBindings.SetVisible(Root, isWheel || isHub || communeSubview);
+        }
+
+        void BindHubBoard(GameSession session)
+        {
+            SpringBoardBindings.BindBoard(El("spring-board"), session);
         }
 
         void BindCommune(GameSession session, CommandBridge bridge)
         {
-            int pid = ResolveCommunePlayerId(session, bridge);
+            int pid = ResolvePendingPlayerId(session, bridge);
             if (pid < 0) return;
 
             if (pid != _communePlayerId)
@@ -158,17 +203,18 @@ namespace Kismeta.UI.Controllers
                 SeedCommuneFromPlayer(session, pid);
 
             RenderCommuneZonesIfNeeded(session);
+            BindCommuneLockCta(bridge);
         }
 
-        static int ResolveCommunePlayerId(GameSession session, CommandBridge bridge)
+        static int ResolvePendingPlayerId(GameSession session, CommandBridge bridge)
         {
-            int pid = bridge.ActivePlayerId;
-            if (pid >= 0 && pid < session.Players.Count)
-                return pid;
-
             var hs = bridge.PendingController;
             if (hs != null && hs.Slot.Index >= 0 && hs.Slot.Index < session.Players.Count)
                 return hs.Slot.Index;
+
+            int pid = bridge.ActivePlayerId;
+            if (pid >= 0 && pid < session.Players.Count)
+                return pid;
 
             return -1;
         }
@@ -222,7 +268,7 @@ namespace Kismeta.UI.Controllers
             if (_session != null)
             {
                 RefreshCommuneZones(_session);
-                BindSpringCta(_bridge!, _loop!);
+                BindCommuneLockCta(_bridge!);
             }
         }
 
@@ -232,7 +278,7 @@ namespace Kismeta.UI.Controllers
                 return 1;
             if (hint == ActionHint.AcknowledgeSign)
                 return 2;
-            if (hint == ActionHint.Commune)
+            if (hint == ActionHint.SpringAction || hint == ActionHint.Commune)
                 return 3;
             if (player.CurrentSign != ZodiacSign.None)
             {
@@ -244,64 +290,101 @@ namespace Kismeta.UI.Controllers
             return session.Phase.CurrentStepIndex;
         }
 
-        void BindHintLabel(ActionHint hint, CommandBridge bridge, PlayerState player)
+        void BindHintLabel(ActionHint hint, CommandBridge bridge, PlayerState player, bool isHub)
         {
             var label = Lbl("hint-label");
             if (label == null) return;
 
-            if (hint == ActionHint.RollZodiac && bridge.CanSubmit)
+            if (_communeSubviewOpen)
+                label.text = "Arrange spread and hand, then lock";
+            else if (isHub && bridge.CanSubmit)
+                label.text = "Review the wheel, then take an action or proceed";
+            else if (hint == ActionHint.RollZodiac && bridge.CanSubmit)
                 label.text = "Your turn";
             else if (hint == ActionHint.AcknowledgeSign && bridge.CanSubmit)
                 label.text = "Review your sign when ready";
-            else if (hint == ActionHint.Commune && bridge.CanSubmit)
-                label.text = "Arrange spread and hand, then lock";
             else
                 label.text = "Your turn";
+
+            var showHint = isHub || hint is ActionHint.RollZodiac or ActionHint.AcknowledgeSign;
+            label.style.display = showHint ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
-        void OnPrimaryAction()
+        void OnWheelAction()
         {
-            if (_bridge == null) return;
+            if (_bridge == null || _session == null) return;
 
-            switch (_bridge.PendingHint)
+            var hint = _loop?.PendingHint ?? _bridge.PendingHint;
+            switch (hint)
             {
                 case ActionHint.RollZodiac:
-                    if (_bridge.ActivePlayerId >= 0 && !_rolling)
+                    if (!_rolling)
                         StartCoroutine(DoRollZodiac());
                     break;
                 case ActionHint.AcknowledgeSign:
-                    if (_bridge.ActivePlayerId >= 0)
-                        _bridge.TrySubmit(new PassActionCommand(_bridge.ActivePlayerId));
-                    break;
-                case ActionHint.Commune:
-                    OnCommuneLock();
+                    TrySubmitPassForPendingPlayer();
                     break;
             }
         }
 
+        void TrySubmitPassForPendingPlayer()
+        {
+            if (_bridge == null || _session == null) return;
+            int pid = ResolvePendingPlayerId(_session, _bridge);
+            if (pid < 0) return;
+            _bridge.TrySubmit(new PassActionCommand(pid));
+        }
+
+        void OnOpenCommuneSubview()
+        {
+            if (_session == null || _bridge == null) return;
+            _communeSubviewOpen = true;
+            _communeInitialized = false;
+            BindState(_session, _loop!, _bridge);
+        }
+
+        void OnBuildHouseClicked() => OnBuildHouse?.Invoke();
+
+        void OnProceedToSummer() => TrySubmitPassForPendingPlayer();
+
         void OnCommuneLock()
         {
             if (_bridge == null || _handIds.Count > WinterRules.HandLimit) return;
-            int pid = ResolveCommunePlayerId(_session!, _bridge);
+            int pid = ResolvePendingPlayerId(_session!, _bridge);
             if (pid < 0) return;
-            _bridge.TrySubmit(new CommuneCommand(pid, _spreadIds, _handIds));
+            if (_bridge.TrySubmit(new CommuneCommand(pid, _spreadIds, _handIds)))
+            {
+                _communeSubviewOpen = false;
+                _communeInitialized = false;
+            }
         }
 
         const float RollSpinSec = 2f;
 
         IEnumerator DoRollZodiac()
         {
-            if (_rolling || _bridge == null || _session == null || _loop == null
-                || _bridge.PendingHint != ActionHint.RollZodiac
-                || _bridge.ActivePlayerId < 0)
+            if (_rolling || _bridge == null || _session == null || _loop == null)
+                yield break;
+
+            var hint = _loop.PendingHint;
+            if (hint != ActionHint.RollZodiac)
+                yield break;
+
+            int pid = ResolvePendingPlayerId(_session, _bridge);
+            if (pid < 0)
                 yield break;
 
             _rolling = true;
-            Btn("commune-btn")?.SetEnabled(false);
+            Btn("wheel-action-btn")?.SetEnabled(false);
             if (Lbl("harvest-count") != null)
                 Lbl("harvest-count")!.text = "Rolling...";
 
-            _bridge.TrySubmit(new RollZodiacCommand(_bridge.ActivePlayerId));
+            if (!_bridge.TrySubmit(new RollZodiacCommand(pid)))
+            {
+                _rolling = false;
+                BindCtas(_bridge, _loop, hint, isHub: false);
+                yield break;
+            }
 
             yield return UiMotion.SpinZodiacWheel(El("wheel-zodiac"), RollSpinSec);
 
@@ -311,59 +394,88 @@ namespace Kismeta.UI.Controllers
 
             var player = _session.Players[_localPlayerId];
             BindWheelAndHarvest(_session, player, _bridge.PendingHint);
-            BindHintLabel(_bridge.PendingHint, _bridge, player);
-            BindSpringCta(_bridge, _loop);
+            BindHintLabel(_bridge.PendingHint, _bridge, player, isHub: false);
+            BindCtas(_bridge, _loop, _bridge.PendingHint, isHub: false);
             _justFinishedRollSpin = false;
         }
 
-        void BindSpringCta(CommandBridge bridge, GameLoop loop)
+        void BindCtas(CommandBridge bridge, GameLoop loop, ActionHint hint, bool isHub)
         {
-            var btn = Btn("commune-btn");
+            if (_communeSubviewOpen)
+            {
+                BindCommuneLockCta(bridge);
+                return;
+            }
+
+            if (isHub)
+                BindHubCtas(bridge, loop);
+            else
+                BindWheelCta(bridge, loop, hint);
+        }
+
+        void BindWheelCta(CommandBridge bridge, GameLoop loop, ActionHint hint)
+        {
+            var btn = Btn("wheel-action-btn");
             if (btn == null) return;
 
-            var hint = bridge.PendingHint;
             bool canAct = bridge.CanSubmit && loop.PendingHumanController != null;
 
             if (_rolling)
             {
-                btn.style.display = DisplayStyle.Flex;
                 btn.text = "Roll your zodiac die";
                 btn.SetEnabled(false);
                 btn.EnableInClassList("btn--disabled", true);
                 return;
             }
 
-            if (!canAct)
+            if (!canAct || hint is not (ActionHint.RollZodiac or ActionHint.AcknowledgeSign))
             {
-                btn.style.display = DisplayStyle.None;
+                btn.SetEnabled(false);
+                btn.EnableInClassList("btn--disabled", true);
                 return;
             }
 
             switch (hint)
             {
                 case ActionHint.RollZodiac:
-                    btn.style.display = DisplayStyle.Flex;
                     btn.text = "Roll your zodiac die";
                     btn.SetEnabled(true);
                     btn.EnableInClassList("btn--disabled", false);
                     break;
                 case ActionHint.AcknowledgeSign:
-                    btn.style.display = DisplayStyle.Flex;
                     btn.text = "Continue";
                     btn.SetEnabled(true);
                     btn.EnableInClassList("btn--disabled", false);
                     break;
-                case ActionHint.Commune:
-                    btn.style.display = DisplayStyle.Flex;
-                    btn.text = "Lock the tableau · to Summer";
-                    bool valid = _handIds.Count <= WinterRules.HandLimit;
-                    btn.SetEnabled(valid);
-                    btn.EnableInClassList("btn--disabled", !valid);
-                    break;
-                default:
-                    btn.style.display = DisplayStyle.None;
-                    break;
             }
+        }
+
+        void BindHubCtas(CommandBridge bridge, GameLoop loop)
+        {
+            bool canAct = bridge.CanSubmit && loop.PendingHumanController != null;
+
+            var communeBtn = Btn("commune-btn");
+            var buildBtn = Btn("build-house-btn");
+            var proceedBtn = Btn("proceed-btn");
+
+            communeBtn?.SetEnabled(canAct);
+            communeBtn?.EnableInClassList("btn--disabled", !canAct);
+            buildBtn?.SetEnabled(canAct);
+            buildBtn?.EnableInClassList("btn--disabled", !canAct);
+            proceedBtn?.SetEnabled(canAct);
+            proceedBtn?.EnableInClassList("btn--disabled", !canAct);
+        }
+
+        void BindCommuneLockCta(CommandBridge bridge)
+        {
+            var btn = Btn("commune-lock-btn");
+            if (btn == null) return;
+
+            bool valid = _handIds.Count <= WinterRules.HandLimit;
+            bool canAct = bridge.CanSubmit;
+            btn.text = "Lock the tableau";
+            btn.SetEnabled(canAct && valid);
+            btn.EnableInClassList("btn--disabled", !canAct || !valid);
         }
 
         void BindWheelAndHarvest(GameSession session, PlayerState player, ActionHint hint)

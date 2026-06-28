@@ -3,7 +3,7 @@ using Kismeta.Core.Domain;
 
 namespace Kismeta.Core.Commands
 {
-    /// <summary>Player builds an Astral House on their current Zodiac Sign during Summer.</summary>
+    /// <summary>Player builds an Astral House on their current Zodiac Sign during Spring Hub.</summary>
     public sealed class BuildAstralHouseCommand : IGameCommand
     {
         public int PlayerId { get; }

@@ -8,10 +8,12 @@ namespace Kismeta.UI.Narrative
         public static string ResolveSeasonIntro(Season season) =>
             $"{season.ToString().ToLowerInvariant()}.intro";
 
-        public static string ResolveSpringHub(ActionHint hint, bool isCommune)
+        public static string ResolveSpringHub(ActionHint hint, bool isCommuneSubview)
         {
-            if (isCommune || hint == ActionHint.Commune)
+            if (isCommuneSubview || hint == ActionHint.Commune)
                 return "spring.commune";
+            if (hint == ActionHint.SpringAction)
+                return "spring.hub";
             if (hint is ActionHint.RollZodiac or ActionHint.AcknowledgeSign)
                 return "spring.sign";
             return "spring.harvest";

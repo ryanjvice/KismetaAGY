@@ -100,6 +100,15 @@ namespace Kismeta.UI.Narrative
                 "Sign +3, Planet +2, Element +1.",
                 new[] { "Deal & commune" }),
             new NarrativeSlotEntry(
+                "spring.hub",
+                Season.Spring,
+                NarrativeSlotTier.Action,
+                4,
+                "The wheel shows where every soul stands — study it before you choose.",
+                "Commune with your cards, build an Astral House on your sign, and review the table before Summer.",
+                "Spread cards score alignment and activate Crucibles but can be stolen in a Duel. Hand cards are safe but idle.",
+                new[] { "Commune with Cards", "Build a House", "Proceed to Summer" }),
+            new NarrativeSlotEntry(
                 "spring.commune",
                 Season.Spring,
                 NarrativeSlotTier.Action,
@@ -107,7 +116,16 @@ namespace Kismeta.UI.Narrative
                 "Lay your fortune out — what you show, and what you keep.",
                 "Sort your cards into Spread (visible engine) and Hand (hidden reserve). Major Arcana go to your Arcanum.",
                 "Spread cards score alignment and activate Crucibles but can be stolen in a Duel. Hand cards are safe but idle.",
-                new[] { "Lock the tableau · to Summer" }),
+                new[] { "Lock the tableau" }),
+            new NarrativeSlotEntry(
+                "spring.buildhouse",
+                Season.Spring,
+                NarrativeSlotTier.Action,
+                4,
+                "A permanent anchor rises in an ever-turning sky.",
+                "Pay 1 card matching your sign's planet to raise a House on your current sign — a permanent harvest source and cosmic effect.",
+                "Houses are permanent — the card is spent for good. You may only build on the sign you rolled this round.",
+                new[] { "Raise the House" }),
             new NarrativeSlotEntry(
                 "spring.lock",
                 Season.Spring,

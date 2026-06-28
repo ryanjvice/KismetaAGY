@@ -545,6 +545,36 @@
     background-color: rgb(32, 18, 38);
 }
 
+.crucible-card--tappable {
+    cursor: link;
+}
+
+.crucible-card--tappable.crucible-card--active {
+    cursor: link;
+}
+
+.crucible-card__face {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 2px;
+}
+
+.crucible-card__numeral {
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: rgb(232, 185, 74);
+    -unity-text-align: middle-center;
+}
+
+.crucible-card__numeral--wide {
+    font-size: 13px;
+}
+
 .crucible-card__token {
     width: 36px;
     height: 36px;

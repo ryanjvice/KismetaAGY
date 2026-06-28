@@ -32,8 +32,16 @@ namespace Kismeta.UI.Components
         [SerializeField] Sprite? _playerStoneRed;
         [SerializeField] Sprite? _playerStoneGreen;
         [SerializeField] Sprite? _playerStoneBlue;
-        [SerializeField] Sprite? _playerStoneYellow;
+        [SerializeField] Sprite? _playerStoneWhite;
         [SerializeField] Sprite? _stasisZone;
+
+        [Header("Spring hub board")]
+        [SerializeField] Sprite? _springHubWheel;
+        [SerializeField] Sprite? _cosmicAgePawn;
+        [SerializeField] Sprite? _meepleRed;
+        [SerializeField] Sprite? _meepleGreen;
+        [SerializeField] Sprite? _meepleBlue;
+        [SerializeField] Sprite? _meepleWhite;
 
         public Sprite? TableFeltVignette => _tableFeltVignette;
         public Sprite? HeroBurgundy => _heroBurgundy;
@@ -59,10 +67,22 @@ namespace Kismeta.UI.Components
             PlayerColor.Red => _playerStoneRed,
             PlayerColor.Green => _playerStoneGreen,
             PlayerColor.Blue => _playerStoneBlue,
-            PlayerColor.White => _playerStoneYellow,
+            PlayerColor.White => _playerStoneWhite,
             _ => null
         };
 
         public Sprite? StasisZone => _stasisZone;
+
+        public Sprite? SpringHubWheel => _springHubWheel;
+        public Sprite? CosmicAgePawn => _cosmicAgePawn;
+
+        public Sprite? MeepleFor(PlayerColor color) => color switch
+        {
+            PlayerColor.Red => _meepleRed,
+            PlayerColor.Green => _meepleGreen,
+            PlayerColor.Blue => _meepleBlue,
+            PlayerColor.White => _meepleWhite,
+            _ => null
+        };
     }
 }

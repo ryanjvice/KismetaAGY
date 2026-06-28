@@ -9,13 +9,20 @@
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
 
     <engine:VisualElement name="spring-hub" class="screen screen--spring">
-        <engine:Label text="Spring hub — your sign, harvest tally, spread, and commune action." class="sr-only" />
+        <engine:Label text="Spring hub — zodiac board, commune, build a house, and advance to Summer." class="sr-only" />
 
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
 
             <engine:VisualElement class="spring-hub__toolbar">
                 <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="hub-actionbar" class="spring-hub__actionbar spring-hub__actionbar--hidden">
+                <engine:VisualElement class="actionbar__row actionbar__row--primary">
+                    <engine:Button name="commune-btn" text="Commune with Cards" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="build-house-btn" text="Build a House" class="actionbtn btn btn--secondary" />
+                </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:VisualElement class="central-panel">
@@ -32,6 +39,14 @@
                 <engine:Label name="narrative-charge" text="" class="narrative-charge" />
                 <engine:Label name="harvest-count" text="Awaiting your roll" class="spring-hub__harvest-count" />
                 <engine:Label name="hint-label" text="Your turn" class="spring-hub__hint" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="hub-stage" class="stage spring-hub__board-stage spring-hub__stage--hidden">
+                <engine:VisualElement name="spring-board" class="spring-board">
+                    <engine:VisualElement name="spring-board-wheel" class="spring-board__wheel" />
+                    <engine:VisualElement name="spring-board-tokens" class="spring-board__tokens" picking-mode="Ignore" />
+                </engine:VisualElement>
+                <engine:Label name="narrative-charge" text="" class="narrative-charge" />
             </engine:VisualElement>
 
             <engine:VisualElement name="commune-stage" class="commune-stage commune-stage--hidden">
@@ -97,8 +112,16 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement class="stage-cta stage-cta--single">
-                <engine:Button name="commune-btn" text="Roll your zodiac die" class="actionbtn btn btn--primary" />
+            <engine:VisualElement name="wheel-cta" class="stage-cta stage-cta--single">
+                <engine:Button name="wheel-action-btn" text="Roll your zodiac die" class="actionbtn btn btn--primary" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="hub-cta" class="stage-cta stage-cta--single spring-hub__hub-cta--hidden">
+                <engine:Button name="proceed-btn" text="Proceed to Summer" class="actionbtn btn btn--primary" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="commune-cta" class="stage-cta stage-cta--single spring-hub__commune-cta--hidden">
+                <engine:Button name="commune-lock-btn" text="Lock the tableau" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 
             <engine:Instance template="PlayerInventoryOverlay" />

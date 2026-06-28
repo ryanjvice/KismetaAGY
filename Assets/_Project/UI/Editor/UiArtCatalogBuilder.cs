@@ -35,11 +35,17 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_cauldronCups").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_blue.png");
             so.FindProperty("_cauldronSwords").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_yellow.png");
             so.FindProperty("_cauldronPentacles").objectReferenceValue = LoadSprite("Assets/_Project/Art/cauldrons/cauldron_green.png");
-            so.FindProperty("_playerStoneRed").objectReferenceValue = LoadSprite("Assets/_Project/Art/player/player_red.png");
-            so.FindProperty("_playerStoneGreen").objectReferenceValue = LoadSprite("Assets/_Project/Art/player/player_green.png");
-            so.FindProperty("_playerStoneBlue").objectReferenceValue = LoadSprite("Assets/_Project/Art/player/player_blue.png");
-            so.FindProperty("_playerStoneYellow").objectReferenceValue = LoadSprite("Assets/_Project/Art/player/player_yellow.png");
+            so.FindProperty("_playerStoneRed").objectReferenceValue = LoadSprite("Assets/_Project/Art/stone/stone_red.png");
+            so.FindProperty("_playerStoneGreen").objectReferenceValue = LoadSprite("Assets/_Project/Art/stone/stone_green.png");
+            so.FindProperty("_playerStoneBlue").objectReferenceValue = LoadSprite("Assets/_Project/Art/stone/stone_blue.png");
+            so.FindProperty("_playerStoneWhite").objectReferenceValue = LoadSprite("Assets/_Project/Art/stone/stone_white.png");
             so.FindProperty("_stasisZone").objectReferenceValue = LoadSprite("Assets/_Project/Art/crucible/stasis_zone.png");
+            so.FindProperty("_springHubWheel").objectReferenceValue = LoadSprite("Assets/_Project/Art/zodiacWheel_springHub.png");
+            so.FindProperty("_cosmicAgePawn").objectReferenceValue = LoadSprite("Assets/_Project/Art/meeple/cosmicAge_pawn.png");
+            so.FindProperty("_meepleRed").objectReferenceValue = LoadSprite("Assets/_Project/Art/meeple/meeple_Red.png");
+            so.FindProperty("_meepleGreen").objectReferenceValue = LoadSprite("Assets/_Project/Art/meeple/meeple_Green.png");
+            so.FindProperty("_meepleBlue").objectReferenceValue = LoadSprite("Assets/_Project/Art/meeple/meeple_Blue.png");
+            so.FindProperty("_meepleWhite").objectReferenceValue = LoadSprite("Assets/_Project/Art/meeple/meeple_White.png");
 
             so.ApplyModifiedPropertiesWithoutUndo();
             AssetDatabase.SaveAssets();

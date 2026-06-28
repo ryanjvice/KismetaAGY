@@ -116,10 +116,10 @@ namespace Kismeta.Core.Players
         {
             SetPhase(Season.Spring);
 
-            await RunAgeOpenCeremonyAsync(ct);
+            await WaitCeremonyUiAsync(CeremonyStep.SpringIntro, ct);
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
-            await WaitCeremonyUiAsync(CeremonyStep.SpringIntro, ct);
+            await RunAgeOpenCeremonyAsync(ct);
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
             Log("Spring — Step 2: Zodiac rolls");
@@ -150,13 +150,9 @@ namespace Kismeta.Core.Players
             await ResolvePendingAdeptsAsync(ct);
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
-            Log("Spring — Step 4: Commune");
-            foreach (var player in _session.Players)
-            {
-                var cmd = await RequestAsync(player.PlayerId,
-                    ActionHint.Commune, ct);
-                Apply(cmd);
-            }
+            Log("Spring — Step 4: Spring Hub (Commune / Build a House)");
+            await RunFreeActionPool(ActionHint.SpringAction, ct);
+            if (_session.IsOver || ct.IsCancellationRequested) return;
 
             Log("Spring — Step 5: Card Lock");
             Apply(new SetCardLockCommand(true));
@@ -544,7 +540,10 @@ namespace Kismeta.Core.Players
         AcknowledgeSign,
         /// <summary>Player reviews harvest breakdown and confirms the deal.</summary>
         ConfirmHarvest,
+        /// <summary>Legacy hint for standalone Commune screen; Spring Hub uses SpringAction.</summary>
         Commune,
+        /// <summary>Spring Hub free-action pool: Commune, Build a House, or pass to Summer.</summary>
+        SpringAction,
         SummerAction,
         AutumnAction,
         /// <summary>Player must choose to Buy or Decline an Adept card just drawn in Harvest.</summary>

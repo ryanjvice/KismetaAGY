@@ -35,7 +35,7 @@ namespace Kismeta.UI.Controllers
 
             _selected.Clear();
             RefreshUi();
-            NarrativeSlotBindings.BindById(Root, "summer.buildhouse");
+            NarrativeSlotBindings.BindById(Root, "spring.buildhouse");
         }
 
         void RefreshUi()

@@ -82,7 +82,7 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="menu-screen__footer">
-                <engine:Button name="enter-btn" text="Enter the age · begin Spring" class="btn btn--primary menu-screen__cta" />
+                <engine:Button name="enter-btn" text="Determine your sign" class="btn btn--primary menu-screen__cta" />
             </engine:VisualElement>
         </engine:VisualElement>
 

@@ -9,7 +9,6 @@ namespace Kismeta.UI.Controllers
     public sealed class SummerSheetsController : OverlayController
     {
         public Action OnCraft;
-        public Action OnBuild;
         public Action OnWard;
         public Action OnTrade;
         public Action OnDuel;
@@ -20,7 +19,6 @@ namespace Kismeta.UI.Controllers
         CommandBridge? _bridge;
 
         Action? _onCraft;
-        Action? _onBuild;
         Action? _onWard;
         Action? _onTrade;
         Action? _onDuel;
@@ -31,7 +29,6 @@ namespace Kismeta.UI.Controllers
         protected override void Wire()
         {
             _onCraft = () => OnCraft?.Invoke();
-            _onBuild = () => OnBuild?.Invoke();
             _onWard = () => OnWard?.Invoke();
             _onTrade = () => TryInvokeConsortRow("act-trade", OnTrade);
             _onDuel = () => TryInvokeConsortRow("act-duel", OnDuel);
@@ -40,7 +37,6 @@ namespace Kismeta.UI.Controllers
             _onConClose = () => OnClose?.Invoke();
 
             WireBtn("act-craft", _onCraft);
-            WireBtn("act-build", _onBuild);
             WireBtn("act-ward", _onWard);
             WireBtn("act-trade", _onTrade);
             WireBtn("act-duel", _onDuel);
@@ -52,7 +48,6 @@ namespace Kismeta.UI.Controllers
         protected override void Unwire()
         {
             UnwireBtn("act-craft", _onCraft);
-            UnwireBtn("act-build", _onBuild);
             UnwireBtn("act-ward", _onWard);
             UnwireBtn("act-trade", _onTrade);
             UnwireBtn("act-duel", _onDuel);

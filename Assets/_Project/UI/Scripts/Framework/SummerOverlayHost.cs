@@ -16,7 +16,6 @@ namespace Kismeta.UI
         VisualTreeAsset? _craftReagent;
         VisualTreeAsset? _activateCard;
         VisualTreeAsset? _crucibleCardDetail;
-        VisualTreeAsset? _buildHouse;
         VisualTreeAsset? _placeWards;
         VisualTreeAsset? _endSummer;
 
@@ -28,7 +27,6 @@ namespace Kismeta.UI
         CraftReagentController? _craft;
         ActivateCardController? _activate;
         CrucibleCardDetailController? _crucibleDetail;
-        BuildHouseController? _build;
         PlaceWardsController? _wards;
         EndSummerController? _endSummerCtrl;
 
@@ -38,7 +36,6 @@ namespace Kismeta.UI
             CraftBuildSheet,
             ConsortSheet,
             CraftReagent,
-            BuildHouse,
             PlaceWards,
             Activate,
             CrucibleDetail,
@@ -57,8 +54,7 @@ namespace Kismeta.UI
 
         public int? ActiveActionGroupIndex => _active switch
         {
-            ActiveOverlay.CraftBuildSheet or ActiveOverlay.CraftReagent or ActiveOverlay.BuildHouse
-                or ActiveOverlay.PlaceWards => 0,
+            ActiveOverlay.CraftBuildSheet or ActiveOverlay.CraftReagent or ActiveOverlay.PlaceWards => 0,
             ActiveOverlay.ConsortSheet => 1,
             ActiveOverlay.Activate => 2,
             ActiveOverlay.CrucibleDetail => 2,
@@ -68,7 +64,6 @@ namespace Kismeta.UI
         public string? ActiveNarrativeStepId => _active switch
         {
             ActiveOverlay.CraftReagent => "summer.craft",
-            ActiveOverlay.BuildHouse => "summer.buildhouse",
             ActiveOverlay.PlaceWards => "summer.wards",
             ActiveOverlay.Activate => "summer.activate",
             _ => null
@@ -81,7 +76,6 @@ namespace Kismeta.UI
             VisualTreeAsset craftReagent,
             VisualTreeAsset activateCard,
             VisualTreeAsset crucibleCardDetail,
-            VisualTreeAsset buildHouse,
             VisualTreeAsset placeWards,
             VisualTreeAsset endSummer)
         {
@@ -89,7 +83,6 @@ namespace Kismeta.UI
             _craftReagent = craftReagent;
             _activateCard = activateCard;
             _crucibleCardDetail = crucibleCardDetail;
-            _buildHouse = buildHouse;
             _placeWards = placeWards;
             _endSummer = endSummer;
             EnsureControllers();
@@ -102,7 +95,6 @@ namespace Kismeta.UI
             _craft ??= GetComponent<CraftReagentController>();
             _activate ??= GetComponent<ActivateCardController>();
             _crucibleDetail ??= GetComponent<CrucibleCardDetailController>();
-            _build ??= GetComponent<BuildHouseController>();
             _wards ??= GetComponent<PlaceWardsController>();
             _endSummerCtrl ??= GetComponent<EndSummerController>();
         }
@@ -156,13 +148,6 @@ namespace Kismeta.UI
             RefreshOpenOverlay();
         }
 
-        public void ShowBuildHouse()
-        {
-            if (!ShowModal(_buildHouse, _build, ActiveOverlay.BuildHouse)) return;
-            WireBuild();
-            RefreshOpenOverlay();
-        }
-
         public void ShowPlaceWards()
         {
             if (!ShowModal(_placeWards, _wards, ActiveOverlay.PlaceWards)) return;
@@ -196,7 +181,6 @@ namespace Kismeta.UI
             _sheets?.Detach();
             _activate?.Detach();
             _crucibleDetail?.Detach();
-            _build?.Detach();
             _wards?.Detach();
             _endSummerCtrl?.Detach();
             _layout?.DismissOverlay();
@@ -239,7 +223,6 @@ namespace Kismeta.UI
             _craft?.BindState(_session, _bridge);
             _activate?.BindState(_session, _bridge);
             _crucibleDetail?.BindState(_session, _bridge);
-            _build?.BindState(_session, _bridge);
             _wards?.BindState(_session, _bridge);
             _endSummerCtrl?.BindState(_session, _bridge);
             _sheets?.BindState(_session, _bridge);
@@ -249,7 +232,6 @@ namespace Kismeta.UI
         {
             if (_sheets == null) return;
             _sheets.OnCraft = () => { Dismiss(); ShowCraftReagent(); };
-            _sheets.OnBuild = () => { Dismiss(); ShowBuildHouse(); };
             _sheets.OnWard = () => { Dismiss(); ShowPlaceWards(); };
             _sheets.OnTrade = () => { ReleaseSheetForContest(); OnTrade?.Invoke(); };
             _sheets.OnDuel = () => { ReleaseSheetForContest(); OnDuel?.Invoke(); };
@@ -275,13 +257,6 @@ namespace Kismeta.UI
         {
             if (_crucibleDetail == null) return;
             _crucibleDetail.OnClose = Dismiss;
-        }
-
-        void WireBuild()
-        {
-            if (_build == null) return;
-            _build.OnBack = Dismiss;
-            _build.OnCompleted = Dismiss;
         }
 
         void WireWards()

@@ -103,7 +103,7 @@ namespace Kismeta.UI.Controllers
 
             var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
             MainSceneBindings.BindCauldrons(Root, local, session);
-            SummerCrucibleRowBindings.Bind(Root, local, session, slotIndex => OnCrucibleCardClicked?.Invoke(slotIndex));
+            SummerCrucibleRowBindings.Bind(Root, local, session, OnCrucibleCardTapped);
 
             var stepId = NarrativeStepResolver.ResolveSummerAction(_summerOverlays, _contestOverlays);
             NarrativeSlotBindings.BindById(
@@ -112,6 +112,20 @@ namespace Kismeta.UI.Controllers
                 mask: NarrativeSlotMask.Beat | NarrativeSlotMask.Stakes | NarrativeSlotMask.Charge);
 
             HeaderOverlayBindings.ApplyHeaderPad(Root);
+        }
+
+        void OnCrucibleCardTapped(int slotIndex)
+        {
+            if (_session == null || _localPlayerId < 0) return;
+            if (slotIndex < 0 || slotIndex >= _session.Players[_localPlayerId].CrucibleSlots.Count) return;
+
+            var slot = _session.Players[_localPlayerId].CrucibleSlots[slotIndex];
+            if (slot.State >= CrucibleCardState.Active)
+                _summerOverlays?.ShowCrucibleDetail(slotIndex);
+            else
+                _summerOverlays?.ShowActivate(slotIndex);
+
+            OnCrucibleCardClicked?.Invoke(slotIndex);
         }
 
         public void RefreshActionGroupRail()

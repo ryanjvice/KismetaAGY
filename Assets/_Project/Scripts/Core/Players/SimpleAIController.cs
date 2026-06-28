@@ -34,6 +34,7 @@ namespace Kismeta.Core.Players
                 ActionHint.AcknowledgeSign   => new PassActionCommand(Slot.Index),
                 ActionHint.ConfirmHarvest    => new HarvestCommand(Slot.Index, 0),
                 ActionHint.Commune           => DecideCommune(context),
+                ActionHint.SpringAction      => DecideSpringAction(context),
                 ActionHint.SummerAction      => DecideSummer(context),
                 ActionHint.AutumnAction      => DecideAutumn(context),
                 ActionHint.AdeptDecision     => DecideAdept(context),
@@ -62,6 +63,75 @@ namespace Kismeta.Core.Players
             return CommuneCommand.AllToSpread(pid, allCards);
         }
 
+        // ─── Spring Hub: Build, Commune, or Pass ───────────────────────────────────
+
+        private IGameCommand DecideSpringAction(GameContext ctx)
+        {
+            var build = TryBuildAstralHouse(ctx);
+            if (build != null)
+                return build;
+
+            var pid = Slot.Index;
+            foreach (var id in ctx.PrivateView.Hand)
+            {
+                if (IsMinorArcana(ctx, id))
+                    return CommuneCommand.AllToSpread(pid, AllMinorCards(ctx));
+            }
+
+            return new PassActionCommand(pid);
+        }
+
+        static List<string> AllMinorCards(GameContext ctx)
+        {
+            var pid = ctx.ActivePlayerId;
+            var spread = ctx.PublicView.Players[pid].Spread;
+            var list = new List<string>(spread.Count + ctx.PrivateView.Hand.Count);
+            foreach (var id in spread) if (IsMinorArcana(ctx, id)) list.Add(id);
+            foreach (var id in ctx.PrivateView.Hand) if (IsMinorArcana(ctx, id)) list.Add(id);
+            return list;
+        }
+
+        /// <summary>Returns a BuildAstralHouseCommand when eligible, or null.</summary>
+        static BuildAstralHouseCommand? TryBuildAstralHouse(GameContext ctx)
+        {
+            var pid = ctx.ActivePlayerId;
+            var player = ctx.PublicView.Players[pid];
+
+            if (player.UnplacedAstralHouses <= 0
+                || player.CurrentSign == ZodiacSign.None
+                || player.AstralHouses.Contains(player.CurrentSign)
+                || ctx.CardDatabase == null)
+                return null;
+
+            var sign = player.CurrentSign;
+            foreach (var p in ctx.PublicView.Players)
+            {
+                if (p.PlayerId != pid && p.AstralHouses.Contains(sign))
+                    return null;
+            }
+
+            var planet = Correspondence.PlanetFor(sign);
+            var cardMap = ctx.PublicView.CardInstanceToDefinition;
+            var spreadIds = new List<string>(player.Spread);
+            foreach (var id in spreadIds)
+            {
+                if (!cardMap.TryGetValue(id, out var defId)) continue;
+                var def = ctx.CardDatabase.GetById(defId);
+                if (def != null && def.Planet == planet)
+                    return new BuildAstralHouseCommand(pid, sign, new List<string> { id });
+            }
+
+            foreach (var id in ctx.PrivateView.Hand)
+            {
+                if (!cardMap.TryGetValue(id, out var defId)) continue;
+                var def = ctx.CardDatabase.GetById(defId);
+                if (def != null && def.Planet == planet)
+                    return new BuildAstralHouseCommand(pid, sign, new List<string> { id });
+            }
+
+            return null;
+        }
+
         // ─── Summer: Activate or Craft or Pass ────────────────────────────────────
 
         private IGameCommand DecideSummer(GameContext ctx)
@@ -79,34 +149,6 @@ namespace Kismeta.Core.Players
                 var payment = FindActivationCards(ctx, player.AssignedCodex, i, spreadIds);
                 if (payment != null)
                     return new ActivateCrucibleCommand(pid, i, payment);
-            }
-
-            // Try to build an Astral House on current sign if unplaced houses remain
-            if (player.UnplacedAstralHouses > 0
-                && player.CurrentSign != ZodiacSign.None
-                && !player.AstralHouses.Contains(player.CurrentSign)
-                && ctx.CardDatabase != null)
-            {
-                var sign   = player.CurrentSign;
-                bool signFree = true;
-                foreach (var p in ctx.PublicView.Players)
-                    if (p.PlayerId != pid && p.AstralHouses.Contains(sign))
-                    { signFree = false; break; }
-
-                if (signFree)
-                {
-                    var planet   = Correspondence.PlanetFor(sign);
-                    var cardMap  = ctx.PublicView.CardInstanceToDefinition;
-                    string? payCard = null;
-                    foreach (var id in spreadIds)
-                    {
-                        if (!cardMap.TryGetValue(id, out var defId)) continue;
-                        var def = ctx.CardDatabase.GetById(defId);
-                        if (def != null && def.Planet == planet) { payCard = id; break; }
-                    }
-                    if (payCard != null)
-                        return new BuildAstralHouseCommand(pid, sign, new List<string> { payCard });
-                }
             }
 
             // Try to craft Salt (needs any 3 cards from Spread)
