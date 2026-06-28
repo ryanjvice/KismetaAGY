@@ -25,94 +25,84 @@ namespace Kismeta.UI.Tests
         }
 
         [Test]
-        public void CollapsedBlock_ShowsSpreadOnly()
+        public void SpreadChip_Click_InvokesOnInspectWithCardId()
         {
-            using var ui = new UiDocumentScope();
-            var root = ui.Root;
-            var session = BuildSessionWithRivals();
-            var expanded = new HashSet<int>();
+            const string cardId = "rival-spread-card";
+            var session = BuildSessionWithRivalSpread(cardId, "minor.swords.seven.1");
 
-            SummerRosterBindings.Populate(root, session, localPlayerId: 0, expanded, null, null);
-
-            var block = root.Q("player-block-1");
-            Assert.IsNotNull(block);
-            Assert.IsFalse(block!.ClassListContains("player-block--expanded"));
-            Assert.IsNotNull(block.Q(className: "player-block__zone"));
-            Assert.IsNull(block.Q(className: "player-block__inline-zones"));
-            Assert.IsNull(block.Q(className: "player-block__detail"));
-        }
-
-        [Test]
-        public void ExpandedBlock_IncludesInlineZonesAndDetail()
-        {
-            using var ui = new UiDocumentScope();
-            var root = ui.Root;
-            var session = BuildSessionWithRivals();
-            var expanded = new HashSet<int> { 1 };
-
-            SummerRosterBindings.Populate(root, session, localPlayerId: 0, expanded, null, null);
-
-            var block = root.Q("player-block-1");
-            Assert.IsNotNull(block);
-            Assert.IsTrue(block!.ClassListContains("player-block--expanded"));
-            Assert.IsNotNull(block.Q(className: "player-block__inline-zones"));
-            Assert.IsNotNull(block.Q(className: "player-block__detail"));
-        }
-
-        [Test]
-        public void Header_WithToggleCallback_IsConfiguredForInteraction()
-        {
-            using var ui = new UiDocumentScope();
-            var root = ui.Root;
-            var session = BuildSessionWithRivals();
-
-            SummerRosterBindings.Populate(
-                root, session, localPlayerId: 0, new HashSet<int>(), null, _ => { });
-
-            var header = root.Q("player-block-1")?.Q(className: "player-block__header");
-            Assert.IsNotNull(header);
-            Assert.IsTrue(header!.focusable);
-            Assert.AreEqual(PickingMode.Position, header.pickingMode);
-            Assert.IsNotNull(header.Q(className: "player-block__expand-hint"));
-        }
-
-        [Test]
-        public void SpreadChip_WithInspectCallback_MarksInspectable()
-        {
-            using var ui = new UiDocumentScope();
-            var root = ui.Root;
-            var session = BuildSessionWithRivals();
-
-            SummerRosterBindings.Populate(
-                root, session, localPlayerId: 0, new HashSet<int>(), _ => { }, null);
-
-            var chip = root.Q("player-block-1")?.Q(className: "card-chip--inspectable");
-            Assert.IsNotNull(chip, "Expected inspectable spread chip.");
-            Assert.AreEqual(PickingMode.Position, chip!.pickingMode);
-        }
-
-        sealed class UiDocumentScope : System.IDisposable
-        {
-            readonly GameObject _go;
-
-            public VisualElement Root { get; }
-
-            public UiDocumentScope()
+            string? inspectedId = null;
+            using var host = AttachToEditorPanel(BuildSummerRoot(), root =>
             {
-                _go = new GameObject("summer-roster-ui-test");
-                var doc = _go.AddComponent<UIDocument>();
-                doc.panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
-                Root = doc.rootVisualElement;
-                Root.style.width = 800;
-                Root.style.height = 600;
-                Root.Add(new ScrollView { name = "players" });
-                EditorApplication.QueuePlayerLoopUpdate();
+                SummerRosterBindings.Populate(root, session, localPlayerId: 0, id => inspectedId = id);
+
+                var spreadRow = root.Q("player-block-1")?.Q(className: "player-block__zone");
+                var chip = spreadRow?.Q(className: "card-chip");
+                Assert.IsNotNull(chip, "Expected rival spread chip in roster.");
+
+                using (var evt = ClickEvent.GetPooled())
+                {
+                    evt.target = chip;
+                    chip!.SendEvent(evt);
+                }
+            });
+
+            Assert.AreEqual(cardId, inspectedId);
+        }
+
+        [Test]
+        public void SpreadChip_HasInspectableClass()
+        {
+            var root = BuildSummerRoot();
+            var session = BuildSessionWithRivalSpread("rival-spread-card", "minor.swords.seven.1");
+
+            SummerRosterBindings.Populate(root, session, localPlayerId: 0, _ => { });
+
+            var chip = root.Q("player-block-1")?.Q(className: "card-chip");
+            Assert.IsNotNull(chip);
+            Assert.IsTrue(chip!.ClassListContains("card-chip--inspectable"));
+        }
+
+        static VisualElement BuildSummerRoot()
+        {
+            var root = new VisualElement();
+            root.Add(new ScrollView { name = "players" });
+            return root;
+        }
+
+        sealed class EditorPanelHost : System.IDisposable
+        {
+            readonly EditorWindow _window;
+            readonly VisualElement _root;
+
+            EditorPanelHost(EditorWindow window, VisualElement root)
+            {
+                _window = window;
+                _root = root;
+                _window.rootVisualElement.Add(root);
             }
 
-            public void Dispose() => Object.DestroyImmediate(_go);
+            public static EditorPanelHost Attach(VisualElement root)
+            {
+                var window = ScriptableObject.CreateInstance<EditorWindow>();
+                window.Show();
+                return new EditorPanelHost(window, root);
+            }
+
+            public void Dispose()
+            {
+                _root.RemoveFromHierarchy();
+                _window.Close();
+            }
         }
 
-        GameSession BuildSessionWithRivals()
+        static EditorPanelHost AttachToEditorPanel(VisualElement root, System.Action<VisualElement> action)
+        {
+            var host = EditorPanelHost.Attach(root);
+            action(root);
+            return host;
+        }
+
+        GameSession BuildSessionWithRivalSpread(string cardId, string definitionId)
         {
             var codexPath = Path.Combine(Application.dataPath,
                 "_Project/Data/Resources/crucible-codex.json");
@@ -132,9 +122,9 @@ namespace Kismeta.UI.Tests
                 new(0, PlayerColor.Red),
                 new(1, PlayerColor.Blue),
             };
-            players[1].Spread.Add("rival-spread-1");
             var session = new GameSession("summer-roster-test", GameMode.Quickplay, players, rules);
-            session.RegisterCard(new CardInstance("rival-spread-1", "minor.wands.ace.1", CardZone.Spread, 1));
+            session.Players[1].Spread.Add(cardId);
+            session.RegisterCard(new CardInstance(cardId, definitionId, CardZone.Spread, 1));
             return session;
         }
     }

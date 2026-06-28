@@ -668,6 +668,10 @@
     padding: 4px 8px 2px;
 }
 
+.screen--summer .card-table__players .unity-scroll-view__content-container {
+    picking-mode: position;
+}
+
 .screen--summer .player-block {
     padding: 6px 10px;
     margin-bottom: 6px;
@@ -683,10 +687,6 @@
 
 .screen--summer .player-block__zone {
     margin-bottom: 4px;
-}
-
-.screen--summer .player-block .card-chip--inspectable {
-    cursor: pointer;
 }
 
 .player-block__sign-glyph {

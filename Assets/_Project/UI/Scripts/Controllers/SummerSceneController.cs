@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI;
@@ -28,7 +27,6 @@ namespace Kismeta.UI.Controllers
         CommandBridge? _bridge;
         GameSession? _session;
         int _localPlayerId;
-        readonly HashSet<int> _expandedBlocks = new();
         DockZone _dockZone = DockZone.Spread;
         SummerOverlayHost? _summerOverlays;
         ContestOverlayHost? _contestOverlays;
@@ -65,12 +63,7 @@ namespace Kismeta.UI.Controllers
                 OnOpenCardTable = () => OnOpenCardTable?.Invoke(),
                 OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
-            HeaderOverlayBindings.Wire(Root, id =>
-            {
-                ExpandRival(id);
-                RefreshRoster();
-                OnRivalSelected?.Invoke(id);
-            });
+            HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
         }
 
         void WireBtn(string name, Action handler)
@@ -151,26 +144,7 @@ namespace Kismeta.UI.Controllers
         void RefreshRoster()
         {
             if (Root == null || _session == null) return;
-            SummerRosterBindings.Populate(
-                Root,
-                _session,
-                _localPlayerId,
-                _expandedBlocks,
-                cardId => OnInspectCard?.Invoke(cardId),
-                ToggleRivalDetail);
-        }
-
-        void ToggleRivalDetail(int playerId)
-        {
-            if (!_expandedBlocks.Add(playerId))
-                _expandedBlocks.Remove(playerId);
-            RefreshRoster();
-        }
-
-        public void ExpandRival(int playerId)
-        {
-            if (playerId >= 0)
-                _expandedBlocks.Add(playerId);
+            SummerRosterBindings.Populate(Root, _session, _localPlayerId, OnInspectCard);
         }
 
         public void RefreshActionGroupRail()

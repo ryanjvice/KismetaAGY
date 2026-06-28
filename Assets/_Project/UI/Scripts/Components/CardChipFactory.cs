@@ -95,18 +95,16 @@ namespace Kismeta.UI.Components
             bottomRow.AddToClassList("card-chip__bottom");
             bottomRow.pickingMode = PickingMode.Ignore;
 
-            if (onInspect != null && !string.IsNullOrEmpty(instanceId))
+            if (inspectViaButton && !string.IsNullOrEmpty(instanceId))
             {
-                if (inspectViaButton)
-                {
-                    chip.AddToClassList("card-chip--inspectable");
-                    var icon = SymbolGlyphs.CreateInfoIconLabel("card-chip__inspect");
-                    icon.pickingMode = PickingMode.Ignore;
-                    bottomRow.Add(icon);
-                }
-
-                WireInspect(chip, instanceId, onInspect);
+                chip.AddToClassList("card-chip--inspectable");
+                var icon = SymbolGlyphs.CreateInfoIconLabel("card-chip__inspect");
+                icon.pickingMode = PickingMode.Ignore;
+                bottomRow.Add(icon);
             }
+
+            if (onInspect != null && !string.IsNullOrEmpty(instanceId))
+                WireInspect(chip, instanceId, onInspect);
 
             chip.Add(bottomRow);
 
