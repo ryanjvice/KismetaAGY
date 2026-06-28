@@ -66,6 +66,7 @@ namespace Kismeta.UI.Components
             PlayerSummaryRowBuilder.BindExisting(
                 root,
                 PublicPlayerView.From(session.Players[localPlayerId]));
+            PlayerHudBindings.Bind(root, session.Players[localPlayerId]);
         }
 
         public static void RefreshInventory(
