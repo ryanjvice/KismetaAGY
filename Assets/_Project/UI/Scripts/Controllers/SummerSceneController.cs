@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
-using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
 using Kismeta.UI.Narrative;
@@ -15,20 +13,12 @@ namespace Kismeta.UI.Controllers
     {
         public override string ScreenId => ScreenIds.SummerMain;
 
-        // Top contest buttons (open target-selecting overlays).
         public Action? OnTrade;
         public Action? OnDuel;
         public Action? OnGambit;
         public Action? OnOpposition;
         public Action? OnPass;
 
-        // Per-rival roster shortcuts.
-        public Action<int>? OnTradeRival;
-        public Action<int>? OnDuelRival;
-        public Action<int>? OnGambitRival;
-        public Action<int>? OnOpposeRival;
-
-        // Inventory / table.
         public Action? OnOpenCardTable;
         public Action? OnOpenActiveEffects;
         public Action<string>? OnInspectCard;
@@ -38,8 +28,6 @@ namespace Kismeta.UI.Controllers
         GameSession? _session;
         int _localPlayerId;
         DockZone _dockZone = DockZone.Spread;
-        CardTableBindings.SortMode _sort = CardTableBindings.SortMode.Threat;
-        readonly HashSet<int> _expandedBlocks = new();
         SummerOverlayHost? _summerOverlays;
         ContestOverlayHost? _contestOverlays;
 
@@ -61,10 +49,12 @@ namespace Kismeta.UI.Controllers
             WireBtn("gambit-btn", () => OnGambit?.Invoke());
             WireBtn("opposition-btn", () => OnOpposition?.Invoke());
             WireBtn("pass-btn", () => OnPass?.Invoke());
+            WireBtn("info-btn", () => SetInfoPopup(true));
+            WireBtn("info-close-btn", () => SetInfoPopup(false));
 
-            HookSort("sort-threat", CardTableBindings.SortMode.Threat);
-            HookSort("sort-turn", CardTableBindings.SortMode.Turn);
-            HookSort("sort-arcanum", CardTableBindings.SortMode.Arcanum);
+            var scrim = El("info-scrim");
+            if (scrim != null)
+                scrim.RegisterCallback<ClickEvent>(_ => SetInfoPopup(false));
 
             InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
             {
@@ -87,17 +77,6 @@ namespace Kismeta.UI.Controllers
             btn.clicked += () => handler();
         }
 
-        void HookSort(string btnName, CardTableBindings.SortMode mode)
-        {
-            Btn(btnName)?.RegisterCallback<ClickEvent>(_ =>
-            {
-                _sort = mode;
-                foreach (var n in new[] { "sort-threat", "sort-turn", "sort-arcanum" })
-                    Btn(n)?.EnableInClassList("table-action--active", n == btnName);
-                RefreshRoster();
-            });
-        }
-
         void OnHandToggle()
         {
             _dockZone = _dockZone == DockZone.Hand ? DockZone.Spread : DockZone.Hand;
@@ -114,13 +93,6 @@ namespace Kismeta.UI.Controllers
         {
             if (_session != null)
                 InventoryOverlayBindings.RefreshInventory(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
-        }
-
-        void ToggleDetail(int playerId)
-        {
-            if (!_expandedBlocks.Add(playerId))
-                _expandedBlocks.Remove(playerId);
-            RefreshRoster();
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -145,30 +117,34 @@ namespace Kismeta.UI.Controllers
             Btn("opposition-btn")?.SetEnabled(
                 summerAction && AutumnActionBindings.HasOpposeTargets(session, _localPlayerId));
 
-            Btn("sort-threat")?.EnableInClassList("table-action--active", _sort == CardTableBindings.SortMode.Threat);
             RefreshRoster();
 
             var stepId = NarrativeStepResolver.ResolveSummerAction(_summerOverlays, _contestOverlays);
-            NarrativeSlotBindings.BindById(
-                Root,
-                stepId,
-                mask: NarrativeSlotMask.Beat | NarrativeSlotMask.Stakes | NarrativeSlotMask.Charge);
+            NarrativeSlotBindings.BindById(Root, stepId, mask: NarrativeSlotMask.Beat);
+
+            var infoPopup = El("summer-info-popup");
+            if (infoPopup != null)
+            {
+                NarrativeSlotBindings.BindById(
+                    infoPopup,
+                    stepId,
+                    mask: NarrativeSlotMask.Stakes | NarrativeSlotMask.Charge);
+            }
 
             HeaderOverlayBindings.ApplyHeaderPad(Root);
+        }
+
+        void SetInfoPopup(bool visible)
+        {
+            var popup = El("summer-info-popup");
+            if (popup != null)
+                popup.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         void RefreshRoster()
         {
             if (Root == null || _session == null) return;
-            CardTableBindings.Populate(
-                Root, _session, _localPlayerId, _session.Phase.CurrentSeason, _sort,
-                _expandedBlocks, focusPlayerId: -1,
-                onInspect: OnInspectCard,
-                onDuel: id => OnDuelRival?.Invoke(id),
-                onGambit: id => OnGambitRival?.Invoke(id),
-                onTrade: id => OnTradeRival?.Invoke(id),
-                onToggleDetail: ToggleDetail,
-                onOppose: id => OnOpposeRival?.Invoke(id));
+            SummerRosterBindings.Populate(Root, _session, _localPlayerId, OnInspectCard);
         }
 
         public void RefreshActionGroupRail()

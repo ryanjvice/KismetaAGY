@@ -128,8 +128,7 @@ MonoBehaviour:
     _tier: 1
     _order: 1
     _beat: The sun rides high and the work is long.
-    _charge: "Take any actions, in any order, as many as you can fuel \u2014 no fixed
-      order, no turn limit."
+    _charge: "Take any actions, in any order, as many as you can fuel."
     _stakes: 
     _verbs:
     - Craft

@@ -16,6 +16,7 @@
 
             <engine:VisualElement class="summer-main__toolbar">
                 <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+                <engine:Button name="info-btn" text="ℹ" class="summer-info-btn" />
             </engine:VisualElement>
 
             <engine:VisualElement class="summer-main__actionbar">
@@ -29,27 +30,34 @@
 
             <engine:VisualElement class="central-panel">
                 <engine:VisualElement name="summer-roster" class="summer-roster" style="flex-grow: 1;">
-                    <engine:VisualElement class="summer-roster__sort" style="padding: 6px 12px; flex-direction: row;">
-                        <engine:Button name="sort-threat" text="by threat" class="table-action" style="background-color: rgb(42, 31, 14); border-color: rgb(90, 68, 32); color: rgb(224, 200, 120);" />
-                        <engine:Button name="sort-turn" text="turn order" class="table-action" style="background-color: rgb(16, 10, 18); border-color: rgb(58, 36, 64); color: rgb(184, 154, 110);" />
-                        <engine:Button name="sort-arcanum" text="arcanum" class="table-action" style="background-color: rgb(16, 10, 18); border-color: rgb(58, 36, 64); color: rgb(184, 154, 110);" />
+                    <engine:VisualElement class="summer-roster__header">
+                        <engine:VisualElement class="summer-roster__header-line" />
+                        <engine:Label text="Rivals" class="summer-roster__heading" />
+                        <engine:VisualElement class="summer-roster__header-line" />
                     </engine:VisualElement>
                     <engine:ScrollView name="players" class="card-table__players" style="flex-grow: 1;" />
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement class="summer-main__stakes">
-                <engine:VisualElement name="narrative-stakes-wrap" class="narrative-stakes-wrap tip tip--caution">
-                    <engine:Label name="narrative-stakes" text="" class="narrative-stakes tip__text" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-
             <engine:VisualElement class="stage-cta stage-cta--single summer-main__pass-block">
                 <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
-                <engine:Label name="narrative-charge" text="" class="narrative-charge summer-main__charge" />
             </engine:VisualElement>
 
             <engine:Instance template="PlayerInventoryOverlay" />
+
+            <engine:VisualElement name="summer-info-popup" class="summer-info-popup" style="display: none; position: absolute; left: 0; top: 0; right: 0; bottom: 0; align-items: center; justify-content: center;">
+                <engine:VisualElement name="info-scrim" class="summer-info-popup__scrim" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.65);" />
+                <engine:VisualElement class="summer-info-popup__card" style="width: 86%; max-width: 460px; padding: 16px; border-width: 1px; border-radius: 14px; border-color: rgb(90, 68, 32); background-color: rgb(28, 22, 14);">
+                    <engine:VisualElement class="summer-info-popup__header" style="flex-direction: row; align-items: center; margin-bottom: 8px;">
+                        <engine:Label text="This Round" class="statusbar__title" style="flex-grow: 1; color: rgb(232, 185, 74);" />
+                        <engine:Button name="info-close-btn" text="&#10005;" style="background-color: rgba(0, 0, 0, 0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
+                    </engine:VisualElement>
+                    <engine:VisualElement name="narrative-stakes-wrap" class="narrative-stakes-wrap tip tip--caution">
+                        <engine:Label name="narrative-stakes" text="" class="narrative-stakes tip__text" />
+                    </engine:VisualElement>
+                    <engine:Label name="narrative-charge" text="" class="narrative-charge summer-main__charge" />
+                </engine:VisualElement>
+            </engine:VisualElement>
         </engine:VisualElement>
 
     </engine:VisualElement>

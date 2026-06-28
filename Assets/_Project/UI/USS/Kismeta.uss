@@ -1794,10 +1794,9 @@
     height: 10px;
     padding: 0;
     margin: 0;
-    font-size: 9px;
+    font-size: 10px;
     color: rgba(255, 255, 255, 0.95);
     -unity-text-align: middle-center;
-    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/tabler-icons.asset");
 }
 
 .cauldron {

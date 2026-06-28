@@ -154,7 +154,7 @@ namespace Kismeta.UI.Narrative
                 NarrativeSlotTier.Action,
                 1,
                 "The sun rides high and the work is long.",
-                "Take any actions, in any order, as many as you can fuel — no fixed order, no turn limit.",
+                "Take any actions, in any order, as many as you can fuel.",
                 string.Empty,
                 new[] { "Craft", "Consort", "Activate", "Pass" }),
             new NarrativeSlotEntry(

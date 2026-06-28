@@ -548,12 +548,6 @@ namespace Kismeta.UI
             summer.OnDuel = () => _contestOverlays?.ShowDuel();
             summer.OnGambit = () => _contestOverlays?.ShowGambit();
             summer.OnOpposition = () => _contestOverlays?.ShowOpposition();
-
-            // Per-rival shortcuts from the embedded roster.
-            summer.OnTradeRival = id => _contestOverlays?.ShowTrade(id);
-            summer.OnDuelRival = id => _contestOverlays?.ShowDuel(id);
-            summer.OnGambitRival = id => _contestOverlays?.ShowGambit(id);
-            summer.OnOpposeRival = _ => _contestOverlays?.ShowOpposition();
         }
 
         private void WireSeasonHubNavigation()

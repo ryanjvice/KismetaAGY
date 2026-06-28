@@ -9,7 +9,7 @@ namespace Kismeta.UI.Components
     {
         public const string ZodiacFontClass = "font-zodiac";
         public const string TablerIconClass = "ti-icon";
-        public const string InfoCircleGlyph = "\ueac5";
+        public const string InfoGlyph = "\u2139";
         public const string ChevronDownGlyph = "\uea5f";
         public const string ChevronUpGlyph = "\uea62";
 
@@ -72,8 +72,7 @@ namespace Kismeta.UI.Components
 
         public static Label CreateInfoIconLabel(string? ussClass = null)
         {
-            var label = new Label(InfoCircleGlyph);
-            label.AddToClassList(TablerIconClass);
+            var label = new Label(InfoGlyph);
             if (ussClass != null)
                 label.AddToClassList(ussClass);
             return label;

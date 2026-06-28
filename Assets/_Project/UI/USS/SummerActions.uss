@@ -441,8 +441,8 @@
     align-items: center;
     flex-shrink: 0;
     padding: 0 var(--space-md);
-    margin: var(--space-xs) var(--space-md) 0;
-    min-height: 40px;
+    margin: 0 var(--space-md) 0;
+    min-height: 26px;
 }
 
 .summer-main__toolbar--hidden,
@@ -474,7 +474,7 @@
 
 .summer-main__actionbar {
     flex-shrink: 0;
-    padding: 8px var(--space-md) 6px;
+    padding: 4px var(--space-md) 4px;
     margin: 0 var(--space-md);
     border-top-width: 1px;
     border-top-color: var(--border-gold);
@@ -489,15 +489,34 @@
 }
 
 .summer-main__pass-block {
-    padding-bottom: var(--space-xs);
+    flex-shrink: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+}
+
+.summer-info-btn {
+    min-width: 28px;
+    min-height: 28px;
+    border-width: 0;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(184, 154, 110);
+    font-size: 18px;
+    padding: 0 4px;
+    flex-shrink: 0;
+}
+
+.summer-info-btn:hover {
+    color: rgb(232, 185, 74);
 }
 
 .summer-main__charge {
     flex-shrink: 0;
     width: 100%;
-    -unity-text-align: middle-center;
-    margin: var(--space-sm) 0 0;
-    padding: 0 var(--space-sm);
+    -unity-text-align: upper-left;
+    margin: 8px 0 0;
+    padding: 0;
     color: var(--muted);
     font-size: var(--font-label);
     white-space: normal;
@@ -597,13 +616,132 @@
     background-image: url("project://database/Assets/_Project/Art/cauldrons/cauldron_yellow.png");
 }
 
-.summer-main__stakes {
-    flex-shrink: 0;
-    margin: 0 var(--space-md) var(--space-sm);
+/* ---------- Summer main: embedded roster ---------- */
+.summer-roster {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    flex-direction: column;
 }
 
-.summer-main__stakes .narrative-stakes-wrap {
-    margin: 0;
+.summer-roster__header {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 6px 10px 2px;
+}
+
+.summer-roster__header-line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: var(--border-subtle);
+}
+
+.summer-roster__heading {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    padding: 0 10px;
+    -unity-font-style: bold;
+}
+
+.screen--summer .screen__body--inventory-pad > .central-panel {
+    padding-bottom: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    margin-bottom: 0;
+}
+
+.screen--summer .central-panel {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    margin-bottom: 0;
+}
+
+.screen--summer .card-table__players {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    padding: 4px 8px 2px;
+}
+
+.screen--summer .player-block {
+    padding: 6px 10px;
+    margin-bottom: 6px;
+}
+
+.screen--summer .player-block__header {
+    margin-bottom: 2px;
+}
+
+.screen--summer .player-block__eyebrow {
+    margin-bottom: 2px;
+}
+
+.screen--summer .player-block__zone {
+    margin-bottom: 4px;
+}
+
+.player-block__sign-glyph {
+    color: var(--gold);
+    font-size: 14px;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.player-block__inline-zones {
+    flex-direction: row;
+    margin-bottom: 0;
+    column-gap: 6px;
+}
+
+.screen--summer .player-block__zone-col--arcanum,
+.screen--summer .player-block__zone-col--crucible {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+    margin-right: 0;
+}
+
+.screen--summer .player-block__zone--nowrap {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.screen--summer .player-block__inline-zones .player-block__zone > .card-chip {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    flex-shrink: 0;
+    margin-right: 2px;
+}
+
+.screen--summer .player-block__zone--nowrap > .card-chip:last-child {
+    margin-right: 0;
+}
+
+/* Summer pass block: sit closer to inventory footer */
+.viewport--compact .screen--summer .stage-cta,
+.viewport--regular .screen--summer .stage-cta {
+    padding-top: 0;
+    padding-bottom: 4px;
+}
+
+.screen--summer .screen__body--inventory-pad > .stage-cta {
+    margin-bottom: var(--inventory-reserved-bottom);
+    margin-top: 0;
+}
+
+.detail-empty {
+    font-size: 9px;
+    color: var(--muted);
+    -unity-font-style: italic;
 }
 
 /* ---------- Summer main: cauldron hub (state center) ---------- */
