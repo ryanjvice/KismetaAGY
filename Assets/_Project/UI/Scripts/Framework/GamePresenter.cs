@@ -235,6 +235,7 @@ namespace Kismeta.UI
                     _completedAdeptModalCardId = null;
                 }
                 RouteGameplay();
+                RefreshActiveScreen();
             }
         }
 

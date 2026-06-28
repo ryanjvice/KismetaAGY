@@ -108,6 +108,39 @@
 
 .intro-content-panel {
     flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.screen.intro--spring,
+.screen.intro--summer,
+.screen.intro--autumn,
+.screen.intro--winter {
+    flex-grow: 1;
+}
+
+.screen.intro--spring .ceremony-reveal-body,
+.screen.intro--summer .ceremony-reveal-body,
+.screen.intro--autumn .ceremony-reveal-body,
+.screen.intro--winter .ceremony-reveal-body {
+    flex-grow: 1;
+    flex-shrink: 1;
+    justify-content: flex-start;
+}
+
+.screen.intro--spring .menu-screen__footer,
+.screen.intro--summer .menu-screen__footer,
+.screen.intro--autumn .menu-screen__footer,
+.screen.intro--winter .menu-screen__footer {
+    margin-top: auto;
+    flex-shrink: 0;
+    padding-top: 20px;
+    padding-bottom: 24px;
+}
+
+.intro-actions {
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .intro-content-panel__eyebrow {
@@ -187,7 +220,10 @@
 .intro-action-row {
     flex-direction: row;
     align-items: center;
-    margin-bottom: 8px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: auto;
+    margin-bottom: 12px;
 }
 
 .intro-action-row:last-child {
@@ -226,6 +262,20 @@
 
 .intro-action-row__icon--red .ti-icon { color: rgb(240, 176, 160); }
 
+.intro-action-row__icon--blue {
+    background-color: rgb(22, 32, 46);
+    border-color: rgb(43, 74, 90);
+}
+
+.intro-action-row__icon--blue .ti-icon { color: rgb(168, 205, 240); }
+
+.intro-action-row__icon--caution {
+    background-color: rgb(42, 35, 14);
+    border-color: rgb(106, 90, 32);
+}
+
+.intro-action-row__icon--caution .ti-icon { color: rgb(224, 200, 120); }
+
 .intro-action-row__icon--forge {
     background-color: rgb(58, 26, 14);
     border-color: rgb(201, 150, 47);
@@ -240,19 +290,38 @@
 
 .intro-action-row__icon--arcane .ti-icon { color: rgb(205, 176, 224); }
 
+.intro-action-row__text,
 .intro-action-row__body {
     flex-grow: 1;
+    flex-shrink: 1;
     min-width: 0;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .intro-action-row__title {
     font-size: 12px;
     color: var(--ink);
+    margin: 0;
+    padding: 0;
+    flex-grow: 0;
+    flex-shrink: 0;
+    -unity-paragraph-spacing: 0;
 }
 
 .intro-action-row__subtitle {
-    font-size: var(--font-body);
+    font-size: 10px;
+    margin: 0;
+    padding: 0;
+    flex-grow: 0;
+    flex-shrink: 0;
     white-space: normal;
+    -unity-paragraph-spacing: 0;
+}
+
+.intro-action-row__text > .intro-action-row__subtitle,
+.intro-action-row__body > .intro-action-row__subtitle {
+    margin-top: 1px;
 }
 
 .intro--summer .intro-action-row__subtitle { color: rgb(184, 148, 106); }

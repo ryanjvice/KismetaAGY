@@ -17,6 +17,8 @@ namespace Kismeta.UI.Controllers
 
         const int LocalPlayerId = 0;
         const float RevealPauseSec = 0.3f;
+        const string RevealCharge =
+            "Read the Sign, Planet, Element, and cosmic effect aloud.";
 
         public override string ScreenId => ScreenIds.RoundOpen;
 
@@ -50,11 +52,25 @@ namespace Kismeta.UI.Controllers
             SetPhaseVisibility(_phase);
 
             if (_phase == Phase.Cast)
+            {
                 CeremonyBindings.BindRoundOpen(Root, session, LocalPlayerId);
+                NarrativeSlotBindings.BindById(
+                    Root,
+                    "spring.setage",
+                    mask: NarrativeSlotMask.Charge | NarrativeSlotMask.Stakes);
+            }
             else
+            {
                 CeremonyBindings.BindAgeOpening(Root, session);
+                BindRevealCharge();
+            }
+        }
 
-            NarrativeSlotBindings.BindById(Root, "spring.setage");
+        void BindRevealCharge()
+        {
+            var lbl = Lbl("reveal-charge");
+            if (lbl != null)
+                lbl.text = RevealCharge;
         }
 
         void ResolveInitialPhase(GameSession session)
@@ -114,6 +130,7 @@ namespace Kismeta.UI.Controllers
             _phase = Phase.Reveal;
             SetPhaseVisibility(Phase.Reveal);
             CeremonyBindings.BindAgeOpening(Root, _session);
+            BindRevealCharge();
         }
     }
 }

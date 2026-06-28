@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
-using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
 using UnityEngine.UIElements;
 
@@ -41,15 +40,17 @@ namespace Kismeta.UI.Controllers
             list.Clear();
 
             var player = _session.Players[_playerId];
-            int active = 0;
+            int activeCards = 0;
             foreach (var slot in player.CrucibleSlots)
-                if (slot.State >= CrucibleCardState.Active) active++;
+                if (slot.State == CrucibleCardState.Active || slot.State == CrucibleCardState.Fired)
+                    activeCards++;
+            activeCards += player.Arcanum.Count;
 
-            AddRecapRow(list, "Activated crucible cards", $"{active} active slot(s) this summer");
-            AddRecapRow(list, "Reagents crafted", SummarizeReagents(player));
+            AddRecapRow(list, $"Reagents in supply: {SummarizeReagents(player)}");
+            AddRecapRow(list, $"{activeCards} active crucible & adept card(s)");
         }
 
-        static void AddRecapRow(VisualElement list, string icon, string text)
+        static void AddRecapRow(VisualElement list, string text)
         {
             var row = new VisualElement();
             row.AddToClassList("end-summer__recap-row");
@@ -81,10 +82,10 @@ namespace Kismeta.UI.Controllers
 
             bool any = false;
 
-            if (CanStillCraft(player))
+            if (AutumnActionBindings.HasOpposeTargets(_session, _playerId))
             {
                 any = true;
-                tip.Add(MakeHintRow("You can still craft reagents from your cards"));
+                tip.Add(MakeHintRow("You can still Oppose a rival forging in the crucible"));
             }
 
             if (HasUnwardedActive(player))
@@ -93,14 +94,14 @@ namespace Kismeta.UI.Controllers
                 tip.Add(MakeHintRow("An active crucible card is unwarded — rivals can gambit it"));
             }
 
-            if (HasDormantWithCoal(player))
+            if (_session.Players.Count > 1)
             {
                 any = true;
-                tip.Add(MakeHintRow("A dormant crucible slot still has coal — you can activate"));
+                tip.Add(MakeHintRow("You can still Trade, Duel, or Gambit with rivals"));
             }
 
             if (!any)
-                tip.Add(MakeHintRow("No obvious productive moves remain — safe to pass"));
+                tip.Add(MakeHintRow("No obvious contest moves remain — safe to pass"));
         }
 
         VisualElement MakeHintRow(string text)
@@ -113,27 +114,11 @@ namespace Kismeta.UI.Controllers
             return row;
         }
 
-        bool CanStillCraft(PlayerState player)
-        {
-            if (_session == null) return false;
-            var cards = SummerCardPickBindings.CollectMinorCards(_session, player);
-            int need = SummerActionBindings.CraftEffectiveCost(_session, player, ReagentType.Salt);
-            return cards.Count >= need;
-        }
-
         static bool HasUnwardedActive(PlayerState player)
         {
             foreach (var slot in player.CrucibleSlots)
                 if ((slot.State == CrucibleCardState.Active || slot.State == CrucibleCardState.Fired)
                     && slot.WardCount == 0)
-                    return true;
-            return false;
-        }
-
-        static bool HasDormantWithCoal(PlayerState player)
-        {
-            foreach (var slot in player.CrucibleSlots)
-                if (slot.State == CrucibleCardState.Dormant && slot.HasCoal)
                     return true;
             return false;
         }

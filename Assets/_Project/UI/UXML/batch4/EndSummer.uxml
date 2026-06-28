@@ -19,9 +19,9 @@
                 <engine:VisualElement class="statusbar__sigil" style="background-color: rgb(46,28,10); border-color: rgb(240, 176, 96);">
                     <engine:Label text="&#xed5a;" class="ti-icon" style="color: rgb(240, 176, 96);" />
                 </engine:VisualElement>
-                <engine:VisualElement>
+                <engine:VisualElement class="end-pass__heading">
                     <engine:Label text="Pass your turn?" class="statusbar__title end-summer__title" />
-                    <engine:Label text="yield the workshop — summer ends when everyone passes in a row" class="statusbar__sub" />
+                    <engine:Label text="yield the contest — summer ends when everyone passes in a row" class="statusbar__sub" />
                 </engine:VisualElement>
             </engine:VisualElement>
             <engine:Button name="close-btn" text="&#10005;" class="end-summer__close" />
@@ -29,7 +29,7 @@
 
         <engine:VisualElement class="sheet__body end-summer__body">
             <engine:VisualElement class="end-summer__section">
-                <engine:Label text="your summer's work" class="end-summer__eyebrow" />
+                <engine:Label text="your standing this summer" class="end-summer__eyebrow" />
                 <engine:VisualElement name="recap-list" class="end-summer__recap-list" />
             </engine:VisualElement>
 

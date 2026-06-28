@@ -24,17 +24,16 @@ MonoBehaviour:
     _stakes: "This age's sign shapes everything \u2014 which cards harvest well,
       which alignments score, and your own cosmic effect for the round."
     _verbs:
-    - Set the cosmic age
+    - Begin Spring
     _breadcrumb: 
   - _id: spring.setage
     _season: 0
     _tier: 1
     _order: 1
     _beat: The Agekeeper rolls, and the heavens choose the age for all.
-    _charge: "Read the age's three Aspects \u2014 Sign, Planet, Element \u2014 and
-      its cosmic effect aloud."
-    _stakes: Every harvest bonus and alignment this round is measured against these
-      three Aspects.
+    _charge: Roll the Cosmic Age die \u2014 one of twelve signs sets this round's
+      Sign, Planet, and Element.
+    _stakes: These three Aspects govern every harvest bonus and alignment all round.
     _verbs:
     - Cast the age
     _breadcrumb: 
@@ -65,7 +64,7 @@ MonoBehaviour:
     _season: 0
     _tier: 1
     _order: 4
-    _beat: The wheel shows where every soul stands — study it before you choose.
+    _beat: "The wheel shows where every soul stands \u2014 study it before you choose."
     _charge: Commune with your cards, build an Astral House on your sign, and review
       the table before Summer.
     _stakes: Spread cards score alignment and activate Crucibles but can be stolen
@@ -92,9 +91,10 @@ MonoBehaviour:
     _tier: 1
     _order: 4
     _beat: A permanent anchor rises in an ever-turning sky.
-    _charge: Pay 1 card matching your sign's planet to raise a House on your current sign.
-    _stakes: Houses are permanent — the card is spent for good. You may only build on the
-      sign you rolled this round.
+    _charge: "Pay 1 card matching your sign's planet to raise a House on your current
+      sign \u2014 a permanent harvest source and cosmic effect."
+    _stakes: "Houses are permanent \u2014 the card is spent for good. You may only
+      build on the sign you rolled this round."
     _verbs:
     - Raise the House
     _breadcrumb: 
@@ -114,12 +114,11 @@ MonoBehaviour:
     _season: 1
     _tier: 0
     _order: 0
-    _beat: The sun rides high and the work is long. Forge your reagents, raise your
-      houses, and reckon with your rivals.
+    _beat: The sun rides high and the work is long. Trade, duel, gambit, and oppose
+      your rivals beneath the high sun.
     _charge: "Take any actions, in any order, as many as you can fuel \u2014 no fixed
       order, no turn limit."
-    _stakes: This is where the round is won or lost. Repeat actions as long as you
-      have cards and reagents to spend.
+    _stakes: 
     _verbs:
     - Begin Summer
     _breadcrumb: 
@@ -128,7 +127,7 @@ MonoBehaviour:
     _tier: 1
     _order: 1
     _beat: The sun rides high and the work is long.
-    _charge: "Take any actions, in any order, as many as you can fuel."
+    _charge: Take any actions, in any order, as many as you can fuel.
     _stakes: 
     _verbs:
     - Craft
@@ -224,12 +223,11 @@ MonoBehaviour:
     _season: 2
     _tier: 0
     _order: 0
-    _beat: "The crucible runs hot. Drive your stone toward gold \u2014 but a forging
-      stone is a stone exposed."
-    _charge: "Advance your stone through the forge \u2014 and oppose any rival that
-      dares to forge."
-    _stakes: The moment your stone enters the forge it can be Opposed. Weigh advancing
-      now against waiting for a safer age.
+    _beat: The crucible runs hot. Craft your reagents, activate your formulas, and
+      drive your stone toward gold.
+    _charge: "Take any actions, in any order, as many as you can fuel \u2014 craft,
+      activate, and advance at the forge."
+    _stakes: 
     _verbs:
     - Begin Autumn
     _breadcrumb: Forging

@@ -13,7 +13,7 @@
                 <engine:VisualElement class="statusbar__sigil" style="background-color: rgb(42,21,14); border-color: rgb(224, 138, 74);">
                     <engine:Label text="&#xed5a;" class="ti-icon" style="color: rgb(224, 138, 74);" />
                 </engine:VisualElement>
-                <engine:VisualElement>
+                <engine:VisualElement class="end-pass__heading">
                     <engine:Label text="Pass your turn?" class="statusbar__title end-autumn__title" />
                     <engine:Label text="yield the forge — autumn ends when everyone passes in a row" class="statusbar__sub" />
                 </engine:VisualElement>

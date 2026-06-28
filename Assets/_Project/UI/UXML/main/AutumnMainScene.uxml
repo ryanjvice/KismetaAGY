@@ -22,9 +22,9 @@
 
             <engine:VisualElement class="autumn-main__actionbar">
                 <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                    <engine:Button name="craft-btn" text="Craft" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="activate-btn" text="Activate" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="forge-btn" text="Forge" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="craft-btn" text="Craft&#10;Reagents" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="activate-btn" text="Light&#10;Cauldrons" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="forge-btn" text="Forge&#10;Stone" class="actionbtn btn btn--secondary" />
                 </engine:VisualElement>
             </engine:VisualElement>
 
@@ -73,8 +73,14 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement class="autumn-main__crucible-row" style="flex-direction: row; align-items: center; justify-content: center;">
-                <engine:VisualElement class="crucible-cards">
+            <engine:VisualElement class="autumn-main__crucible-section">
+                <engine:VisualElement class="summer-roster__header">
+                    <engine:VisualElement class="summer-roster__header-line" />
+                    <engine:Label text="Crucible Cards" class="summer-roster__heading" />
+                    <engine:VisualElement class="summer-roster__header-line" />
+                </engine:VisualElement>
+                <engine:VisualElement class="autumn-main__crucible-row">
+                    <engine:VisualElement class="crucible-cards">
                     <engine:VisualElement name="crucible-card-0" class="crucible-card">
                         <engine:VisualElement name="crucible-token-0" class="crucible-card__token" />
                         <engine:VisualElement name="crucible-face-0" class="crucible-card__face" style="display: none;">
@@ -98,6 +104,7 @@
                         <engine:VisualElement name="crucible-face-3" class="crucible-card__face" style="display: none;">
                             <engine:Label name="crucible-numeral-3" text="" class="crucible-card__numeral" />
                         </engine:VisualElement>
+                    </engine:VisualElement>
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>

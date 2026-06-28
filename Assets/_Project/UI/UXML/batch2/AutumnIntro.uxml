@@ -14,9 +14,9 @@
                 <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
             </engine:VisualElement>
             <engine:Label text="AUTUMN" class="intro-name" />
-            <engine:Label text="THE FORGE SEASON · TRANSMUTE &amp; CLASH" class="intro-tagline" />
+            <engine:Label text="THE FORGE SEASON · CRAFT &amp; FORGE" class="intro-tagline" />
             <engine:Label name="narrative-beat"
-                          text="The crucible runs hot. Drive your stone toward gold — but a forging stone is a stone exposed."
+                          text="The crucible runs hot. Craft your reagents, activate your formulas, and drive your stone toward gold."
                           class="intro-couplet narrative-beat" />
         </engine:VisualElement>
 
@@ -27,9 +27,9 @@
                         <engine:Label text="&#xea6c;" class="ti-icon" />
                     </engine:VisualElement>
                     <engine:VisualElement class="intro-info-panel__body">
-                        <engine:Label text="the crucible step" class="eyebrow intro-info-panel__eyebrow" />
+                        <engine:Label text="craft · activate · forge" class="eyebrow intro-info-panel__eyebrow" />
                         <engine:Label name="narrative-charge"
-                                      text="advance your stone — and oppose any that dare to forge"
+                                      text="take any actions, in any order, as many as you can fuel — craft, activate, and advance at the forge"
                                       class="intro-info-panel__subtitle narrative-charge" />
                     </engine:VisualElement>
                 </engine:VisualElement>
@@ -37,44 +37,36 @@
 
             <engine:VisualElement class="ceremony-panel-wrap">
                 <engine:VisualElement class="panel intro-content-panel">
-                    <engine:Label text="at the forge" class="eyebrow intro-content-panel__eyebrow" />
-                    <engine:VisualElement name="intro-actions">
+                    <engine:Label text="at the forge — act freely" class="eyebrow intro-content-panel__eyebrow" />
+                    <engine:VisualElement name="intro-actions" class="intro-actions">
+                        <engine:VisualElement class="intro-action-row">
+                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--green">
+                                <engine:Label text="&#xebd9;" class="ti-icon" />
+                            </engine:VisualElement>
+                            <engine:VisualElement class="intro-action-row__text">
+                                <engine:Label text="Craft" class="intro-action-row__title" />
+                                <engine:Label text="discard 3 matching cards into a lit cauldron" class="intro-action-row__subtitle" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row">
+                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--gold">
+                                <engine:Label text="&#xea2c;" class="ti-icon" />
+                            </engine:VisualElement>
+                            <engine:VisualElement class="intro-action-row__text">
+                                <engine:Label text="Activate" class="intro-action-row__title" />
+                                <engine:Label text="complete a crucible formula, light its cauldron" class="intro-action-row__subtitle" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
                         <engine:VisualElement class="intro-action-row">
                             <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--forge">
                                 <engine:Label text="&#xec3a;" class="ti-icon" />
                             </engine:VisualElement>
-                            <engine:VisualElement class="intro-action-row__body">
-                                <engine:Label text="Fire" class="intro-action-row__title" />
-                                <engine:Label text="spend reagents to push your stone forward" class="intro-action-row__subtitle" />
-                            </engine:VisualElement>
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-action-row">
-                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--arcane">
-                                <engine:Label text="&#xea1b;" class="ti-icon" />
-                            </engine:VisualElement>
-                            <engine:VisualElement class="intro-action-row__body">
-                                <engine:Label text="Temper" class="intro-action-row__title" />
-                                <engine:Label text="advance a stage when a crucible card is ready" class="intro-action-row__subtitle" />
-                            </engine:VisualElement>
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-action-row">
-                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--red">
-                                <engine:Label text="&#xeb4c;" class="ti-icon" />
-                            </engine:VisualElement>
-                            <engine:VisualElement class="intro-action-row__body">
-                                <engine:Label text="Oppose" class="intro-action-row__title" />
-                                <engine:Label text="alignment contest to send a rival to stasis" class="intro-action-row__subtitle" />
+                            <engine:VisualElement class="intro-action-row__text">
+                                <engine:Label text="Forge" class="intro-action-row__title" />
+                                <engine:Label text="fire your stone into the forge, or temper when the round is done" class="intro-action-row__subtitle" />
                             </engine:VisualElement>
                         </engine:VisualElement>
                     </engine:VisualElement>
-                </engine:VisualElement>
-            </engine:VisualElement>
-
-            <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
-                <engine:VisualElement name="narrative-stakes-wrap" class="panel tip--danger narrative-stakes-wrap">
-                    <engine:Label name="narrative-stakes"
-                                  text="The moment your stone enters the forge it can be Opposed. Ward it first, and weigh whether to advance now or wait for a safer age."
-                                  class="tip__text intro-tip__text narrative-stakes" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>

@@ -82,6 +82,17 @@
 .crucible-pill--dormant { background-color: var(--panel-darker); border-color: var(--border-subtle); opacity: 0.6; }
 
 /* ---------- Pass your turn (End Autumn) ---------- */
+.end-pass__heading {
+    flex-shrink: 1;
+    min-width: 0;
+    flex-grow: 1;
+}
+
+.end-autumn__header .end-pass__heading .statusbar__sub {
+    white-space: normal;
+    flex-shrink: 1;
+}
+
 .end-autumn__title {
     color: var(--autumn-accent);
 }
@@ -223,6 +234,7 @@
 
 .autumn-main__actionbar .actionbar__row--primary > .actionbtn {
     min-height: var(--touch-min);
+    line-height: 13px;
 }
 
 .autumn-main__stakes {
@@ -255,13 +267,31 @@
     flex-grow: 0;
 }
 
+.screen--autumn .screen__body--inventory-pad > .central-panel {
+    padding-bottom: 0;
+}
+
 .screen--autumn .central-panel > .stage {
     min-height: 400px;
     flex-shrink: 1;
 }
 
+.autumn-main__crucible-section {
+    flex-shrink: 0;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0 var(--space-md) var(--space-md);
+}
+
+.autumn-main__crucible-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
 .screen--autumn .stage-cta {
     padding: 4px 14px 6px;
+    margin-top: var(--space-sm);
 }
 
 .screen--autumn .forge-panel {

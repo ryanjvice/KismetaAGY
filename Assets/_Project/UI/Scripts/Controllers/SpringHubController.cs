@@ -144,8 +144,6 @@ namespace Kismeta.UI.Controllers
                 BindCommune(session, bridge);
             else if (isHub)
                 BindHubBoard(session);
-            else if (isWheel)
-                BindWheelAndHarvest(session, player, hint);
 
             BindHintLabel(hint, bridge, player, isHub);
             BindCtas(bridge, loop, hint, isHub);
@@ -163,6 +161,9 @@ namespace Kismeta.UI.Controllers
                 chargeRoot,
                 stepId,
                 mask: NarrativeSlotMask.Charge);
+
+            if (isWheel)
+                BindWheelAndHarvest(session, player, hint);
 
             if (isHub || _communeSubviewOpen)
                 RefreshDock();
@@ -327,12 +328,11 @@ namespace Kismeta.UI.Controllers
             }
         }
 
-        void TrySubmitPassForPendingPlayer()
+        bool TrySubmitPassForPendingPlayer()
         {
-            if (_bridge == null || _session == null) return;
-            int pid = ResolvePendingPlayerId(_session, _bridge);
-            if (pid < 0) return;
-            _bridge.TrySubmit(new PassActionCommand(pid));
+            if (_bridge == null || !_bridge.CanSubmit)
+                return false;
+            return _bridge.TrySubmitPass();
         }
 
         void OnOpenCommuneSubview()
@@ -345,7 +345,20 @@ namespace Kismeta.UI.Controllers
 
         void OnBuildHouseClicked() => OnBuildHouse?.Invoke();
 
-        void OnProceedToSummer() => TrySubmitPassForPendingPlayer();
+        void OnProceedToSummer()
+        {
+            if (_bridge == null || _loop == null || !_bridge.CanSubmit)
+                return;
+
+            var proceedBtn = Btn("proceed-btn");
+            proceedBtn?.SetEnabled(false);
+            proceedBtn?.EnableInClassList("btn--disabled", true);
+
+            if (TrySubmitPassForPendingPlayer())
+                return;
+
+            BindHubCtas(_bridge, _loop);
+        }
 
         void OnCommuneLock()
         {
@@ -443,7 +456,7 @@ namespace Kismeta.UI.Controllers
                     btn.EnableInClassList("btn--disabled", false);
                     break;
                 case ActionHint.AcknowledgeSign:
-                    btn.text = "Continue";
+                    btn.text = "Continue to Harvest";
                     btn.SetEnabled(true);
                     btn.EnableInClassList("btn--disabled", false);
                     break;
@@ -496,13 +509,13 @@ namespace Kismeta.UI.Controllers
             }
 
             var sign = player.CurrentSign;
-            var cosmic = session.Board.CosmicAgeSign;
             int bindKey = WheelBindKey(player.PlayerId, sign, hint);
 
             BindWheelGlyph(sign);
 
             if (bindKey == _wheelBindKey)
             {
+                UpdateWheelResultText(session, player);
                 UpdateHarvestLabel(session, player, hint);
                 return;
             }
@@ -512,7 +525,7 @@ namespace Kismeta.UI.Controllers
             if (sign == ZodiacSign.None)
             {
                 SetLabelVisible("rolled-sign", false);
-                SetLabelVisible("sign-match", false);
+                UpdateWheelResultText(session, player);
                 UpdateHarvestLabel(session, player, hint);
                 return;
             }
@@ -526,13 +539,26 @@ namespace Kismeta.UI.Controllers
                 Lbl("rolled-sign")!.style.display = DisplayStyle.Flex;
             }
 
-            if (Lbl("sign-match") != null)
+            UpdateWheelResultText(session, player);
+            UpdateHarvestLabel(session, player, hint);
+        }
+
+        void UpdateWheelResultText(GameSession session, PlayerState player)
+        {
+            var chargeLbl = El("wheel-stage")?.Q<Label>("narrative-charge");
+            if (chargeLbl == null)
+                return;
+
+            if (_rolling || player.CurrentSign == ZodiacSign.None)
             {
-                Lbl("sign-match")!.text = DescribeAlignment(sign, cosmic);
-                Lbl("sign-match")!.style.display = DisplayStyle.Flex;
+                SetLabelVisible("sign-match", false);
+                return;
             }
 
-            UpdateHarvestLabel(session, player, hint);
+            var cosmic = session.Board.CosmicAgeSign;
+            chargeLbl.text = DescribeAlignment(player.CurrentSign, cosmic);
+            chargeLbl.style.display = DisplayStyle.Flex;
+            SetLabelVisible("sign-match", false);
         }
 
         void BindWheelGlyph(ZodiacSign sign)
@@ -551,17 +577,19 @@ namespace Kismeta.UI.Controllers
         {
             if (Lbl("harvest-count") == null) return;
 
+            if (hint == ActionHint.AcknowledgeSign)
+            {
+                SetLabelVisible("harvest-count", false);
+                return;
+            }
+
+            SetLabelVisible("harvest-count", true);
+
             if (player.CurrentSign == ZodiacSign.None)
             {
                 Lbl("harvest-count")!.text = hint == ActionHint.RollZodiac
                     ? "Awaiting your roll"
                     : "Awaiting harvest";
-                return;
-            }
-
-            if (hint == ActionHint.AcknowledgeSign)
-            {
-                Lbl("harvest-count")!.text = "Sign locked — tap below to gather";
                 return;
             }
 
@@ -582,12 +610,12 @@ namespace Kismeta.UI.Controllers
         {
             int bonus = AlignmentBonus(playerSign, cosmicSign);
             if (bonus >= 3)
-                return $"your meeple moves to {playerSign} · sign match · +{bonus} alignment";
+                return $"Your meeple moves to {playerSign} · sign match · +{bonus} alignment";
             if (bonus == 2)
-                return $"your meeple moves to {playerSign} · planet match · +{bonus} alignment";
+                return $"Your meeple moves to {playerSign} · planet match · +{bonus} alignment";
             if (bonus == 1)
-                return $"your meeple moves to {playerSign} · element match · +{bonus} alignment";
-            return $"your meeple moves to {playerSign} · no aspect match";
+                return $"Your meeple moves to {playerSign} · element match · +{bonus} alignment";
+            return $"Your meeple moves to {playerSign} · no aspect match";
         }
 
         static int AlignmentBonus(ZodiacSign playerSign, ZodiacSign cosmicSign)

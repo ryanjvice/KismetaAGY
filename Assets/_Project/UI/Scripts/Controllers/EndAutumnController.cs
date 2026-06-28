@@ -46,6 +46,7 @@ namespace Kismeta.UI.Controllers
             AddRecapRow(list, $"Stone at {player.StonePosition} ({player.StoneState})");
             AddRecapRow(list, $"{fired} crucible card(s) forged this age");
             AddRecapRow(list, $"Stone wards: {player.StoneWardCount}");
+            AddRecapRow(list, $"Reagents in supply: {SummarizeReagents(player)}");
         }
 
         static void AddRecapRow(VisualElement list, string text)
@@ -58,6 +59,17 @@ namespace Kismeta.UI.Controllers
             list.Add(row);
         }
 
+        static string SummarizeReagents(PlayerState player)
+        {
+            var parts = new List<string>();
+            foreach (ReagentType rt in System.Enum.GetValues(typeof(ReagentType)))
+            {
+                int n = player.GetReagent(rt);
+                if (n > 0) parts.Add($"{n} {rt}");
+            }
+            return parts.Count > 0 ? string.Join(", ", parts) : "none yet";
+        }
+
         void BuildStillAvailable()
         {
             if (_session == null || _playerId < 0) return;
@@ -67,6 +79,18 @@ namespace Kismeta.UI.Controllers
 
             tip.Clear();
             bool any = false;
+
+            if (SummerActionBindings.CanStillCraftReagent(_session, player))
+            {
+                any = true;
+                tip.Add(MakeHintRow("You can still craft reagents from your cards"));
+            }
+
+            if (SummerActionBindings.HasActivatableCrucible(player))
+            {
+                any = true;
+                tip.Add(MakeHintRow("A dormant crucible slot still has coal — you can activate"));
+            }
 
             if (AutumnActionBindings.CanFire(_session, player))
             {
@@ -80,10 +104,10 @@ namespace Kismeta.UI.Controllers
                 tip.Add(MakeHintRow("A temper-ready forged card can advance your stage"));
             }
 
-            if (player.StoneWardCount == 0 && player.StoneState == StoneState.Forging)
+            if (AutumnActionBindings.CanLeaveStasis(player))
             {
                 any = true;
-                tip.Add(MakeHintRow("Your stone is unwarded — rivals pay less to Oppose"));
+                tip.Add(MakeHintRow("You can pay Salt to Leave Stasis"));
             }
 
             if (!any)

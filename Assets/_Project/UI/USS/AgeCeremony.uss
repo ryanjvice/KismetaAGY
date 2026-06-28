@@ -138,6 +138,33 @@
     color: rgb(205, 176, 224);
 }
 
+.ceremony-instruction {
+    width: 100%;
+    max-width: 280px;
+    margin-top: 4px;
+    padding: 0 12px;
+    align-self: center;
+    align-items: center;
+}
+
+.ceremony-instruction .narrative-slots {
+    margin-bottom: 0;
+    align-items: center;
+}
+
+.ceremony-instruction .narrative-beat {
+    -unity-text-align: middle-center;
+}
+
+.ceremony-instruction .narrative-charge {
+    -unity-text-align: middle-center;
+    margin-bottom: 8px;
+}
+
+.ceremony-instruction .narrative-stakes-wrap {
+    margin-top: 0;
+}
+
 .ceremony-reveal-body {
     width: 100%;
     flex-grow: 1;
@@ -148,6 +175,19 @@
 
 .ceremony-panel-wrap {
     padding: 8px 16px 0;
+}
+
+.ceremony-reveal-body > .ceremony-panel-wrap:last-child {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    justify-content: flex-start;
+}
+
+.ceremony-reveal-body > .ceremony-panel-wrap:last-child > .panel {
+    flex-grow: 0;
+    flex-shrink: 0;
+    align-self: stretch;
 }
 
 .ceremony-panel-wrap--callout {

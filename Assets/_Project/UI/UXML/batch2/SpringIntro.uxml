@@ -72,14 +72,6 @@
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
-
-            <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
-                <engine:VisualElement name="narrative-stakes-wrap" class="panel tip--ok narrative-stakes-wrap">
-                    <engine:Label name="narrative-stakes"
-                                  text="This age's sign shapes everything — which cards harvest well, which alignments score, and your own cosmic effect for the round."
-                                  class="tip__text intro-tip__text narrative-stakes" />
-                </engine:VisualElement>
-            </engine:VisualElement>
         </engine:VisualElement>
 
         <engine:VisualElement class="menu-screen__footer">

@@ -305,7 +305,19 @@
 }
 .crucible-slot__reagent { font-size: 12px; -unity-font-style: bold; color: var(--ink); margin-bottom: 4px; }
 
-/* ---------- Pass your turn (End Summer) ---------- */
+/* ---------- Pass your turn (End Summer / End Autumn) ---------- */
+.end-pass__heading {
+    flex-shrink: 1;
+    min-width: 0;
+    flex-grow: 1;
+}
+
+.end-summer__header .end-pass__heading .statusbar__sub,
+.end-autumn__header .end-pass__heading .statusbar__sub {
+    white-space: normal;
+    flex-shrink: 1;
+}
+
 .end-summer__title {
     color: rgb(127, 196, 168);
 }
