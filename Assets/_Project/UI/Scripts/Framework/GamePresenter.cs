@@ -112,6 +112,15 @@ namespace Kismeta.UI
             loop.OnLog += OnLoopLog;
 
             EnsureOverlayHosts();
+            HeaderOverlayBindings.ConfigureRivalSelection(id =>
+            {
+                if (_endOverlays == null)
+                {
+                    Debug.LogWarning("[GamePresenter] EndOverlayHost missing — rival click cannot open Card Table.");
+                    return;
+                }
+                _endOverlays.ShowCardTable(id);
+            });
 
             WireTitleScreen();
             WireShellScreens();
@@ -145,6 +154,7 @@ namespace Kismeta.UI
             _completedAdeptModalCardId = null;
             _lastFateModalKey = null;
             _completedFateModalKey = null;
+            HeaderOverlayBindings.ConfigureRivalSelection(null);
             DismissAllOverlays();
             _playerHud?.Hide();
         }
@@ -523,6 +533,7 @@ namespace Kismeta.UI
             if (summer != null)
             {
                 summer.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                summer.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 summer.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
@@ -558,6 +569,7 @@ namespace Kismeta.UI
             if (summerHub != null)
             {
                 summerHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                summerHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 summerHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 summerHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
@@ -566,6 +578,7 @@ namespace Kismeta.UI
             if (autumnHub != null)
             {
                 autumnHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                autumnHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 autumnHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 autumnHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
@@ -602,6 +615,7 @@ namespace Kismeta.UI
             autumn.OnPass = () => _autumnOverlays.ShowEndAutumn();
             autumn.OnOppose = () => _contestOverlays?.ShowOpposition();
             autumn.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+            autumn.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
             autumn.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
             autumn.OnInspectCard = id => _endOverlays?.ShowInspect(id);
         }
@@ -650,6 +664,27 @@ namespace Kismeta.UI
 
         private void WireCardOverlays()
         {
+            if (_endOverlays != null)
+            {
+                var spring = _router.GetController<SpringHubController>(ScreenIds.SpringHub);
+                if (spring != null)
+                {
+                    spring.OnOpenCardTable = () => _endOverlays.ShowCardTable();
+                    spring.OnRivalSelected = id => _endOverlays.ShowCardTable(id);
+                    spring.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
+                    spring.OnInspectCard = id => _endOverlays.ShowInspect(id);
+                }
+
+                var winter = _router.GetController<WinterHubController>(ScreenIds.WinterHub);
+                if (winter != null)
+                {
+                    winter.OnOpenCardTable = () => _endOverlays.ShowCardTable();
+                    winter.OnRivalSelected = id => _endOverlays.ShowCardTable(id);
+                    winter.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
+                    winter.OnInspectCard = id => _endOverlays.ShowInspect(id);
+                }
+            }
+
             if (_endOverlays == null || _contestOverlays == null) return;
 
             _endOverlays.OnDuelFromTable = id => _contestOverlays.ShowDuel(id);
@@ -664,22 +699,6 @@ namespace Kismeta.UI
                 _adeptModalOpen = false;
                 _fateModalOpen = false;
             };
-
-            var spring = _router.GetController<SpringHubController>(ScreenIds.SpringHub);
-            if (spring != null)
-            {
-                spring.OnOpenCardTable = () => _endOverlays.ShowCardTable();
-                spring.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
-                spring.OnInspectCard = id => _endOverlays.ShowInspect(id);
-            }
-
-            var winter = _router.GetController<WinterHubController>(ScreenIds.WinterHub);
-            if (winter != null)
-            {
-                winter.OnOpenCardTable = () => _endOverlays.ShowCardTable();
-                winter.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
-                winter.OnInspectCard = id => _endOverlays.ShowInspect(id);
-            }
         }
 
         private void EnsureOverlayHosts()

@@ -463,6 +463,10 @@
     display: none;
 }
 
+.game-header-overlay--expanded {
+    z-index: 25;
+}
+
 .header-summary-row {
     flex-direction: row;
     align-items: center;
@@ -957,6 +961,16 @@
 .rival--active {
     border-color: rgb(240, 176, 96);
     background-color: rgba(46, 28, 10, 0.85);
+}
+.rival--clickable {
+    cursor: link;
+}
+.rival--clickable:hover {
+    border-color: var(--border-gold);
+    background-color: rgba(32, 18, 42, 0.92);
+}
+.rival--clickable:active {
+    opacity: 0.85;
 }
 .rival__dot { width: 18px; height: 18px; border-radius: 9px; border-width: 1px; margin-right: 6px; flex-shrink: 0; }
 .rival .inventory-summary-row {

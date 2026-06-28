@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
@@ -5,6 +6,7 @@ using Kismeta.Core.Players;
 using Kismeta.Core.Views;
 using Kismeta.UI.Controllers;
 using Kismeta.UI.Narrative;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
@@ -15,11 +17,30 @@ namespace Kismeta.UI.Components
         const float HeaderContentGapPx = 8f;
 
         static bool s_expanded;
+        static Action<int>? s_onRivalSelected;
+        static Action<int>? s_globalRivalHandler;
         static readonly HashSet<VisualElement> s_geometryWired = new();
+        static readonly HashSet<VisualElement> s_rivalClickWired = new();
 
-        public static void Wire(VisualElement? root)
+        /// <summary>Game-level rival click handler (e.g. open Card Table). Takes precedence over per-screen Wire callbacks.</summary>
+        public static void ConfigureRivalSelection(Action<int>? handler) => s_globalRivalHandler = handler;
+
+        /// <summary>Resolves the rival handler at click time so stale Populate-time delegates cannot no-op.</summary>
+        public static void InvokeRivalSelected(int playerId)
+        {
+            var handler = s_globalRivalHandler ?? s_onRivalSelected;
+            if (handler != null)
+                handler.Invoke(playerId);
+            else
+                Debug.LogWarning($"[HeaderOverlay] Rival {playerId} clicked but no rival handler is registered.");
+        }
+
+        public static void Wire(VisualElement? root, Action<int>? onRivalSelected = null)
         {
             if (root == null) return;
+            s_onRivalSelected = onRivalSelected;
+            RivalStripBuilder.ResetCache();
+            WireRivalStripClicks(root);
             root.Q<Button>("header-toggle-btn")?.RegisterCallback<ClickEvent>(_ => ToggleExpanded(root));
 
             var overlay = OverlayRoot(root);
@@ -131,7 +152,8 @@ namespace Kismeta.UI.Components
             GameLoop loop,
             int localPlayerId,
             int activePlayerId,
-            Season season)
+            Season season,
+            Action<int>? onRivalSelected = null)
         {
             StepRailBuilder.EnsureBuilt(root?.Q<VisualElement>("step-rail"), season);
             BindSummary(root, session, localPlayerId);
@@ -141,7 +163,8 @@ namespace Kismeta.UI.Components
                 root?.Q<VisualElement>("rivals"),
                 GamePublicView.From(session),
                 localPlayerId,
-                activePlayerId);
+                activePlayerId,
+                s_globalRivalHandler ?? onRivalSelected ?? s_onRivalSelected);
             ApplyHeaderPad(root);
         }
 
@@ -231,5 +254,27 @@ namespace Kismeta.UI.Components
             && !toolbar.ClassListContains("summer-hub__toolbar--hidden")
             && !toolbar.ClassListContains("autumn-main__toolbar--hidden")
             && !toolbar.ClassListContains("autumn-hub__toolbar--hidden");
+
+        static void WireRivalStripClicks(VisualElement root)
+        {
+            var rivals = root.Q<VisualElement>("rivals");
+            if (rivals == null || !s_rivalClickWired.Add(rivals))
+                return;
+
+            rivals.RegisterCallback<ClickEvent>(evt =>
+            {
+                var el = evt.target as VisualElement;
+                while (el != null && el != rivals)
+                {
+                    if (el.ClassListContains("rival") && el.userData is int playerId)
+                    {
+                        evt.StopPropagation();
+                        InvokeRivalSelected(playerId);
+                        return;
+                    }
+                    el = el.parent;
+                }
+            });
+        }
     }
 }

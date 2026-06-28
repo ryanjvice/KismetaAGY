@@ -23,6 +23,7 @@ namespace Kismeta.UI.Controllers
         public Action OnOpenCardTable;
         public Action OnOpenActiveEffects;
         public Action<string> OnInspectCard;
+        public Action<int>? OnRivalSelected;
         public Action<Suit>? OnCauldronClicked;
 
         CommandBridge? _bridge;
@@ -57,7 +58,7 @@ namespace Kismeta.UI.Controllers
                 OnOpenCardTable = () => OnOpenCardTable?.Invoke(),
                 OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
-            HeaderOverlayBindings.Wire(Root);
+            HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
             CauldronHubBindings.WireCauldrons(
                 Root,
                 suit => OnCauldronClicked?.Invoke(suit),
@@ -92,7 +93,8 @@ namespace Kismeta.UI.Controllers
             var view = GamePublicView.From(session);
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             HeaderOverlayBindings.RefreshHeader(
-                Root, session, loop, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
+                Root, session, loop, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason,
+                id => OnRivalSelected?.Invoke(id));
             MainSceneBindings.BindPassButton(Root, session, bridge);
             RefreshActionGroupRail();
             RefreshDock();

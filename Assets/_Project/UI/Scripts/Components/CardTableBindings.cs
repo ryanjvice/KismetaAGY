@@ -4,6 +4,7 @@ using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
+using Kismeta.UI.Controllers;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,10 +20,13 @@ namespace Kismeta.UI.Components
             int localPlayerId,
             Season season,
             SortMode sort,
+            HashSet<int> expandedBlocks,
+            int focusPlayerId,
             Action<string>? onInspect,
             Action<int>? onDuel,
             Action<int>? onGambit,
-            Action<int>? onTrade)
+            Action<int>? onTrade,
+            Action<int>? onToggleDetail)
         {
             var scroll = root.Q<ScrollView>("players");
             if (scroll == null) return;
@@ -37,14 +41,20 @@ namespace Kismeta.UI.Components
             var cosmic = session.Board.CosmicAgeSign;
             bool summerContests = season == Season.Summer;
 
+            VisualElement? focusBlock = null;
+
             foreach (var p in players)
             {
                 bool isSelf = p.PlayerId == localPlayerId;
                 bool inStasis = p.StoneState == StoneState.Stasis;
+                bool expanded = expandedBlocks.Contains(p.PlayerId);
                 int threat = alignment?.CalculateAlignmentPoints(session, p.PlayerId, cosmic) ?? 0;
 
                 var block = new VisualElement();
+                block.name = $"player-block-{p.PlayerId}";
                 block.AddToClassList("player-block");
+                if (expanded)
+                    block.AddToClassList("player-block--expanded");
                 block.style.borderLeftColor = new StyleColor(PlayerUiNames.PlayerColor(p.PlayerId));
                 if (isSelf)
                 {
@@ -54,6 +64,7 @@ namespace Kismeta.UI.Components
                 }
 
                 var header = new VisualElement();
+                header.AddToClassList("player-block__header");
                 header.style.flexDirection = FlexDirection.Row;
                 header.style.alignItems = Align.Center;
                 header.style.marginBottom = 8;
@@ -93,7 +104,23 @@ namespace Kismeta.UI.Components
                 var hand = new Label($"hand {p.HandCardCount}");
                 hand.style.fontSize = 9;
                 hand.style.color = new StyleColor(new Color(0.48f, 0.54f, 0.6f));
+                hand.style.marginRight = 6;
                 header.Add(hand);
+
+                header.Add(SymbolGlyphs.CreateInfoIconLabel("player-block__expand-hint"));
+
+                var chevron = new Label(expanded ? SymbolGlyphs.ChevronUpGlyph : SymbolGlyphs.ChevronDownGlyph);
+                chevron.AddToClassList("player-block__chevron");
+                chevron.AddToClassList(SymbolGlyphs.TablerIconClass);
+                header.Add(chevron);
+
+                int playerId = p.PlayerId;
+                header.pickingMode = PickingMode.Position;
+                header.focusable = true;
+                foreach (var child in header.Children())
+                    child.pickingMode = PickingMode.Ignore;
+                if (onToggleDetail != null)
+                    header.AddManipulator(new Clickable(() => onToggleDetail.Invoke(playerId)));
                 block.Add(header);
 
                 block.Add(MakeEyebrow("spread"));
@@ -147,6 +174,14 @@ namespace Kismeta.UI.Components
                     block.Add(arcRow);
                 }
 
+                if (expanded)
+                {
+                    var detail = new VisualElement();
+                    detail.AddToClassList("player-block__detail");
+                    BuildDetailSection(detail, p, session, db, onInspect);
+                    block.Add(detail);
+                }
+
                 if (inStasis)
                 {
                     var note = new Label("in stasis — cannot be opposed this age");
@@ -166,8 +201,184 @@ namespace Kismeta.UI.Components
                     block.Add(actions);
                 }
 
+                if (focusPlayerId >= 0 && p.PlayerId == focusPlayerId)
+                    focusBlock = block;
+
                 scroll.Add(block);
             }
+
+            if (focusBlock != null)
+                scroll.schedule.Execute(() => scroll.ScrollTo(focusBlock)).ExecuteLater(0);
+        }
+
+        static void BuildDetailSection(
+            VisualElement detail,
+            PublicPlayerView p,
+            GameSession session,
+            ICardDatabase? db,
+            Action<string>? onInspect)
+        {
+            detail.Add(MakeDetailSection("current sign", BuildZodiacRow(p)));
+
+            var housesRow = new VisualElement();
+            housesRow.AddToClassList("player-block__detail-row");
+            if (p.AstralHouses.Count == 0 && p.UnplacedAstralHouses <= 0)
+            {
+                housesRow.Add(new Label("none") { name = "detail-empty" });
+            }
+            else
+            {
+                var chips = new VisualElement();
+                chips.AddToClassList("house-chip-row");
+                foreach (var sign in p.AstralHouses)
+                    chips.Add(MakeHouseChip(sign));
+                housesRow.Add(chips);
+                if (p.UnplacedAstralHouses > 0)
+                {
+                    var unplaced = new Label($"unplaced {p.UnplacedAstralHouses}");
+                    unplaced.AddToClassList("detail-meta");
+                    housesRow.Add(unplaced);
+                }
+            }
+            detail.Add(MakeDetailSection("astral houses", housesRow));
+
+            var reagentRow = new VisualElement();
+            reagentRow.AddToClassList("reagent-row");
+            foreach (ReagentType rt in Enum.GetValues(typeof(ReagentType)))
+            {
+                p.Reagents.TryGetValue(rt, out int count);
+                reagentRow.Add(MakeReagentChip(rt, count));
+            }
+            detail.Add(MakeDetailSection("reagents", reagentRow));
+
+            var crucibleHost = new VisualElement();
+            crucibleHost.AddToClassList("crucible-slot-list");
+            if (p.CrucibleSlots.Count == 0)
+            {
+                crucibleHost.Add(new Label("none") { name = "detail-empty" });
+            }
+            else
+            {
+                foreach (var slot in p.CrucibleSlots)
+                    crucibleHost.Add(MakeCrucibleSlotRow(slot, session, db, onInspect));
+            }
+            detail.Add(MakeDetailSection("crucible", crucibleHost));
+
+            detail.Add(MakeDetailSection("stone", BuildStoneRow(p)));
+        }
+
+        static VisualElement MakeDetailSection(string eyebrow, VisualElement content)
+        {
+            var section = new VisualElement();
+            section.AddToClassList("player-block__detail-section");
+            section.Add(MakeEyebrow(eyebrow));
+            section.Add(content);
+            return section;
+        }
+
+        static VisualElement BuildZodiacRow(PublicPlayerView p)
+        {
+            var row = new VisualElement();
+            row.AddToClassList("player-block__detail-row");
+            if (p.CurrentSign == ZodiacSign.None)
+            {
+                var empty = new Label("—");
+                empty.AddToClassList("detail-zodiac__name");
+                row.Add(empty);
+                return row;
+            }
+
+            row.Add(SymbolGlyphs.CreateZodiacLabel(SymbolGlyphs.Zodiac(p.CurrentSign), "detail-zodiac__glyph"));
+            var name = new Label(p.CurrentSign.ToString());
+            name.AddToClassList("detail-zodiac__name");
+            row.Add(name);
+            return row;
+        }
+
+        static VisualElement BuildStoneRow(PublicPlayerView p)
+        {
+            var row = new VisualElement();
+            row.AddToClassList("stone-status");
+
+            var status = new Label($"{StoneShort(p.StonePosition)} ({p.StonePosition.Value}) · {p.StoneState}");
+            status.AddToClassList("stone-status__label");
+            row.Add(status);
+
+            if (p.StoneWardCount > 0)
+                row.Add(MakeWardBadge(p.StoneWardCount));
+
+            return row;
+        }
+
+        static VisualElement MakeHouseChip(ZodiacSign sign)
+        {
+            var chip = new VisualElement();
+            chip.AddToClassList("house-chip");
+            chip.Add(SymbolGlyphs.CreateZodiacLabel(SymbolGlyphs.Zodiac(sign), "house-chip__glyph"));
+            return chip;
+        }
+
+        static VisualElement MakeReagentChip(ReagentType type, int count)
+        {
+            var chip = new VisualElement();
+            chip.AddToClassList("reagent-chip");
+            chip.AddToClassList(ReagentChipClass(type));
+            var lbl = new Label(count.ToString());
+            lbl.AddToClassList("reagent-chip__count");
+            chip.Add(lbl);
+            return chip;
+        }
+
+        static string ReagentChipClass(ReagentType type) => type switch
+        {
+            ReagentType.Sulphur => "reagent-chip--sulphur",
+            ReagentType.AquaRegia => "reagent-chip--aqua",
+            ReagentType.Vitriol => "reagent-chip--vitriol",
+            ReagentType.Quicksilver => "reagent-chip--quick",
+            _ => "reagent-chip--salt"
+        };
+
+        static VisualElement MakeCrucibleSlotRow(
+            CrucibleSlotView slot,
+            GameSession session,
+            ICardDatabase? db,
+            Action<string>? onInspect)
+        {
+            var row = new VisualElement();
+            row.AddToClassList("crucible-slot-row");
+
+            if (slot.State == CrucibleCardState.Dormant)
+            {
+                row.Add(MakeHiddenChip());
+            }
+            else
+            {
+                var inst = session.GetCard(slot.CardInstanceId);
+                var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
+                if (def != null)
+                    row.Add(MakeChip(def, slot.CardInstanceId, aligned: false, onInspect));
+                else
+                    row.Add(MakeHiddenChip());
+            }
+
+            var metaParts = new List<string> { slot.State.ToString().ToLowerInvariant() };
+            if (slot.HasCoal)
+                metaParts.Add("coal");
+            var meta = new Label(string.Join(" · ", metaParts));
+            meta.AddToClassList("crucible-slot-row__meta");
+            row.Add(meta);
+
+            if (slot.WardCount > 0)
+                row.Add(MakeWardBadge(slot.WardCount));
+
+            return row;
+        }
+
+        static Label MakeWardBadge(int count)
+        {
+            var badge = new Label($"ward ×{count}");
+            badge.AddToClassList("ward-badge");
+            return badge;
         }
 
         static int ComparePlayers(GameSession session, PublicPlayerView a, PublicPlayerView b, SortMode sort)

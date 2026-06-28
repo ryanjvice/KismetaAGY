@@ -471,3 +471,128 @@
     border-color: rgb(90,68,32);
     color: rgb(224,200,120);
 }
+
+/* ---------- Card table player detail (expandable) ---------- */
+.player-block__header {
+    cursor: link;
+}
+.player-block__header:hover {
+    opacity: 0.92;
+}
+.player-block__expand-hint {
+    font-size: 13px;
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-right: 4px;
+}
+.player-block__chevron {
+    font-size: 12px;
+    color: var(--gold);
+    flex-shrink: 0;
+}
+.player-block--expanded {
+    border-color: var(--border-gold);
+}
+.player-block__detail {
+    flex-direction: column;
+    background-color: rgba(12, 8, 16, 0.55);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    margin-bottom: 8px;
+}
+.player-block__detail-section {
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+.player-block__detail-section:last-child {
+    margin-bottom: 0;
+}
+.player-block__detail-row {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.detail-zodiac__glyph {
+    font-size: 18px;
+    margin-right: 8px;
+    color: var(--gold-bright);
+}
+.detail-zodiac__name {
+    font-size: 12px;
+    color: var(--gold-bright);
+}
+.detail-meta {
+    font-size: 9px;
+    color: var(--muted);
+    margin-left: 8px;
+}
+.house-chip-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.house-chip {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    background-color: rgba(16, 10, 18, 0.9);
+    align-items: center;
+    justify-content: center;
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+.house-chip__glyph {
+    font-size: 14px;
+}
+.reagent-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.reagent-row > .reagent-chip {
+    margin-right: 6px;
+    margin-bottom: 4px;
+}
+.crucible-slot-list {
+    flex-direction: column;
+}
+.crucible-slot-row {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+.crucible-slot-row:last-child {
+    margin-bottom: 0;
+}
+.crucible-slot-row__meta {
+    font-size: 9px;
+    color: var(--muted);
+    margin-left: 8px;
+    margin-right: 6px;
+}
+.ward-badge {
+    background-color: rgb(28, 22, 42);
+    border-width: 1px;
+    border-color: rgb(106, 80, 138);
+    border-radius: var(--radius-sm);
+    padding: 2px 6px;
+    font-size: 9px;
+    color: rgb(184, 154, 192);
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+.stone-status {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.stone-status__label {
+    font-size: 11px;
+    color: var(--ink);
+    margin-right: 8px;
+}

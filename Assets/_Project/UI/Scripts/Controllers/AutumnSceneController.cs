@@ -24,6 +24,7 @@ namespace Kismeta.UI.Controllers
         public Action? OnOpenCardTable;
         public Action? OnOpenActiveEffects;
         public Action<string>? OnInspectCard;
+        public Action<int>? OnRivalSelected;
 
         CommandBridge? _bridge;
         GameSession? _session;
@@ -58,7 +59,7 @@ namespace Kismeta.UI.Controllers
                 OnOpenCardTable = () => OnOpenCardTable?.Invoke(),
                 OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
-            HeaderOverlayBindings.Wire(Root);
+            HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
         }
 
         void OnHandToggle()
@@ -132,7 +133,8 @@ namespace Kismeta.UI.Controllers
             var view = GamePublicView.From(session);
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             HeaderOverlayBindings.RefreshHeader(
-                Root, session, loop, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason);
+                Root, session, loop, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason,
+                id => OnRivalSelected?.Invoke(id));
             MainSceneBindings.BindPassButton(Root, session, bridge);
             RefreshActionGroupRail();
 

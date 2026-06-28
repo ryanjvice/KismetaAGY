@@ -1,6 +1,7 @@
 using System;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
+using Kismeta.UI.Components;
 using Kismeta.UI.Controllers;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -28,6 +29,7 @@ namespace Kismeta.UI
         enum ActiveOverlay { None, CardTable, CardModals, ActiveEffects }
         ActiveOverlay _active = ActiveOverlay.None;
         bool _reopenCardTableAfterInspect;
+        int _cardTableFocusPlayerId = -1;
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
 
@@ -80,10 +82,37 @@ namespace Kismeta.UI
             ShowOverlay(_activeEffects, _activeEffectsCtrl, WireActiveEffects, ActiveOverlay.ActiveEffects);
         }
 
-        public void ShowCardTable()
+        public void ShowCardTable(int focusPlayerId = -1)
         {
             EnsureControllers();
+            if (_cardTable == null)
+            {
+                Debug.LogWarning("[EndOverlayHost] CardTable UXML not assigned — run Kismeta → UI → Wire Bootstrap UI References.");
+                return;
+            }
+
+            // Defer one frame so the rival click finishes before the modal layer appears.
+            var scheduleRoot = _layout?.Root ?? _layout?.ContentScreenRoot;
+            if (scheduleRoot != null)
+            {
+                scheduleRoot.schedule.Execute(() => OpenCardTable(focusPlayerId)).ExecuteLater(0);
+                return;
+            }
+
+            OpenCardTable(focusPlayerId);
+        }
+
+        void OpenCardTable(int focusPlayerId)
+        {
+            if (focusPlayerId >= 0)
+            {
+                var screenRoot = _layout?.ContentScreenRoot;
+                if (screenRoot != null)
+                    HeaderOverlayBindings.SetExpanded(screenRoot, false, animate: false);
+            }
+
             _reopenCardTableAfterInspect = false;
+            _cardTableFocusPlayerId = focusPlayerId;
             ShowOverlay(_cardTable, _table, WireTable, ActiveOverlay.CardTable);
         }
 
@@ -163,7 +192,21 @@ namespace Kismeta.UI
         void ShowOverlay<T>(VisualTreeAsset? asset, T? controller, System.Action wire, ActiveOverlay kind)
             where T : OverlayController
         {
-            if (_layout == null || asset == null || controller == null) return;
+            if (_layout == null)
+            {
+                Debug.LogWarning("[EndOverlayHost] ViewportLayout missing — cannot show overlay.");
+                return;
+            }
+            if (asset == null)
+            {
+                Debug.LogWarning("[EndOverlayHost] Overlay UXML not assigned.");
+                return;
+            }
+            if (controller == null)
+            {
+                Debug.LogWarning($"[EndOverlayHost] {typeof(T).Name} missing on bootstrap object.");
+                return;
+            }
             _layout.ShowModal(asset);
             var root = _layout.OverlayContentRoot;
             if (root == null) return;
@@ -175,9 +218,17 @@ namespace Kismeta.UI
 
         void RefreshOpenOverlay()
         {
-            if (_session == null || _bridge == null) return;
+            if (_session == null || _bridge == null)
+            {
+                Debug.LogWarning("[EndOverlayHost] Session not bound — overlay content will be empty.");
+                return;
+            }
             if (_active == ActiveOverlay.CardTable)
+            {
+                _table?.SetFocus(_cardTableFocusPlayerId);
+                _cardTableFocusPlayerId = -1;
                 _table?.BindState(_session, _bridge);
+            }
             else if (_active == ActiveOverlay.ActiveEffects)
                 _activeEffectsCtrl?.BindState(_session, _loop, _bridge!);
         }

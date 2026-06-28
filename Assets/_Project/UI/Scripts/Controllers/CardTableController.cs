@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.UI;
@@ -12,6 +13,8 @@ namespace Kismeta.UI.Controllers
         GameSession? _session;
         CommandBridge? _bridge;
         CardTableBindings.SortMode _sort = CardTableBindings.SortMode.Threat;
+        int _focusPlayerId = -1;
+        readonly HashSet<int> _expandedBlocks = new();
 
         public Action? OnClose;
         public Action<int>? OnDuel;
@@ -38,6 +41,13 @@ namespace Kismeta.UI.Controllers
             });
         }
 
+        public void SetFocus(int playerId)
+        {
+            _focusPlayerId = playerId;
+            if (playerId >= 0)
+                _expandedBlocks.Add(playerId);
+        }
+
         public void BindState(GameSession session, CommandBridge bridge)
         {
             _session = session;
@@ -46,13 +56,23 @@ namespace Kismeta.UI.Controllers
             RefreshTable();
         }
 
+        void ToggleDetail(int playerId)
+        {
+            if (!_expandedBlocks.Add(playerId))
+                _expandedBlocks.Remove(playerId);
+            RefreshTable();
+        }
+
         void RefreshTable()
         {
             if (Root == null || _session == null || _bridge == null) return;
             int localId = SummerActionBindings.ResolvePlayerId(_session, _bridge);
+            int scrollTo = _focusPlayerId;
+            _focusPlayerId = -1;
             CardTableBindings.Populate(
                 Root, _session, localId, _session.Phase.CurrentSeason, _sort,
-                OnInspect, OnDuel, OnGambit, OnTrade);
+                _expandedBlocks, scrollTo,
+                OnInspect, OnDuel, OnGambit, OnTrade, ToggleDetail);
         }
     }
 }
