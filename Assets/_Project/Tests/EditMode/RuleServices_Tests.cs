@@ -1486,7 +1486,7 @@ namespace Kismeta.Core.Tests
             for (int seed = 0; seed < 10000; seed++)
             {
                 var r = new System.Random(seed);
-                if ((r.Next(1, 13) >= r.Next(1, 13)) == attackerWins)
+                if ((r.Next(1, 13) > r.Next(1, 13)) == attackerWins)
                     return seed;
             }
             Assert.Fail("Could not find duel seed.");
@@ -1538,6 +1538,37 @@ namespace Kismeta.Core.Tests
             string anteId = ante[0];
 
             var combat = new CombatRules(FindDuelSeed(attackerWins: false));
+            var result = combat.TryDuel(session, 0, 1, targetId, anteId);
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsFalse(session.Players[0].Spread.Contains(anteId));
+            Assert.IsTrue(session.Board.CommonDiscard.Contains(anteId));
+            Assert.IsTrue(session.Players[1].Spread.Contains(targetId));
+        }
+
+        static int FindDuelTieSeed()
+        {
+            for (int seed = 0; seed < 10000; seed++)
+            {
+                var r = new System.Random(seed);
+                if (r.Next(1, 13) == r.Next(1, 13))
+                    return seed;
+            }
+            Assert.Fail("Could not find duel tie seed.");
+            return 0;
+        }
+
+        [Test]
+        public void Duel_Tie_DefenderWins()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var ante = PopulateSpread(session, 0, 1, "duel-ante");
+            var targets = PopulateSpread(session, 1, 1, "duel-target");
+            string targetId = targets[0];
+            string anteId = ante[0];
+
+            var combat = new CombatRules(FindDuelTieSeed());
             var result = combat.TryDuel(session, 0, 1, targetId, anteId);
 
             Assert.IsTrue(result.IsOk, result.Message);

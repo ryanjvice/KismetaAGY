@@ -117,7 +117,7 @@ namespace Kismeta.Core.Rules
 
             int attackRoll = _rng.Next(1, 13);
             int defendRoll = _rng.Next(1, 13);
-            bool attackerWins = attackRoll >= defendRoll;
+            bool attackerWins = attackRoll > defendRoll;
             int winnerId = attackerWins ? attackerId : defenderId;
 
             if (attackerWins)
@@ -232,7 +232,7 @@ namespace Kismeta.Core.Rules
 
             int attackRoll = _rng.Next(1, 13);
             int defendRoll = _rng.Next(1, 13);
-            bool attackerWins = attackRoll >= defendRoll;
+            bool attackerWins = attackRoll > defendRoll;
             int winnerId = attackerWins ? attackerId : defenderId;
 
             string? arrestedDefenderCardId = null;
