@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/Contests.uss" />
+    <engine:Style src="../../USS/ActiveEffects.uss" />
+    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
+
+    <!-- Contest response: defender roll (Duel) or accept/decline (Trade, Gambit, Opposition).
+         Type theming applied at runtime via contest-response modifier classes. -->
+    <engine:VisualElement name="contest-response" class="screen sheet contest-response">
+
+        <engine:VisualElement class="sheet__header contest-response__header">
+            <engine:VisualElement class="statusbar__left">
+                <engine:VisualElement name="response-sigil" class="statusbar__sigil">
+                    <engine:Label name="response-sigil-icon" text="&#xeb4d;" class="ti-icon" />
+                </engine:VisualElement>
+                <engine:VisualElement class="contest-response__heading">
+                    <engine:Label name="response-title" text="Contest Response" class="statusbar__title contest-response__title" />
+                    <engine:Label name="response-sub" text="from rival" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Button name="close-btn" text="&#10005;" class="contest-response__close" />
+        </engine:VisualElement>
+
+        <engine:ScrollView name="response-scroll" class="sheet__body contest-response__scroll">
+            <engine:VisualElement class="contest-response__scroll-content">
+            <engine:Instance template="NarrativeSlots" />
+
+            <engine:VisualElement name="response-party" class="party contest-response__party" />
+
+            <engine:VisualElement class="panel contest-response__context">
+                <engine:Label name="response-desc" text="A rival targets you with a contest." class="contest-response__desc" />
+                <engine:VisualElement name="response-duel-stakes" class="contest-response__duel-stakes is-hidden">
+                    <engine:VisualElement class="contest-response__stake-row tray tray--give">
+                        <engine:Label text="target · your spread" class="eyebrow" />
+                        <engine:VisualElement name="response-target-card" class="contest-response__stake-chip" />
+                        <engine:Label name="response-target-name" text="" class="contest-response__card-name" />
+                    </engine:VisualElement>
+                    <engine:Label text="&#8645;" class="contest-response__stake-divider" />
+                    <engine:VisualElement class="contest-response__stake-row tray tray--get">
+                        <engine:Label text="ante · their stake" class="eyebrow" />
+                        <engine:VisualElement name="response-ante-card" class="contest-response__stake-chip" />
+                        <engine:Label name="response-ante-name" text="" class="contest-response__card-name" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement name="response-effects" class="contest-response__effects is-hidden">
+                <engine:Label text="Active effects" class="eyebrow" />
+                <engine:VisualElement name="response-effects-featured" class="active-effects-featured" />
+                <engine:VisualElement name="response-effects-list" class="active-effects-sections" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="response-fee-row" class="contest-response__fee-row is-hidden">
+                <engine:Label text="entry fee" class="eyebrow" />
+                <engine:VisualElement name="response-fee-chips" class="contest-response__fee-chips" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="response-tip" class="tip tip--caution contest-response__tip is-hidden">
+                <engine:Label name="response-tip-text" text="" class="tip__text" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="response-footer-choice" class="contest-response__footer">
+                <engine:Button name="decline-btn" text="Decline" class="btn btn--secondary contest-response__btn" />
+                <engine:Button name="accept-btn" text="Accept" class="btn btn--primary contest-response__btn" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="response-footer-duel" class="contest-response__footer-duel is-hidden">
+                <engine:VisualElement class="dice-row">
+                    <engine:VisualElement class="contest-response__die-col">
+                        <engine:VisualElement name="die-you" class="die-big die-big--you">
+                            <engine:Label name="die-you-pip" text="?" class="die-big__pip" />
+                        </engine:VisualElement>
+                        <engine:Label text="you" class="contest-response__die-label" />
+                    </engine:VisualElement>
+                    <engine:Label text="vs" class="die-vs" />
+                    <engine:VisualElement class="contest-response__die-col">
+                        <engine:VisualElement name="die-foe" class="die-big die-big--foe">
+                            <engine:Label name="die-foe-pip" text="?" class="die-big__pip" />
+                        </engine:VisualElement>
+                        <engine:Label name="die-foe-name" text="rival" class="contest-response__die-label" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:Button name="roll-btn" text="Roll Die" class="btn btn--primary" />
+                <engine:Label name="roll-outcome" text="" class="contest-response__roll-outcome is-hidden" />
+            </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:ScrollView>
+
+    </engine:VisualElement>
+</engine:UXML>

@@ -34,6 +34,9 @@ namespace Kismeta.UI.Components
                 bool hasContext = !string.IsNullOrWhiteSpace(exchange.ContextLine);
                 subtitle.text = exchange.ContextLine ?? "";
                 subtitle.style.display = hasContext ? DisplayStyle.Flex : DisplayStyle.None;
+                bool isCombatVerdict = hasContext
+                    && (exchange.Kind == ExchangeKind.Duel || exchange.Kind == ExchangeKind.Gambit);
+                subtitle.EnableInClassList("exchange__subtitle--verdict", isCombatVerdict);
             }
 
             var bilateral = root.Q("bilateral-panel");
@@ -56,7 +59,83 @@ namespace Kismeta.UI.Components
             if (legsList != null)
                 legsList.style.display = DisplayStyle.None;
 
-            ResolveBilateralTrays(root, session, exchange);
+            if (exchange.Kind == ExchangeKind.Duel || exchange.Kind == ExchangeKind.Gambit)
+                PopulateCombatTrays(root, session, exchange);
+            else
+                ResolveBilateralTrays(root, session, exchange);
+        }
+
+        static void PopulateCombatTrays(VisualElement root, GameSession session, PlayerExchangeEvent exchange)
+        {
+            ExchangeLeg? playerTransfer = null;
+            ExchangeLeg? toSink = null;
+            var selfLegs = new List<ExchangeLeg>();
+
+            foreach (var leg in exchange.Legs)
+            {
+                if (leg.FromPlayerId >= 0 && leg.ToPlayerId >= 0 && leg.FromPlayerId != leg.ToPlayerId)
+                    playerTransfer = leg;
+                else if (leg.ToPlayerId < 0)
+                    toSink = leg;
+                else if (leg.FromPlayerId >= 0 && leg.FromPlayerId == leg.ToPlayerId)
+                    selfLegs.Add(leg);
+            }
+
+            if (playerTransfer != null)
+            {
+                var items = new List<ExchangeItem>(playerTransfer.Items);
+                SetTray(root, "party-a-label", "party-a-items", session, playerTransfer.FromPlayerId, items,
+                    $"{ContestBindings.RivalName(session, playerTransfer.FromPlayerId)} loses");
+                SetTray(root, "party-b-label", "party-b-items", session, playerTransfer.ToPlayerId, items,
+                    $"{ContestBindings.RivalName(session, playerTransfer.ToPlayerId)} wins");
+                return;
+            }
+
+            if (toSink != null)
+            {
+                var lostItems = new List<ExchangeItem>(toSink.Items);
+                SetTray(root, "party-a-label", "party-a-items", session, toSink.FromPlayerId, lostItems,
+                    $"{ContestBindings.RivalName(session, toSink.FromPlayerId)} loses");
+
+                var keptLeg = selfLegs.Count > 0
+                    ? selfLegs.Find(l => l.FromPlayerId != toSink.FromPlayerId)
+                    : null;
+                if (keptLeg != null)
+                {
+                    var keptItems = new List<ExchangeItem>(keptLeg.Items);
+                    SetTray(root, "party-b-label", "party-b-items", session, keptLeg.FromPlayerId, keptItems,
+                        $"{ContestBindings.RivalName(session, keptLeg.FromPlayerId)} wins");
+                }
+                else
+                {
+                    SetTray(root, "party-b-label", "party-b-items", session, -1, lostItems,
+                        "to common deck", isSink: true);
+                }
+                return;
+            }
+
+            if (selfLegs.Count >= 2)
+            {
+                var loseLeg = selfLegs[0];
+                var winLeg = selfLegs[1];
+                SetTray(root, "party-a-label", "party-a-items", session, loseLeg.FromPlayerId,
+                    new List<ExchangeItem>(loseLeg.Items),
+                    $"{ContestBindings.RivalName(session, loseLeg.FromPlayerId)} loses");
+                SetTray(root, "party-b-label", "party-b-items", session, winLeg.FromPlayerId,
+                    new List<ExchangeItem>(winLeg.Items),
+                    $"{ContestBindings.RivalName(session, winLeg.FromPlayerId)} wins");
+                return;
+            }
+
+            if (selfLegs.Count == 1)
+            {
+                var leg = selfLegs[0];
+                var items = new List<ExchangeItem>(leg.Items);
+                SetTray(root, "party-a-label", "party-a-items", session, leg.FromPlayerId, items,
+                    $"{ContestBindings.RivalName(session, leg.FromPlayerId)} loses");
+                SetTray(root, "party-b-label", "party-b-items", session, leg.FromPlayerId, items,
+                    "contest resolved");
+            }
         }
 
         static void ResolveBilateralTrays(VisualElement root, GameSession session, PlayerExchangeEvent exchange)
@@ -107,17 +186,23 @@ namespace Kismeta.UI.Components
             string itemsName,
             GameSession session,
             int playerId,
-            List<ExchangeItem> items)
+            List<ExchangeItem> items,
+            string? customLabel = null,
+            bool isSink = false)
         {
             var label = root.Q<Label>(labelName);
             if (label != null)
             {
-                if (playerId < 0 && items.Count > 0 && items[0].Kind == ExchangeItemKind.ToDiscard)
+                if (!string.IsNullOrEmpty(customLabel))
+                    label.text = customLabel;
+                else if (playerId < 0 && items.Count > 0 && items[0].Kind == ExchangeItemKind.ToDiscard)
                     label.text = "to common deck";
                 else if (playerId >= 0)
                     label.text = $"{ContestBindings.RivalName(session, playerId)} gives";
                 else
                     label.text = "gives";
+
+                label.EnableInClassList("exchange__tray-label--sink", isSink);
             }
 
             var host = root.Q(itemsName);

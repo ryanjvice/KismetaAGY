@@ -251,6 +251,7 @@ MonoBehaviour:
   _duel: {fileID: 9197481963319205126, guid: d38330957eeb899419e4a9d055553bcf, type: 3}
   _gambit: {fileID: 9197481963319205126, guid: eceadc2ed3a289d46974dfc0ee16743e, type: 3}
   _opposition: {fileID: 9197481963319205126, guid: ab9532d9d810ed042bc50542cf4d6759, type: 3}
+  _contestResponse: {fileID: 9197481963319205126, guid: 35213db04139f564f9b57ef35cb06f46, type: 3}
   _fireStone: {fileID: 9197481963319205126, guid: dd780d10b779e3048b20b87dd2d386f5, type: 3}
   _temperStone: {fileID: 9197481963319205126, guid: e86ecbdd87a725a4fa949fecc6f722b4, type: 3}
   _manageCards: {fileID: 9197481963319205126, guid: 0bff89acac9d3e44ca0f2ee82f3ecf82, type: 3}

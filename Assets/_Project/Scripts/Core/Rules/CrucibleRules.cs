@@ -283,7 +283,54 @@ namespace Kismeta.Core.Rules
 
         // ─── Opposition ───────────────────────────────────────────────────────────
 
+        public CommandResult TryInitiateOppose(GameSession session, int attackerId, int defenderId)
+        {
+            var validation = ValidateOppositionSetup(session, attackerId, defenderId);
+            if (!validation.IsOk) return validation;
+
+            int wardCost = session.Players[defenderId].StoneWardCount;
+            session.Board.PendingContest = new PendingContest
+            {
+                Kind       = ContestKind.Opposition,
+                AttackerId = attackerId,
+                DefenderId = defenderId
+            };
+
+            session.EmitEvent(new OppositionOfferedEvent(attackerId, defenderId, wardCost));
+            return CommandResult.Ok($"Opposition offered against P{defenderId}.");
+        }
+
+        public CommandResult TryRespondOpposition(GameSession session, int defenderId, bool accept)
+        {
+            var pending = session.Board.PendingContest;
+            if (pending == null || pending.Kind != ContestKind.Opposition)
+                return CommandResult.Invalid("No pending opposition to respond to.");
+            if (pending.DefenderId != defenderId)
+                return CommandResult.Invalid("Only the opposition defender may respond.");
+
+            var attackerId = pending.AttackerId;
+            session.Board.PendingContest = null;
+
+            if (!accept)
+            {
+                session.EmitEvent(new OppositionDeclinedEvent(attackerId, defenderId));
+                return CommandResult.Ok("Opposition declined.");
+            }
+
+            var validation = ValidateOppositionSetup(session, attackerId, defenderId);
+            if (!validation.IsOk) return validation;
+
+            return ResolveOpposition(session, attackerId, defenderId);
+        }
+
         public CommandResult TryOppose(GameSession session, int attackerId, int defenderId)
+        {
+            var initiate = TryInitiateOppose(session, attackerId, defenderId);
+            if (!initiate.IsOk) return initiate;
+            return TryRespondOpposition(session, defenderId, accept: true);
+        }
+
+        static CommandResult ValidateOppositionSetup(GameSession session, int attackerId, int defenderId)
         {
             if (attackerId == defenderId)
                 return CommandResult.Invalid("Cannot oppose yourself.");
@@ -292,42 +339,28 @@ namespace Kismeta.Core.Rules
             if (defender.StoneState != StoneState.Forging)
                 return CommandResult.Invalid("Target stone must be Forging to initiate Opposition.");
 
-            // Stones Fired this Autumn are immune to Opposition
             var defenderFiredSlot = defender.CrucibleSlots.Find(
                 s => s.State == CrucibleCardState.Fired && s.FiredAtRound == session.Board.RoundNumber);
             if (defenderFiredSlot != null)
                 return CommandResult.Invalid("This stone was Fired this Autumn and cannot be targeted yet.");
 
-            // Attacker must pay entry fee equal to defender's ward count
             var attacker = session.Players[attackerId];
-            if (defender.StoneWardCount > 0)
-            {
-                int totalReagents = attacker.GetReagent(ReagentType.Salt)
-                                  + attacker.GetReagent(ReagentType.Sulphur)
-                                  + attacker.GetReagent(ReagentType.Quicksilver)
-                                  + attacker.GetReagent(ReagentType.Vitriol)
-                                  + attacker.GetReagent(ReagentType.AquaRegia);
-                if (totalReagents < defender.StoneWardCount)
-                    return CommandResult.Invalid(
-                        $"Attacker must pay {defender.StoneWardCount} reagent(s) to breach Ward — only {totalReagents} available.");
+            if (defender.StoneWardCount > 0
+                && ReagentSpendHelper.TotalReagents(attacker) < defender.StoneWardCount)
+                return CommandResult.Invalid(
+                    $"Attacker must pay {defender.StoneWardCount} reagent(s) to breach Ward — insufficient.");
 
-                int remaining = defender.StoneWardCount;
-                foreach (ReagentType rt in new[]
-                {
-                    ReagentType.Salt, ReagentType.Sulphur, ReagentType.Quicksilver,
-                    ReagentType.Vitriol, ReagentType.AquaRegia
-                })
-                {
-                    while (remaining > 0 && attacker.GetReagent(rt) > 0)
-                    {
-                        attacker.SpendReagent(rt);
-                        remaining--;
-                    }
-                    if (remaining == 0) break;
-                }
-            }
+            return CommandResult.Ok();
+        }
 
-            // Score each side using alignment points (if the service is wired) + a dice roll for tiebreaking
+        CommandResult ResolveOpposition(GameSession session, int attackerId, int defenderId)
+        {
+            var defender = session.Players[defenderId];
+            var attacker = session.Players[attackerId];
+
+            if (!ReagentSpendHelper.TrySpend(attacker, defender.StoneWardCount, null, out var spendError))
+                return CommandResult.Invalid(spendError ?? "Could not pay ward breach fee.");
+
             int attackScore, defendScore;
             if (_alignmentService != null)
             {
@@ -341,12 +374,10 @@ namespace Kismeta.Core.Rules
                 defendScore = 0;
             }
 
-            // Defender gains Besieged Bonus from prior successful defenses this Autumn
             defendScore += defender.BesiegedBonusCount;
 
             int attackRoll, defendRoll;
 
-            // Best-of-3 if Justice fate is active (ties rerolled within each sub-round)
             if (session.Board.BestOfThreeDuels)
             {
                 int aWins = 0, dWins = 0;
@@ -361,7 +392,6 @@ namespace Kismeta.Core.Rules
             }
             else
             {
-                // Reroll dice until totals differ — no attacker-wins-ties bias
                 do
                 {
                     attackRoll = _rng.Next(1, 13);
@@ -369,7 +399,6 @@ namespace Kismeta.Core.Rules
                 } while (attackScore + attackRoll == defendScore + defendRoll);
             }
 
-            // Final score = alignment score (+ besieged bonus for defender) + dice roll
             int attackTotal = attackScore + attackRoll;
             int defendTotal = defendScore + defendRoll;
 
@@ -381,11 +410,9 @@ namespace Kismeta.Core.Rules
             var winner = session.Players[winnerId];
 
             loser.StoneState       = StoneState.Stasis;
-            loser.StoneWardCount   = 0; // Wards discarded on loss
+            loser.StoneWardCount   = 0;
             session.Board.StasisOccupancy[loserId] = true;
-            // winner.StoneWardCount remains (wards stay on successful defence)
 
-            // Besieged Bonus: successful defender earns +1 alignment for the rest of the Autumn
             if (winnerId == defenderId)
                 winner.BesiegedBonusCount++;
 

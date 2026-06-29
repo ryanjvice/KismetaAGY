@@ -46,9 +46,13 @@ namespace Kismeta.UI.Components
 
             if (mask.HasFlag(NarrativeSlotMask.Beat))
                 SetLabel(root, "narrative-beat", entry.Beat, showBeat);
+            else
+                SetLabel(root, "narrative-beat", string.Empty, false);
 
             if (mask.HasFlag(NarrativeSlotMask.Charge))
                 SetLabel(root, "narrative-charge", entry.Charge, true);
+            else
+                SetLabel(root, "narrative-charge", string.Empty, false);
 
             if (mask.HasFlag(NarrativeSlotMask.Stakes))
             {
@@ -69,6 +73,15 @@ namespace Kismeta.UI.Components
                 {
                     SetLabel(root, "narrative-stakes", entry.Stakes, showStakes);
                 }
+            }
+            else
+            {
+                var stakesWrap = root.Q<VisualElement>("narrative-stakes-wrap")
+                    ?? root.Q(className: "narrative-stakes-wrap");
+                if (stakesWrap != null)
+                    stakesWrap.style.display = DisplayStyle.None;
+                else
+                    SetLabel(root, "narrative-stakes", string.Empty, false);
             }
 
             if (mask == NarrativeSlotMask.All)

@@ -28,6 +28,9 @@ namespace Kismeta.Core.Entities
         public int? WinnerPlayerId { get; private set; }
         public bool CardLockActive { get; private set; }
 
+        /// <summary>Player whose proactive turn is active during season action phases. Set by GameLoop.</summary>
+        public int? CurrentTurnPlayerId { get; set; }
+
         private readonly List<PlayerState> _players;
         public ReadOnlyCollection<PlayerState> Players { get; }
 
@@ -155,7 +158,7 @@ namespace Kismeta.Core.Entities
                     : CommandResult.NotImplemented(nameof(TemperCommand)),
 
                 InitiateOppositionCommand cmd => _rules is not null
-                    ? ApplyWithAudit(_rules.Crucible.TryOppose(this, cmd.AttackerId, cmd.DefenderId), command)
+                    ? ApplyWithAudit(_rules.Crucible.TryInitiateOppose(this, cmd.AttackerId, cmd.DefenderId), command)
                     : CommandResult.NotImplemented(nameof(InitiateOppositionCommand)),
 
                 LeaveStasisCommand       cmd => _rules is not null
@@ -212,18 +215,34 @@ namespace Kismeta.Core.Entities
                     : CommandResult.NotImplemented(nameof(RefreshAdeptCommand)),
 
                 DirectTradeCommand    cmd => _rules?.Trade is not null
-                    ? ApplyWithAudit(_rules.Trade.TryTrade(this, cmd.PlayerId, cmd.TargetId,
+                    ? ApplyWithAudit(_rules.Trade.TryInitiateTrade(this, cmd.PlayerId, cmd.TargetId,
                         cmd.OfferCardIds, cmd.RequestCardIds), command)
                     : CommandResult.NotImplemented(nameof(DirectTradeCommand)),
 
+                RespondTradeCommand   cmd => _rules?.Trade is not null
+                    ? ApplyWithAudit(_rules.Trade.TryRespondTrade(this, cmd.PlayerId, cmd.Accept), command)
+                    : CommandResult.NotImplemented(nameof(RespondTradeCommand)),
+
                 // ── Combat ────────────────────────────────────────────────────────
                 InitiateDuelCommand   cmd => _rules?.Combat is not null
-                    ? ApplyWithAudit(_rules.Combat.TryDuel(this, cmd.AttackerId, cmd.DefenderId, cmd.TargetCardId, cmd.AnteCardId), command)
+                    ? ApplyWithAudit(_rules.Combat.TryInitiateDuel(this, cmd.AttackerId, cmd.DefenderId, cmd.TargetCardId, cmd.AnteCardId), command)
                     : CommandResult.NotImplemented(nameof(InitiateDuelCommand)),
 
                 InitiateGambitCommand cmd => _rules?.Combat is not null
-                    ? ApplyWithAudit(_rules.Combat.TryGambit(this, cmd.AttackerId, cmd.DefenderId, cmd.OfferedCardId), command)
+                    ? ApplyWithAudit(_rules.Combat.TryInitiateGambit(this, cmd.AttackerId, cmd.DefenderId, cmd.OfferedCardId), command)
                     : CommandResult.NotImplemented(nameof(InitiateGambitCommand)),
+
+                RespondDuelCommand    cmd => _rules?.Combat is not null
+                    ? ApplyWithAudit(_rules.Combat.TryRespondDuel(this, cmd.PlayerId, cmd.Accept), command)
+                    : CommandResult.NotImplemented(nameof(RespondDuelCommand)),
+
+                RespondGambitCommand  cmd => _rules?.Combat is not null
+                    ? ApplyWithAudit(_rules.Combat.TryRespondGambit(this, cmd.PlayerId, cmd.Accept, cmd.ReagentPayments), command)
+                    : CommandResult.NotImplemented(nameof(RespondGambitCommand)),
+
+                RespondOppositionCommand cmd => _rules is not null
+                    ? ApplyWithAudit(_rules.Crucible.TryRespondOpposition(this, cmd.PlayerId, cmd.Accept), command)
+                    : CommandResult.NotImplemented(nameof(RespondOppositionCommand)),
 
                 FreeArrestedCommand   cmd => _rules?.Combat is not null
                     ? ApplyWithAudit(_rules.Combat.TryFreeArrested(this, cmd.PlayerId, cmd.SlotIndex), command)

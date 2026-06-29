@@ -39,6 +39,181 @@ namespace Kismeta.Core.Rules
             return new ActiveEffectsSnapshot(subtitle, cosmicAge, sections);
         }
 
+        /// <summary>Effects that may influence an in-flight duel (both players, staked cards, Justice age).</summary>
+        public static ActiveEffectsSnapshot BuildDuelRelevant(
+            GameSession session,
+            int defenderId,
+            int attackerId,
+            string? targetCardId,
+            string? anteCardId)
+        {
+            var cosmic = session.Board.CosmicAgeSign;
+            var planet = Correspondence.PlanetFor(cosmic);
+            var element = Correspondence.ElementFor(cosmic);
+
+            string subtitle = cosmic == ZodiacSign.None
+                ? "Cosmic age not yet cast"
+                : $"Age of {cosmic} · {planet} · {element}";
+
+            var cosmicAge = session.Board.BestOfThreeDuels
+                ? BuildCosmicAgeFeatured(session, cosmic, planet, element)
+                : EmptyCosmicAgeItem();
+
+            var sections = new List<ActiveEffectSection>();
+
+            if (defenderId >= 0 && defenderId < session.Players.Count)
+            {
+                var defender = session.Players[defenderId];
+                AddFilteredSection(sections, FilterDuelSection(
+                    BuildAstralHousesSection(session, defender, cosmic)));
+                AddFilteredSection(sections, FilterDuelSection(
+                    BuildAdeptsSection(session, defender)));
+                AddFilteredSection(sections, FilterDuelSection(
+                    BuildFatesSection(session, defender)));
+                AddFilteredSection(sections, BuildDuelSpreadSection(
+                    session, defender, cosmic, targetCardId, anteCardId,
+                    "Your spread", targetCardId));
+            }
+
+            if (attackerId >= 0 && attackerId < session.Players.Count && attackerId != defenderId)
+            {
+                var attacker = session.Players[attackerId];
+                AddFilteredSection(sections, FilterDuelSection(
+                    BuildAstralHousesSection(session, attacker, cosmic)));
+                AddFilteredSection(sections, FilterDuelSection(
+                    BuildAdeptsSection(session, attacker)));
+                AddFilteredSection(sections, FilterDuelSection(
+                    BuildFatesSection(session, attacker)));
+                AddFilteredSection(sections, BuildDuelSpreadSection(
+                    session, attacker, cosmic, targetCardId, anteCardId,
+                    $"{PlayerLabel(session, attackerId)} spread", anteCardId));
+            }
+
+            return new ActiveEffectsSnapshot(subtitle, cosmicAge, sections);
+        }
+
+        static ActiveEffectItem EmptyCosmicAgeItem() => new(
+            "cosmic-age",
+            string.Empty,
+            string.Empty,
+            new ActiveEffectBadge(string.Empty, ActiveEffectBadgeTone.Neutral));
+
+        static void AddFilteredSection(List<ActiveEffectSection> sections, ActiveEffectSection? section)
+        {
+            if (section == null || section.Value.Items.Count == 0)
+                return;
+            sections.Add(section.Value);
+        }
+
+        static ActiveEffectSection? FilterDuelSection(ActiveEffectSection section)
+        {
+            var items = section.Items.Where(item =>
+                PertainsToDuel(item.Description) || PertainsToDuel(item.Title)).ToList();
+            if (items.Count == 0)
+                return null;
+
+            return new ActiveEffectSection(
+                section.SectionId,
+                section.Title,
+                items.Count.ToString(),
+                items,
+                section.FooterNote);
+        }
+
+        static ActiveEffectSection? BuildDuelSpreadSection(
+            GameSession session,
+            PlayerState player,
+            ZodiacSign cosmic,
+            string? targetCardId,
+            string? anteCardId,
+            string title,
+            string? highlightCardId)
+        {
+            var db = session.Rules?.CardDatabase;
+            if (db == null)
+                return null;
+
+            var codexDb = session.Rules?.CodexDatabase;
+            var spreadCards = new List<(string id, CardDefinition def)>();
+            foreach (var id in player.Spread)
+            {
+                var inst = session.GetCard(id);
+                var def = inst != null ? db.GetById(inst.DefinitionId) : null;
+                if (def != null)
+                    spreadCards.Add((id, def));
+            }
+
+            var crucibleMatches = BuildCrucibleContributions(session, player, spreadCards, codexDb);
+            var items = new List<ActiveEffectItem>();
+
+            foreach (var (id, def) in spreadCards)
+            {
+                if (!IsDuelRelevantSpreadCard(id, def, targetCardId, anteCardId, highlightCardId))
+                    continue;
+
+                int alignPts = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);
+                crucibleMatches.TryGetValue(id, out var slotLabel);
+                var state = SpreadCardEffectEvaluator.Evaluate(player, def, cosmic, alignPts, slotLabel);
+
+                string cardTitle = def.IsMinorArcana
+                    ? $"{def.Rank} of {def.Suit}"
+                    : def.Name;
+
+                if (state.IsInactive && id != targetCardId && id != anteCardId && id != highlightCardId)
+                    continue;
+
+                string description = state.IsInactive
+                    ? FirstLine(def.EffectText)
+                    : state.Description;
+
+                var badge = state.IsInactive
+                    ? new ActiveEffectBadge("staked card", ActiveEffectBadgeTone.Pending)
+                    : state.Badge;
+
+                items.Add(new ActiveEffectItem(
+                    id,
+                    cardTitle,
+                    description,
+                    badge,
+                    iconKey: SuitIconKey(def.Suit),
+                    polarity: state.IsInactive ? ActiveEffectPolarity.Neutral : state.Polarity));
+            }
+
+            items.Sort(CompareSpreadItems);
+            if (items.Count == 0)
+                return null;
+
+            return new ActiveEffectSection(
+                $"spread-cards-{player.PlayerId}",
+                title,
+                $"{items.Count} active",
+                items);
+        }
+
+        static bool IsDuelRelevantSpreadCard(
+            string id,
+            CardDefinition def,
+            string? targetCardId,
+            string? anteCardId,
+            string? highlightCardId)
+        {
+            if (id == targetCardId || id == anteCardId || id == highlightCardId)
+                return true;
+
+            return def.EffectType.Equals("Duel", StringComparison.OrdinalIgnoreCase)
+                || def.EffectType.Equals("Gambit", StringComparison.OrdinalIgnoreCase);
+        }
+
+        static bool PertainsToDuel(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            return text.Contains("duel", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("gambit", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("combat", StringComparison.OrdinalIgnoreCase);
+        }
+
         static ActiveEffectItem BuildCosmicAgeFeatured(
             GameSession session,
             ZodiacSign cosmic,

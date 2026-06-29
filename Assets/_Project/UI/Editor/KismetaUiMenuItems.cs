@@ -55,6 +55,7 @@ namespace Kismeta.UI.Editor
         private const string DuelPath = "Assets/_Project/UI/UXML/batch5/Duel.uxml";
         private const string GambitPath = "Assets/_Project/UI/UXML/batch5/Gambit.uxml";
         private const string OppositionPath = "Assets/_Project/UI/UXML/batch5/Opposition.uxml";
+        private const string ContestResponsePath = "Assets/_Project/UI/UXML/batch5/ContestResponse.uxml";
         private const string FireStonePath = "Assets/_Project/UI/UXML/batch6/FireStone.uxml";
         private const string TemperStonePath = "Assets/_Project/UI/UXML/batch6/TemperStone.uxml";
         private const string ManageCardsPath = "Assets/_Project/UI/UXML/batch6/ManageCards.uxml";
@@ -220,6 +221,7 @@ namespace Kismeta.UI.Editor
             EnsureComponent<DuelController>(bootstrap.gameObject);
             EnsureComponent<GambitController>(bootstrap.gameObject);
             EnsureComponent<OppositionController>(bootstrap.gameObject);
+            EnsureComponent<ContestResponseController>(bootstrap.gameObject);
             EnsureComponent<FireStoneController>(bootstrap.gameObject);
             EnsureComponent<TemperStoneController>(bootstrap.gameObject);
             EnsureComponent<ManageCardsController>(bootstrap.gameObject);
@@ -299,6 +301,7 @@ namespace Kismeta.UI.Editor
             var duel = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(DuelPath);
             var gambit = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GambitPath);
             var opposition = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(OppositionPath);
+            var contestResponse = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ContestResponsePath);
             var fireStone = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FireStonePath);
             var temperStone = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TemperStonePath);
             var manageCards = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ManageCardsPath);
@@ -355,6 +358,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_duel").objectReferenceValue = duel;
             so.FindProperty("_gambit").objectReferenceValue = gambit;
             so.FindProperty("_opposition").objectReferenceValue = opposition;
+            so.FindProperty("_contestResponse").objectReferenceValue = contestResponse;
             so.FindProperty("_fireStone").objectReferenceValue = fireStone;
             so.FindProperty("_temperStone").objectReferenceValue = temperStone;
             so.FindProperty("_manageCards").objectReferenceValue = manageCards;
@@ -369,6 +373,14 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_resourceExchange").objectReferenceValue = resourceExchange;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            var responseCtrl = bootstrap.GetComponent<ContestResponseController>();
+            if (responseCtrl != null && contestResponse != null)
+            {
+                var responseSo = new SerializedObject(responseCtrl);
+                responseSo.FindProperty("_uxmlAsset").objectReferenceValue = contestResponse;
+                responseSo.ApplyModifiedPropertiesWithoutUndo();
+            }
 
             var doc = bootstrap.GetComponent<UIDocument>() ?? bootstrap.gameObject.AddComponent<UIDocument>();
             doc.panelSettings = panelSettings;
@@ -457,6 +469,7 @@ namespace Kismeta.UI.Editor
             host.AddComponent<DuelController>();
             host.AddComponent<GambitController>();
             host.AddComponent<OppositionController>();
+            host.AddComponent<ContestResponseController>();
             host.AddComponent<FireStoneController>();
             host.AddComponent<TemperStoneController>();
             host.AddComponent<ManageCardsController>();

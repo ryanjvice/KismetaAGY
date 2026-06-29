@@ -5,37 +5,65 @@ using Kismeta.Core.Entities;
 namespace Kismeta.Core.Rules
 {
     /// <summary>
-    /// Validates that a command is legal given the current phase and player turn.
-    /// M2: lightweight checks only — season gating and active-player enforcement.
-    /// The individual rule services run their own state-level validation as well.
+    /// Validates that a command is legal given the current phase, turn, and pending contests.
     /// </summary>
     public sealed class ActionValidator : IActionValidator
     {
         public CommandResult Validate(GameSession session, IGameCommand command)
         {
-            // Sanity: game must be running
             if (session.IsOver)
                 return CommandResult.Invalid("The game is already over.");
 
             return command switch
             {
                 RollCosmicAgeCommand cmd    => ValidateAgekeeper(session, cmd.PlayerId),
-                RollZodiacCommand    cmd    => CommandResult.Ok(),
-                HarvestCommand       cmd    => CommandResult.Ok(),
-                CommuneCommand       cmd    => CommandResult.Ok(),
+                RollZodiacCommand    _      => CommandResult.Ok(),
+                HarvestCommand       _      => CommandResult.Ok(),
+                CommuneCommand       _      => CommandResult.Ok(),
                 SetCardLockCommand   _      => CommandResult.Ok(),
-                ActivateCrucibleCommand cmd => ValidateSeason(session, Season.Autumn),
+                ActivateCrucibleCommand _   => ValidateSeason(session, Season.Autumn),
                 FireStoneCommand     _      => ValidateSeason(session, Season.Autumn),
                 TemperCommand        _      => ValidateSeason(session, Season.Autumn),
-                InitiateOppositionCommand _ => ValidateSeason(session, Season.Summer),
+                InitiateOppositionCommand cmd => ValidateContestInitiation(session, cmd.AttackerId, Season.Summer),
+                InitiateDuelCommand cmd     => ValidateContestInitiation(session, cmd.AttackerId, Season.Summer),
+                InitiateGambitCommand cmd   => ValidateContestInitiation(session, cmd.AttackerId, Season.Summer),
+                DirectTradeCommand cmd      => ValidateContestInitiation(session, cmd.PlayerId, Season.Summer),
+                RespondTradeCommand cmd     => ValidateContestResponse(session, cmd.PlayerId),
+                RespondDuelCommand cmd      => ValidateContestResponse(session, cmd.PlayerId),
+                RespondGambitCommand cmd    => ValidateContestResponse(session, cmd.PlayerId),
+                RespondOppositionCommand cmd => ValidateContestResponse(session, cmd.PlayerId),
                 BuildAstralHouseCommand _   => ValidateSeason(session, Season.Spring),
-                CraftReagentCommand  _      => CommandResult.Ok(), // allowed any season
+                CraftReagentCommand  _      => CommandResult.Ok(),
                 PassActionCommand    _      => CommandResult.Ok(),
                 PassCrucibleActionCommand _ => CommandResult.Ok(),
                 EnforceCardLimitsCommand _  => CommandResult.Ok(),
                 TransitAgeCommand    _      => CommandResult.Ok(),
-                _                           => CommandResult.Ok(), // unknown → let Apply decide
+                _                           => CommandResult.Ok(),
             };
+        }
+
+        static CommandResult ValidateContestInitiation(GameSession session, int playerId, Season required)
+        {
+            var seasonCheck = ValidateSeason(session, required);
+            if (!seasonCheck.IsOk) return seasonCheck;
+
+            if (session.Board.PendingContest != null)
+                return CommandResult.Invalid("Resolve the pending contest before initiating another.");
+
+            if (session.CurrentTurnPlayerId.HasValue && session.CurrentTurnPlayerId.Value != playerId)
+                return CommandResult.Invalid("It is not your turn.");
+
+            return CommandResult.Ok();
+        }
+
+        static CommandResult ValidateContestResponse(GameSession session, int playerId)
+        {
+            var pending = session.Board.PendingContest;
+            if (pending == null)
+                return CommandResult.Invalid("No pending contest to respond to.");
+            if (pending.DefenderId != playerId)
+                return CommandResult.Invalid("Only the targeted player may respond.");
+            return CommandResult.Ok();
         }
 
         private static CommandResult ValidateAgekeeper(GameSession session, int playerId)

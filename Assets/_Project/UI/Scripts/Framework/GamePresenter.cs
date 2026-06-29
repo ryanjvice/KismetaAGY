@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
@@ -51,10 +53,16 @@ namespace Kismeta.UI
         private CeremonyStep? _lastCeremonyStep;
         private bool _adeptModalOpen;
         private bool _fateModalOpen;
+        private bool _contestResponseOpen;
         private string? _lastAdeptModalCardId;
         private string? _completedAdeptModalCardId;
         private string? _lastFateModalKey;
         private string? _completedFateModalKey;
+        private bool _exchangeRetryPending;
+        private int _pendingHumanExchangeAcks;
+        private bool _exchangeConfirmRequiresAck;
+        private readonly Queue<Action> _mainThreadActions = new();
+        private readonly object _mainThreadActionsLock = new();
 
         public CommandBridge Bridge => _bridge;
         public bool IsInGame => _inGame;
@@ -146,6 +154,8 @@ namespace Kismeta.UI
             WireCardOverlays();
             WireExchangeOverlays();
             WireWagerOverlays();
+
+            loop.WaitForPendingExchangesAsync = WaitForPendingExchangesAsync;
         }
 
         public void Unbind()
@@ -153,7 +163,10 @@ namespace Kismeta.UI
             if (_session != null)
                 _session.OnEvent -= OnSessionEvent;
             if (_loop != null)
+            {
                 _loop.OnLog -= OnLoopLog;
+                _loop.WaitForPendingExchangesAsync = null;
+            }
             _bridge.OnSideEffectApplied = null;
             _session = null;
             _loop = null;
@@ -163,11 +176,14 @@ namespace Kismeta.UI
             _lastCeremonyStep = null;
             _adeptModalOpen = false;
             _fateModalOpen = false;
+            _contestResponseOpen = false;
             _lastAdeptModalCardId = null;
             _completedAdeptModalCardId = null;
             _lastFateModalKey = null;
             _completedFateModalKey = null;
             _exchangeQueue.Clear();
+            _pendingHumanExchangeAcks = 0;
+            _exchangeConfirmRequiresAck = false;
             _wagerResultQueue.Clear();
             _completedWagerResultKeys.Clear();
             HeaderOverlayBindings.ConfigureRivalSelection(null);
@@ -186,6 +202,11 @@ namespace Kismeta.UI
 
         private void Update()
         {
+            FlushMainThreadActions();
+
+            if (_exchangeQueue.Count > 0 && _exchangeOverlays != null && !_exchangeOverlays.IsOpen)
+                TryShowQueuedExchange();
+
             if (_loop == null || _session == null || !_inGame)
                 return;
 
@@ -228,7 +249,18 @@ namespace Kismeta.UI
                 RouteGameplay();
                 TryOpenAdeptModal(hint);
                 TryOpenFateModal(hint);
+                TryOpenContestResponse(hint);
                 RefreshActiveScreen();
+                return;
+            }
+
+            if (_contestOverlays?.IsDefenderDuelUiPending == true)
+                return;
+
+            if (ShouldHoldGameplayRouting())
+            {
+                if (_exchangeOverlays?.IsOpen != true)
+                    ScheduleTryShowQueuedExchange();
                 return;
             }
 
@@ -242,6 +274,8 @@ namespace Kismeta.UI
                     _fateModalOpen = false;
                     _lastFateModalKey = null;
                 }
+                if (!IsContestResponseHint(hint) && _contestOverlays?.IsDefenderDuelUiPending != true)
+                    _contestResponseOpen = false;
                 if (hint != ActionHint.AdeptDecision)
                 {
                     _adeptModalOpen = false;
@@ -274,8 +308,14 @@ namespace Kismeta.UI
 
             if (evt is PlayerExchangeEvent exchange)
             {
-                _exchangeQueue.Enqueue(exchange);
-                TryShowQueuedExchange();
+                bool involvesHuman = ExchangeInvolvesSeatedHuman(exchange);
+                if (involvesHuman)
+                    _pendingHumanExchangeAcks++;
+                RunOnMainThread(() =>
+                {
+                    _exchangeQueue.Enqueue(exchange);
+                    ScheduleTryShowQueuedExchange();
+                });
             }
 
             if (evt is FatefulWagerResolvedEvent wagerResolved)
@@ -318,7 +358,7 @@ namespace Kismeta.UI
 
         private void NotifyPassedScreenActivity(string message)
         {
-            if (_loop == null || !_loop.IsLocalHumanYielded || string.IsNullOrWhiteSpace(message))
+            if (_loop == null || !_loop.IsLocalHumanWaitingForTurn || string.IsNullOrWhiteSpace(message))
                 return;
 
             var controller = _router.ActiveController;
@@ -355,6 +395,12 @@ namespace Kismeta.UI
 
             if (_layout.IsOverlayVisible)
                 return;
+
+            if (ShouldHoldGameplayRouting())
+            {
+                ScheduleTryShowQueuedExchange();
+                return;
+            }
 
             var activeId = _router.CurrentScreenId;
             if (_loop.PendingHumanController == null && _loop.ActivePlayerId < 0
@@ -530,6 +576,7 @@ namespace Kismeta.UI
             _lastCeremonyStep = null;
             _adeptModalOpen = false;
             _fateModalOpen = false;
+            _contestResponseOpen = false;
             _lastAdeptModalCardId = null;
             _lastFateModalKey = null;
             RouteGameplay();
@@ -552,6 +599,12 @@ namespace Kismeta.UI
                 RefreshActiveScreen();
                 return;
             }
+
+            if (_contestOverlays?.IsDefenderDuelUiPending == true)
+                return;
+
+            if (ShouldHoldGameplayRouting())
+                return;
 
             if (_loop.PendingHumanController == null)
             {
@@ -577,9 +630,33 @@ namespace Kismeta.UI
             ActionHint.SpringHubResponse => ScreenIds.SpringHub,
             ActionHint.ConfirmHarvest => ScreenIds.SpringHarvest,
             ActionHint.DiscardToLimit => ScreenIds.CardLimits,
+            ActionHint.TradeResponse => ScreenIds.SummerMain,
+            ActionHint.DuelResponse => ScreenIds.SummerMain,
+            ActionHint.GambitResponse => ScreenIds.SummerMain,
+            ActionHint.OppositionResponse => ScreenIds.SummerMain,
             ActionHint.SummerContestResponse => ScreenIds.SummerMain,
             ActionHint.AutumnForgeResponse => ScreenIds.AutumnMain,
             _ => ResolveSeasonMainScreen(season)
+        };
+
+        void TryOpenContestResponse(ActionHint hint)
+        {
+            if (_contestOverlays == null || _loop == null || _session == null) return;
+            if (!IsContestResponseHint(hint)) return;
+            if (_session.Board.PendingContest == null) return;
+            if (_contestResponseOpen && _contestOverlays.IsOpen) return;
+
+            _contestResponseOpen = true;
+            if (!_contestOverlays.ShowContestResponse(_loop))
+                _contestResponseOpen = false;
+        }
+
+        static bool IsContestResponseHint(ActionHint hint) => hint switch
+        {
+            ActionHint.TradeResponse or ActionHint.DuelResponse
+                or ActionHint.GambitResponse or ActionHint.OppositionResponse
+                or ActionHint.SummerContestResponse => true,
+            _ => false
         };
 
         private void WireStepScreens()
@@ -744,13 +821,20 @@ namespace Kismeta.UI
             void Refresh()
             {
                 RefreshActionGroupRails();
-                TryShowQueuedExchange();
+                ScheduleTryShowQueuedExchange();
             }
 
             if (_summerOverlays != null)
                 _summerOverlays.OverlayChanged = Refresh;
             if (_contestOverlays != null)
+            {
                 _contestOverlays.OverlayChanged = Refresh;
+                _contestOverlays.OnResponseCompleted = () =>
+                {
+                    _contestResponseOpen = false;
+                    ScheduleTryShowQueuedExchange();
+                };
+            }
             if (_autumnOverlays != null)
                 _autumnOverlays.OverlayChanged = Refresh;
 
@@ -792,7 +876,10 @@ namespace Kismeta.UI
             _exchangeOverlays.BindState(_session);
             _exchangeOverlays.OnConfirmed = () =>
             {
-                TryShowQueuedExchange();
+                if (_exchangeConfirmRequiresAck && _pendingHumanExchangeAcks > 0)
+                    _pendingHumanExchangeAcks--;
+                _exchangeConfirmRequiresAck = false;
+                ScheduleTryShowQueuedExchange();
                 RefreshActiveScreenIfNeeded();
             };
         }
@@ -845,27 +932,166 @@ namespace Kismeta.UI
             }
         }
 
+        void RunOnMainThread(Action action)
+        {
+            lock (_mainThreadActionsLock)
+                _mainThreadActions.Enqueue(action);
+        }
+
+        void FlushMainThreadActions()
+        {
+            while (true)
+            {
+                Action? action = null;
+                lock (_mainThreadActionsLock)
+                {
+                    if (_mainThreadActions.Count == 0)
+                        break;
+                    action = _mainThreadActions.Dequeue();
+                }
+                action?.Invoke();
+            }
+        }
+
+        private void ScheduleTryShowQueuedExchange()
+        {
+            TryShowQueuedExchange();
+            if (_exchangeQueue.Count == 0 || _exchangeOverlays?.IsOpen == true)
+                return;
+            if (!_exchangeRetryPending)
+                StartCoroutine(DeferredTryShowQueuedExchange());
+        }
+
+        private IEnumerator DeferredTryShowQueuedExchange()
+        {
+            _exchangeRetryPending = true;
+            yield return null;
+            _exchangeRetryPending = false;
+            TryShowQueuedExchange();
+        }
+
         private void TryShowQueuedExchange()
         {
             if (_session == null || _exchangeOverlays == null || _exchangeQueue.Count == 0)
                 return;
             if (_exchangeOverlays.IsOpen)
+            {
+                var nextPeek = _exchangeQueue.Peek();
+                if (ShouldReplaceStaleExchange(nextPeek))
+                {
+                    if (_exchangeConfirmRequiresAck && _pendingHumanExchangeAcks > 0)
+                        _pendingHumanExchangeAcks--;
+                    _exchangeConfirmRequiresAck = false;
+                    _exchangeOverlays.ClearShowingState();
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            var next = _exchangeQueue.Peek();
+            if (_contestOverlays?.IsResponseActive == true)
                 return;
-            if (IsBlockingOverlayOpen())
+            if (IsBlockingOverlayOpen(next))
                 return;
 
-            var next = _exchangeQueue.Dequeue();
-            _exchangeOverlays.Show(next);
+            _exchangeQueue.Dequeue();
+            _exchangeConfirmRequiresAck = ExchangeInvolvesSeatedHuman(next);
+            if (_contestOverlays?.IsOpen == true)
+                _contestOverlays.ReleaseStaleActiveState();
+            bool shown = _exchangeOverlays.Show(next);
+            if (!shown)
+            {
+                _exchangeConfirmRequiresAck = false;
+                _exchangeQueue.Enqueue(next);
+            }
         }
 
-        private bool IsBlockingOverlayOpen()
+        bool ShouldReplaceStaleExchange(PlayerExchangeEvent next)
         {
-            if (_contestOverlays?.IsOpen == true) return true;
+            if (_contestOverlays?.IsResponseActive == true)
+                return false;
+            if (_contestOverlays?.IsOpen == true)
+                return true;
+            if (_layout != null && !_layout.IsOverlayVisible)
+                return true;
+            if (_exchangeQueue.Count > 0 && ExchangeInvolvesSeatedHuman(next)
+                && (next.Kind == ExchangeKind.Duel || next.Kind == ExchangeKind.Gambit))
+                return _pendingHumanExchangeAcks > 0;
+            return false;
+        }
+
+        bool ShouldHoldGameplayRouting() =>
+            _pendingHumanExchangeAcks > 0 || _exchangeQueue.Count > 0;
+
+        bool ExchangeInvolvesSeatedHuman(PlayerExchangeEvent exchange)
+        {
+            if (_loop == null) return false;
+            foreach (var leg in exchange.Legs)
+            {
+                if (_loop.IsHumanPlayer(leg.FromPlayerId))
+                    return true;
+                if (leg.ToPlayerId >= 0 && _loop.IsHumanPlayer(leg.ToPlayerId))
+                    return true;
+            }
+            return false;
+        }
+
+        public Task WaitForPendingExchangesAsync(CancellationToken ct)
+        {
+            if (_pendingHumanExchangeAcks <= 0)
+            {
+                RunOnMainThread(TryShowQueuedExchange);
+                return Task.CompletedTask;
+            }
+
+            var tcs = new TaskCompletionSource<bool>();
+            RunOnMainThread(() => StartCoroutine(WaitForPendingHumanExchangesRoutine(tcs, ct)));
+            return tcs.Task;
+        }
+
+        IEnumerator WaitForPendingHumanExchangesRoutine(TaskCompletionSource<bool> tcs, CancellationToken ct)
+        {
+            while (_pendingHumanExchangeAcks > 0)
+            {
+                if (ct.IsCancellationRequested)
+                {
+                    tcs.TrySetCanceled();
+                    yield break;
+                }
+
+                if (_exchangeOverlays?.IsOpen != true)
+                    TryShowQueuedExchange();
+
+                yield return null;
+            }
+
+            tcs.TrySetResult(true);
+        }
+
+        private bool IsBlockingOverlayOpen(PlayerExchangeEvent? next = null)
+        {
+            if (_exchangeOverlays?.IsOpen == true) return true;
+
+            bool combatExchange = next != null
+                && (next.Kind == ExchangeKind.Duel || next.Kind == ExchangeKind.Gambit)
+                && _pendingHumanExchangeAcks > 0;
+
+            if (_contestOverlays?.IsResponseActive == true)
+                return true;
+
+            if (combatExchange)
+                return false;
+
+            if (_contestOverlays?.IsOpen == true)
+                return true;
+            if (_endOverlays?.IsOpen == true) return true;
+            if (_wagerOverlays?.IsOpen == true) return true;
+
             if (_summerOverlays?.IsOpen == true) return true;
             if (_springOverlays?.IsOpen == true) return true;
             if (_autumnOverlays?.IsOpen == true) return true;
-            if (_endOverlays?.IsOpen == true) return true;
-            if (_wagerOverlays?.IsOpen == true) return true;
             return false;
         }
 
@@ -908,7 +1134,7 @@ namespace Kismeta.UI
                     _completedFateModalKey = _lastFateModalKey;
                 _adeptModalOpen = false;
                 _fateModalOpen = false;
-                TryShowQueuedExchange();
+                ScheduleTryShowQueuedExchange();
             };
         }
 
@@ -943,9 +1169,12 @@ namespace Kismeta.UI
             _exchangeOverlays?.Dismiss();
             _wagerOverlays?.Dismiss();
             _exchangeQueue.Clear();
+            _pendingHumanExchangeAcks = 0;
+            _exchangeConfirmRequiresAck = false;
             _wagerResultQueue.Clear();
             _adeptModalOpen = false;
             _fateModalOpen = false;
+            _contestResponseOpen = false;
             _lastAdeptModalCardId = null;
             _completedAdeptModalCardId = null;
             _lastFateModalKey = null;
@@ -965,13 +1194,28 @@ namespace Kismeta.UI
 
         private string ResolveSpectatorScreen(Season season)
         {
-            if (_loop != null && _loop.IsLocalHumanYielded)
+            if (_loop != null && _loop.IsLocalHumanWaitingForTurn)
             {
                 return season switch
                 {
                     Season.Spring => ScreenIds.SpringPassed,
                     Season.Summer => ScreenIds.SummerPassed,
                     Season.Autumn => ScreenIds.AutumnPassed,
+                    _ => ScreenIds.Waiting
+                };
+            }
+
+            if (_loop != null && _session != null
+                && _loop.TurnPlayerId >= 0
+                && _loop.TurnPlayerId != _loop.LocalHumanPlayerId
+                && IsSeasonActionPhase(season))
+            {
+                return season switch
+                {
+                    Season.Spring => ScreenIds.SpringPassed,
+                    Season.Summer => ScreenIds.SummerPassed,
+                    Season.Autumn => ScreenIds.AutumnPassed,
+                    Season.Winter => ScreenIds.Waiting,
                     _ => ScreenIds.Waiting
                 };
             }
@@ -984,6 +1228,9 @@ namespace Kismeta.UI
                 _ => ScreenIds.Waiting
             };
         }
+
+        static bool IsSeasonActionPhase(Season season) =>
+            season is Season.Spring or Season.Summer or Season.Autumn or Season.Winter;
 
         private static string ResolveSeasonMainScreen(Season season) => season switch
         {

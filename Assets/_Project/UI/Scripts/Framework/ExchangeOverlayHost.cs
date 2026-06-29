@@ -17,7 +17,19 @@ namespace Kismeta.UI
 
         public System.Action? OnConfirmed;
 
-        public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
+        bool _isShowing;
+
+        public bool IsOpen => _isShowing
+            && _layout != null
+            && _layout.IsOverlayVisible;
+
+        /// <summary>Clears internal open state when another overlay replaced ours without Dismiss().</summary>
+        public void ClearShowingState()
+        {
+            _isShowing = false;
+            _pendingExchange = null;
+            _controller?.Detach();
+        }
 
         PlayerExchangeEvent? _pendingExchange;
 
@@ -40,28 +52,36 @@ namespace Kismeta.UI
             _session = session;
         }
 
-        public void Show(PlayerExchangeEvent exchange)
+        public bool Show(PlayerExchangeEvent exchange)
         {
             EnsureControllers();
             if (_layout == null || _resourceExchange == null || _controller == null)
             {
                 Debug.LogWarning("[ExchangeOverlayHost] Missing layout, UXML, or controller.");
-                return;
+                return false;
+            }
+
+            _layout.ShowModal(_resourceExchange);
+            var root = _layout.OverlayContentRoot;
+            if (root == null)
+            {
+                Debug.LogWarning("[ExchangeOverlayHost] Overlay content root missing.");
+                _layout.DismissOverlay();
+                return false;
             }
 
             _pendingExchange = exchange;
-            _layout.ShowModal(_resourceExchange);
-            var root = _layout.OverlayContentRoot;
-            if (root == null) return;
-
+            _isShowing = true;
             _controller.AttachTo(root);
             if (_session != null)
                 _controller.BindState(_session, exchange);
             WireController();
+            return true;
         }
 
         public void Dismiss()
         {
+            _isShowing = false;
             _pendingExchange = null;
             _controller?.Detach();
             _layout?.DismissOverlay();

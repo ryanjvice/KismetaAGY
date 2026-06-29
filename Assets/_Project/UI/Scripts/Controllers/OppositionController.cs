@@ -248,8 +248,11 @@ namespace Kismeta.UI.Controllers
             Btn("o-resolve-btn")?.SetEnabled(false);
 
             OppositionResolvedEvent? resolved = null;
+            OppositionDeclinedEvent? declined = null;
             _bridge.TrySubmit(new InitiateOppositionCommand(_playerId, _rivalId));
             yield return WaitForEvent(_session, (OppositionResolvedEvent e) => resolved = e);
+            if (resolved == null)
+                yield return WaitForEvent(_session, (OppositionDeclinedEvent e) => declined = e);
 
             if (resolved != null)
             {
@@ -271,6 +274,8 @@ namespace Kismeta.UI.Controllers
                     OnCompleted?.Invoke();
                 }
             }
+            else if (declined != null)
+                OnCompleted?.Invoke();
             else
                 Btn("o-resolve-btn")?.SetEnabled(true);
 

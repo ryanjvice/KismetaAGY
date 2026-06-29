@@ -105,14 +105,29 @@ namespace Kismeta.UI.Controllers
                 int pid = loop.ActivePlayerId >= 0
                     ? loop.ActivePlayerId
                     : loop.PendingHumanController.Slot.Index;
+                if (IsContestResponseHint(loop.PendingHint))
+                    return $"Respond · {loop.PendingHint} · P{pid}";
+                if (loop.TurnPlayerId == pid)
+                    return $"Your turn · End Turn when done · P{pid}";
                 return $"Your turn · {loop.PendingHint} · P{pid}";
             }
+
+            if (loop.TurnPlayerId >= 0)
+                return $"P{loop.TurnPlayerId}'s turn…";
 
             if (loop.PendingHint != ActionHint.None)
                 return $"Resolving · {loop.PendingHint}";
 
             return "Waiting for next step…";
         }
+
+        static bool IsContestResponseHint(ActionHint hint) => hint switch
+        {
+            ActionHint.TradeResponse or ActionHint.DuelResponse
+                or ActionHint.GambitResponse or ActionHint.OppositionResponse
+                or ActionHint.SummerContestResponse => true,
+            _ => false
+        };
 
         public static void BindPassButton(VisualElement? root, GameSession session, CommandBridge bridge)
         {
@@ -121,7 +136,9 @@ namespace Kismeta.UI.Controllers
 
             var hint = bridge.PendingHint;
             bool canPass = bridge.CanSubmit && !session.IsOver &&
-                hint is ActionHint.SummerAction or ActionHint.AutumnAction or ActionHint.WinterAction;
+                hint is ActionHint.SpringAction or ActionHint.SummerAction
+                    or ActionHint.AutumnAction or ActionHint.WinterAction;
+            pass.text = "End Turn";
             pass.SetEnabled(canPass);
         }
 
@@ -248,7 +265,7 @@ namespace Kismeta.UI.Controllers
         {
             if (root == null) return;
 
-            int activeId = loop.ActivePlayerId;
+            int activeId = loop.TurnPlayerId >= 0 ? loop.TurnPlayerId : loop.ActivePlayerId;
             var banner = root.Q<Label>("turn-banner");
             var hint = root.Q<Label>("hint-label");
 

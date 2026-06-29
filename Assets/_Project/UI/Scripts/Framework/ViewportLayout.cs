@@ -27,6 +27,7 @@ namespace Kismeta.UI
 
         private UIDocument _document;
         private VisualElement _overlayLayer;
+        private VisualElement _overlayCloneHost;
         private VisualElement _overlayContentRoot;
         private EventCallback<GeometryChangedEvent>? _centeredOverlayFitHandler;
         private bool _centeredOverlayFitBound;
@@ -48,6 +49,9 @@ namespace Kismeta.UI
 
         /// <summary>Root of the most recently shown overlay UXML clone.</summary>
         public VisualElement? OverlayContentRoot => _overlayContentRoot;
+
+        /// <summary>Clone host wrapper for the active overlay modal.</summary>
+        public VisualElement? OverlayCloneHost => _overlayCloneHost;
 
         /// <summary>Last computed scale factor (informational; PanelSettings also scales the panel).</summary>
         public float UiScale { get; private set; } = 1f;
@@ -128,6 +132,44 @@ namespace Kismeta.UI
             SetOverlayBackdropBlur(true);
         }
 
+        /// <summary>Cap overlay host height so an inner ScrollView can scroll tall sheet content.</summary>
+        public void ApplyBoundedOverlaySheet()
+        {
+            if (_overlayLayer == null || _overlayContentRoot == null || _overlayCloneHost == null)
+                return;
+
+            void Apply()
+            {
+                if (_overlayLayer == null || _overlayContentRoot == null || _overlayCloneHost == null)
+                    return;
+
+                float overlayH = _overlayLayer.resolvedStyle.height;
+                if (overlayH <= 0f)
+                    return;
+
+                float padT = _overlayLayer.resolvedStyle.paddingTop;
+                float padB = _overlayLayer.resolvedStyle.paddingBottom;
+                float avail = overlayH - padT - padB - 8f;
+                if (avail <= 0f)
+                    return;
+
+                _overlayCloneHost.style.maxHeight = avail;
+                _overlayCloneHost.style.height = avail;
+                _overlayCloneHost.style.flexShrink = 1;
+                _overlayCloneHost.style.minHeight = 0;
+                _overlayCloneHost.style.overflow = Overflow.Hidden;
+
+                _overlayContentRoot.style.height = Length.Percent(100);
+                _overlayContentRoot.style.maxHeight = Length.Percent(100);
+                _overlayContentRoot.style.flexGrow = 1;
+                _overlayContentRoot.style.flexShrink = 1;
+                _overlayContentRoot.style.minHeight = 0;
+            }
+
+            _overlayLayer.schedule.Execute(Apply).StartingIn(0);
+            _overlayLayer.schedule.Execute(Apply).StartingIn(50);
+        }
+
         public enum SheetVerticalAlign
         {
             Top,
@@ -199,10 +241,21 @@ namespace Kismeta.UI
             ApplyAssetStylesheets(host, asset);
             overlay.Add(host);
             asset.CloneTree(host);
-            var screenRoot = host.Q(className: "screen") ?? (host.childCount > 0 ? host[0] : null);
-            if (screenRoot != null)
-                ApplyAssetStylesheets(screenRoot, asset);
-            _overlayContentRoot = screenRoot ?? host;
+            _overlayCloneHost = host;
+            VisualElement? contentRoot = null;
+            if (host.childCount > 0)
+            {
+                var first = host[0];
+                if (!string.IsNullOrEmpty(first.name))
+                    contentRoot = first;
+            }
+
+            contentRoot ??= host.Q(className: "screen")
+                ?? host.Q(className: "sheet")
+                ?? (host.childCount > 0 ? host[0] : null);
+            if (contentRoot != null)
+                ApplyAssetStylesheets(contentRoot, asset);
+            _overlayContentRoot = contentRoot ?? host;
             return host;
         }
 
@@ -272,6 +325,7 @@ namespace Kismeta.UI
             _overlayLayer.RemoveFromClassList("overlay-layer--sheet-center");
             _overlayLayer.RemoveFromClassList("overlay-layer--sheet-bottom");
             _overlayContentRoot = null;
+            _overlayCloneHost = null;
             SetOverlayBackdropBlur(false);
         }
 

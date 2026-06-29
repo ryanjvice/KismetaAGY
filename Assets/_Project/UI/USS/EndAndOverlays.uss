@@ -694,6 +694,14 @@
     margin-bottom: 10px;
     white-space: normal;
 }
+.exchange__subtitle--verdict {
+    font-size: 17px;
+    color: rgb(168, 205, 240);
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
+    -unity-text-align: middle-center;
+    margin-bottom: 14px;
+    margin-top: 2px;
+}
 .exchange__bilateral {
     flex-direction: column;
     margin-bottom: 12px;
@@ -707,6 +715,15 @@
 .exchange__tray-label {
     font-size: 11px;
     margin-bottom: 6px;
+}
+.tray--give .exchange__tray-label {
+    color: rgb(220, 180, 140);
+}
+.tray--get .exchange__tray-label {
+    color: rgb(180, 220, 200);
+}
+.tray--get .exchange__tray-label.exchange__tray-label--sink {
+    color: rgb(168, 205, 240);
 }
 .exchange__items {
     flex-direction: row;

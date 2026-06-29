@@ -44,6 +44,8 @@ namespace Kismeta.Core.Rules
             {
                 legs.Add(new ExchangeLeg(attackerId, PlayerExchangeEvent.SinkDiscard,
                     new[] { ExchangeItem.Discard(anteCardId) }));
+                legs.Add(new ExchangeLeg(defenderId, defenderId,
+                    new[] { ExchangeItem.Spread(targetCardId) }));
             }
 
             string context = winnerId == attackerId
@@ -60,14 +62,18 @@ namespace Kismeta.Core.Rules
             var legs = new List<ExchangeLeg>();
             if (winnerId == attackerId && arrestedDefenderCardId != null)
             {
-                legs.Add(new ExchangeLeg(defenderId, defenderId,
-                    new[] { ExchangeItem.ArrestedCrucible(arrestedDefenderCardId) }));
+                var arrested = new[] { ExchangeItem.ArrestedCrucible(arrestedDefenderCardId) };
+                legs.Add(new ExchangeLeg(defenderId, defenderId, arrested));
+                legs.Add(new ExchangeLeg(attackerId, attackerId, arrested));
             }
             else if (winnerId == defenderId)
             {
                 if (offeredInCrucible)
-                    legs.Add(new ExchangeLeg(attackerId, attackerId,
-                        new[] { ExchangeItem.ArrestedCrucible(offeredCardId) }));
+                {
+                    var arrested = new[] { ExchangeItem.ArrestedCrucible(offeredCardId) };
+                    legs.Add(new ExchangeLeg(attackerId, attackerId, arrested));
+                    legs.Add(new ExchangeLeg(defenderId, defenderId, arrested));
+                }
                 else
                     legs.Add(new ExchangeLeg(attackerId, PlayerExchangeEvent.SinkDiscard,
                         new[] { ExchangeItem.Discard(offeredCardId) }));

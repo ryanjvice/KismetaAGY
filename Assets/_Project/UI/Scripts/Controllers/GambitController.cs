@@ -164,11 +164,14 @@ namespace Kismeta.UI.Controllers
             Btn("g-roll-btn")?.SetEnabled(false);
 
             GambitResolvedEvent? resolved = null;
+            GambitDeclinedEvent? declined = null;
             string offered = "";
             foreach (var id in _stake) { offered = id; break; }
 
             _bridge.TrySubmit(new InitiateGambitCommand(_playerId, _rivalId, offered));
             yield return WaitForEvent(_session, (GambitResolvedEvent e) => resolved = e);
+            if (resolved == null)
+                yield return WaitForEvent(_session, (GambitDeclinedEvent e) => declined = e);
 
             if (resolved != null)
             {
@@ -176,8 +179,8 @@ namespace Kismeta.UI.Controllers
                 yield return RollDie(Lbl("die-foe-pip"), resolved.DefendRoll);
                 OnCompleted?.Invoke();
             }
-            else
-                Btn("g-roll-btn")?.SetEnabled(true);
+            else if (declined != null)
+                OnCompleted?.Invoke();
 
             _rolling = false;
         }

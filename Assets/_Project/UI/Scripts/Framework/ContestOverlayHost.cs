@@ -1,5 +1,6 @@
 using System;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Players;
 using Kismeta.UI.Controllers;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -15,6 +16,7 @@ namespace Kismeta.UI
         VisualTreeAsset? _duel;
         VisualTreeAsset? _gambit;
         VisualTreeAsset? _opposition;
+        VisualTreeAsset? _contestResponse;
 
         ViewportLayout? _layout;
         GameSession? _session;
@@ -24,16 +26,30 @@ namespace Kismeta.UI
         DuelController? _duelCtrl;
         GambitController? _gambitCtrl;
         OppositionController? _oppositionCtrl;
+        ContestResponseController? _responseCtrl;
 
         int? _pendingDuelRival;
         int? _pendingGambitRival;
         int? _pendingTradeRival;
+        GameLoop? _pendingResponseLoop;
 
-        enum ActiveContest { None, Trade, Duel, Gambit, Opposition }
+        enum ActiveContest { None, Trade, Duel, Gambit, Opposition, Response }
         ActiveContest _active = ActiveContest.None;
 
         public bool IsOpen => _active != ActiveContest.None
             && _layout != null && _layout.IsOverlayVisible;
+
+        public bool IsResponseActive => _active == ActiveContest.Response;
+
+        public bool IsDefenderRollInProgress =>
+            IsResponseActive && (_responseCtrl?.IsDuelRollInProgress ?? false);
+
+        public bool IsAwaitingDuelContinue =>
+            IsResponseActive && (_responseCtrl?.IsAwaitingDuelContinue ?? false);
+
+        public bool IsDefenderDuelUiPending => IsDefenderRollInProgress || IsAwaitingDuelContinue;
+
+        public System.Action? OnResponseCompleted;
 
         public int? ActiveSummerGroupIndex => _active switch
         {
@@ -64,13 +80,23 @@ namespace Kismeta.UI
             VisualTreeAsset trade,
             VisualTreeAsset duel,
             VisualTreeAsset gambit,
-            VisualTreeAsset opposition)
+            VisualTreeAsset opposition,
+            VisualTreeAsset contestResponse)
         {
             _trade = trade;
             _duel = duel;
             _gambit = gambit;
             _opposition = opposition;
+            _contestResponse = contestResponse;
             EnsureControllers();
+
+            if (_contestResponse != null
+                && !_contestResponse.name.StartsWith("ContestResponse"))
+            {
+                Debug.LogWarning(
+                    $"[ContestOverlayHost] Expected ContestResponse.uxml but got '{_contestResponse.name}'. " +
+                    "Run Kismeta → UI → Wire Bootstrap UI.");
+            }
         }
 
         void EnsureControllers()
@@ -80,6 +106,7 @@ namespace Kismeta.UI
             _duelCtrl ??= GetComponent<DuelController>();
             _gambitCtrl ??= GetComponent<GambitController>();
             _oppositionCtrl ??= GetComponent<OppositionController>();
+            _responseCtrl ??= GetComponent<ContestResponseController>();
         }
 
         public void BindState(GameSession session, CommandBridge bridge)
@@ -91,6 +118,7 @@ namespace Kismeta.UI
         public void DismissIfNotHumanTurn()
         {
             if (_bridge != null && _bridge.CanSubmit) return;
+            if (IsDefenderDuelUiPending) return;
             Dismiss();
         }
 
@@ -121,6 +149,20 @@ namespace Kismeta.UI
             ShowContest(_opposition, _oppositionCtrl, WireOpposition, ActiveContest.Opposition);
         }
 
+        public bool ShowContestResponse(GameLoop loop)
+        {
+            EnsureControllers();
+            var asset = _contestResponse ?? _responseCtrl?.UxmlAsset;
+            _pendingResponseLoop = loop;
+            if (!ShowContest(asset, _responseCtrl, WireResponse, ActiveContest.Response))
+            {
+                _pendingResponseLoop = null;
+                return false;
+            }
+
+            return true;
+        }
+
         public void Dismiss()
         {
             _active = ActiveContest.None;
@@ -128,41 +170,74 @@ namespace Kismeta.UI
             _duelCtrl?.Detach();
             _gambitCtrl?.Detach();
             _oppositionCtrl?.Detach();
+            _responseCtrl?.Detach();
             _layout?.DismissOverlay();
             NotifyOverlayChanged();
         }
 
-        void ShowContest<T>(VisualTreeAsset? asset, T? controller, System.Action wire, ActiveContest kind)
+        /// <summary>Clears contest active state when another overlay replaced ours on the shared layer.</summary>
+        public void ReleaseStaleActiveState()
+        {
+            if (_active == ActiveContest.None)
+                return;
+            _active = ActiveContest.None;
+            _pendingResponseLoop = null;
+            _tradeCtrl?.Detach();
+            _duelCtrl?.Detach();
+            _gambitCtrl?.Detach();
+            _oppositionCtrl?.Detach();
+            _responseCtrl?.Detach();
+            NotifyOverlayChanged();
+        }
+
+        bool ShowContest<T>(VisualTreeAsset? asset, T? controller, System.Action wire, ActiveContest kind)
             where T : OverlayController
         {
             EnsureControllers();
             if (_layout == null)
             {
                 Debug.LogWarning($"[ContestOverlayHost] Cannot show {kind}: ViewportLayout missing.");
-                return;
+                return false;
             }
             if (asset == null)
             {
                 Debug.LogWarning($"[ContestOverlayHost] Cannot show {kind}: UXML asset not assigned.");
-                return;
+                return false;
             }
             if (controller == null)
             {
                 Debug.LogWarning($"[ContestOverlayHost] Cannot show {kind}: controller missing on bootstrap.");
-                return;
+                return false;
             }
             _layout.ShowModal(asset);
-            var root = _layout.OverlayContentRoot;
+            var root = ResolveAttachRoot(_layout, kind);
             if (root == null)
             {
                 Debug.LogWarning($"[ContestOverlayHost] Cannot show {kind}: overlay content root missing.");
-                return;
+                _layout.DismissOverlay();
+                return false;
             }
+
+            if (kind == ActiveContest.Response
+                && root.Q<Button>("accept-btn") == null
+                && root.Q<Button>("roll-btn") == null)
+            {
+                Debug.LogError(
+                    $"[ContestOverlayHost] ContestResponse clone is missing #accept-btn and #roll-btn. " +
+                    $"Asset='{asset.name}', attachRoot='{root.name}', cloneChildren={root.childCount}. " +
+                    "If cloneChildren is 0, check the Unity console for UXML import errors on ContestResponse.uxml.");
+                _layout.DismissOverlay();
+                return false;
+            }
+
             controller.AttachTo(root);
             _active = kind;
+            if (kind == ActiveContest.Response)
+                _layout.ApplyBoundedOverlaySheet();
             wire();
             RefreshOpenOverlay();
             NotifyOverlayChanged();
+            return true;
         }
 
         void NotifyOverlayChanged() => OverlayChanged?.Invoke();
@@ -188,6 +263,11 @@ namespace Kismeta.UI
                     _gambitCtrl?.BindState(_session, _bridge);
                     break;
                 case ActiveContest.Opposition: _oppositionCtrl?.BindState(_session, _bridge); break;
+                case ActiveContest.Response:
+                    if (_pendingResponseLoop != null)
+                        _responseCtrl?.BindState(_session, _bridge, _pendingResponseLoop);
+                    _pendingResponseLoop = null;
+                    break;
             }
         }
 
@@ -217,6 +297,48 @@ namespace Kismeta.UI
             if (_oppositionCtrl == null) return;
             _oppositionCtrl.OnBack = Dismiss;
             _oppositionCtrl.OnCompleted = Dismiss;
+        }
+
+        void WireResponse()
+        {
+            if (_responseCtrl == null) return;
+            _responseCtrl.OnCompleted = () =>
+            {
+                ReleaseStaleActiveState();
+                OnResponseCompleted?.Invoke();
+            };
+        }
+
+        static VisualElement? ResolveAttachRoot(ViewportLayout layout, ActiveContest kind)
+        {
+            var host = layout.OverlayCloneHost ?? layout.OverlayContentRoot?.parent;
+            var root = layout.OverlayContentRoot;
+
+            if (kind == ActiveContest.Response)
+            {
+                var response = FindNamedDescendant(host, "contest-response")
+                    ?? FindNamedDescendant(root, "contest-response");
+                if (response != null) return response;
+            }
+
+            if (root == null) return null;
+
+            if (root.name == "contest-response" || root.ClassListContains("contest-response"))
+                return root;
+
+            if (root.ClassListContains("screen") || root.ClassListContains("sheet"))
+                return root;
+
+            return root.Q<VisualElement>(className: "sheet")
+                ?? root.Q<VisualElement>(className: "screen")
+                ?? root;
+        }
+
+        static VisualElement? FindNamedDescendant(VisualElement? parent, string elementName)
+        {
+            if (parent == null) return null;
+            if (parent.name == elementName) return parent;
+            return parent.Q<VisualElement>(elementName);
         }
     }
 }

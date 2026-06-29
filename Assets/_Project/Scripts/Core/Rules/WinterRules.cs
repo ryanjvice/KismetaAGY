@@ -259,6 +259,8 @@ namespace Kismeta.Core.Rules
             // Clear all per-round effect flags
             session.Board.CosmicEffect    = CosmicEffectFlags.Default;
             session.Board.BestOfThreeDuels = false;
+            session.Board.PendingContest   = null;
+            session.CurrentTurnPlayerId    = null;
 
             // Clear per-round stone flags and Tower arrest.
             // Wager state is intentionally preserved here; it is resolved and cleared

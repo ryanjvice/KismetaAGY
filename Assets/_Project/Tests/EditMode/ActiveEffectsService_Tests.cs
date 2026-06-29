@@ -272,5 +272,48 @@ namespace Kismeta.Core.Tests
                 ActiveEffectPolarity.Debuff
             }));
         }
+
+        [Test]
+        public void BuildDuelRelevant_BestOfThree_IncludesCosmicAgeFeatured()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Libra;
+            session.Board.BestOfThreeDuels = true;
+
+            var snapshot = ActiveEffectsService.BuildDuelRelevant(session, 0, 1, null, null);
+
+            StringAssert.Contains("best-of-three", snapshot.CosmicAge.Description);
+        }
+
+        [Test]
+        public void BuildDuelRelevant_FiltersCombatSpreadCardsAndStakedCards()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Scorpio;
+
+            AddSpreadCard(session, 0, "def-duel", "minor.cups.knight.1");
+            AddSpreadCard(session, 0, "def-target", "minor.pentacles.two.1");
+            AddSpreadCard(session, 0, "def-idle", "minor.cups.ace.2");
+            AddSpreadCard(session, 1, "att-ante", "minor.wands.seven.1");
+
+            var snapshot = ActiveEffectsService.BuildDuelRelevant(
+                session, 0, 1, "def-target", "att-ante");
+
+            var spreadSections = snapshot.Sections.Where(s => s.SectionId.StartsWith("spread-cards")).ToList();
+            Assert.AreEqual(2, spreadSections.Count);
+
+            var yours = spreadSections.First(s => s.Title == "Your spread");
+            Assert.AreEqual(2, yours.Items.Count);
+            Assert.IsTrue(yours.Items.Any(i => i.Id == "def-duel"));
+            Assert.IsTrue(yours.Items.Any(i => i.Id == "def-target"));
+
+            var theirs = spreadSections.First(s => s.Title.Contains("Green"));
+            Assert.AreEqual(1, theirs.Items.Count);
+            Assert.AreEqual("att-ante", theirs.Items[0].Id);
+        }
     }
 }

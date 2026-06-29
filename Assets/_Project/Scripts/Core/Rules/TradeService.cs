@@ -6,9 +6,8 @@ using Kismeta.Core.Entities;
 namespace Kismeta.Core.Rules
 {
     /// <summary>
-    /// Resolves direct card trades between players during the Summer free-action pool.
-    /// Only minor arcana cards in the Spread may be traded; no card-lock check is required
-    /// because card lock is always active in Summer (Spread cards are visible/usable).
+    /// Resolves direct card trades between players during the Summer action phase.
+    /// Only minor arcana cards in the Spread may be traded.
     /// </summary>
     public sealed class TradeService
     {
@@ -16,12 +15,73 @@ namespace Kismeta.Core.Rules
 
         public TradeService(ICardDatabase db) => _db = db;
 
-        /// <summary>
-        /// Immediately swaps <paramref name="offerCardIds"/> from initiator's Spread with
-        /// <paramref name="requestCardIds"/> from the target's Spread.
-        /// Either offer or request may be empty (a gift trade), but not both.
-        /// </summary>
+        /// <summary>Validate offer and record a pending trade awaiting target response.</summary>
+        public CommandResult TryInitiateTrade(GameSession session,
+            int initiatorId, int targetId,
+            IReadOnlyList<string> offerCardIds,
+            IReadOnlyList<string> requestCardIds)
+        {
+            var validation = ValidateTrade(session, initiatorId, targetId, offerCardIds, requestCardIds);
+            if (!validation.IsOk) return validation;
+
+            session.Board.PendingContest = new PendingContest
+            {
+                Kind           = ContestKind.Trade,
+                AttackerId     = initiatorId,
+                DefenderId     = targetId,
+                OfferCardIds   = new List<string>(offerCardIds),
+                RequestCardIds = new List<string>(requestCardIds)
+            };
+
+            session.EmitEvent(new TradeOfferedEvent(initiatorId, targetId, offerCardIds, requestCardIds));
+            return CommandResult.Ok($"Trade offered to P{targetId}.");
+        }
+
+        /// <summary>Target accepts or declines the pending trade.</summary>
+        public CommandResult TryRespondTrade(GameSession session, int targetId, bool accept)
+        {
+            var pending = session.Board.PendingContest;
+            if (pending == null || pending.Kind != ContestKind.Trade)
+                return CommandResult.Invalid("No pending trade to respond to.");
+            if (pending.DefenderId != targetId)
+                return CommandResult.Invalid("Only the trade target may respond.");
+            if (pending.OfferCardIds == null || pending.RequestCardIds == null)
+                return CommandResult.Invalid("Pending trade is missing card data.");
+
+            var initiatorId   = pending.AttackerId;
+            var offerCardIds  = pending.OfferCardIds;
+            var requestCardIds = pending.RequestCardIds;
+            session.Board.PendingContest = null;
+
+            if (!accept)
+            {
+                session.EmitEvent(new TradeDeclinedEvent(initiatorId, targetId));
+                return CommandResult.Ok("Trade declined.");
+            }
+
+            var validation = ValidateTrade(session, initiatorId, targetId, offerCardIds, requestCardIds);
+            if (!validation.IsOk) return validation;
+
+            ExecuteSwap(session, initiatorId, targetId, offerCardIds, requestCardIds);
+            session.EmitEvent(new TradeCompletedEvent(
+                initiatorId, targetId, offerCardIds.Count, requestCardIds.Count));
+            ExchangeEventEmitter.EmitTrade(session, initiatorId, targetId, offerCardIds, requestCardIds);
+            return CommandResult.Ok(
+                $"Trade complete: P{initiatorId} gave {offerCardIds.Count}, received {requestCardIds.Count}.");
+        }
+
+        /// <summary>Legacy entry point — initiates then auto-accepts (tests / debug).</summary>
         public CommandResult TryTrade(GameSession session,
+            int initiatorId, int targetId,
+            IReadOnlyList<string> offerCardIds,
+            IReadOnlyList<string> requestCardIds)
+        {
+            var initiate = TryInitiateTrade(session, initiatorId, targetId, offerCardIds, requestCardIds);
+            if (!initiate.IsOk) return initiate;
+            return TryRespondTrade(session, targetId, accept: true);
+        }
+
+        static CommandResult ValidateTrade(GameSession session,
             int initiatorId, int targetId,
             IReadOnlyList<string> offerCardIds,
             IReadOnlyList<string> requestCardIds)
@@ -39,27 +99,32 @@ namespace Kismeta.Core.Rules
 
             var initiator = session.Players[initiatorId];
             var target    = session.Players[targetId];
+            var db        = session.Rules?.CardDatabase;
 
-            // Validate initiator's offered cards
             foreach (var id in offerCardIds)
             {
                 if (!initiator.Spread.Contains(id))
                     return CommandResult.Invalid($"Card {id} is not in your Spread.");
-                var inst = session.GetCard(id);
-                var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
-                if (def?.IsMajorArcana == true)
-                    return CommandResult.Invalid($"Card {id} is Major Arcana and cannot be traded.");
+                if (db != null)
+                {
+                    var inst = session.GetCard(id);
+                    var def  = inst != null ? db.GetById(inst.DefinitionId) : null;
+                    if (def?.IsMajorArcana == true)
+                        return CommandResult.Invalid($"Card {id} is Major Arcana and cannot be traded.");
+                }
             }
 
-            // Validate target's requested cards
             foreach (var id in requestCardIds)
             {
                 if (!target.Spread.Contains(id))
                     return CommandResult.Invalid($"Card {id} is not in the target's Spread.");
-                var inst = session.GetCard(id);
-                var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
-                if (def?.IsMajorArcana == true)
-                    return CommandResult.Invalid($"Card {id} is Major Arcana and cannot be traded.");
+                if (db != null)
+                {
+                    var inst = session.GetCard(id);
+                    var def  = inst != null ? db.GetById(inst.DefinitionId) : null;
+                    if (def?.IsMajorArcana == true)
+                        return CommandResult.Invalid($"Card {id} is Major Arcana and cannot be traded.");
+                }
             }
 
             if (!PlayerAspectAlignment.IsMagnusTradeRatioValid(session, initiatorId, targetId,
@@ -67,7 +132,17 @@ namespace Kismeta.Core.Rules
                 return CommandResult.Invalid(
                     "Misaligned Magnus trade requires offering 2 cards for every 1 received.");
 
-            // Execute the swap
+            return CommandResult.Ok();
+        }
+
+        static void ExecuteSwap(GameSession session,
+            int initiatorId, int targetId,
+            IReadOnlyList<string> offerCardIds,
+            IReadOnlyList<string> requestCardIds)
+        {
+            var initiator = session.Players[initiatorId];
+            var target    = session.Players[targetId];
+
             foreach (var id in offerCardIds)
             {
                 initiator.Spread.Remove(id);
@@ -81,13 +156,6 @@ namespace Kismeta.Core.Rules
                 session.GetCard(id)?.MoveTo(CardZone.Spread, initiatorId);
                 initiator.Spread.Add(id);
             }
-
-            session.EmitEvent(new TradeCompletedEvent(
-                initiatorId, targetId,
-                offerCardIds.Count, requestCardIds.Count));
-            ExchangeEventEmitter.EmitTrade(session, initiatorId, targetId, offerCardIds, requestCardIds);
-            return CommandResult.Ok(
-                $"Trade complete: P{initiatorId} gave {offerCardIds.Count}, received {requestCardIds.Count}.");
         }
     }
 }

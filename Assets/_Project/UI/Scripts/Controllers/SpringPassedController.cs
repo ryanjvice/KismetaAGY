@@ -72,9 +72,9 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindStepRail(El("step-rail"), 4, 5, "step__dot--active");
             MainSceneBindings.BindYieldedTurnBanner(
                 Root, session, loop,
-                "at the zodiac wheel",
-                "You passed — waiting for spring to end",
-                "Spring ends when everyone passes in a row");
+                "taking their spring turn",
+                "Waiting for your turn…",
+                "End Turn when you are ready to pass");
             NarrativeSlotBindings.BindById(
                 Root,
                 "spring.passed",

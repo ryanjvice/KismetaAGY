@@ -49,7 +49,9 @@ namespace Kismeta.Core.Tests
                 crucible:      new CrucibleRules(db, codexDb, seed: seed),
                 crafting:      new CraftingRules(db),
                 winter:        new WinterRules(db),
-                validator:     new ActionValidator());
+                validator:     new ActionValidator(),
+                combat:        new CombatRules(seed: seed),
+                trade:         new TradeService(db));
 
             var players     = new List<PlayerState>(playerCount);
             var controllers = new List<IPlayerController>(playerCount);
@@ -235,64 +237,83 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
-        public void GameLoop_MarkPlayerYielded_True_After_Mark()
+        public void GameLoop_TurnPlayerId_IsNegative_Before_Run()
         {
             var db = LoadDb();
             var (_, loop) = BuildAIGame(db);
-
-            Assert.IsFalse(loop.IsPlayerYielded(0));
-            loop.MarkPlayerYielded(0);
-            Assert.IsTrue(loop.IsPlayerYielded(0));
+            Assert.AreEqual(-1, loop.TurnPlayerId);
         }
 
         [Test]
-        public void GameLoop_TryResolveYieldedPoolCommand_Returns_AutoPass_For_SummerAction()
+        public void GameLoop_IsLocalHumanWaitingForTurn_False_When_No_Turn()
         {
             var db = LoadDb();
             var (_, loop) = BuildAIGame(db);
-
-            loop.MarkPlayerYielded(1);
-            var cmd = loop.TryResolveYieldedPoolCommand(1, ActionHint.SummerAction);
-
-            Assert.IsInstanceOf<PassCrucibleActionCommand>(cmd);
-            Assert.AreEqual(1, ((PassCrucibleActionCommand)cmd!).PlayerId);
+            Assert.IsFalse(loop.IsLocalHumanWaitingForTurn);
         }
 
         [Test]
-        public void GameLoop_TryResolveYieldedPoolCommand_Returns_AutoPass_For_SpringAction()
+        public void Trade_Initiate_And_Respond_Completes_Swap()
         {
             var db = LoadDb();
-            var (_, loop) = BuildAIGame(db);
+            var (session, _) = BuildAIGame(db, 2, seed: 42);
+            session.Apply(new SetupGameCommand());
+            session.Phase.SetSeason(Season.Summer);
+            session.CurrentTurnPlayerId = 0;
 
-            loop.MarkPlayerYielded(0);
-            var cmd = loop.TryResolveYieldedPoolCommand(0, ActionHint.SpringAction);
+            var p0 = session.Players[0];
+            var p1 = session.Players[1];
+            if (p0.Spread.Count == 0 || p1.Spread.Count == 0)
+                Assert.Inconclusive("Need spread cards on both players for trade test.");
 
-            Assert.IsInstanceOf<PassActionCommand>(cmd);
-            Assert.AreEqual(0, ((PassActionCommand)cmd!).PlayerId);
+            var offer = new List<string> { p0.Spread[0] };
+            var request = new List<string> { p1.Spread[0] };
+
+            var initiate = session.Apply(new DirectTradeCommand(0, 1, offer, request));
+            Assert.IsTrue(initiate.IsOk, initiate.Message);
+            Assert.NotNull(session.Board.PendingContest);
+
+            var respond = session.Apply(new RespondTradeCommand(1, accept: true));
+            Assert.IsTrue(respond.IsOk, respond.Message);
+            Assert.IsNull(session.Board.PendingContest);
         }
 
         [Test]
-        public void GameLoop_TryResolveYieldedPoolCommand_Clears_Yield_For_NonPool_Hint()
+        public void Trade_Declined_Leaves_Cards_Unchanged()
         {
             var db = LoadDb();
-            var (_, loop) = BuildAIGame(db);
+            var (session, _) = BuildAIGame(db, 2, seed: 42);
+            session.Apply(new SetupGameCommand());
+            session.Phase.SetSeason(Season.Summer);
+            session.CurrentTurnPlayerId = 0;
 
-            loop.MarkPlayerYielded(0);
-            var cmd = loop.TryResolveYieldedPoolCommand(0, ActionHint.FateReagentChoice);
+            var p0 = session.Players[0];
+            var p1 = session.Players[1];
+            if (p0.Spread.Count == 0 || p1.Spread.Count == 0)
+                Assert.Inconclusive("Need spread cards on both players for trade test.");
 
-            Assert.IsNull(cmd);
-            Assert.IsFalse(loop.IsPlayerYielded(0));
+            string p0Card = p0.Spread[0];
+            string p1Card = p1.Spread[0];
+
+            session.Apply(new DirectTradeCommand(0, 1, new List<string> { p0Card }, new List<string> { p1Card }));
+            var result = session.Apply(new RespondTradeCommand(1, accept: false));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(p0.Spread.Contains(p0Card));
+            Assert.IsTrue(p1.Spread.Contains(p1Card));
         }
 
         [Test]
-        public void GameLoop_ClearYield_Removes_Yielded_Flag()
+        public void ActionValidator_Rejects_Contest_Initiation_When_Not_Turn_Player()
         {
             var db = LoadDb();
-            var (_, loop) = BuildAIGame(db);
+            var (session, _) = BuildAIGame(db);
+            session.Apply(new SetupGameCommand());
+            session.Phase.SetSeason(Season.Summer);
+            session.CurrentTurnPlayerId = 0;
 
-            loop.MarkPlayerYielded(0);
-            loop.ClearYield(0);
-            Assert.IsFalse(loop.IsPlayerYielded(0));
+            var validator = new ActionValidator();
+            var result = validator.Validate(session, new InitiateDuelCommand(1, 0, "x", "y"));
+            Assert.IsFalse(result.IsOk, "Non-turn player should not initiate contests.");
         }
     }
 }

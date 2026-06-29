@@ -491,8 +491,11 @@ namespace Kismeta.Core.Tests
             var session = SetupSession(db, codexDb);
             session.Players[1].StoneState = StoneState.Forging;
             SetSeason(session, Season.Summer);
-            var result = session.Apply(new InitiateOppositionCommand(0, 1));
-            Assert.IsTrue(result.IsOk, result.Message);
+            session.CurrentTurnPlayerId = 0;
+            var initiate = session.Apply(new InitiateOppositionCommand(0, 1));
+            Assert.IsTrue(initiate.IsOk, initiate.Message);
+            var respond = session.Apply(new RespondOppositionCommand(1, accept: true));
+            Assert.IsTrue(respond.IsOk, respond.Message);
             // One of the two players must be in Stasis
             bool someoneInStasis = session.Players[0].StoneState == StoneState.Stasis
                                 || session.Players[1].StoneState == StoneState.Stasis;

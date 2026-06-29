@@ -85,6 +85,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _duel;
         [SerializeField] private VisualTreeAsset _gambit;
         [SerializeField] private VisualTreeAsset _opposition;
+        [SerializeField] private VisualTreeAsset _contestResponse;
         [SerializeField] private VisualTreeAsset _fireStone;
         [SerializeField] private VisualTreeAsset _temperStone;
         [SerializeField] private VisualTreeAsset _manageCards;
@@ -225,6 +226,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<DuelController>();
             EnsureController<GambitController>();
             EnsureController<OppositionController>();
+            EnsureController<ContestResponseController>();
             EnsureController<FireStoneController>();
             EnsureController<TemperStoneController>();
             EnsureController<ManageCardsController>();
@@ -255,7 +257,7 @@ namespace Kismeta.Game.Bootstrap
             springOverlays?.Configure(_buildHouse, _boardInspect);
 
             var contestOverlays = GetComponent<ContestOverlayHost>();
-            contestOverlays?.Configure(_trade, _duel, _gambit, _opposition);
+            contestOverlays?.Configure(_trade, _duel, _gambit, _opposition, _contestResponse);
 
             var autumnOverlays = GetComponent<AutumnOverlayHost>();
             autumnOverlays?.Configure(

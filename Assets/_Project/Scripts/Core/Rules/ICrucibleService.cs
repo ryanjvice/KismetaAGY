@@ -26,8 +26,16 @@ namespace Kismeta.Core.Rules
         CommandResult TryLeaveStasis(GameSession session, int playerId);
 
         /// <summary>
-        /// Autumn Step 2: attacker initiates an Opposition against a Forging stone.
-        /// Score = alignment points + dice roll; higher total wins. Attacker wins ties.
+        /// Summer: attacker initiates an Opposition against a Forging stone.
+        /// Records a pending contest awaiting defender response.
+        /// </summary>
+        CommandResult TryInitiateOppose(GameSession session, int attackerId, int defenderId);
+
+        /// <summary>Summer: defender accepts or declines a pending Opposition.</summary>
+        CommandResult TryRespondOpposition(GameSession session, int defenderId, bool accept);
+
+        /// <summary>
+        /// Legacy entry point: initiates then auto-accepts (tests / debug).
         /// </summary>
         CommandResult TryOppose(GameSession session, int attackerId, int defenderId);
 

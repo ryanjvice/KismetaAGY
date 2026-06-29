@@ -13,13 +13,9 @@ namespace Kismeta.Core.Players
 {
     /// <summary>
     /// Drives one complete game of Kismeta from Setup through end-of-game.
-    /// Calls <see cref="IPlayerController.RequestActionAsync"/> for every decision point,
-    /// applying the returned command to the session and advancing the phase machine.
-    ///
-    /// Free-action phases (Summer and Autumn) use a consecutive-pass pool:
-    /// the pool ends when all players pass without anyone acting in between.
-    ///
-    /// This class has no Unity dependency; it can be unit-tested with seeded AI controllers.
+    /// Season action phases use a single clockwise lap from the Agekeeper;
+    /// each player takes multiple actions until they End Turn (Pass).
+    /// Contests pause the active turn until the defender responds.
     /// </summary>
     public sealed class GameLoop
     {
@@ -35,6 +31,9 @@ namespace Kismeta.Core.Players
 
         /// <summary>0-based index of the player the loop is currently asking to act.</summary>
         public int ActivePlayerId { get; private set; } = -1;
+
+        /// <summary>Player whose proactive turn is active during a season action phase.</summary>
+        public int TurnPlayerId { get; private set; } = -1;
 
         /// <summary>First hot-seat player index, or 0 when no human is seated.</summary>
         public int LocalHumanPlayerId
@@ -59,9 +58,6 @@ namespace Kismeta.Core.Players
         /// <summary>Fired on every log-worthy event (phase changes, errors, etc.).</summary>
         public event Action<string>? OnLog;
 
-        /// <summary>Players who confirmed Pass during the current Spring/Summer/Autumn free-action pool.</summary>
-        private readonly HashSet<int> _yieldedPlayerIds = new();
-
         public GameLoop(GameSession session, IReadOnlyList<IPlayerController> controllers)
         {
             _session     = session;
@@ -70,42 +66,15 @@ namespace Kismeta.Core.Players
 
         public void BindCeremonyGate(CeremonyGate gate) => _ceremonyGate = gate;
 
-        /// <summary>True when the player confirmed Pass for the current Spring/Summer/Autumn pool.</summary>
-        public bool IsPlayerYielded(int playerId) => _yieldedPlayerIds.Contains(playerId);
-
-        /// <summary>True when the local human has yielded in the current Spring/Summer/Autumn pool.</summary>
-        public bool IsLocalHumanYielded => IsPlayerYielded(LocalHumanPlayerId);
-
-        /// <summary>Clears yield so the player can act again (e.g. after a response prompt).</summary>
-        public void ClearYield(int playerId) => _yieldedPlayerIds.Remove(playerId);
-
         /// <summary>
-        /// When a player has yielded, returns an auto-pass for Spring/Summer/Autumn pool hints.
-        /// Clears yield when a non-pool hint is requested. Returns null when the player should act normally.
+        /// When set, invoked after a contest resolves so the UI can block until seated humans
+        /// acknowledge any exchange summary they participated in.
         /// </summary>
-        public IGameCommand? TryResolveYieldedPoolCommand(int playerId, ActionHint hint)
-        {
-            if (!IsYieldPoolHint(hint))
-            {
-                _yieldedPlayerIds.Remove(playerId);
-                return null;
-            }
+        public Func<CancellationToken, Task>? WaitForPendingExchangesAsync { get; set; }
 
-            if (!_yieldedPlayerIds.Contains(playerId))
-                return null;
-
-            return hint switch
-            {
-                ActionHint.SpringAction => new PassActionCommand(playerId),
-                _ => new PassCrucibleActionCommand(playerId)
-            };
-        }
-
-        /// <summary>Marks a player as yielded after confirming Pass in a free-action pool.</summary>
-        public void MarkPlayerYielded(int playerId) => _yieldedPlayerIds.Add(playerId);
-
-        static bool IsYieldPoolHint(ActionHint hint) =>
-            hint is ActionHint.SpringAction or ActionHint.SummerAction or ActionHint.AutumnAction;
+        /// <summary>True when the local human is not the active turn player during a season action phase.</summary>
+        public bool IsLocalHumanWaitingForTurn =>
+            TurnPlayerId >= 0 && TurnPlayerId != LocalHumanPlayerId;
 
         // ─── Entry point ──────────────────────────────────────────────────────────
 
@@ -114,7 +83,6 @@ namespace Kismeta.Core.Players
         {
             Log("=== Game Loop Started ===");
 
-            // One-time setup
             Apply(new SetupGameCommand());
             if (_session.IsOver) return;
 
@@ -140,10 +108,6 @@ namespace Kismeta.Core.Players
 
         // ─── Phase helper ─────────────────────────────────────────────────────────
 
-        /// <summary>
-        /// Jumps the phase controller to the first step of the given season and fires
-        /// a <see cref="PhaseChangedEvent"/> so the UI left-column label stays in sync.
-        /// </summary>
         private void SetPhase(Season season)
         {
             _session.Phase.SetSeason(season);
@@ -182,18 +146,16 @@ namespace Kismeta.Core.Players
                 Apply(cmd);
             }
 
-            // Resolve Fate cards that were drawn (auto + async)
             await ResolvePendingFatesAsync(ct);
             AuditInventory("after ResolvePendingFates");
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
-            // Resolve Adept purchase decisions queued during harvest
             await ResolvePendingAdeptsAsync(ct);
             AuditInventory("after ResolvePendingAdepts");
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
             Log("Spring — Step 4: Spring Hub (Commune / Build a House)");
-            await RunFreeActionPool(ActionHint.SpringAction, ct);
+            await RunSeasonTurnsAsync(ActionHint.SpringAction, ct);
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
             Log("Spring — Step 5: Card Lock");
@@ -215,14 +177,12 @@ namespace Kismeta.Core.Players
             {
                 if (ct.IsCancellationRequested) break;
 
-                // Auto-resolve inline (returns true) — nothing further needed
                 if (_session.Rules?.FateResolver?.Resolve(_session, playerId, fateCardId, arcanaNum) ?? false)
                     continue;
 
-                // Async fates require player input
                 switch (arcanaNum)
                 {
-                    case 18: // Moon: draw 4 cards, then player keeps 2
+                    case 18:
                         Log($"Spring — Fate: The Moon — P{playerId} draws 4, keeps 2");
                         _session.Board.FateMoonDrawnCardIds.Clear();
                         DrawCards(playerId, 4, _session.Board.FateMoonDrawnCardIds);
@@ -234,7 +194,7 @@ namespace Kismeta.Core.Players
                             Log($"[WARN] Moon decision rejected: {moonResult.Message}");
                         break;
 
-                    case 0: // Fool: drawer draws 2; each opponent picks 1 Reagent
+                    case 0:
                         Log($"Spring — Fate: The Fool — P{playerId} draws 2");
                         DrawCards(playerId, 2);
                         foreach (var opp in _session.Players)
@@ -246,7 +206,7 @@ namespace Kismeta.Core.Players
                         }
                         break;
 
-                    case 6: // Lovers: drawer picks a target; that target chooses the reward for the drawer only
+                    case 6:
                         Log($"Spring — Fate: The Lovers — P{playerId} picks a target to choose their reward");
                         var loversTargetCmd = await RequestAsync(playerId, ActionHint.FateLoversTargetPick, ct, fateCardId);
                         int targetId = (playerId + 1) % _session.Players.Count;
@@ -255,10 +215,7 @@ namespace Kismeta.Core.Players
                         Log($"Spring — Fate: The Lovers — P{targetId} now chooses the reward for P{playerId}");
                         var loversRewardCmd = await RequestAsync(targetId, ActionHint.FateLoversChoice, ct, fateCardId);
                         if (loversRewardCmd is FateLoversChoiceCommand lc)
-                        {
-                            // Only the drawer receives the reward (the target is the chooser, not the recipient)
                             Apply(new FateLoversChoiceCommand(playerId, lc.DrawCards, lc.ChosenReagent, targetId));
-                        }
                         break;
                 }
             }
@@ -271,7 +228,6 @@ namespace Kismeta.Core.Players
             var pending = _session.Board.PendingAdeptDecisions;
             if (pending.Count == 0) return;
 
-            // Process a snapshot; new entries won't be added mid-resolution
             var decisions = new List<(int PlayerId, string AdeptCardId)>();
             var seen = new HashSet<string>();
             foreach (var (playerId, adeptCardId) in pending)
@@ -314,8 +270,8 @@ namespace Kismeta.Core.Players
             await WaitCeremonyUiAsync(CeremonyStep.SummerIntro, ct);
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
-            Log("Summer — Free-Action Pool (Trade / Duel / Gambit / Opposition)");
-            await RunFreeActionPool(ActionHint.SummerAction, ct);
+            Log("Summer — Turn-based actions (Trade / Duel / Gambit / Opposition)");
+            await RunSeasonTurnsAsync(ActionHint.SummerAction, ct);
             AuditInventory("end Summer");
         }
 
@@ -327,8 +283,8 @@ namespace Kismeta.Core.Players
             await WaitCeremonyUiAsync(CeremonyStep.AutumnIntro, ct);
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
-            Log("Autumn — Free-Action Pool (Craft / Activate / Forge)");
-            await RunFreeActionPool(ActionHint.AutumnAction, ct);
+            Log("Autumn — Turn-based actions (Craft / Activate / Forge)");
+            await RunSeasonTurnsAsync(ActionHint.AutumnAction, ct);
             AuditInventory("end Autumn");
         }
 
@@ -344,7 +300,7 @@ namespace Kismeta.Core.Players
             Apply(new SetCardLockCommand(false));
 
             Log("Winter — Step 2: Activities");
-            await RunFreeActionPool(ActionHint.WinterAction, ct);
+            await RunSeasonTurnsAsync(ActionHint.WinterAction, ct);
 
             Log("Winter — Step 3: Enforce Card Limits");
             await RunWinterDiscardAsync(ct);
@@ -400,7 +356,7 @@ namespace Kismeta.Core.Players
             await _ceremonyGate.WaitAsync(step, ct);
         }
 
-        private bool HasAnyHumanPlayer()
+        public bool HasAnyHumanPlayer()
         {
             foreach (var c in _controllers)
             {
@@ -410,13 +366,9 @@ namespace Kismeta.Core.Players
             return false;
         }
 
-        private bool IsHumanPlayer(int playerId) =>
+        public bool IsHumanPlayer(int playerId) =>
             playerId >= 0 && playerId < _controllers.Count && _controllers[playerId] is HotSeatController;
 
-        /// <summary>
-        /// For each player: if over Hand or Spread limits, ask them to choose discards.
-        /// Always clear Fate cards from Arcanum (automated cleanup for every player).
-        /// </summary>
         private async Task RunWinterDiscardAsync(CancellationToken ct)
         {
             _session.Rules?.Winter?.ClearFateCardsFromArcanum(_session);
@@ -432,54 +384,88 @@ namespace Kismeta.Core.Players
             }
         }
 
-        // ─── Free-action pool (shared by Summer + Autumn) ────────────────────────
+        // ─── Turn-based season actions ────────────────────────────────────────────
 
         /// <summary>
-        /// Round-robin, starting from the Agekeeper, until all players pass consecutively.
+        /// Single clockwise lap starting from the Agekeeper. Each player takes a proactive turn
+        /// until they End Turn (Pass).
         /// </summary>
-        private async Task RunFreeActionPool(ActionHint hint, CancellationToken ct)
+        private async Task RunSeasonTurnsAsync(ActionHint hint, CancellationToken ct)
         {
-            if (IsYieldPoolHint(hint))
-                _yieldedPlayerIds.Clear();
+            int playerCount = _session.Players.Count;
+            int startIdx    = FindAgekeeperIndex();
 
-            int playerCount       = _session.Players.Count;
-            int startIdx          = FindAgekeeperIndex();
-            int consecutivePasses = 0;
-            int currentIdx        = startIdx;
-
-            while (consecutivePasses < playerCount && !_session.IsOver && !ct.IsCancellationRequested)
+            for (int i = 0; i < playerCount; i++)
             {
-                int playerId = _session.Players[currentIdx].PlayerId;
-                var cmd      = await RequestAsync(playerId, hint, ct);
-                var result   = Apply(cmd);
+                if (_session.IsOver || ct.IsCancellationRequested) return;
 
-                if (hint == ActionHint.SpringAction && cmd is PassActionCommand springPass)
-                    MarkPlayerYielded(springPass.PlayerId);
-                else if (hint is ActionHint.SummerAction or ActionHint.AutumnAction
-                         && cmd is PassCrucibleActionCommand passCmd)
-                    MarkPlayerYielded(passCmd.PlayerId);
-
-                // A player is considered to have "given up their turn" if they:
-                //   (a) explicitly passed, OR
-                //   (b) submitted a command that the rule engine rejected (nothing changed).
-                // Only a successfully applied non-pass action resets the streak.
-                bool passed = cmd is PassActionCommand or PassCrucibleActionCommand;
-                bool acted  = !passed && result.IsOk;
-                consecutivePasses = acted ? 0 : consecutivePasses + 1;
-
-                currentIdx = (currentIdx + 1) % playerCount;
+                int idx      = (startIdx + i) % playerCount;
+                int playerId = _session.Players[idx].PlayerId;
+                await RunPlayerTurnAsync(playerId, hint, ct);
             }
         }
+
+        /// <summary>
+        /// One player's proactive turn: prompt repeatedly until they End Turn or the game ends.
+        /// </summary>
+        private async Task RunPlayerTurnAsync(int playerId, ActionHint hint, CancellationToken ct)
+        {
+            TurnPlayerId = playerId;
+            _session.CurrentTurnPlayerId = playerId;
+            Log($"Turn — P{playerId} ({hint})");
+
+            try
+            {
+                while (!_session.IsOver && !ct.IsCancellationRequested)
+                {
+                    var cmd    = await RequestAsync(playerId, hint, ct);
+                    var result = Apply(cmd);
+
+                    if (IsEndTurnCommand(cmd))
+                        break;
+
+                    if (result.IsOk)
+                        await ResolvePendingContestAsync(ct);
+                }
+            }
+            finally
+            {
+                TurnPlayerId = -1;
+                _session.CurrentTurnPlayerId = null;
+            }
+        }
+
+        private async Task ResolvePendingContestAsync(CancellationToken ct)
+        {
+            var pending = _session.Board.PendingContest;
+            if (pending == null || ct.IsCancellationRequested) return;
+
+            var responseHint = pending.Kind switch
+            {
+                ContestKind.Trade      => ActionHint.TradeResponse,
+                ContestKind.Duel       => ActionHint.DuelResponse,
+                ContestKind.Gambit     => ActionHint.GambitResponse,
+                ContestKind.Opposition => ActionHint.OppositionResponse,
+                _                      => ActionHint.None
+            };
+
+            if (responseHint == ActionHint.None) return;
+
+            Log($"Contest — P{pending.DefenderId} must respond to {pending.Kind} from P{pending.AttackerId}");
+            var responseCmd = await RequestAsync(pending.DefenderId, responseHint, ct);
+            var result = Apply(responseCmd);
+            if (result.IsOk && WaitForPendingExchangesAsync != null)
+                await WaitForPendingExchangesAsync(ct);
+        }
+
+        static bool IsEndTurnCommand(IGameCommand cmd) =>
+            cmd is PassActionCommand or PassCrucibleActionCommand;
 
         // ─── Controller dispatch ──────────────────────────────────────────────────
 
         private async Task<IGameCommand> RequestAsync(int playerId, ActionHint hint,
             CancellationToken ct, string? pendingCardId = null)
         {
-            var yieldedCmd = TryResolveYieldedPoolCommand(playerId, hint);
-            if (yieldedCmd != null)
-                return yieldedCmd;
-
             ActivePlayerId = playerId;
             PendingCardId  = pendingCardId;
             var controller = _controllers[playerId];
@@ -487,12 +473,10 @@ namespace Kismeta.Core.Players
             var pubView  = GamePublicView.From(_session);
             var privView = PlayerPrivateView.From(_session, playerId);
 
-            // For The Moon decision, pass the 4 drawn card IDs so controllers can validate
             IReadOnlyList<string>? moonDrawnIds = hint == ActionHint.FateMoonDecision
                 ? _session.Board.FateMoonDrawnCardIds
                 : null;
 
-            // For Adept decisions, pass which Arcanum slots are already Adepts (vs Fate cards)
             IReadOnlyList<string>? arcanumAdeptIds = null;
             if (hint == ActionHint.AdeptDecision)
             {
@@ -538,10 +522,6 @@ namespace Kismeta.Core.Players
 
         // ─── Helpers ──────────────────────────────────────────────────────────────
 
-        /// <summary>
-        /// Applies a command without completing the pending hot-seat request.
-        /// Used during Card Limits for rearrange/craft side effects.
-        /// </summary>
         public CommandResult ApplySideEffect(IGameCommand cmd) => Apply(cmd);
 
         private CommandResult Apply(IGameCommand cmd)
@@ -566,12 +546,6 @@ namespace Kismeta.Core.Players
             return 0;
         }
 
-        /// <summary>
-        /// Draw <paramref name="count"/> cards from CommonDeck, routing each through
-        /// <see cref="IHarvestService.RouteDrawnCard"/> so Major Arcana never land in Hand.
-        /// Minor Arcana card ids are appended to <paramref name="minorPool"/> when provided
-        /// (used by the Moon fate to build the player's "keep-2" pick list).
-        /// </summary>
         private void DrawCards(int playerId, int count, List<string>? minorPool = null)
         {
             var harvest = _session.Rules?.Harvest;
@@ -586,7 +560,6 @@ namespace Kismeta.Core.Players
                     harvest.RouteDrawnCard(_session, playerId, id, minorPool);
                 else
                 {
-                    // Fallback: plain hand add (tests without rules wired)
                     _session.GetCard(id)?.MoveTo(CardZone.Hand, playerId);
                     _session.Players[playerId].Hand.Add(id);
                     minorPool?.Add(id);
@@ -611,39 +584,38 @@ namespace Kismeta.Core.Players
     public enum ActionHint
     {
         None,
-        /// <summary>Player rolls their Zodiac Die to determine their sign for the round.</summary>
         RollZodiac,
-        /// <summary>Player reviews their rolled sign before harvest continues.</summary>
         AcknowledgeSign,
-        /// <summary>Player reviews harvest breakdown and confirms the deal.</summary>
         ConfirmHarvest,
         /// <summary>Legacy hint for standalone Commune screen; Spring Hub uses SpringAction.</summary>
         Commune,
-        /// <summary>Spring Hub free-action pool: Commune, Build a House, or pass to Summer.</summary>
+        /// <summary>Spring Hub turn: Commune, Build a House, or End Turn.</summary>
         SpringAction,
-        /// <summary>Future: player responds during Spring hub (breaks yield for that player).</summary>
-        SpringHubResponse,
-        /// <summary>Summer free-action pool: Trade, Duel, Gambit, Opposition, or Pass.</summary>
+        /// <summary>Summer turn: Trade, Duel, Gambit, Opposition, or End Turn.</summary>
         SummerAction,
-        /// <summary>Autumn free-action pool: Craft, Activate, Fire, Temper, Leave Stasis, or Pass.</summary>
+        /// <summary>Autumn turn: Craft, Activate, Fire, Temper, Leave Stasis, or End Turn.</summary>
         AutumnAction,
-        /// <summary>Future: defender responds to a Summer contest (breaks yield for that player).</summary>
+        /// <summary>Defender responds to a pending trade offer.</summary>
+        TradeResponse,
+        /// <summary>Defender responds to a pending duel.</summary>
+        DuelResponse,
+        /// <summary>Defender responds to a pending gambit.</summary>
+        GambitResponse,
+        /// <summary>Defender responds to a pending opposition.</summary>
+        OppositionResponse,
+        /// <summary>Future: player responds during Spring hub.</summary>
+        SpringHubResponse,
+        /// <summary>Legacy alias kept for UI routing compatibility.</summary>
         SummerContestResponse,
-        /// <summary>Future: defender responds to an Autumn forge action (breaks yield for that player).</summary>
+        /// <summary>Future: defender responds to an Autumn forge action.</summary>
         AutumnForgeResponse,
-        /// <summary>Player must choose to Buy or Decline an Adept card just drawn in Harvest.</summary>
         AdeptDecision,
-        /// <summary>The Moon Fate: player keeps 2 of 4 drawn cards, returns the rest.</summary>
         FateMoonDecision,
-        /// <summary>The Fool/Lovers Fate: player picks one Reagent from the supply.</summary>
         FateReagentChoice,
-        /// <summary>The Lovers Fate: target player chooses the drawer's reward.</summary>
         FateLoversChoice,
-        /// <summary>The Lovers Fate: drawer picks which opponent will choose the reward.</summary>
         FateLoversTargetPick,
-        /// <summary>Winter Activities free-action pool: move cards Hand↔Spread, craft, or place Fateful Wager.</summary>
+        /// <summary>Winter Activities turn: move cards, craft, wager, or End Turn.</summary>
         WinterAction,
-        /// <summary>Player must choose which cards to discard because they are over the zone limit.</summary>
         DiscardToLimit,
     }
 }

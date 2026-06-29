@@ -7,11 +7,6 @@ namespace Kismeta.Core.Rules
 {
     /// <summary>
     /// Summer social combat: Duel and Gambit resolution, and releasing Arrested cards.
-    ///
-    /// Duel   — Attacker targets a Spread card and antes one of their own; dice roll decides the steal.
-    /// Gambit — Attacker offers an Active Crucible or Adept card; defender pays Ward reagents to enter;
-    ///          winner takes both cards (loser's card is arrested).
-    /// FreeArrested — Spend 1 Salt to un-arrest a Crucible slot (during Summer only).
     /// </summary>
     public sealed class CombatRules
     {
@@ -24,7 +19,61 @@ namespace Kismeta.Core.Rules
 
         // ── Duel ──────────────────────────────────────────────────────────────────
 
+        public CommandResult TryInitiateDuel(GameSession session, int attackerId, int defenderId,
+            string targetCardId, string anteCardId)
+        {
+            var validation = ValidateDuelSetup(session, attackerId, defenderId, targetCardId, anteCardId);
+            if (!validation.IsOk) return validation;
+
+            session.Board.PendingContest = new PendingContest
+            {
+                Kind         = ContestKind.Duel,
+                AttackerId   = attackerId,
+                DefenderId   = defenderId,
+                TargetCardId = targetCardId,
+                AnteCardId   = anteCardId
+            };
+
+            session.EmitEvent(new DuelOfferedEvent(attackerId, defenderId, targetCardId, anteCardId));
+            return CommandResult.Ok($"Duel offered to P{defenderId}.");
+        }
+
+        public CommandResult TryRespondDuel(GameSession session, int defenderId, bool accept)
+        {
+            var pending = session.Board.PendingContest;
+            if (pending == null || pending.Kind != ContestKind.Duel)
+                return CommandResult.Invalid("No pending duel to respond to.");
+            if (pending.DefenderId != defenderId)
+                return CommandResult.Invalid("Only the duel defender may respond.");
+            if (pending.TargetCardId == null || pending.AnteCardId == null)
+                return CommandResult.Invalid("Pending duel is missing card data.");
+
+            var attackerId   = pending.AttackerId;
+            var targetCardId = pending.TargetCardId;
+            var anteCardId   = pending.AnteCardId;
+            session.Board.PendingContest = null;
+
+            if (!accept)
+            {
+                session.EmitEvent(new DuelDeclinedEvent(attackerId, defenderId));
+                return CommandResult.Ok("Duel declined.");
+            }
+
+            var validation = ValidateDuelSetup(session, attackerId, defenderId, targetCardId, anteCardId);
+            if (!validation.IsOk) return validation;
+
+            return ResolveDuel(session, attackerId, defenderId, targetCardId, anteCardId);
+        }
+
         public CommandResult TryDuel(GameSession session, int attackerId, int defenderId,
+            string targetCardId, string anteCardId)
+        {
+            var initiate = TryInitiateDuel(session, attackerId, defenderId, targetCardId, anteCardId);
+            if (!initiate.IsOk) return initiate;
+            return TryRespondDuel(session, defenderId, accept: true);
+        }
+
+        static CommandResult ValidateDuelSetup(GameSession session, int attackerId, int defenderId,
             string targetCardId, string anteCardId)
         {
             if (attackerId == defenderId)
@@ -57,7 +106,15 @@ namespace Kismeta.Core.Rules
                     return CommandResult.Invalid("Ante card is Major Arcana and cannot be dueled with.");
             }
 
-            // Each side rolls 1–12; attacker wins ties
+            return CommandResult.Ok();
+        }
+
+        CommandResult ResolveDuel(GameSession session, int attackerId, int defenderId,
+            string targetCardId, string anteCardId)
+        {
+            var attacker = session.Players[attackerId];
+            var defender = session.Players[defenderId];
+
             int attackRoll = _rng.Next(1, 13);
             int defendRoll = _rng.Next(1, 13);
             bool attackerWins = attackRoll >= defendRoll;
@@ -86,7 +143,66 @@ namespace Kismeta.Core.Rules
 
         // ── Gambit ────────────────────────────────────────────────────────────────
 
+        public CommandResult TryInitiateGambit(GameSession session, int attackerId, int defenderId,
+            string offeredCardId)
+        {
+            var validation = ValidateGambitSetup(session, attackerId, defenderId, offeredCardId);
+            if (!validation.IsOk) return validation;
+
+            int wardCost = session.Players[defenderId].StoneWardCount;
+            session.Board.PendingContest = new PendingContest
+            {
+                Kind          = ContestKind.Gambit,
+                AttackerId    = attackerId,
+                DefenderId    = defenderId,
+                OfferedCardId = offeredCardId
+            };
+
+            session.EmitEvent(new GambitOfferedEvent(attackerId, defenderId, offeredCardId, wardCost));
+            return CommandResult.Ok($"Gambit offered to P{defenderId}.");
+        }
+
+        public CommandResult TryRespondGambit(GameSession session, int defenderId, bool accept,
+            System.Collections.Generic.IReadOnlyList<(ReagentType Type, int Count)>? reagentPayments = null)
+        {
+            var pending = session.Board.PendingContest;
+            if (pending == null || pending.Kind != ContestKind.Gambit)
+                return CommandResult.Invalid("No pending gambit to respond to.");
+            if (pending.DefenderId != defenderId)
+                return CommandResult.Invalid("Only the gambit defender may respond.");
+            if (pending.OfferedCardId == null)
+                return CommandResult.Invalid("Pending gambit is missing card data.");
+
+            var attackerId    = pending.AttackerId;
+            var offeredCardId = pending.OfferedCardId;
+            session.Board.PendingContest = null;
+
+            if (!accept)
+            {
+                session.EmitEvent(new GambitDeclinedEvent(attackerId, defenderId));
+                return CommandResult.Ok("Gambit declined.");
+            }
+
+            var validation = ValidateGambitSetup(session, attackerId, defenderId, offeredCardId);
+            if (!validation.IsOk) return validation;
+
+            var defender = session.Players[defenderId];
+            int wardCost = defender.StoneWardCount;
+            if (!ReagentSpendHelper.TrySpend(defender, wardCost, reagentPayments, out var spendError))
+                return CommandResult.Invalid(spendError ?? "Could not pay ward cost.");
+
+            return ResolveGambit(session, attackerId, defenderId, offeredCardId);
+        }
+
         public CommandResult TryGambit(GameSession session, int attackerId, int defenderId,
+            string offeredCardId)
+        {
+            var initiate = TryInitiateGambit(session, attackerId, defenderId, offeredCardId);
+            if (!initiate.IsOk) return initiate;
+            return TryRespondGambit(session, defenderId, accept: true);
+        }
+
+        static CommandResult ValidateGambitSetup(GameSession session, int attackerId, int defenderId,
             string offeredCardId)
         {
             if (attackerId == defenderId)
@@ -95,7 +211,6 @@ namespace Kismeta.Core.Rules
             var attacker = session.Players[attackerId];
             var defender = session.Players[defenderId];
 
-            // Offered card must be in an Active Crucible slot or Attacker's Arcanum
             bool offeredInCrucible = attacker.CrucibleSlots.Exists(
                 s => s.CardInstanceId == offeredCardId && s.State == CrucibleCardState.Active);
             bool offeredInArcanum  = attacker.Arcanum.Contains(offeredCardId);
@@ -104,34 +219,17 @@ namespace Kismeta.Core.Rules
                 return CommandResult.Invalid(
                     "Offered card must be in an Active Crucible slot or your Arcanum.");
 
-            // Defender pays Ward count in reagents to enter the Gambit
-            int wardCost = defender.StoneWardCount;
-            if (wardCost > 0)
-            {
-                // Count all reagents the defender has
-                int total = 0;
-                foreach (ReagentType rt in Enum.GetValues(typeof(ReagentType)))
-                    total += defender.GetReagent(rt);
+            return CommandResult.Ok();
+        }
 
-                if (total < wardCost)
-                    return CommandResult.Invalid(
-                        $"Defender must pay {wardCost} Reagent(s) to enter (Ward cost); insufficient.");
+        CommandResult ResolveGambit(GameSession session, int attackerId, int defenderId, string offeredCardId)
+        {
+            var attacker = session.Players[attackerId];
+            var defender = session.Players[defenderId];
 
-                // Spend reagents in priority order: Salt → Sulphur → AquaRegia → Vitriol → Quicksilver
-                int remaining = wardCost;
-                ReagentType[] order = new[] { ReagentType.Salt, ReagentType.Sulphur,
-                    ReagentType.AquaRegia, ReagentType.Vitriol, ReagentType.Quicksilver };
-                foreach (var rt in order)
-                {
-                    if (remaining <= 0) break;
-                    int have = defender.GetReagent(rt);
-                    int spend = Math.Min(have, remaining);
-                    defender.SpendReagent(rt, spend);
-                    remaining -= spend;
-                }
-            }
+            bool offeredInCrucible = attacker.CrucibleSlots.Exists(
+                s => s.CardInstanceId == offeredCardId && s.State == CrucibleCardState.Active);
 
-            // Dice roll: attacker wins ties
             int attackRoll = _rng.Next(1, 13);
             int defendRoll = _rng.Next(1, 13);
             bool attackerWins = attackRoll >= defendRoll;
@@ -140,7 +238,6 @@ namespace Kismeta.Core.Rules
             string? arrestedDefenderCardId = null;
             if (attackerWins)
             {
-                // Attacker wins: defender's top Active Crucible slot (or Arcanum card) is arrested
                 var defSlot = defender.CrucibleSlots.Find(s => s.State == CrucibleCardState.Active);
                 if (defSlot != null)
                 {
@@ -150,7 +247,6 @@ namespace Kismeta.Core.Rules
             }
             else
             {
-                // Defender wins: attacker's offered card is arrested
                 if (offeredInCrucible)
                 {
                     var aSlot = attacker.CrucibleSlots.Find(s => s.CardInstanceId == offeredCardId);
@@ -158,7 +254,6 @@ namespace Kismeta.Core.Rules
                 }
                 else
                 {
-                    // Adept card from Arcanum — remove and send to Arrested zone (discard for now)
                     attacker.Arcanum.Remove(offeredCardId);
                     session.Board.CommonDiscard.Add(offeredCardId);
                     session.GetCard(offeredCardId)?.MoveTo(CardZone.Discard, -1);

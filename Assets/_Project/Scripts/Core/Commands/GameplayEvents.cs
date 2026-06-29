@@ -291,6 +291,87 @@ namespace Kismeta.Core.Commands
         { InitiatorId = initiatorId; TargetId = targetId; OfferedCards = offeredCards; ReceivedCards = receivedCards; }
     }
 
+    public sealed class TradeOfferedEvent : IGameEvent
+    {
+        public int InitiatorId { get; }
+        public int TargetId { get; }
+        public IReadOnlyList<string> OfferCardIds { get; }
+        public IReadOnlyList<string> RequestCardIds { get; }
+        public TradeOfferedEvent(int initiatorId, int targetId,
+            IReadOnlyList<string> offerCardIds, IReadOnlyList<string> requestCardIds)
+        {
+            InitiatorId = initiatorId; TargetId = targetId;
+            OfferCardIds = offerCardIds; RequestCardIds = requestCardIds;
+        }
+    }
+
+    public sealed class TradeDeclinedEvent : IGameEvent
+    {
+        public int InitiatorId { get; }
+        public int TargetId { get; }
+        public TradeDeclinedEvent(int initiatorId, int targetId)
+        { InitiatorId = initiatorId; TargetId = targetId; }
+    }
+
+    public sealed class DuelOfferedEvent : IGameEvent
+    {
+        public int AttackerId { get; }
+        public int DefenderId { get; }
+        public string TargetCardId { get; }
+        public string AnteCardId { get; }
+        public DuelOfferedEvent(int attackerId, int defenderId, string targetCardId, string anteCardId)
+        {
+            AttackerId = attackerId; DefenderId = defenderId;
+            TargetCardId = targetCardId; AnteCardId = anteCardId;
+        }
+    }
+
+    public sealed class DuelDeclinedEvent : IGameEvent
+    {
+        public int AttackerId { get; }
+        public int DefenderId { get; }
+        public DuelDeclinedEvent(int attackerId, int defenderId)
+        { AttackerId = attackerId; DefenderId = defenderId; }
+    }
+
+    public sealed class GambitOfferedEvent : IGameEvent
+    {
+        public int AttackerId { get; }
+        public int DefenderId { get; }
+        public string OfferedCardId { get; }
+        public int WardCost { get; }
+        public GambitOfferedEvent(int attackerId, int defenderId, string offeredCardId, int wardCost)
+        {
+            AttackerId = attackerId; DefenderId = defenderId;
+            OfferedCardId = offeredCardId; WardCost = wardCost;
+        }
+    }
+
+    public sealed class GambitDeclinedEvent : IGameEvent
+    {
+        public int AttackerId { get; }
+        public int DefenderId { get; }
+        public GambitDeclinedEvent(int attackerId, int defenderId)
+        { AttackerId = attackerId; DefenderId = defenderId; }
+    }
+
+    public sealed class OppositionOfferedEvent : IGameEvent
+    {
+        public int AttackerId { get; }
+        public int DefenderId { get; }
+        public int WardCost { get; }
+        public OppositionOfferedEvent(int attackerId, int defenderId, int wardCost)
+        { AttackerId = attackerId; DefenderId = defenderId; WardCost = wardCost; }
+    }
+
+    public sealed class OppositionDeclinedEvent : IGameEvent
+    {
+        public int AttackerId { get; }
+        public int DefenderId { get; }
+        public OppositionDeclinedEvent(int attackerId, int defenderId)
+        { AttackerId = attackerId; DefenderId = defenderId; }
+    }
+
     public enum ExchangeKind
     {
         Trade,

@@ -45,6 +45,10 @@ namespace Kismeta.Core.Players
                 ActionHint.FateMoonDecision  => DecideFateMoon(context),
                 ActionHint.WinterAction      => DecideWinter(context),
                 ActionHint.DiscardToLimit    => DecideDiscardToLimit(context),
+                ActionHint.TradeResponse     => DecideTradeResponse(context),
+                ActionHint.DuelResponse      => new RespondDuelCommand(Slot.Index, accept: true),
+                ActionHint.GambitResponse    => DecideGambitResponse(context),
+                ActionHint.OppositionResponse => new RespondOppositionCommand(Slot.Index, accept: true),
                 _                            => new PassActionCommand(Slot.Index)
             };
 
@@ -309,6 +313,33 @@ namespace Kismeta.Core.Players
                 ? new List<string> { source[0], source[1] }
                 : new List<string>(source);
             return new FateMoonDecisionCommand(Slot.Index, keep);
+        }
+
+        private IGameCommand DecideTradeResponse(GameContext ctx) =>
+            new RespondTradeCommand(Slot.Index, accept: true);
+
+        private IGameCommand DecideGambitResponse(GameContext ctx)
+        {
+            var ps = ctx.PublicView.Players[Slot.Index];
+            int wardCost = ps.StoneWardCount;
+            if (wardCost <= 0)
+                return new RespondGambitCommand(Slot.Index, accept: true);
+
+            var payments = new List<(ReagentType, int)>();
+            int remaining = wardCost;
+            foreach (var rt in ReagentSpendHelper.PriorityOrder)
+            {
+                if (remaining <= 0) break;
+                if (!ps.Reagents.TryGetValue(rt, out int have) || have <= 0) continue;
+                int spend = System.Math.Min(have, remaining);
+                payments.Add((rt, spend));
+                remaining -= spend;
+            }
+
+            if (remaining > 0)
+                return new RespondGambitCommand(Slot.Index, accept: false);
+
+            return new RespondGambitCommand(Slot.Index, accept: true, payments);
         }
 
         // ─── Helpers ──────────────────────────────────────────────────────────────

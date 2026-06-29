@@ -132,15 +132,28 @@ namespace Kismeta.UI.Controllers
             Btn("roll-btn")?.SetEnabled(false);
 
             DuelResolvedEvent? resolved = null;
+            DuelDeclinedEvent? declined = null;
             var cmd = new InitiateDuelCommand(_playerId, _rivalId, GetFirst(_target), GetFirst(_ante));
             _bridge.TrySubmit(cmd);
 
             yield return WaitForEvent(_session, (DuelResolvedEvent e) => resolved = e);
+            if (resolved == null)
+                yield return WaitForEvent(_session, (DuelDeclinedEvent e) => declined = e);
 
             if (resolved != null)
             {
                 yield return RollDie(Lbl("die-you-pip"), resolved.AttackRoll);
                 yield return RollDie(Lbl("die-foe-pip"), resolved.DefendRoll);
+                OnCompleted?.Invoke();
+            }
+            else if (declined != null)
+            {
+                var outcome = Lbl("roll-outcome");
+                if (outcome != null)
+                {
+                    outcome.style.display = DisplayStyle.Flex;
+                    outcome.text = "Duel declined.";
+                }
                 OnCompleted?.Invoke();
             }
             else

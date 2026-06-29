@@ -74,9 +74,9 @@ namespace Kismeta.UI.Controllers
             RefreshActionGroupRail();
             MainSceneBindings.BindYieldedTurnBanner(
                 Root, session, loop,
-                "working in the workshop",
-                "You passed — waiting for summer to end",
-                "Summer ends when everyone passes in a row");
+                "taking their summer turn",
+                "Waiting for your turn…",
+                "End Turn when you are ready to pass");
             NarrativeSlotBindings.BindById(Root, "summer.passed");
             RefreshDock();
 

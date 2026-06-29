@@ -42,6 +42,9 @@ namespace Kismeta.Core.Entities
         // Whether duels this round resolve as best-of-3 (set by Justice Fate card)
         public bool BestOfThreeDuels { get; set; }
 
+        /// <summary>Contest awaiting defender response, or null when none is in flight.</summary>
+        public PendingContest? PendingContest { get; set; }
+
         public int CommonDeckCount    => CommonDeck.Count;
         public int CommonDiscardCount => CommonDiscard.Count;
     }
