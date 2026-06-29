@@ -343,7 +343,8 @@ namespace Kismeta.UI.Components
                 var inst = session.GetCard(slot.CardInstanceId);
                 var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
                 if (def != null)
-                    row.Add(MakeChip(def, slot.CardInstanceId, aligned: false, onInspect));
+                    row.Add(MakeChip(def, slot.CardInstanceId, aligned: false, onInspect,
+                        RomanNumerals.ToArcanaLabel(def.ArcanaNumber)));
                 else
                     row.Add(MakeHiddenChip());
             }

@@ -30,6 +30,7 @@ namespace Kismeta.UI.Components
             root.Q<Button>("effects-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenActiveEffects?.Invoke());
 
             SetExpanded(root, s_expanded, animate: false);
+            OverlayRoot(root)?.BringToFront();
         }
 
         public static VisualElement? OverlayRoot(VisualElement? root) =>

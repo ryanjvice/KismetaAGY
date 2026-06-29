@@ -244,9 +244,22 @@ namespace Kismeta.UI.Controllers
 
             var stepId = NarrativeStepResolver.ResolveAutumnAction(
                 player.StoneState, _autumnOverlays, _contestOverlays);
-            NarrativeSlotBindings.BindById(Root, stepId);
+            NarrativeSlotBindings.BindById(Root, stepId, mask: NarrativeSlotMask.Beat);
+
+            var infoPopup = El("autumn-info-popup");
+            if (infoPopup != null)
+            {
+                NarrativeSlotBindings.BindById(
+                    infoPopup,
+                    stepId,
+                    mask: NarrativeSlotMask.Stakes | NarrativeSlotMask.Charge);
+            }
 
             RefreshDock();
+
+            InventoryOverlayBindings.SetVisible(Root, true);
+            InventoryOverlayBindings.OverlayRoot(Root)?.BringToFront();
+            HeaderOverlayBindings.ApplyHeaderPad(Root);
         }
 
         // Tap your own Stone in the forge to Fire (advance into the Forge).

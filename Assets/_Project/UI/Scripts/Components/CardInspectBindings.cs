@@ -36,6 +36,9 @@ namespace Kismeta.UI.Components
             var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
             if (def == null) return;
 
+            if (def.IsCrucible)
+                return;
+
             var cosmic = session.Board.CosmicAgeSign;
             int pts = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);
 

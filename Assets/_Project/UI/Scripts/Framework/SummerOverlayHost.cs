@@ -143,7 +143,10 @@ namespace Kismeta.UI
         {
             if (!ShowModal(_crucibleCardDetail, _crucibleDetail, ActiveOverlay.CrucibleDetail)) return;
             if (_crucibleDetail != null)
+            {
                 _crucibleDetail.SlotIndex = slotIndex;
+                _crucibleDetail.CardInstanceId = null;
+            }
             WireCrucibleDetail();
             RefreshOpenOverlay();
         }

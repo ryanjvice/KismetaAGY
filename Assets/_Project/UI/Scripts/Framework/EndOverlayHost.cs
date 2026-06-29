@@ -16,6 +16,7 @@ namespace Kismeta.UI
         VisualTreeAsset? _cardTable;
         VisualTreeAsset? _cardModals;
         VisualTreeAsset? _activeEffects;
+        VisualTreeAsset? _crucibleCardDetail;
 
         ViewportLayout? _layout;
         GameSession? _session;
@@ -25,8 +26,9 @@ namespace Kismeta.UI
         CardTableController? _table;
         CardModalsController? _modals;
         ActiveEffectsController? _activeEffectsCtrl;
+        CrucibleCardDetailController? _crucibleDetail;
 
-        enum ActiveOverlay { None, CardTable, CardModals, ActiveEffects }
+        enum ActiveOverlay { None, CardTable, CardModals, ActiveEffects, CrucibleDetail }
         ActiveOverlay _active = ActiveOverlay.None;
         bool _reopenCardTableAfterInspect;
         int _cardTableFocusPlayerId = -1;
@@ -41,11 +43,16 @@ namespace Kismeta.UI
 
         void Awake() => EnsureControllers();
 
-        public void Configure(VisualTreeAsset cardTable, VisualTreeAsset cardModals, VisualTreeAsset? activeEffects = null)
+        public void Configure(
+            VisualTreeAsset cardTable,
+            VisualTreeAsset cardModals,
+            VisualTreeAsset? activeEffects = null,
+            VisualTreeAsset? crucibleCardDetail = null)
         {
             _cardTable = cardTable;
             _cardModals = cardModals;
             _activeEffects = activeEffects;
+            _crucibleCardDetail = crucibleCardDetail;
             EnsureControllers();
         }
 
@@ -55,6 +62,7 @@ namespace Kismeta.UI
             _table ??= GetComponent<CardTableController>();
             _modals ??= GetComponent<CardModalsController>();
             _activeEffectsCtrl ??= GetComponent<ActiveEffectsController>();
+            _crucibleDetail ??= GetComponent<CrucibleCardDetailController>();
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -121,11 +129,44 @@ namespace Kismeta.UI
         public void ShowInspect(string cardInstanceId)
         {
             EnsureControllers();
+            if (_session != null)
+            {
+                var inst = _session.GetCard(cardInstanceId);
+                var db = _session.Rules?.CardDatabase;
+                var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
+                if (def?.IsCrucible == true)
+                {
+                    ShowCrucibleDetail(cardInstanceId);
+                    return;
+                }
+            }
+
             if (_active == ActiveOverlay.CardTable)
                 _reopenCardTableAfterInspect = true;
 
             ShowOverlay(_cardModals, _modals, WireModals, ActiveOverlay.CardModals);
             _modals?.BindInspect(_session!, cardInstanceId);
+        }
+
+        public void ShowCrucibleDetail(string cardInstanceId)
+        {
+            EnsureControllers();
+            if (_crucibleCardDetail == null)
+            {
+                Debug.LogWarning("[EndOverlayHost] CrucibleCardDetail UXML not assigned — run Kismeta → UI → Wire Bootstrap UI References.");
+                return;
+            }
+
+            if (_active == ActiveOverlay.CardTable)
+                _reopenCardTableAfterInspect = true;
+
+            if (_crucibleDetail != null)
+            {
+                _crucibleDetail.CardInstanceId = cardInstanceId;
+                _crucibleDetail.SlotIndex = null;
+            }
+
+            ShowOverlay(_crucibleCardDetail, _crucibleDetail, WireCrucibleDetail, ActiveOverlay.CrucibleDetail);
         }
 
         public void ShowAdept(string adeptInstanceId)
@@ -188,6 +229,7 @@ namespace Kismeta.UI
             _table?.Detach();
             _modals?.Detach();
             _activeEffectsCtrl?.Detach();
+            _crucibleDetail?.Detach();
             _layout?.DismissOverlay();
         }
 
@@ -237,6 +279,10 @@ namespace Kismeta.UI
                 _activeEffectsFocusPlayerId = -1;
                 _activeEffectsCtrl?.BindState(_session, _loop, _bridge!);
             }
+            else if (_active == ActiveOverlay.CrucibleDetail)
+            {
+                _crucibleDetail?.BindState(_session, _bridge);
+            }
         }
 
         void WireActiveEffects()
@@ -262,6 +308,12 @@ namespace Kismeta.UI
             _modals.OnAdeptCompleted = OnModalDone;
             _modals.OnFateAccept = OnModalDone;
             _modals.OnFateDecisionCompleted = OnModalDone;
+        }
+
+        void WireCrucibleDetail()
+        {
+            if (_crucibleDetail == null) return;
+            _crucibleDetail.OnClose = OnModalDone;
         }
 
         void OnModalDone()

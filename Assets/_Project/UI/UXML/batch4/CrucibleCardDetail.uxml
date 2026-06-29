@@ -31,6 +31,11 @@
             <engine:Label name="crucible-name" text="" style="font-size: 16px; color: rgb(232, 185, 74); white-space: normal;" />
         </engine:VisualElement>
 
+        <engine:VisualElement style="padding: 8px 14px 4px;">
+            <engine:Label text="arcana number" class="eyebrow" />
+            <engine:Label name="crucible-number" text="" style="font-size: 14px; color: rgb(232, 185, 74); -unity-font-style: bold;" />
+        </engine:VisualElement>
+
         <engine:VisualElement style="padding: 10px 14px 4px;">
             <engine:Label text="alchemical formula · card set" class="eyebrow" style="color: rgb(244, 211, 94);" />
             <engine:Label name="crucible-formula" text="" style="font-size: 11px; color: rgb(243, 233, 210); white-space: normal; margin-top: 4px;" />

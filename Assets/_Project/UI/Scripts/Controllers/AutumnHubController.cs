@@ -82,6 +82,10 @@ namespace Kismeta.UI.Controllers
             CrucibleForgeBindings.ApplyAllPlayerStones(
                 El("board-stage"), El("stasis-row"), session, _localPlayerId);
             CrucibleForgeBindings.ApplyCauldronReagents(El("cauldron-mini"), player);
+
+            InventoryOverlayBindings.SetVisible(Root, true);
+            InventoryOverlayBindings.OverlayRoot(Root)?.BringToFront();
+            HeaderOverlayBindings.ApplyHeaderPad(Root);
         }
 
         public void RefreshActionGroupRail()

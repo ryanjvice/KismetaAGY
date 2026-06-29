@@ -258,7 +258,7 @@ namespace Kismeta.Game.Bootstrap
                 _fireStone, _temperStone, _manageCards, _leaveStasis, _endAutumn);
 
             var endOverlays = GetComponent<EndOverlayHost>();
-            endOverlays?.Configure(_cardTable, _cardModals, _activeEffects);
+            endOverlays?.Configure(_cardTable, _cardModals, _activeEffects, _crucibleCardDetail);
 
             var exchangeOverlays = GetComponent<ExchangeOverlayHost>();
             exchangeOverlays?.Configure(_resourceExchange);

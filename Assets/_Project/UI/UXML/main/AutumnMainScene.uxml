@@ -134,8 +134,8 @@
                     </engine:VisualElement>
                     <engine:VisualElement name="narrative-stakes-wrap" class="narrative-stakes-wrap tip tip--danger">
                         <engine:Label name="narrative-stakes" text="" class="narrative-stakes tip__text" />
-                        <engine:Label name="narrative-charge" text="" class="narrative-charge autumn-main__charge" />
                     </engine:VisualElement>
+                    <engine:Label name="narrative-charge" text="" class="narrative-charge autumn-main__charge" />
                 </engine:VisualElement>
             </engine:VisualElement>
 

@@ -213,6 +213,18 @@ namespace Kismeta.UI.Tests
             Assert.AreEqual(DisplayStyle.None, modal.Q<VisualElement>("inspect-major-detail")!.style.display);
         }
 
+        [Test]
+        public void CrucibleCard_DoesNotBindMajorArcanaInspectModal()
+        {
+            var modal = InstantiateInspectModal();
+            var session = BuildSession("crucible.a.0", ZodiacSign.Scorpio);
+
+            CardInspectBindings.BindInspectModal(modal, session, "inspect-card");
+
+            Assert.AreNotEqual("The Fool", modal.Q<Label>("inspect-name")?.text);
+            Assert.AreNotEqual(DisplayStyle.Flex, modal.Q<VisualElement>("inspect-major-detail")!.style.display);
+        }
+
         static VisualElement InstantiateInspectModal()
         {
             var asset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
