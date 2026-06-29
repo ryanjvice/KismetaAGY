@@ -41,6 +41,7 @@ namespace Kismeta.UI.Editor
         private const string SpringHarvestPath = "Assets/_Project/UI/UXML/batch3/SpringHarvest.uxml";
         private const string WinterUnlockPath = "Assets/_Project/UI/UXML/batch3/WinterUnlock.uxml";
         private const string FatefulWagerPath = "Assets/_Project/UI/UXML/batch3/FatefulWager.uxml";
+        private const string FatefulWagerModalsPath = "Assets/_Project/UI/UXML/batch3/FatefulWagerModals.uxml";
         private const string CardLimitsPath = "Assets/_Project/UI/UXML/batch3/CardLimits.uxml";
         private const string SummerSheetsPath = "Assets/_Project/UI/UXML/batch4/SummerSheets.uxml";
         private const string CraftReagentPath = "Assets/_Project/UI/UXML/batch4/CraftReagent.uxml";
@@ -200,6 +201,8 @@ namespace Kismeta.UI.Editor
             EnsureComponent<SpringHarvestController>(bootstrap.gameObject);
             EnsureComponent<WinterUnlockController>(bootstrap.gameObject);
             EnsureComponent<FatefulWagerController>(bootstrap.gameObject);
+            EnsureComponent<FatefulWagerModalsController>(bootstrap.gameObject);
+            EnsureComponent<WagerOverlayHost>(bootstrap.gameObject);
             EnsureComponent<CardLimitsController>(bootstrap.gameObject);
             EnsureComponent<SummerOverlayHost>(bootstrap.gameObject);
             EnsureComponent<SpringOverlayHost>(bootstrap.gameObject);
@@ -278,6 +281,7 @@ namespace Kismeta.UI.Editor
             var springHarvest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHarvestPath);
             var winterUnlock = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterUnlockPath);
             var fatefulWager = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FatefulWagerPath);
+            var fatefulWagerModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(FatefulWagerModalsPath);
             var cardLimits = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardLimitsPath);
             var summerSheets = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerSheetsPath);
             var craftReagent = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CraftReagentPath);
@@ -331,6 +335,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_springHarvest").objectReferenceValue = springHarvest;
             so.FindProperty("_winterUnlock").objectReferenceValue = winterUnlock;
             so.FindProperty("_fatefulWager").objectReferenceValue = fatefulWager;
+            so.FindProperty("_fatefulWagerModals").objectReferenceValue = fatefulWagerModals;
             so.FindProperty("_cardLimits").objectReferenceValue = cardLimits;
             so.FindProperty("_summerSheets").objectReferenceValue = summerSheets;
             so.FindProperty("_craftReagent").objectReferenceValue = craftReagent;

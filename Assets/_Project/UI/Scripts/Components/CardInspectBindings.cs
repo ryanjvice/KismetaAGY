@@ -13,6 +13,18 @@ namespace Kismeta.UI.Components
             "card-chip--wands", "card-chip--cups", "card-chip--pentacles", "card-chip--swords"
         };
 
+        static readonly string[] MajorChipClasses = { "card-chip--fate", "card-chip--adept" };
+
+        static readonly string[] ModalThemeClasses =
+        {
+            "card-modal--inspect", "card-modal--fate", "card-modal--adept"
+        };
+
+        static readonly string[] HeroThemeClasses =
+        {
+            "card-modal__hero--inspect", "card-modal__hero--fate", "card-modal__hero--adept"
+        };
+
         public static void BindInspectModal(
             VisualElement root,
             GameSession session,
@@ -24,29 +36,126 @@ namespace Kismeta.UI.Components
             var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
             if (def == null) return;
 
-            var nameLbl = root.Q<Label>("inspect-name");
-            if (nameLbl != null)
-                nameLbl.text = def.IsMinorArcana
-                    ? $"{def.Rank} of {def.Suit}"
-                    : def.EffectText.Length > 0 ? def.EffectText.Split('\n')[0] : def.Id;
-
             var cosmic = session.Board.CosmicAgeSign;
             int pts = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);
 
             if (def.IsMinorArcana)
             {
+                ResetModalTheme(root);
+                var nameLbl = root.Q<Label>("inspect-name");
+                if (nameLbl != null)
+                    nameLbl.text = $"{def.Rank} of {def.Suit}";
+
                 BindHero(root, def);
                 BindAspects(root, def);
-                BindEffect(root, def);
+                BindEffect(root, "inspect-effect-section", "inspect-effect-eyebrow", "inspect-effect", def);
                 RebuildGoodForTags(root, def, pts);
                 ShowMinorDetail(root, true);
+                ShowMajorDetail(root, false);
             }
             else
             {
-                ShowMinorDetail(root, false);
+                BindMajorArcana(root, def);
             }
 
             BindAlignment(root, def, cosmic, pts);
+        }
+
+        static void BindMajorArcana(VisualElement root, CardDefinition def)
+        {
+            var isFate = def.MajorArcanaType == MajorArcanaType.Fate;
+            ResetModalTheme(root);
+            ApplyModalTheme(root, isFate);
+
+            var nameLbl = root.Q<Label>("inspect-name");
+            if (nameLbl != null)
+                nameLbl.text = def.Name;
+
+            var subtitle = root.Q<Label>("inspect-subtitle");
+            if (subtitle != null)
+            {
+                var typeLabel = def.MajorArcanaType.ToString().ToLowerInvariant();
+                var numeral = RomanNumerals.ToArcanaLabel(def.ArcanaNumber);
+                subtitle.text = $"{typeLabel} · {numeral}";
+            }
+
+            BindMajorHero(root, def, isFate);
+            BindEffect(root, "inspect-major-effect-section", "inspect-major-effect-eyebrow",
+                "inspect-major-effect", def);
+            ShowMinorDetail(root, false);
+            ShowMajorDetail(root, true);
+        }
+
+        static void BindMajorHero(VisualElement root, CardDefinition def, bool isFate)
+        {
+            var hero = root.Q<VisualElement>("inspect-hero-tarot");
+            var heroIcon = root.Q<Label>("inspect-hero-icon");
+            if (hero == null) return;
+
+            foreach (var cls in SuitChipClasses)
+                hero.RemoveFromClassList(cls);
+            foreach (var cls in MajorChipClasses)
+                hero.RemoveFromClassList(cls);
+            hero.AddToClassList(isFate ? "card-chip--fate" : "card-chip--adept");
+
+            var numeral = RomanNumerals.ToArcanaLabel(def.ArcanaNumber);
+            CardArtBindings.Apply(hero, heroIcon, def);
+            if (heroIcon != null)
+            {
+                heroIcon.RemoveFromClassList("ti-icon");
+                heroIcon.RemoveFromClassList("inspect-hero-icon");
+                heroIcon.AddToClassList("inspect-hero-numeral");
+                if (Resources.Load<Sprite>($"CardArt/{def.Id}") == null)
+                {
+                    heroIcon.style.display = DisplayStyle.Flex;
+                    heroIcon.text = numeral;
+                    if (numeral.Length >= 2)
+                        heroIcon.AddToClassList("inspect-hero-numeral--compact");
+                    else
+                        heroIcon.RemoveFromClassList("inspect-hero-numeral--compact");
+                }
+            }
+        }
+
+        static void ApplyModalTheme(VisualElement root, bool isFate)
+        {
+            root.RemoveFromClassList("card-modal--inspect");
+            root.AddToClassList(isFate ? "card-modal--fate" : "card-modal--adept");
+
+            var heroSection = root.Q(className: "card-modal__hero");
+            if (heroSection == null) return;
+            foreach (var cls in HeroThemeClasses)
+                heroSection.RemoveFromClassList(cls);
+            heroSection.AddToClassList(isFate ? "card-modal__hero--fate" : "card-modal__hero--adept");
+        }
+
+        static void ResetModalTheme(VisualElement root)
+        {
+            foreach (var cls in ModalThemeClasses)
+                root.RemoveFromClassList(cls);
+            root.AddToClassList("card-modal--inspect");
+
+            var heroSection = root.Q(className: "card-modal__hero");
+            if (heroSection == null) return;
+            foreach (var cls in HeroThemeClasses)
+                heroSection.RemoveFromClassList(cls);
+            heroSection.AddToClassList("card-modal__hero--inspect");
+
+            var hero = root.Q<VisualElement>("inspect-hero-tarot");
+            if (hero != null)
+            {
+                foreach (var cls in MajorChipClasses)
+                    hero.RemoveFromClassList(cls);
+            }
+
+            var heroIcon = root.Q<Label>("inspect-hero-icon");
+            if (heroIcon != null)
+            {
+                heroIcon.RemoveFromClassList("inspect-hero-numeral");
+                heroIcon.RemoveFromClassList("inspect-hero-numeral--compact");
+                heroIcon.AddToClassList("ti-icon");
+                heroIcon.AddToClassList("inspect-hero-icon");
+            }
         }
 
         static void BindHero(VisualElement root, CardDefinition def)
@@ -126,11 +235,16 @@ namespace Kismeta.UI.Components
             }
         }
 
-        static void BindEffect(VisualElement root, CardDefinition def)
+        static void BindEffect(
+            VisualElement root,
+            string sectionName,
+            string eyebrowName,
+            string textName,
+            CardDefinition def)
         {
-            var section = root.Q<VisualElement>("inspect-effect-section");
-            var eyebrow = root.Q<Label>("inspect-effect-eyebrow");
-            var text = root.Q<Label>("inspect-effect");
+            var section = root.Q<VisualElement>(sectionName);
+            var eyebrow = root.Q<Label>(eyebrowName);
+            var text = root.Q<Label>(textName);
             if (section == null) return;
 
             if (string.IsNullOrWhiteSpace(def.EffectText))
@@ -218,6 +332,16 @@ namespace Kismeta.UI.Components
         static void ShowMinorDetail(VisualElement root, bool visible)
         {
             var section = root.Q<VisualElement>("inspect-minor-detail");
+            if (section == null) return;
+
+            section.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            if (visible)
+                section.style.flexDirection = FlexDirection.Column;
+        }
+
+        static void ShowMajorDetail(VisualElement root, bool visible)
+        {
+            var section = root.Q<VisualElement>("inspect-major-detail");
             if (section == null) return;
 
             section.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;

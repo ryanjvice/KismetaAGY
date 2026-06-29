@@ -37,6 +37,8 @@ namespace Kismeta.Core.Entities
                 OwnerId = newOwnerId;
         }
 
+        public void SetOwnerId(int ownerId) => OwnerId = ownerId;
+
         public void SetFaceDown(bool faceDown) => IsFaceDown = faceDown;
         public void SetFired(bool fired) => IsFired = fired;
         public void SetArrested(bool arrested) => IsArrested = arrested;

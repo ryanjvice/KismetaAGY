@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/AgeCeremony.uss" />
+    <engine:Style src="../../USS/SpringSteps.uss" />
+
+    <engine:VisualElement name="wager-modals">
+
+        <!-- Confirm before committing a Winter wager -->
+        <engine:VisualElement name="wager-confirm-modal" class="modal modal--wager">
+            <engine:VisualElement class="modal__header" style="background-color: rgb(36, 16, 40); border-bottom-color: rgb(106, 74, 138);">
+                <engine:VisualElement style="width: 30px; height: 30px; border-radius: 9px; background-color: rgb(36, 16, 40); border-width: 1px; border-color: rgb(106, 74, 138); align-items: center; justify-content: center; margin-right: 10px;">
+                    <engine:Label text="&#xeb6c;" class="ti-icon" style="color: rgb(205, 176, 224);" />
+                </engine:VisualElement>
+                <engine:VisualElement style="flex-grow: 1;">
+                    <engine:Label text="Confirm your wager" style="font-size: 14px; color: rgb(205, 176, 224);" />
+                    <engine:Label text="this cannot be undone until next Spring" style="font-size: 10px; color: rgb(168,148,106);" />
+                </engine:VisualElement>
+                <engine:Button name="confirm-cancel-btn" text="&#10005;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 16px 14px 8px; align-items: center;">
+                <engine:Label text="your prediction" class="eyebrow" />
+                <engine:Label name="confirm-sign-glyph" text="?" class="font-zodiac" style="font-size: 36px; color: rgb(205, 176, 224); margin: 6px 0;" />
+                <engine:Label name="confirm-sign-name" text="Pisces" style="font-size: 16px; color: rgb(205, 176, 224); margin-bottom: 10px;" />
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 0 14px 8px;">
+                <engine:Label name="confirm-stake-line" text="Staking 3 card(s)" class="eyebrow" style="margin-bottom: 8px;" />
+                <engine:VisualElement name="confirm-stake-cards" class="swap-zone__cards" />
+            </engine:VisualElement>
+
+            <engine:VisualElement class="tip tip--arcanum" style="margin: 4px 14px 12px;">
+                <engine:Label name="confirm-stakes-copy"
+                              text="If wrong, these cards are lost to the Fates. Resolves next Spring."
+                              class="tip__text" style="color: rgb(184,154,192);" />
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 2px 14px 16px; flex-direction: row;">
+                <engine:Button name="confirm-cancel-btn-2" text="Cancel" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
+                <engine:Button name="confirm-commit-btn" text="Commit wager" class="btn btn--primary"
+                               style="flex-grow: 1.4; background-color: rgb(36, 16, 40); border-color: rgb(154,122,192); color: rgb(205, 176, 224);" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- Result after cosmic age die resolves wagers -->
+        <engine:VisualElement name="wager-result-modal" class="modal modal--wager" style="display: none;">
+            <engine:VisualElement class="modal__header" style="background-color: rgb(36, 16, 40); border-bottom-color: rgb(106, 74, 138);">
+                <engine:VisualElement style="width: 30px; height: 30px; border-radius: 9px; background-color: rgb(36, 16, 40); border-width: 1px; border-color: rgb(106, 74, 138); align-items: center; justify-content: center; margin-right: 10px;">
+                    <engine:Label text="&#xeb6c;" class="ti-icon" style="color: rgb(205, 176, 224);" />
+                </engine:VisualElement>
+                <engine:VisualElement style="flex-grow: 1;">
+                    <engine:Label name="result-eyebrow" text="The Fates have spoken" style="font-size: 14px; color: rgb(205, 176, 224);" />
+                    <engine:Label name="result-subtitle" text="your wager is resolved" style="font-size: 10px; color: rgb(168,148,106);" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement name="result-body" class="wager-result__body" style="padding: 16px 14px 8px;">
+                <engine:VisualElement style="flex-direction: row; justify-content: space-around; align-items: center; margin-bottom: 12px;">
+                    <engine:VisualElement style="align-items: center; flex-grow: 1;">
+                        <engine:Label text="you predicted" class="eyebrow" />
+                        <engine:Label name="result-predicted-glyph" text="?" class="font-zodiac" style="font-size: 32px; color: rgb(205, 176, 224);" />
+                        <engine:Label name="result-predicted-name" text="Pisces" style="font-size: 12px; color: rgb(184,154,192);" />
+                    </engine:VisualElement>
+                    <engine:Label text="vs" style="font-size: 11px; color: rgb(122,138,154); margin: 0 8px;" />
+                    <engine:VisualElement style="align-items: center; flex-grow: 1;">
+                        <engine:Label text="cosmic age" class="eyebrow" />
+                        <engine:Label name="result-age-glyph" text="?" class="font-zodiac" style="font-size: 32px; color: rgb(205, 176, 224);" />
+                        <engine:Label name="result-age-name" text="Gemini" style="font-size: 12px; color: rgb(184,154,192);" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+
+                <engine:VisualElement name="result-outcome-panel" class="panel ceremony-wager-panel">
+                    <engine:Label text="&#xeb6c;" class="ti-icon ceremony-wager-panel__icon" />
+                    <engine:Label name="result-outcome-line" text="Your 3 cards are lost to the Fates."
+                                  class="ceremony-wager-panel__text" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement style="padding: 2px 14px 16px;">
+                <engine:Button name="result-continue-btn" text="Continue" class="btn btn--primary menu-screen__cta" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

@@ -1202,6 +1202,7 @@ namespace Kismeta.Core.Tests
 
             Assert.IsNotNull(resolved, "FatefulWagerResolvedEvent must be emitted.");
             Assert.IsTrue(resolved!.Won, "Should be a win when predicted sign matches Cosmic Age.");
+            Assert.AreEqual(ZodiacSign.Aries, resolved.PredictedSign);
             Assert.IsTrue(player.Hand.Contains(waged.InstanceId), "Wagered card returned to Hand.");
             Assert.IsTrue(player.Hand.Contains(prize.InstanceId), "Bonus card drawn to Hand.");
             Assert.AreEqual(ZodiacSign.None, player.FatefulWagerSign, "Wager sign cleared after resolution.");
@@ -1237,6 +1238,7 @@ namespace Kismeta.Core.Tests
 
             Assert.IsNotNull(resolved, "FatefulWagerResolvedEvent must be emitted.");
             Assert.IsFalse(resolved!.Won, "Should be a loss when predicted sign does not match.");
+            Assert.AreEqual(ZodiacSign.Aries, resolved.PredictedSign);
             Assert.IsFalse(player.Hand.Contains(waged.InstanceId), "Lost wager card not returned to Hand.");
             Assert.IsTrue(session.Board.CommonDiscard.Contains(waged.InstanceId), "Lost wager card in discard.");
             Assert.AreEqual(ZodiacSign.None, player.FatefulWagerSign, "Wager sign cleared after resolution.");

@@ -26,10 +26,10 @@
                     <engine:Label name="inspect-hero-icon" text="&#xebcb;" class="ti-icon inspect-hero-icon" style="color: rgb(244,216,192);" />
                 </engine:VisualElement>
                 <engine:Label name="inspect-name" text="Seven of Wands" class="tarot__name" style="color: rgb(244,216,192);" />
-                <engine:Label name="inspect-subtitle" text="minor arcana · rank 7" style="font-size: 10px; color: rgb(208,144,128);" />
+                <engine:Label name="inspect-subtitle" text="minor arcana · rank 7" class="inspect-subtitle" style="color: rgb(208,144,128);" />
             </engine:VisualElement>
 
-            <engine:VisualElement class="card-modal__body card-modal__body--inspect">
+            <engine:VisualElement class="card-modal__body-scroll card-modal__body--inspect">
                 <engine:VisualElement name="inspect-minor-detail" class="inspect-minor-detail">
                     <engine:VisualElement class="inspect-block">
                         <engine:Label text="aspects" class="eyebrow" />
@@ -65,6 +65,15 @@
                     </engine:VisualElement>
                 </engine:VisualElement>
 
+                <engine:VisualElement name="inspect-major-detail" class="inspect-major-detail" style="display: none;">
+                    <engine:VisualElement name="inspect-major-effect-section" class="inspect-block">
+                        <engine:Label name="inspect-major-effect-eyebrow" text="effect" class="eyebrow" />
+                        <engine:VisualElement class="panel inspect-effect-panel">
+                            <engine:Label name="inspect-major-effect" text="" class="inspect-effect__text" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+
                 <engine:VisualElement class="inspect-block">
                     <engine:Label text="alignment this age" class="eyebrow" />
                     <engine:VisualElement class="panel inspect-align-panel">
@@ -75,7 +84,9 @@
                         <engine:Label name="inspect-align-pts" text="+2" class="inspect-align-pts" />
                     </engine:VisualElement>
                 </engine:VisualElement>
+            </engine:VisualElement>
 
+            <engine:VisualElement class="card-modal__footer">
                 <engine:Button name="inspect-done" text="Done" class="btn btn--secondary inspect-done" style="color: rgb(240,176,160);" />
             </engine:VisualElement>
         </engine:VisualElement>

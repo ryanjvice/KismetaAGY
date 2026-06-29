@@ -71,6 +71,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _springHarvest;
         [SerializeField] private VisualTreeAsset _winterUnlock;
         [SerializeField] private VisualTreeAsset _fatefulWager;
+        [SerializeField] private VisualTreeAsset _fatefulWagerModals;
         [SerializeField] private VisualTreeAsset _cardLimits;
         [SerializeField] private VisualTreeAsset _summerSheets;
         [SerializeField] private VisualTreeAsset _craftReagent;
@@ -204,6 +205,8 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<SpringHarvestController>();
             EnsureController<WinterUnlockController>();
             EnsureController<FatefulWagerController>();
+            EnsureController<FatefulWagerModalsController>();
+            EnsureController<WagerOverlayHost>();
             EnsureController<CardLimitsController>();
             EnsureController<SummerOverlayHost>();
             EnsureController<SpringOverlayHost>();
@@ -259,6 +262,9 @@ namespace Kismeta.Game.Bootstrap
 
             var exchangeOverlays = GetComponent<ExchangeOverlayHost>();
             exchangeOverlays?.Configure(_resourceExchange);
+
+            var wagerOverlays = GetComponent<WagerOverlayHost>();
+            wagerOverlays?.Configure(_fatefulWagerModals);
 
             GetComponent<PlayerHudController>()?.Configure(_playerHud);
 
@@ -409,7 +415,7 @@ namespace Kismeta.Game.Bootstrap
                 string detail = evt switch
                 {
                     FatefulWagerPlacedEvent e => $"[Wager] P{e.PlayerId} placed {e.CardCount} card(s) on {e.PredictedSign}",
-                    FatefulWagerResolvedEvent e => $"[Wager] P{e.PlayerId} {(e.Won ? "WON" : "LOST")} vs CosmicAge={e.Sign} ({e.CardCount} cards)",
+                    FatefulWagerResolvedEvent e => $"[Wager] P{e.PlayerId} {(e.Won ? "WON" : "LOST")} predicted {e.PredictedSign} vs CosmicAge={e.Sign} ({e.CardCount} cards)",
                     _ => $"[Event] {evt.GetType().Name}"
                 };
                 Debug.Log(detail);

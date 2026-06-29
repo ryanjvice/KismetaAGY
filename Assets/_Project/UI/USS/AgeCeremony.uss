@@ -215,6 +215,29 @@
     white-space: normal;
 }
 
+.modal--wager {
+    background-color: rgb(18, 12, 24);
+    border-color: rgb(106, 74, 138);
+}
+
+.wager-result--won .ceremony-wager-panel {
+    background-color: rgb(20, 36, 24);
+    border-color: rgb(74, 120, 74);
+}
+
+.wager-result--won .ceremony-wager-panel__text {
+    color: rgb(184, 220, 184);
+}
+
+.wager-result--lost .ceremony-wager-panel {
+    background-color: rgb(36, 16, 24);
+    border-color: rgb(120, 58, 58);
+}
+
+.wager-result--lost .ceremony-wager-panel__text {
+    color: rgb(220, 170, 170);
+}
+
 .ceremony-effect-panel {
     flex-direction: row;
     align-items: flex-start;

@@ -18,6 +18,7 @@ namespace Kismeta.UI.Controllers
 
         public Action? OnCompleted;
         public Action? OnBack;
+        public WagerOverlayHost? WagerOverlays { get; set; }
 
         static readonly string[] SignSlugs =
         {
@@ -170,11 +171,28 @@ namespace Kismeta.UI.Controllers
 
         void OnPlace()
         {
-            if (_bridge == null) return;
+            if (_bridge == null || _session == null) return;
             var sign = SlugToSign(_selectedSlug);
             if (sign == ZodiacSign.None || _staked.Count == 0) return;
-            if (_bridge.TrySubmit(new PlaceFatefulWagerCommand(_playerId, sign, new List<string>(_staked))))
+
+            var cardIds = new List<string>(_staked);
+            if (WagerOverlays != null)
             {
+                WagerOverlays.ShowConfirm(_session, sign, cardIds,
+                    () => SubmitWager(sign, cardIds),
+                    () => { });
+                return;
+            }
+
+            SubmitWager(sign, cardIds);
+        }
+
+        void SubmitWager(ZodiacSign sign, List<string> cardIds)
+        {
+            if (_bridge == null) return;
+            if (_bridge.TrySubmit(new PlaceFatefulWagerCommand(_playerId, sign, cardIds)))
+            {
+                WagerOverlays?.Dismiss();
                 _staked.Clear();
                 OnCompleted?.Invoke();
             }

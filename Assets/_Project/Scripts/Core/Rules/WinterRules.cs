@@ -89,7 +89,12 @@ namespace Kismeta.Core.Rules
             {
                 player.Spread.Remove(id);
                 player.Hand.Remove(id);
-                session.GetCard(id)?.MoveTo(CardZone.Deck, -1); // neutral placeholder
+                var inst = session.GetCard(id);
+                if (inst != null)
+                {
+                    inst.MoveTo(CardZone.Deck, -1);
+                    inst.SetOwnerId(-1);
+                }
                 player.FatefulWagerCards.Add(id);
             }
 
@@ -139,7 +144,8 @@ namespace Kismeta.Core.Rules
                     }
                 }
 
-                session.EmitEvent(new FatefulWagerResolvedEvent(player.PlayerId, cosmicSign, won, count));
+                var predicted = player.FatefulWagerSign;
+                session.EmitEvent(new FatefulWagerResolvedEvent(player.PlayerId, predicted, cosmicSign, won, count));
                 player.FatefulWagerCards.Clear();
                 player.FatefulWagerSign = ZodiacSign.None;
             }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
@@ -22,11 +23,14 @@ namespace Kismeta.UI.Controllers
 
         public override string ScreenId => ScreenIds.RoundOpen;
 
+        public Func<IEnumerator>? WaitForPendingWagerResults;
+
         CeremonyGate? _gate;
         GameSession? _session;
         Phase _phase = Phase.Cast;
         ZodiacSign _signAtCeremonyStart = ZodiacSign.None;
         bool _capturedCeremonyStartSign;
+        bool _wagerResultsHandled;
 
         protected override void Wire()
         {
@@ -39,6 +43,7 @@ namespace Kismeta.UI.Controllers
             _phase = Phase.Cast;
             _capturedCeremonyStartSign = false;
             _signAtCeremonyStart = ZodiacSign.None;
+            _wagerResultsHandled = false;
         }
 
         public void BindState(GameSession session, CeremonyGate gate)
@@ -49,6 +54,18 @@ namespace Kismeta.UI.Controllers
             if (_phase == Phase.Rolling) return;
 
             ResolveInitialPhase(session);
+
+            if (_phase == Phase.Reveal && WaitForPendingWagerResults != null && !_wagerResultsHandled)
+            {
+                StartCoroutine(ShowWagerResultsThenReveal(session));
+                return;
+            }
+
+            ApplyPhaseBinding(session);
+        }
+
+        void ApplyPhaseBinding(GameSession session)
+        {
             SetPhaseVisibility(_phase);
 
             if (_phase == Phase.Cast)
@@ -64,6 +81,18 @@ namespace Kismeta.UI.Controllers
                 CeremonyBindings.BindAgeOpening(Root, session);
                 BindRevealCharge();
             }
+        }
+
+        IEnumerator ShowWagerResultsThenReveal(GameSession session)
+        {
+            _wagerResultsHandled = true;
+            SetPhaseVisibility(Phase.Cast);
+
+            if (WaitForPendingWagerResults != null)
+                yield return WaitForPendingWagerResults();
+
+            _phase = Phase.Reveal;
+            ApplyPhaseBinding(session);
         }
 
         void BindRevealCharge()
@@ -127,6 +156,10 @@ namespace Kismeta.UI.Controllers
             yield return DieAnimator.RollZodiacLabel(face, sign);
             yield return new WaitForSeconds(RevealPauseSec);
 
+            if (WaitForPendingWagerResults != null)
+                yield return WaitForPendingWagerResults();
+
+            _wagerResultsHandled = true;
             _phase = Phase.Reveal;
             SetPhaseVisibility(Phase.Reveal);
             CeremonyBindings.BindAgeOpening(Root, _session);

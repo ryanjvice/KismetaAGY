@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
@@ -32,8 +33,11 @@ namespace Kismeta.UI
         private AutumnOverlayHost? _autumnOverlays;
         private EndOverlayHost? _endOverlays;
         private ExchangeOverlayHost? _exchangeOverlays;
+        private WagerOverlayHost? _wagerOverlays;
         private PlayerHudController? _playerHud;
         private readonly Queue<PlayerExchangeEvent> _exchangeQueue = new();
+        private readonly Queue<FatefulWagerResolvedEvent> _wagerResultQueue = new();
+        private readonly HashSet<string> _completedWagerResultKeys = new();
         private readonly CommandBridge _bridge = new();
         private GameSession? _session;
         private GameLoop? _loop;
@@ -72,6 +76,7 @@ namespace Kismeta.UI
             _autumnOverlays = GetComponent<AutumnOverlayHost>();
             _endOverlays = GetComponent<EndOverlayHost>();
             _exchangeOverlays = GetComponent<ExchangeOverlayHost>();
+            _wagerOverlays = GetComponent<WagerOverlayHost>();
             _playerHud = GetComponent<PlayerHudController>();
         }
 
@@ -140,6 +145,7 @@ namespace Kismeta.UI
             WireEndNavigation();
             WireCardOverlays();
             WireExchangeOverlays();
+            WireWagerOverlays();
         }
 
         public void Unbind()
@@ -162,6 +168,8 @@ namespace Kismeta.UI
             _lastFateModalKey = null;
             _completedFateModalKey = null;
             _exchangeQueue.Clear();
+            _wagerResultQueue.Clear();
+            _completedWagerResultKeys.Clear();
             HeaderOverlayBindings.ConfigureRivalSelection(null);
             DismissAllOverlays();
             _playerHud?.Hide();
@@ -269,6 +277,9 @@ namespace Kismeta.UI
                 _exchangeQueue.Enqueue(exchange);
                 TryShowQueuedExchange();
             }
+
+            if (evt is FatefulWagerResolvedEvent wagerResolved)
+                EnqueueWagerResult(wagerResolved);
 
             if (IsInventoryMutationEvent(evt))
                 RefreshInventoryAfterMutation();
@@ -582,7 +593,14 @@ namespace Kismeta.UI
 
             var wager = _router.GetController<FatefulWagerController>(ScreenIds.FatefulWager);
             if (wager != null)
+            {
+                wager.WagerOverlays = _wagerOverlays;
                 wager.OnCompleted = () => _router.GoTo(ScreenIds.WinterHub);
+            }
+
+            var roundOpen = _router.GetController<RoundOpenController>(ScreenIds.RoundOpen);
+            if (roundOpen != null)
+                roundOpen.WaitForPendingWagerResults = WaitForPendingWagerResults;
         }
 
         private void WireSummerNavigation()
@@ -773,6 +791,54 @@ namespace Kismeta.UI
             };
         }
 
+        private void WireWagerOverlays()
+        {
+            // Host is configured on bootstrap; controllers receive references via WireStepScreens.
+        }
+
+        static string WagerResultKey(FatefulWagerResolvedEvent e) =>
+            $"{e.PlayerId}:{e.PredictedSign}:{e.Sign}:{e.CardCount}:{e.Won}";
+
+        void EnqueueWagerResult(FatefulWagerResolvedEvent resolved)
+        {
+            if (_session == null) return;
+            int localId = MainSceneBindings.ResolveLocalPlayerId(_session, _loop, _bridge);
+            if (resolved.PlayerId != localId) return;
+
+            var key = WagerResultKey(resolved);
+            if (_completedWagerResultKeys.Contains(key)) return;
+            _wagerResultQueue.Enqueue(resolved);
+        }
+
+        public bool HasPendingWagerResults => _wagerResultQueue.Count > 0;
+
+        public IEnumerator WaitForPendingWagerResults()
+        {
+            while (_wagerResultQueue.Count > 0)
+            {
+                if (_wagerOverlays == null)
+                    yield break;
+
+                while (_wagerOverlays.IsOpen)
+                    yield return null;
+
+                var next = _wagerResultQueue.Dequeue();
+                var key = WagerResultKey(next);
+                if (_completedWagerResultKeys.Contains(key))
+                    continue;
+
+                var done = false;
+                _wagerOverlays.ShowResult(next, () =>
+                {
+                    _completedWagerResultKeys.Add(key);
+                    done = true;
+                });
+
+                while (!done)
+                    yield return null;
+            }
+        }
+
         private void TryShowQueuedExchange()
         {
             if (_session == null || _exchangeOverlays == null || _exchangeQueue.Count == 0)
@@ -793,6 +859,7 @@ namespace Kismeta.UI
             if (_springOverlays?.IsOpen == true) return true;
             if (_autumnOverlays?.IsOpen == true) return true;
             if (_endOverlays?.IsOpen == true) return true;
+            if (_wagerOverlays?.IsOpen == true) return true;
             return false;
         }
 
@@ -845,6 +912,7 @@ namespace Kismeta.UI
             _autumnOverlays = GetComponent<AutumnOverlayHost>();
             _endOverlays = GetComponent<EndOverlayHost>();
             _exchangeOverlays = GetComponent<ExchangeOverlayHost>();
+            _wagerOverlays = GetComponent<WagerOverlayHost>();
 
             if (_session != null)
             {
@@ -865,7 +933,9 @@ namespace Kismeta.UI
             _autumnOverlays?.Dismiss();
             _endOverlays?.Dismiss();
             _exchangeOverlays?.Dismiss();
+            _wagerOverlays?.Dismiss();
             _exchangeQueue.Clear();
+            _wagerResultQueue.Clear();
             _adeptModalOpen = false;
             _fateModalOpen = false;
             _lastAdeptModalCardId = null;
@@ -956,7 +1026,10 @@ namespace Kismeta.UI
         {
             var wager = _router.GetController<FatefulWagerController>(ScreenIds.FatefulWager);
             if (wager != null)
+            {
                 wager.OnBack = () => _router.GoTo(ScreenIds.WinterHub);
+                wager.WagerOverlays = _wagerOverlays;
+            }
             _router.GoTo(ScreenIds.FatefulWager);
             RefreshActiveScreen();
         }
@@ -973,7 +1046,10 @@ namespace Kismeta.UI
             if (gate != null)
             {
                 if (controller is RoundOpenController roundOpen)
+                {
+                    roundOpen.WaitForPendingWagerResults = WaitForPendingWagerResults;
                     roundOpen.BindState(_session, gate);
+                }
                 else if (controller is AgeClosingController ageClosing)
                     ageClosing.BindState(_session, gate);
                 else if (controller is SpringIntroController springIntro)
@@ -1042,7 +1118,10 @@ namespace Kismeta.UI
             else if (controller is WinterUnlockController winterUnlock)
                 winterUnlock.BindState(_session, _bridge);
             else if (controller is FatefulWagerController fatefulWager)
+            {
+                fatefulWager.WagerOverlays = _wagerOverlays;
                 fatefulWager.BindState(_session, _bridge);
+            }
             else if (controller is CraftReagentController craftReagent)
                 craftReagent.BindState(_session, _bridge);
             else if (controller is CardLimitsController cardLimits)

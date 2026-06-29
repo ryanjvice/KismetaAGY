@@ -154,6 +154,65 @@ namespace Kismeta.UI.Tests
             Assert.IsFalse(elementIcon.ClassListContains(SymbolGlyphs.ZodiacFontClass));
         }
 
+        [Test]
+        public void TheSun_Fate_BindsNameTypeNumeralAndEffect()
+        {
+            var modal = InstantiateInspectModal();
+            var session = BuildSession("major.fate.19", ZodiacSign.Pisces);
+
+            CardInspectBindings.BindInspectModal(modal, session, "inspect-card");
+
+            Assert.AreEqual("The Sun", modal.Q<Label>("inspect-name")?.text);
+            Assert.AreEqual("fate · XIX", modal.Q<Label>("inspect-subtitle")?.text);
+            Assert.IsTrue(modal.ClassListContains("card-modal--fate"));
+
+            var hero = modal.Q<VisualElement>("inspect-hero-tarot");
+            Assert.IsNotNull(hero);
+            Assert.IsTrue(hero!.ClassListContains("card-chip--fate"));
+            Assert.AreEqual("XIX", modal.Q<Label>("inspect-hero-icon")?.text);
+
+            Assert.AreEqual(DisplayStyle.None, modal.Q<VisualElement>("inspect-minor-detail")!.style.display);
+            Assert.AreEqual(DisplayStyle.Flex, modal.Q<VisualElement>("inspect-major-detail")!.style.display);
+            Assert.AreEqual(
+                "All players receive one of each Reagent.",
+                modal.Q<Label>("inspect-major-effect")?.text);
+        }
+
+        [Test]
+        public void TheEmperor_Adept_BindsNameTypeNumeralAndEffect()
+        {
+            var modal = InstantiateInspectModal();
+            var session = BuildSession("major.adept.4", ZodiacSign.Aries);
+
+            CardInspectBindings.BindInspectModal(modal, session, "inspect-card");
+
+            Assert.AreEqual("The Emperor", modal.Q<Label>("inspect-name")?.text);
+            Assert.AreEqual("adept · IV", modal.Q<Label>("inspect-subtitle")?.text);
+            Assert.IsTrue(modal.ClassListContains("card-modal--adept"));
+
+            var hero = modal.Q<VisualElement>("inspect-hero-tarot");
+            Assert.IsNotNull(hero);
+            Assert.IsTrue(hero!.ClassListContains("card-chip--adept"));
+            Assert.AreEqual("IV", modal.Q<Label>("inspect-hero-icon")?.text);
+
+            Assert.AreEqual(DisplayStyle.Flex, modal.Q<VisualElement>("inspect-major-detail")!.style.display);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(modal.Q<Label>("inspect-major-effect")?.text));
+        }
+
+        [Test]
+        public void MinorArcana_ClearsFateAdeptThemeOnBind()
+        {
+            var modal = InstantiateInspectModal();
+            var session = BuildSession("minor.swords.seven.1", ZodiacSign.Scorpio);
+
+            CardInspectBindings.BindInspectModal(modal, session, "inspect-card");
+
+            Assert.IsTrue(modal.ClassListContains("card-modal--inspect"));
+            Assert.IsFalse(modal.ClassListContains("card-modal--fate"));
+            Assert.IsFalse(modal.ClassListContains("card-modal--adept"));
+            Assert.AreEqual(DisplayStyle.None, modal.Q<VisualElement>("inspect-major-detail")!.style.display);
+        }
+
         static VisualElement InstantiateInspectModal()
         {
             var asset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);

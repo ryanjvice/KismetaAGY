@@ -242,12 +242,19 @@ namespace Kismeta.Core.Commands
 
     public sealed class FatefulWagerResolvedEvent : IGameEvent
     {
-        public int        PlayerId  { get; }
-        public ZodiacSign Sign      { get; }
-        public bool       Won       { get; }
-        public int        CardCount { get; }
-        public FatefulWagerResolvedEvent(int playerId, ZodiacSign sign, bool won, int cardCount)
-        { PlayerId = playerId; Sign = sign; Won = won; CardCount = cardCount; }
+        public int        PlayerId      { get; }
+        public ZodiacSign PredictedSign { get; }
+        public ZodiacSign Sign          { get; }
+        public bool       Won           { get; }
+        public int        CardCount     { get; }
+        public FatefulWagerResolvedEvent(int playerId, ZodiacSign predictedSign, ZodiacSign sign, bool won, int cardCount)
+        {
+            PlayerId = playerId;
+            PredictedSign = predictedSign;
+            Sign = sign;
+            Won = won;
+            CardCount = cardCount;
+        }
     }
 
     public sealed class CardsDiscardedToLimitEvent : IGameEvent
