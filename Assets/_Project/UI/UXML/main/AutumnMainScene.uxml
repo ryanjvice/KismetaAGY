@@ -6,6 +6,7 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
     <engine:Style src="../../USS/AutumnActions.uss" />
+    <engine:Style src="../../USS/CentralPanelInspect.uss" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
     <engine:Template src="../shell/CauldronHub.uxml" name="CauldronHub" />

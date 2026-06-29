@@ -2,9 +2,11 @@
 
 .central-panel-inspect {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 2;
+    top: 12px;
+    right: 12px;
+    left: auto;
+    bottom: auto;
+    z-index: 10;
 }
 
 .central-panel-inspect-fab {

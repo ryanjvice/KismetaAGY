@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
+    <engine:Style src="../../USS/CentralPanelInspect.uss" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
     <engine:Template src="../shell/CentralPanelInspectFab.uxml" name="CentralPanelInspectFab" />
