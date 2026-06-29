@@ -141,16 +141,6 @@ namespace Kismeta.UI.Controllers
             {
                 yield return RollDie(Lbl("die-you-pip"), resolved.AttackRoll);
                 yield return RollDie(Lbl("die-foe-pip"), resolved.DefendRoll);
-                bool won = resolved.WinnerId == _playerId;
-                var outcome = Lbl("roll-outcome");
-                if (outcome != null)
-                {
-                    outcome.style.display = DisplayStyle.Flex;
-                    outcome.text = won
-                        ? $"You win ({resolved.AttackRoll} vs {resolved.DefendRoll}) — you steal the targeted card and keep your ante."
-                        : $"You lose ({resolved.AttackRoll} vs {resolved.DefendRoll}) — your ante returns to the deck.";
-                }
-                yield return new WaitForSeconds(1.2f);
                 OnCompleted?.Invoke();
             }
             else

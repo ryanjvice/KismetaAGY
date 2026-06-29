@@ -62,11 +62,14 @@ namespace Kismeta.Core.Commands
         public ReagentType ChosenReagent { get; }
 
         public FateLoversChoiceCommand(int playerId, bool drawCards,
-            ReagentType chosenReagent = ReagentType.Salt)
+            ReagentType chosenReagent = ReagentType.Salt, int chooserId = -1)
         {
             PlayerId      = playerId;
             DrawCards     = drawCards;
             ChosenReagent = chosenReagent;
+            ChooserId     = chooserId;
         }
+
+        public int ChooserId { get; }
     }
 }

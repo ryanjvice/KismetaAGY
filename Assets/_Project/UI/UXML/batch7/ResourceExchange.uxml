@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/Contests.uss" />
+    <engine:Style src="../../USS/EndAndOverlays.uss" />
+
+  <engine:VisualElement name="resource-exchange" class="card-modal card-modal--exchange">
+
+        <engine:VisualElement class="modal__header exchange__header">
+            <engine:Label name="exchange-title" text="Resources exchanged" class="exchange__title" />
+        </engine:VisualElement>
+
+        <engine:VisualElement class="card-modal__body exchange__body">
+            <engine:Label name="exchange-subtitle" text="" class="exchange__subtitle" />
+
+            <engine:VisualElement name="bilateral-panel" class="exchange__bilateral">
+                <engine:VisualElement class="tray tray--give">
+                    <engine:Label name="party-a-label" text="you give" class="exchange__tray-label" />
+                    <engine:VisualElement name="party-a-items" class="tray__cards exchange__items" />
+                </engine:VisualElement>
+
+                <engine:Label text="&#8645;" class="exchange__arrow" />
+
+                <engine:VisualElement class="tray tray--get">
+                    <engine:Label name="party-b-label" text="rival gives" class="exchange__tray-label" />
+                    <engine:VisualElement name="party-b-items" class="tray__cards exchange__items" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:VisualElement name="legs-list" class="exchange__legs" style="display: none;" />
+
+            <engine:Button name="exchange-confirm-btn" text="Confirm" class="btn btn--primary exchange__confirm" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

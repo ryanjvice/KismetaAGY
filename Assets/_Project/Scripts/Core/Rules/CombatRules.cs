@@ -78,6 +78,8 @@ namespace Kismeta.Core.Rules
 
             session.EmitEvent(new DuelResolvedEvent(
                 attackerId, defenderId, attackRoll, defendRoll, winnerId, targetCardId, anteCardId));
+            ExchangeEventEmitter.EmitDuel(session, attackerId, defenderId,
+                attackRoll, defendRoll, winnerId, targetCardId, anteCardId);
             return CommandResult.Ok(
                 $"Duel: P{attackerId}({attackRoll}) vs P{defenderId}({defendRoll}) → P{winnerId} wins.");
         }
@@ -135,11 +137,16 @@ namespace Kismeta.Core.Rules
             bool attackerWins = attackRoll >= defendRoll;
             int winnerId = attackerWins ? attackerId : defenderId;
 
+            string? arrestedDefenderCardId = null;
             if (attackerWins)
             {
                 // Attacker wins: defender's top Active Crucible slot (or Arcanum card) is arrested
                 var defSlot = defender.CrucibleSlots.Find(s => s.State == CrucibleCardState.Active);
-                if (defSlot != null) defSlot.Arrest();
+                if (defSlot != null)
+                {
+                    defSlot.Arrest();
+                    arrestedDefenderCardId = defSlot.CardInstanceId;
+                }
             }
             else
             {
@@ -160,6 +167,8 @@ namespace Kismeta.Core.Rules
 
             session.EmitEvent(new GambitResolvedEvent(
                 attackerId, defenderId, attackRoll, defendRoll, winnerId, offeredCardId));
+            ExchangeEventEmitter.EmitGambit(session, attackerId, defenderId,
+                attackRoll, defendRoll, winnerId, offeredCardId, offeredInCrucible, arrestedDefenderCardId);
             return CommandResult.Ok(
                 $"Gambit: P{attackerId}({attackRoll}) vs P{defenderId}({defendRoll}) → P{winnerId} wins.");
         }

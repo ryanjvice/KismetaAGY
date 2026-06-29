@@ -232,6 +232,7 @@ namespace Kismeta.Core.Rules
 
             SetFateNote(session, fateCardId,
                 "Already resolved: every hand passed clockwise. Now face-up in Arcanum.");
+            ExchangeEventEmitter.EmitHangedMan(session, hands);
         }
 
         // ── Async fate resolution (called by GameLoop after RequestAsync returns) ──
@@ -290,6 +291,9 @@ namespace Kismeta.Core.Rules
             ReagentType reagentType)
         {
             session.Players[chooserId].AddReagent(reagentType);
+            int drawerId = FindFoolDrawerPlayerId(session);
+            if (drawerId >= 0)
+                ExchangeEventEmitter.EmitFoolGift(session, drawerId, chooserId, reagentType);
             SetFateNote(session, FindDrawerFateCardId(session, 0),
                 $"Already resolved: opponents received reagents from the Fool. Now face-up in Arcanum.");
             return CommandResult.Ok($"P{chooserId} received 1 {reagentType} (Fool).");
@@ -297,8 +301,9 @@ namespace Kismeta.Core.Rules
 
         /// <summary>Lovers (6): target's choice resolves for the drawer.</summary>
         public CommandResult HandleLoversChoice(GameSession session, int drawerId,
-            bool drawCards, ReagentType chosenReagent)
+            bool drawCards, ReagentType chosenReagent, int chooserId = -1)
         {
+            var drawnIds = new List<string>();
             if (drawCards)
             {
                 // Drawer draws 2 cards — routed through harvest so Major Arcana go to Arcanum
@@ -320,12 +325,17 @@ namespace Kismeta.Core.Rules
                         inst.MoveTo(CardZone.Hand, drawerId);
                         player.Hand.Add(id);
                     }
+                    drawnIds.Add(id);
                 }
             }
             else
             {
                 session.Players[drawerId].AddReagent(chosenReagent);
             }
+
+            if (chooserId >= 0)
+                ExchangeEventEmitter.EmitLoversChoice(session, drawerId, chooserId,
+                    drawCards, chosenReagent, drawnIds);
 
             SetFateNote(session, FindFateCardId(session, drawerId, 6),
                 drawCards
@@ -356,6 +366,29 @@ namespace Kismeta.Core.Rules
             }
 
             return null;
+        }
+
+        static int FindFoolDrawerPlayerId(GameSession session)
+        {
+            foreach (var (pid, _, num) in session.Board.PendingFateDecisions)
+            {
+                if (num == 0)
+                    return pid;
+            }
+
+            foreach (var player in session.Players)
+            {
+                foreach (var id in player.Arcanum)
+                {
+                    var inst = session.GetCard(id);
+                    if (inst == null) continue;
+                    var def = session.Rules?.CardDatabase.GetById(inst.DefinitionId);
+                    if (def?.MajorArcanaType == MajorArcanaType.Fate && def.ArcanaNumber == 0)
+                        return player.PlayerId;
+                }
+            }
+
+            return -1;
         }
 
         static string? FindDrawerFateCardId(GameSession session, int arcanaNumber)

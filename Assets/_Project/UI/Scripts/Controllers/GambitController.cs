@@ -174,7 +174,6 @@ namespace Kismeta.UI.Controllers
             {
                 yield return RollDie(Lbl("die-you-pip"), resolved.AttackRoll);
                 yield return RollDie(Lbl("die-foe-pip"), resolved.DefendRoll);
-                yield return new WaitForSeconds(1.2f);
                 OnCompleted?.Invoke();
             }
             else

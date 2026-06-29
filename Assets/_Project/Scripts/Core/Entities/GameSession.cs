@@ -194,7 +194,8 @@ namespace Kismeta.Core.Entities
                     : CommandResult.NotImplemented(nameof(FateReagentChoiceCommand)),
 
                 FateLoversChoiceCommand   cmd => _rules?.FateResolver is not null
-                    ? _rules.FateResolver.HandleLoversChoice(this, cmd.PlayerId, cmd.DrawCards, cmd.ChosenReagent)
+                    ? _rules.FateResolver.HandleLoversChoice(this, cmd.PlayerId, cmd.DrawCards,
+                        cmd.ChosenReagent, cmd.ChooserId)
                     : CommandResult.NotImplemented(nameof(FateLoversChoiceCommand)),
 
                 // ── Ward placement ────────────────────────────────────────────────

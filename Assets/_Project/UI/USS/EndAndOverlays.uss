@@ -596,3 +596,75 @@
     color: var(--ink);
     margin-right: 8px;
 }
+
+/* ---------- Resource exchange summary ---------- */
+.card-modal--exchange {
+    background-color: rgb(12, 18, 26);
+    border-color: rgb(58, 90, 138);
+    max-height: none;
+    flex-shrink: 0;
+}
+.exchange__header {
+    background-color: rgb(18, 28, 42);
+    border-bottom-color: rgb(43, 58, 74);
+    padding: 12px 14px;
+}
+.exchange__title {
+    font-size: 13px;
+    color: rgb(168, 205, 240);
+}
+.exchange__body {
+    flex-direction: column;
+    padding: 12px 14px 16px;
+}
+.exchange__subtitle {
+    font-size: 11px;
+    color: rgb(184, 154, 110);
+    margin-bottom: 10px;
+    white-space: normal;
+}
+.exchange__bilateral {
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+.exchange__arrow {
+    font-size: 18px;
+    color: rgb(184, 154, 110);
+    -unity-text-align: middle-center;
+    margin: 4px 0;
+}
+.exchange__tray-label {
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+.exchange__items {
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-height: var(--card-chip-h);
+}
+.exchange__confirm {
+    margin-top: 4px;
+}
+.exchange__legs {
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+.exchange__leg-row {
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+.exchange__leg-label {
+    font-size: 10px;
+    color: rgb(184, 154, 110);
+    margin-bottom: 4px;
+}
+.exchange__more-label {
+    font-size: 10px;
+    color: rgb(127, 160, 196);
+    padding: 8px 6px;
+}
+.exchange__status-badge {
+    font-size: 8px;
+    color: rgb(224, 160, 120);
+    -unity-text-align: middle-center;
+}

@@ -1525,6 +1525,91 @@ namespace Kismeta.Core.Tests
             Assert.IsTrue(session.Players[1].Spread.Contains(targetId));
         }
 
+        [Test]
+        public void Trade_EmitsPlayerExchangeEvent_WithCardLegs()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var offer = PopulateSpread(session, 0, 1, "trade-ex");
+            var request = PopulateSpread(session, 1, 1, "trade-ex");
+
+            PlayerExchangeEvent? exchange = null;
+            void Handler(IGameEvent e)
+            {
+                if (e is PlayerExchangeEvent pe) exchange = pe;
+            }
+            session.OnEvent += Handler;
+
+            var trade = new TradeService(db);
+            var result = trade.TryTrade(session, 0, 1, offer, request);
+            session.OnEvent -= Handler;
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.NotNull(exchange);
+            Assert.AreEqual(ExchangeKind.Trade, exchange!.Kind);
+            Assert.AreEqual(2, exchange.Legs.Count);
+            Assert.AreEqual(0, exchange.Legs[0].FromPlayerId);
+            Assert.AreEqual(1, exchange.Legs[0].ToPlayerId);
+            Assert.AreEqual(offer[0], exchange.Legs[0].Items[0].CardInstanceId);
+            Assert.AreEqual(request[0], exchange.Legs[1].Items[0].CardInstanceId);
+        }
+
+        [Test]
+        public void Duel_AttackerWins_EmitsPlayerExchangeEvent()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var ante = PopulateSpread(session, 0, 1, "duel-ex-ante");
+            var targets = PopulateSpread(session, 1, 1, "duel-ex-target");
+            string targetId = targets[0];
+            string anteId = ante[0];
+
+            PlayerExchangeEvent? exchange = null;
+            void Handler(IGameEvent e)
+            {
+                if (e is PlayerExchangeEvent pe) exchange = pe;
+            }
+            session.OnEvent += Handler;
+
+            var combat = new CombatRules(FindDuelSeed(attackerWins: true));
+            var result = combat.TryDuel(session, 0, 1, targetId, anteId);
+            session.OnEvent -= Handler;
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.NotNull(exchange);
+            Assert.AreEqual(ExchangeKind.Duel, exchange!.Kind);
+            Assert.AreEqual(1, exchange.Legs.Count);
+            Assert.AreEqual(1, exchange.Legs[0].FromPlayerId);
+            Assert.AreEqual(0, exchange.Legs[0].ToPlayerId);
+            Assert.AreEqual(targetId, exchange.Legs[0].Items[0].CardInstanceId);
+        }
+
+        [Test]
+        public void FoolReagentChoice_EmitsPlayerExchangeEvent()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, playerCount: 3);
+            session.Board.PendingFateDecisions.Add((0, "fool-fate", 0));
+
+            var resolver = new FateCardResolver(db);
+            PlayerExchangeEvent? exchange = null;
+            void Handler(IGameEvent e)
+            {
+                if (e is PlayerExchangeEvent pe) exchange = pe;
+            }
+            session.OnEvent += Handler;
+
+            var result = resolver.HandleFoolReagentChoice(session, 1, ReagentType.Salt);
+            session.OnEvent -= Handler;
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.NotNull(exchange);
+            Assert.AreEqual(ExchangeKind.FateFool, exchange!.Kind);
+            Assert.AreEqual(0, exchange.Legs[0].FromPlayerId);
+            Assert.AreEqual(1, exchange.Legs[0].ToPlayerId);
+            Assert.AreEqual(ReagentType.Salt, exchange.Legs[0].Items[0].ReagentType);
+        }
+
         private sealed class SeededContestRng : System.Random
         {
             readonly Queue<int> _values = new();

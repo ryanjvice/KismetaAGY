@@ -85,6 +85,7 @@ namespace Kismeta.Core.Rules
             session.EmitEvent(new TradeCompletedEvent(
                 initiatorId, targetId,
                 offerCardIds.Count, requestCardIds.Count));
+            ExchangeEventEmitter.EmitTrade(session, initiatorId, targetId, offerCardIds, requestCardIds);
             return CommandResult.Ok(
                 $"Trade complete: P{initiatorId} gave {offerCardIds.Count}, received {requestCardIds.Count}.");
         }

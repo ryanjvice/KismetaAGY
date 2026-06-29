@@ -251,7 +251,7 @@ namespace Kismeta.Core.Players
                         if (loversRewardCmd is FateLoversChoiceCommand lc)
                         {
                             // Only the drawer receives the reward (the target is the chooser, not the recipient)
-                            Apply(new FateLoversChoiceCommand(playerId, lc.DrawCards, lc.ChosenReagent));
+                            Apply(new FateLoversChoiceCommand(playerId, lc.DrawCards, lc.ChosenReagent, targetId));
                         }
                         break;
                 }

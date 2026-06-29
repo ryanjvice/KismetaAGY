@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
@@ -30,7 +31,9 @@ namespace Kismeta.UI
         private ContestOverlayHost? _contestOverlays;
         private AutumnOverlayHost? _autumnOverlays;
         private EndOverlayHost? _endOverlays;
+        private ExchangeOverlayHost? _exchangeOverlays;
         private PlayerHudController? _playerHud;
+        private readonly Queue<PlayerExchangeEvent> _exchangeQueue = new();
         private readonly CommandBridge _bridge = new();
         private GameSession? _session;
         private GameLoop? _loop;
@@ -68,6 +71,7 @@ namespace Kismeta.UI
             _contestOverlays = GetComponent<ContestOverlayHost>();
             _autumnOverlays = GetComponent<AutumnOverlayHost>();
             _endOverlays = GetComponent<EndOverlayHost>();
+            _exchangeOverlays = GetComponent<ExchangeOverlayHost>();
             _playerHud = GetComponent<PlayerHudController>();
         }
 
@@ -135,6 +139,7 @@ namespace Kismeta.UI
             WireActionGroupRailRefresh();
             WireEndNavigation();
             WireCardOverlays();
+            WireExchangeOverlays();
         }
 
         public void Unbind()
@@ -156,6 +161,7 @@ namespace Kismeta.UI
             _completedAdeptModalCardId = null;
             _lastFateModalKey = null;
             _completedFateModalKey = null;
+            _exchangeQueue.Clear();
             HeaderOverlayBindings.ConfigureRivalSelection(null);
             DismissAllOverlays();
             _playerHud?.Hide();
@@ -256,6 +262,12 @@ namespace Kismeta.UI
                     localId = _bridge.PendingController?.Slot.Index ?? -1;
                 if (fate.PlayerId == localId)
                     _endOverlays.ShowFate(fate.FateCardId, fate.ArcanaNum);
+            }
+
+            if (evt is PlayerExchangeEvent exchange)
+            {
+                _exchangeQueue.Enqueue(exchange);
+                TryShowQueuedExchange();
             }
 
             RefreshActiveScreenIfNeeded();
@@ -679,7 +691,11 @@ namespace Kismeta.UI
 
         private void WireActionGroupRailRefresh()
         {
-            void Refresh() => RefreshActionGroupRails();
+            void Refresh()
+            {
+                RefreshActionGroupRails();
+                TryShowQueuedExchange();
+            }
 
             if (_summerOverlays != null)
                 _summerOverlays.OverlayChanged = Refresh;
@@ -719,6 +735,41 @@ namespace Kismeta.UI
             }
         }
 
+        private void WireExchangeOverlays()
+        {
+            if (_exchangeOverlays == null || _session == null) return;
+
+            _exchangeOverlays.BindState(_session);
+            _exchangeOverlays.OnConfirmed = () =>
+            {
+                TryShowQueuedExchange();
+                RefreshActiveScreenIfNeeded();
+            };
+        }
+
+        private void TryShowQueuedExchange()
+        {
+            if (_session == null || _exchangeOverlays == null || _exchangeQueue.Count == 0)
+                return;
+            if (_exchangeOverlays.IsOpen)
+                return;
+            if (IsBlockingOverlayOpen())
+                return;
+
+            var next = _exchangeQueue.Dequeue();
+            _exchangeOverlays.Show(next);
+        }
+
+        private bool IsBlockingOverlayOpen()
+        {
+            if (_contestOverlays?.IsOpen == true) return true;
+            if (_summerOverlays?.IsOpen == true) return true;
+            if (_springOverlays?.IsOpen == true) return true;
+            if (_autumnOverlays?.IsOpen == true) return true;
+            if (_endOverlays?.IsOpen == true) return true;
+            return false;
+        }
+
         private void WireCardOverlays()
         {
             if (_endOverlays != null)
@@ -756,6 +807,7 @@ namespace Kismeta.UI
                     _completedFateModalKey = _lastFateModalKey;
                 _adeptModalOpen = false;
                 _fateModalOpen = false;
+                TryShowQueuedExchange();
             };
         }
 
@@ -766,6 +818,17 @@ namespace Kismeta.UI
             _contestOverlays = GetComponent<ContestOverlayHost>();
             _autumnOverlays = GetComponent<AutumnOverlayHost>();
             _endOverlays = GetComponent<EndOverlayHost>();
+            _exchangeOverlays = GetComponent<ExchangeOverlayHost>();
+
+            if (_session != null)
+            {
+                _summerOverlays?.BindState(_session, _bridge);
+                _springOverlays?.BindState(_session, _bridge);
+                _contestOverlays?.BindState(_session, _bridge);
+                _autumnOverlays?.BindState(_session, _bridge);
+                _endOverlays?.BindState(_session, _loop!, _bridge);
+                _exchangeOverlays?.BindState(_session);
+            }
         }
 
         private void DismissAllOverlays()
@@ -775,6 +838,8 @@ namespace Kismeta.UI
             _contestOverlays?.Dismiss();
             _autumnOverlays?.Dismiss();
             _endOverlays?.Dismiss();
+            _exchangeOverlays?.Dismiss();
+            _exchangeQueue.Clear();
             _adeptModalOpen = false;
             _fateModalOpen = false;
             _lastAdeptModalCardId = null;

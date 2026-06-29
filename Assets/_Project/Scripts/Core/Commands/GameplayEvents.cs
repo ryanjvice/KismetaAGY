@@ -284,6 +284,96 @@ namespace Kismeta.Core.Commands
         { InitiatorId = initiatorId; TargetId = targetId; OfferedCards = offeredCards; ReceivedCards = receivedCards; }
     }
 
+    public enum ExchangeKind
+    {
+        Trade,
+        Duel,
+        Gambit,
+        FateLovers,
+        FateFool,
+        FateHangedMan
+    }
+
+    public enum ExchangeItemKind
+    {
+        SpreadCard,
+        CrucibleCard,
+        AdeptCard,
+        Reagent,
+        ToDiscard,
+        Arrested
+    }
+
+    public readonly struct ExchangeItem
+    {
+        public ExchangeItemKind Kind { get; }
+        public string? CardInstanceId { get; }
+        public ReagentType ReagentType { get; }
+        public int Count { get; }
+
+        public ExchangeItem(ExchangeItemKind kind, string? cardInstanceId = null,
+            ReagentType reagentType = ReagentType.Salt, int count = 1)
+        {
+            Kind = kind;
+            CardInstanceId = cardInstanceId;
+            ReagentType = reagentType;
+            Count = count;
+        }
+
+        public static ExchangeItem Spread(string cardId) =>
+            new(ExchangeItemKind.SpreadCard, cardInstanceId: cardId);
+
+        public static ExchangeItem Crucible(string cardId) =>
+            new(ExchangeItemKind.CrucibleCard, cardInstanceId: cardId);
+
+        public static ExchangeItem Adept(string cardId) =>
+            new(ExchangeItemKind.AdeptCard, cardInstanceId: cardId);
+
+        public static ExchangeItem Discard(string cardId) =>
+            new(ExchangeItemKind.ToDiscard, cardInstanceId: cardId);
+
+        public static ExchangeItem ArrestedCrucible(string cardId) =>
+            new(ExchangeItemKind.Arrested, cardInstanceId: cardId);
+
+        public static ExchangeItem Reagent(ReagentType type, int count = 1) =>
+            new(ExchangeItemKind.Reagent, reagentType: type, count: count);
+    }
+
+    public sealed class ExchangeLeg
+    {
+        public int FromPlayerId { get; }
+        public int ToPlayerId { get; }
+        public IReadOnlyList<ExchangeItem> Items { get; }
+
+        public ExchangeLeg(int fromPlayerId, int toPlayerId, IReadOnlyList<ExchangeItem> items)
+        {
+            FromPlayerId = fromPlayerId;
+            ToPlayerId = toPlayerId;
+            Items = items;
+        }
+    }
+
+    /// <summary>
+    /// Emitted when tangible resources move between players (or to deck/discard sinks).
+    /// Drives the post-action exchange summary modal.
+    /// </summary>
+    public sealed class PlayerExchangeEvent : IGameEvent
+    {
+        public const int SinkDiscard = -1;
+        public const int SinkDeck = -2;
+
+        public ExchangeKind Kind { get; }
+        public IReadOnlyList<ExchangeLeg> Legs { get; }
+        public string? ContextLine { get; }
+
+        public PlayerExchangeEvent(ExchangeKind kind, IReadOnlyList<ExchangeLeg> legs, string? contextLine = null)
+        {
+            Kind = kind;
+            Legs = legs;
+            ContextLine = contextLine;
+        }
+    }
+
     /// <summary>
     /// Emitted when a stone leaving Stasis clashes with an occupying stone at the same Forge position.
     /// The loser is sent back to Stasis; the winner remains Forging.
