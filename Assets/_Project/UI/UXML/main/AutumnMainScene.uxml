@@ -15,9 +15,9 @@
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
 
-            <engine:VisualElement class="autumn-main__toolbar" style="flex-direction: row; align-items: center;">
+            <engine:VisualElement class="autumn-main__toolbar">
                 <engine:Label name="narrative-beat" text="" class="narrative-beat" style="flex-grow: 1;" />
-                <engine:Button name="info-btn" text="&#9432;" class="autumn-info-btn" />
+                <engine:Button name="info-btn" text="ℹ" class="autumn-info-btn" />
             </engine:VisualElement>
 
             <engine:VisualElement class="autumn-main__actionbar">

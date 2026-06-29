@@ -296,7 +296,9 @@
 }
 
 .screen--autumn .stage-cta {
-    padding: 4px 14px 6px;
+    padding-top: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
     margin-top: var(--space-sm);
 }
 

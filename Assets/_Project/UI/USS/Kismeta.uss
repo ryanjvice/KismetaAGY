@@ -907,6 +907,12 @@
     overflow: hidden;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/GermaniaOne-Regular.asset");
 }
+
+.header-summary__season {
+    flex-shrink: 0;
+    overflow: visible;
+}
+
 .statusbar__sub { font-size: var(--font-label); color: var(--muted); flex-shrink: 0; }
 
 .rivals {
