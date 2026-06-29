@@ -35,7 +35,7 @@
 
             <engine:VisualElement class="end-autumn__actions">
                 <engine:Button name="keep-btn" text="Keep forging" class="btn btn--secondary end-autumn__btn" />
-                <engine:Button name="end-btn" text="Pass turn" class="btn btn--primary end-autumn__btn end-autumn__btn--pass" />
+                <engine:Button name="end-btn" text="Finish Turn" class="btn btn--primary end-autumn__btn end-autumn__btn--pass" />
             </engine:VisualElement>
         </engine:VisualElement>
 

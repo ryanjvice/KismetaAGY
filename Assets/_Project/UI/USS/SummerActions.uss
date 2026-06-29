@@ -972,3 +972,30 @@
     -unity-text-align: middle-center;
     white-space: nowrap;
 }
+
+/* yielded / passed waiting screens */
+.screen--yielded .central-panel {
+    opacity: 0.94;
+}
+.yielded-banner {
+    font-size: 13px;
+    color: rgb(180, 132, 72);
+    -unity-font-style: bold;
+    margin-bottom: 12px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+.yielded-hint {
+    font-size: 11px;
+    color: rgb(200, 188, 160);
+    margin-top: 8px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+.yielded-activity {
+    font-size: 10px;
+    color: rgb(160, 148, 120);
+    margin-top: 10px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}

@@ -75,10 +75,13 @@ namespace Kismeta.UI
             VisualTreeAsset? settings = null,
             VisualTreeAsset? agekeeperContest = null,
             VisualTreeAsset? springHub = null,
+            VisualTreeAsset? springPassed = null,
             VisualTreeAsset? summerMain = null,
             VisualTreeAsset? summerHub = null,
+            VisualTreeAsset? summerPassed = null,
             VisualTreeAsset? autumnMain = null,
             VisualTreeAsset? autumnHub = null,
+            VisualTreeAsset? autumnPassed = null,
             VisualTreeAsset? winterHub = null,
             VisualTreeAsset? roundOpen = null,
             VisualTreeAsset? springIntro = null,
@@ -113,14 +116,20 @@ namespace Kismeta.UI
                 screens.Add(new ScreenAsset { Id = ScreenIds.AgekeeperContest, Uxml = agekeeperContest });
             if (springHub != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.SpringHub, Uxml = springHub });
+            if (springPassed != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.SpringPassed, Uxml = springPassed });
             if (summerMain != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.SummerMain, Uxml = summerMain });
             if (summerHub != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.SummerHub, Uxml = summerHub });
+            if (summerPassed != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.SummerPassed, Uxml = summerPassed });
             if (autumnMain != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.AutumnMain, Uxml = autumnMain });
             if (autumnHub != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.AutumnHub, Uxml = autumnHub });
+            if (autumnPassed != null)
+                screens.Add(new ScreenAsset { Id = ScreenIds.AutumnPassed, Uxml = autumnPassed });
             if (winterHub != null)
                 screens.Add(new ScreenAsset { Id = ScreenIds.WinterHub, Uxml = winterHub });
             if (roundOpen != null)

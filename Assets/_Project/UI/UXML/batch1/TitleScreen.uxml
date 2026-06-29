@@ -25,7 +25,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="title-menu">
-            <engine:Button name="new-game-btn" text="New game" class="btn btn--primary title-menu__primary" />
+            <engine:Button name="new-game-btn" text="New Game" class="btn btn--primary title-menu__primary" />
 
             <engine:VisualElement class="title-menu__row">
                 <engine:Button name="resume-btn" text="Resume" class="btn btn--menu" />

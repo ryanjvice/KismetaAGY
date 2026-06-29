@@ -233,5 +233,66 @@ namespace Kismeta.Core.Tests
             var result    = validator.Validate(session, new RollCosmicAgeCommand(0));
             Assert.IsTrue(result.IsOk, result.Message);
         }
+
+        [Test]
+        public void GameLoop_MarkPlayerYielded_True_After_Mark()
+        {
+            var db = LoadDb();
+            var (_, loop) = BuildAIGame(db);
+
+            Assert.IsFalse(loop.IsPlayerYielded(0));
+            loop.MarkPlayerYielded(0);
+            Assert.IsTrue(loop.IsPlayerYielded(0));
+        }
+
+        [Test]
+        public void GameLoop_TryResolveYieldedPoolCommand_Returns_AutoPass_For_SummerAction()
+        {
+            var db = LoadDb();
+            var (_, loop) = BuildAIGame(db);
+
+            loop.MarkPlayerYielded(1);
+            var cmd = loop.TryResolveYieldedPoolCommand(1, ActionHint.SummerAction);
+
+            Assert.IsInstanceOf<PassCrucibleActionCommand>(cmd);
+            Assert.AreEqual(1, ((PassCrucibleActionCommand)cmd!).PlayerId);
+        }
+
+        [Test]
+        public void GameLoop_TryResolveYieldedPoolCommand_Returns_AutoPass_For_SpringAction()
+        {
+            var db = LoadDb();
+            var (_, loop) = BuildAIGame(db);
+
+            loop.MarkPlayerYielded(0);
+            var cmd = loop.TryResolveYieldedPoolCommand(0, ActionHint.SpringAction);
+
+            Assert.IsInstanceOf<PassActionCommand>(cmd);
+            Assert.AreEqual(0, ((PassActionCommand)cmd!).PlayerId);
+        }
+
+        [Test]
+        public void GameLoop_TryResolveYieldedPoolCommand_Clears_Yield_For_NonPool_Hint()
+        {
+            var db = LoadDb();
+            var (_, loop) = BuildAIGame(db);
+
+            loop.MarkPlayerYielded(0);
+            var cmd = loop.TryResolveYieldedPoolCommand(0, ActionHint.FateReagentChoice);
+
+            Assert.IsNull(cmd);
+            Assert.IsFalse(loop.IsPlayerYielded(0));
+        }
+
+        [Test]
+        public void GameLoop_ClearYield_Removes_Yielded_Flag()
+        {
+            var db = LoadDb();
+            var (_, loop) = BuildAIGame(db);
+
+            loop.MarkPlayerYielded(0);
+            loop.ClearYield(0);
+            Assert.IsFalse(loop.IsPlayerYielded(0));
+        }
     }
 }

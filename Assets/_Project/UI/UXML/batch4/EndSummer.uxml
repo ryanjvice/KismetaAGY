@@ -41,7 +41,7 @@
 
             <engine:VisualElement class="end-summer__actions">
                 <engine:Button name="keep-btn" text="Keep working" class="btn btn--secondary end-summer__btn" />
-                <engine:Button name="end-btn" text="Pass turn" class="btn btn--primary end-summer__btn end-summer__btn--pass" />
+                <engine:Button name="end-btn" text="Finish Turn" class="btn btn--primary end-summer__btn end-summer__btn--pass" />
             </engine:VisualElement>
         </engine:VisualElement>
 

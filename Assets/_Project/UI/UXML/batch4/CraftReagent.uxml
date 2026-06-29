@@ -99,7 +99,7 @@
             </engine:VisualElement>
             <engine:VisualElement style="padding: 0 14px 16px;">
                 <engine:VisualElement name="txn-strip" class="txn" />
-                <engine:Button name="result-done-btn" text="Back to the workshop" class="btn btn--primary" style="margin-top: 8px;" />
+                <engine:Button name="result-done-btn" text="Back To The Workshop" class="btn btn--primary" style="margin-top: 8px;" />
             </engine:VisualElement>
         </engine:VisualElement>
 

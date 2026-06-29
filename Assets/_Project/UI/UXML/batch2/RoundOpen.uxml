@@ -36,7 +36,7 @@
             </engine:ScrollView>
 
             <engine:VisualElement class="menu-screen__footer">
-                <engine:Button name="roll-btn" text="Cast the age die" class="btn btn--primary menu-screen__cta" />
+                <engine:Button name="roll-btn" text="Cast The Age Die" class="btn btn--primary menu-screen__cta" />
             </engine:VisualElement>
         </engine:VisualElement>
 
@@ -83,7 +83,7 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="menu-screen__footer">
-                <engine:Button name="enter-btn" text="Determine your sign" class="btn btn--primary menu-screen__cta" />
+                <engine:Button name="enter-btn" text="Determine Your Sign" class="btn btn--primary menu-screen__cta" />
             </engine:VisualElement>
         </engine:VisualElement>
 

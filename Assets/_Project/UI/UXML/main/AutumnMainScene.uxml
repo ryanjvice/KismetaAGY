@@ -112,7 +112,7 @@
             <engine:VisualElement class="stage-cta stage-cta--multi">
                 <engine:VisualElement class="actionbar__row actionbar__row--primary">
                     <engine:Button name="stasis-btn" text="Stasis" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="pass-btn" text="Finish Turn" class="actionbtn btn btn--primary" />
                 </engine:VisualElement>
             </engine:VisualElement>
 

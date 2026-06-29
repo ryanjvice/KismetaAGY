@@ -21,8 +21,8 @@
             <engine:VisualElement name="player-rolls" class="agekeeper-contest__players" />
 
             <engine:VisualElement class="menu-screen__footer agekeeper-contest__footer">
-                <engine:Button name="roll-btn" text="Roll the dice" class="btn btn--primary menu-screen__cta" />
-                <engine:Button name="continue-btn" text="Begin the Great Year" class="btn btn--primary menu-screen__cta menu-screen__cta--hidden" />
+                <engine:Button name="roll-btn" text="Roll The Dice" class="btn btn--primary menu-screen__cta" />
+                <engine:Button name="continue-btn" text="Begin The Great Year" class="btn btn--primary menu-screen__cta menu-screen__cta--hidden" />
             </engine:VisualElement>
         </engine:VisualElement>
 

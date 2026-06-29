@@ -115,15 +115,15 @@
             </engine:VisualElement>
 
             <engine:VisualElement name="wheel-cta" class="stage-cta stage-cta--single">
-                <engine:Button name="wheel-action-btn" text="Roll your zodiac die" class="actionbtn btn btn--primary" />
+                <engine:Button name="wheel-action-btn" text="Roll Your Zodiac Die" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 
             <engine:VisualElement name="hub-cta" class="stage-cta stage-cta--single spring-hub__hub-cta--hidden">
-                <engine:Button name="proceed-btn" text="Proceed to Summer" class="actionbtn btn btn--primary" />
+                <engine:Button name="proceed-btn" text="Proceed To Summer" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 
             <engine:VisualElement name="commune-cta" class="stage-cta stage-cta--single spring-hub__commune-cta--hidden">
-                <engine:Button name="commune-lock-btn" text="Lock the tableau" class="actionbtn btn btn--primary" />
+                <engine:Button name="commune-lock-btn" text="Lock The Tableau" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 
             <engine:Instance template="PlayerInventoryOverlay" />

@@ -82,7 +82,7 @@ namespace Kismeta.UI.Controllers
             else
             {
                 SetIntroVisible(true);
-                DisableActivate("Select a card to activate");
+                DisableActivate("Select A Card To Activate");
             }
 
             NarrativeSlotBindings.BindById(Root, "summer.activate");
@@ -374,7 +374,7 @@ namespace Kismeta.UI.Controllers
 
             if (_slotIndex < 0)
             {
-                DisableActivate("Select a card to activate");
+                DisableActivate("Select A Card To Activate");
                 return;
             }
 
@@ -392,7 +392,7 @@ namespace Kismeta.UI.Controllers
             btn.EnableInClassList("btn--primary", ready);
 
             if (ready)
-                btn.text = $"Activate · light the {formula.Cauldron} cauldron";
+                btn.text = $"Activate · Light The {formula.Cauldron} Cauldron";
             else if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
             {
                 int have = _selected.Count > 0
@@ -400,8 +400,8 @@ namespace Kismeta.UI.Controllers
                     : CountMatchingPlanet(spreadCards, formula.RequiredPlanet);
                 int missing = 3 - have;
                 btn.text = missing > 0
-                    ? $"Need {missing} more {formula.RequiredPlanet} to activate"
-                    : $"Select 3 {formula.RequiredPlanet} cards to activate";
+                    ? $"Need {missing} More {formula.RequiredPlanet} To Activate"
+                    : $"Select 3 {formula.RequiredPlanet} Cards To Activate";
             }
             else
             {
@@ -410,8 +410,8 @@ namespace Kismeta.UI.Controllers
                     : ActivationCardSuggester.BestRankSumFromSpread(spreadCards, formula.RequiredSuit);
                 int missing = formula.MinRankSum - sum;
                 btn.text = missing > 0
-                    ? $"Need {missing} more rank points to activate"
-                    : $"Need more rank points ({sum} / {formula.MinRankSum})";
+                    ? $"Need {missing} More Rank Points To Activate"
+                    : $"Need More Rank Points ({sum} / {formula.MinRankSum})";
             }
         }
 
@@ -426,12 +426,12 @@ namespace Kismeta.UI.Controllers
 
         static string SlotBlockedMessage(PlayerCrucibleSlot slot) => slot.State switch
         {
-            CrucibleCardState.Dormant when !slot.HasCoal => "No coal on this card",
-            CrucibleCardState.Active => "Already activated",
-            CrucibleCardState.Fired => "Already forged",
+            CrucibleCardState.Dormant when !slot.HasCoal => "No Coal On This Card",
+            CrucibleCardState.Active => "Already Activated",
+            CrucibleCardState.Fired => "Already Forged",
             CrucibleCardState.Discarded => "Discarded",
             CrucibleCardState.Arrested => "Arrested",
-            _ => "Cannot activate this slot"
+            _ => "Cannot Activate This Slot"
         };
 
         bool IsSelectedSetValid(CodexFormulaDefinition formula, ICardDatabase db) =>

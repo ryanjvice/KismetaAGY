@@ -54,7 +54,7 @@
                 </engine:Button>
             </engine:VisualElement>
 
-            <engine:Button name="begin-btn" text="Start Game" class="btn btn--primary" style="font-size: 14px;" />
+            <engine:Button name="begin-btn" text="Start Game" class="btn btn--primary" />
             <engine:Label name="summary" text="3 alchemists · Standard · curated deck"
                           style="font-size: 9px; color: rgb(106,90,74); -unity-text-align: middle-center; margin-top: 8px;" />
         </engine:VisualElement>

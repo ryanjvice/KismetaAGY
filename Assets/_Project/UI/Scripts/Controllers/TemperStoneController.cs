@@ -103,14 +103,14 @@ namespace Kismeta.UI.Controllers
                 btn.RemoveFromClassList("btn--disabled");
                 btn.AddToClassList("btn--primary");
                 btn.text = winning
-                    ? "Temper to the Altar · complete the Great Work"
-                    : $"Temper · advance to {player.StonePosition.Advance()}";
+                    ? "Temper To The Altar · Complete The Great Work"
+                    : $"Temper · Advance To {player.StonePosition.Advance()}";
             }
             else
             {
                 btn.AddToClassList("btn--disabled");
                 btn.RemoveFromClassList("btn--primary");
-                btn.text = "No forged card ready to temper";
+                btn.text = "No Forged Card Ready To Temper";
             }
         }
 

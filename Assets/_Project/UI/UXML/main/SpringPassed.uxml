@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/SpringSteps.uss" />
+    <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
+    <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
+
+    <engine:VisualElement name="spring-passed" class="screen screen--spring screen--yielded">
+
+        <engine:VisualElement class="screen__body">
+            <engine:Instance template="GameHeaderOverlay" />
+
+            <engine:VisualElement class="spring-hub__toolbar">
+                <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+            </engine:VisualElement>
+
+            <engine:VisualElement class="central-panel">
+            <engine:VisualElement class="stage spring-hub__board-stage">
+                <engine:Label name="turn-banner" text="You passed — waiting for spring to end" class="yielded-banner" />
+                <engine:VisualElement name="spring-board-panel" class="spring-board-panel">
+                    <engine:VisualElement name="spring-board" class="spring-board">
+                        <engine:VisualElement name="spring-board-wheel" class="spring-board__wheel" />
+                        <engine:VisualElement name="spring-board-tokens" class="spring-board__tokens" picking-mode="Ignore" />
+                    </engine:VisualElement>
+                    <engine:Label name="narrative-charge" text="" class="narrative-charge spring-board-panel__charge" />
+                </engine:VisualElement>
+                <engine:Label name="hint-label" text="Spring ends when everyone passes in a row" class="yielded-hint spring-hub__hint" />
+                <engine:Label name="activity-label" text="" class="yielded-activity" />
+            </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:Instance template="PlayerInventoryOverlay" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

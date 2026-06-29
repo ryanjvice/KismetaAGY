@@ -59,6 +59,9 @@ namespace Kismeta.Core.Players
         /// <summary>Fired on every log-worthy event (phase changes, errors, etc.).</summary>
         public event Action<string>? OnLog;
 
+        /// <summary>Players who confirmed Pass during the current Spring/Summer/Autumn free-action pool.</summary>
+        private readonly HashSet<int> _yieldedPlayerIds = new();
+
         public GameLoop(GameSession session, IReadOnlyList<IPlayerController> controllers)
         {
             _session     = session;
@@ -66,6 +69,43 @@ namespace Kismeta.Core.Players
         }
 
         public void BindCeremonyGate(CeremonyGate gate) => _ceremonyGate = gate;
+
+        /// <summary>True when the player confirmed Pass for the current Spring/Summer/Autumn pool.</summary>
+        public bool IsPlayerYielded(int playerId) => _yieldedPlayerIds.Contains(playerId);
+
+        /// <summary>True when the local human has yielded in the current Spring/Summer/Autumn pool.</summary>
+        public bool IsLocalHumanYielded => IsPlayerYielded(LocalHumanPlayerId);
+
+        /// <summary>Clears yield so the player can act again (e.g. after a response prompt).</summary>
+        public void ClearYield(int playerId) => _yieldedPlayerIds.Remove(playerId);
+
+        /// <summary>
+        /// When a player has yielded, returns an auto-pass for Spring/Summer/Autumn pool hints.
+        /// Clears yield when a non-pool hint is requested. Returns null when the player should act normally.
+        /// </summary>
+        public IGameCommand? TryResolveYieldedPoolCommand(int playerId, ActionHint hint)
+        {
+            if (!IsYieldPoolHint(hint))
+            {
+                _yieldedPlayerIds.Remove(playerId);
+                return null;
+            }
+
+            if (!_yieldedPlayerIds.Contains(playerId))
+                return null;
+
+            return hint switch
+            {
+                ActionHint.SpringAction => new PassActionCommand(playerId),
+                _ => new PassCrucibleActionCommand(playerId)
+            };
+        }
+
+        /// <summary>Marks a player as yielded after confirming Pass in a free-action pool.</summary>
+        public void MarkPlayerYielded(int playerId) => _yieldedPlayerIds.Add(playerId);
+
+        static bool IsYieldPoolHint(ActionHint hint) =>
+            hint is ActionHint.SpringAction or ActionHint.SummerAction or ActionHint.AutumnAction;
 
         // ─── Entry point ──────────────────────────────────────────────────────────
 
@@ -385,6 +425,9 @@ namespace Kismeta.Core.Players
         /// </summary>
         private async Task RunFreeActionPool(ActionHint hint, CancellationToken ct)
         {
+            if (IsYieldPoolHint(hint))
+                _yieldedPlayerIds.Clear();
+
             int playerCount       = _session.Players.Count;
             int startIdx          = FindAgekeeperIndex();
             int consecutivePasses = 0;
@@ -395,6 +438,12 @@ namespace Kismeta.Core.Players
                 int playerId = _session.Players[currentIdx].PlayerId;
                 var cmd      = await RequestAsync(playerId, hint, ct);
                 var result   = Apply(cmd);
+
+                if (hint == ActionHint.SpringAction && cmd is PassActionCommand springPass)
+                    MarkPlayerYielded(springPass.PlayerId);
+                else if (hint is ActionHint.SummerAction or ActionHint.AutumnAction
+                         && cmd is PassCrucibleActionCommand passCmd)
+                    MarkPlayerYielded(passCmd.PlayerId);
 
                 // A player is considered to have "given up their turn" if they:
                 //   (a) explicitly passed, OR
@@ -413,6 +462,10 @@ namespace Kismeta.Core.Players
         private async Task<IGameCommand> RequestAsync(int playerId, ActionHint hint,
             CancellationToken ct, string? pendingCardId = null)
         {
+            var yieldedCmd = TryResolveYieldedPoolCommand(playerId, hint);
+            if (yieldedCmd != null)
+                return yieldedCmd;
+
             ActivePlayerId = playerId;
             PendingCardId  = pendingCardId;
             var controller = _controllers[playerId];
@@ -544,8 +597,16 @@ namespace Kismeta.Core.Players
         Commune,
         /// <summary>Spring Hub free-action pool: Commune, Build a House, or pass to Summer.</summary>
         SpringAction,
+        /// <summary>Future: player responds during Spring hub (breaks yield for that player).</summary>
+        SpringHubResponse,
+        /// <summary>Summer free-action pool: Trade, Duel, Gambit, Opposition, or Pass.</summary>
         SummerAction,
+        /// <summary>Autumn free-action pool: Craft, Activate, Fire, Temper, Leave Stasis, or Pass.</summary>
         AutumnAction,
+        /// <summary>Future: defender responds to a Summer contest (breaks yield for that player).</summary>
+        SummerContestResponse,
+        /// <summary>Future: defender responds to an Autumn forge action (breaks yield for that player).</summary>
+        AutumnForgeResponse,
         /// <summary>Player must choose to Buy or Decline an Adept card just drawn in Harvest.</summary>
         AdeptDecision,
         /// <summary>The Moon Fate: player keeps 2 of 4 drawn cards, returns the rest.</summary>

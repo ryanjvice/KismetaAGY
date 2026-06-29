@@ -80,7 +80,7 @@ namespace Kismeta.UI.Narrative
                 "The Agekeeper rolls, and the heavens choose the age for all.",
                 "Roll the Cosmic Age die — one of twelve signs sets this round's Sign, Planet, and Element.",
                 "These three Aspects govern every harvest bonus and alignment all round.",
-                new[] { "Cast the age" }),
+                new[] { "Cast The Age" }),
             new NarrativeSlotEntry(
                 "spring.sign",
                 Season.Spring,
@@ -89,7 +89,7 @@ namespace Kismeta.UI.Narrative
                 "Your own die falls, and the cosmos names you for the age.",
                 "Roll your Zodiac die and move your meeple to your sign — your identity for this round.",
                 "Your sign is an alignment source AND grants a personal cosmic effect that lasts until Winter.",
-                new[] { "Roll your zodiac die" }),
+                new[] { "Roll Your Zodiac Die" }),
             new NarrativeSlotEntry(
                 "spring.harvest",
                 Season.Spring,
@@ -98,7 +98,7 @@ namespace Kismeta.UI.Narrative
                 "The age is generous to those who align with it.",
                 "Tally your bonus from every source, then take your full harvest from the Agekeeper.",
                 "Sign +3, Planet +2, Element +1.",
-                new[] { "Deal & commune" }),
+                new[] { "Deal & Commune" }),
             new NarrativeSlotEntry(
                 "spring.hub",
                 Season.Spring,
@@ -107,7 +107,16 @@ namespace Kismeta.UI.Narrative
                 "The wheel shows where every soul stands — study it before you choose.",
                 "Commune with your cards, build an Astral House on your sign, and review the table before Summer.",
                 "Spread cards score alignment and activate Crucibles but can be stolen in a Duel. Hand cards are safe but idle.",
-                new[] { "Commune with Cards", "Build a House", "Proceed to Summer" }),
+                new[] { "Commune With Cards", "Build A House", "Proceed To Summer" }),
+            new NarrativeSlotEntry(
+                "spring.passed",
+                Season.Spring,
+                NarrativeSlotTier.Action,
+                4,
+                "You yielded the wheel — spring waits on your rivals.",
+                "Spring ends when every player passes in a row without acting.",
+                "You will be asked to respond if a rival's action requires your input.",
+                new[] { "Waiting" }),
             new NarrativeSlotEntry(
                 "spring.commune",
                 Season.Spring,
@@ -116,7 +125,7 @@ namespace Kismeta.UI.Narrative
                 "Lay your fortune out — what you show, and what you keep.",
                 "Sort your cards into Spread (visible engine) and Hand (hidden reserve). Major Arcana go to your Arcanum.",
                 "Spread cards score alignment and activate Crucibles but can be stolen in a Duel. Hand cards are safe but idle.",
-                new[] { "Lock the tableau" }),
+                new[] { "Lock The Tableau" }),
             new NarrativeSlotEntry(
                 "spring.buildhouse",
                 Season.Spring,
@@ -125,7 +134,7 @@ namespace Kismeta.UI.Narrative
                 "A permanent anchor rises in an ever-turning sky.",
                 "Pay 1 card matching your sign's planet to raise a House on your current sign — a permanent harvest source and cosmic effect.",
                 "Houses are permanent — the card is spent for good. You may only build on the sign you rolled this round.",
-                new[] { "Raise the House" }),
+                new[] { "Raise The House" }),
             new NarrativeSlotEntry(
                 "spring.lock",
                 Season.Spring,
@@ -156,7 +165,16 @@ namespace Kismeta.UI.Narrative
                 "The sun rides high and the work is long.",
                 "Take any actions, in any order, as many as you can fuel.",
                 string.Empty,
-                new[] { "Craft", "Consort", "Activate", "Pass" }),
+                new[] { "Craft", "Consort", "Activate", "Finish Turn" }),
+            new NarrativeSlotEntry(
+                "summer.passed",
+                Season.Summer,
+                NarrativeSlotTier.Action,
+                1,
+                "You yielded the contest — the high sun waits on your rivals.",
+                "Summer ends when every player passes in a row without acting.",
+                "You will be asked to respond if a rival's action requires your input.",
+                new[] { "Waiting" }),
             new NarrativeSlotEntry(
                 "summer.activate",
                 Season.Summer,
@@ -183,7 +201,7 @@ namespace Kismeta.UI.Narrative
                 "A permanent anchor rises in an ever-turning sky.",
                 "Pay 2 cards matching your sign's planet to raise a House — a permanent harvest source, opposition boost, and cosmic effect.",
                 "Houses are permanent — the cards are spent for good and cannot be reclaimed. Build deliberately.",
-                new[] { "Raise the House" }),
+                new[] { "Raise The House" }),
             new NarrativeSlotEntry(
                 "summer.wards",
                 Season.Summer,
@@ -192,7 +210,7 @@ namespace Kismeta.UI.Narrative
                 "Set your tolls before the rivals come.",
                 "Place reagents on your Active Crucible or Adept cards to set the fee challengers must pay to Gambit them.",
                 "Crucible wards are permanent; Adept wards return if the Adept leaves play. An unwarded active card can be gambited for free.",
-                new[] { "Seal the wards" }),
+                new[] { "Seal The Wards" }),
             new NarrativeSlotEntry(
                 "summer.trade",
                 Season.Summer,
@@ -201,7 +219,7 @@ namespace Kismeta.UI.Narrative
                 "Bargains struck beneath the high sun.",
                 "Exchange cards, reagents, or Active Crucible cards freely with a rival — the only way to move reagents.",
                 "Hidden Hand cards cannot be requested. In Magnus mode, misaligned players trade 2:1.",
-                new[] { "Complete trade" }),
+                new[] { "Complete Trade" }),
             new NarrativeSlotEntry(
                 "summer.duel",
                 Season.Summer,
@@ -210,7 +228,7 @@ namespace Kismeta.UI.Narrative
                 "Steel meets steel over a coveted card.",
                 "Name a card in a rival's Spread, ante a card of your own, and roll — higher roll takes the prize.",
                 "Lose, and your ante returns to the deck. Only Spread cards can be targeted; the Hand is safe.",
-                new[] { "Ante & roll" }),
+                new[] { "Ante & Roll" }),
             new NarrativeSlotEntry(
                 "summer.gambit",
                 Season.Summer,
@@ -219,7 +237,7 @@ namespace Kismeta.UI.Narrative
                 "A wager against the Fates themselves.",
                 "Stake one of your Active cards to seize a rival's Crucible or Adept card. Pay their ward fee, then roll.",
                 "Lose, and your offered card is Arrested — pay 1 Salt to free it, and you can't re-gambit that rival this round.",
-                new[] { "Challenge this rival" })
+                new[] { "Challenge This Rival" })
         };
 
         public static IReadOnlyList<NarrativeSlotEntry> WinterSlice { get; } = new[]
@@ -241,7 +259,7 @@ namespace Kismeta.UI.Narrative
                 "The stars release their hold.",
                 "Move cards freely between Hand and Spread one last time before the age closes.",
                 string.Empty,
-                new[] { "Unlock cards" }),
+                new[] { "Unlock Cards" }),
             new NarrativeSlotEntry(
                 "winter.wager",
                 Season.Winter,
@@ -250,7 +268,7 @@ namespace Kismeta.UI.Narrative
                 "Bet on the sign the coming age will wear.",
                 "Predict the next cosmic sign and stake any cards from your Spread or Hand. Guess right and your wager doubles.",
                 "Guess wrong and the cards are lost to the Fates. Major Arcana in your Arcanum cannot be wagered.",
-                new[] { "Place wager", "Skip wager" }),
+                new[] { "Place Wager", "Skip Wager" }),
             new NarrativeSlotEntry(
                 "winter.limits",
                 Season.Winter,
@@ -259,7 +277,7 @@ namespace Kismeta.UI.Narrative
                 "Pare back to what you can carry into the dark.",
                 "Discard down to 5 Spread and 5 Hand. Return all Fate cards to the deck; Adepts remain.",
                 string.Empty,
-                new[] { "Enforce limits" }),
+                new[] { "Enforce Limits" }),
             new NarrativeSlotEntry(
                 "winter.transit",
                 Season.Winter,
@@ -268,7 +286,7 @@ namespace Kismeta.UI.Narrative
                 "The key passes, and the wheel turns toward a sign unknown until the dice fall.",
                 "The Agekeeper shuffles the deck and passes the key clockwise — a new age begins, unless the Great Work is done.",
                 string.Empty,
-                new[] { "Turn the wheel", "cast the next age" })
+                new[] { "Turn The Wheel", "Cast The Next Age" })
         };
 
         public static IReadOnlyList<NarrativeSlotEntry> AutumnSlice { get; } = new[]
@@ -293,6 +311,16 @@ namespace Kismeta.UI.Narrative
                 string.Empty,
                 new[] { "Survey" },
                 "Survey"),
+            new NarrativeSlotEntry(
+                "autumn.passed",
+                Season.Autumn,
+                NarrativeSlotTier.Action,
+                2,
+                "You stepped back from the flames — the forge still burns for your rivals.",
+                "Autumn ends when every player passes in a row without acting.",
+                "You will be asked to respond if a rival's action requires your input.",
+                new[] { "Waiting" },
+                "Waiting"),
             new NarrativeSlotEntry(
                 "summer.opposition",
                 Season.Summer,

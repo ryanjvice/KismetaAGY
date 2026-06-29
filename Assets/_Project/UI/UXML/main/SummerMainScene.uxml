@@ -40,7 +40,7 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--single summer-main__pass-block">
-                <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
+                <engine:Button name="pass-btn" text="Finish Turn" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 
             <engine:Instance template="PlayerInventoryOverlay" />

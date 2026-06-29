@@ -94,8 +94,8 @@ namespace Kismeta.UI.Components
             b.EnableInClassList("btn--disabled", !ready);
             b.EnableInClassList("btn--primary", ready);
             b.text = ready
-                ? "Forge the reagent"
-                : $"Forge — needs {need - selectedCount} more card{(need - selectedCount == 1 ? "" : "s")}";
+                ? "Forge The Reagent"
+                : $"Forge — Needs {need - selectedCount} More Card{(need - selectedCount == 1 ? "" : "s")}";
         }
 
         public static int EffectiveCost(GameSession session, PlayerState player, ReagentType reagent)

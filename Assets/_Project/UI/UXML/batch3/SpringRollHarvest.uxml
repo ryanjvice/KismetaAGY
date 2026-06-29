@@ -61,7 +61,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 10px 14px 16px;">
-            <engine:Button name="roll-btn" text="Roll for your sign" class="btn btn--primary" style="color: rgb(127, 196, 154);" />
+            <engine:Button name="roll-btn" text="Roll For Your Sign" class="btn btn--primary" style="color: rgb(127, 196, 154);" />
             <engine:Button name="continue-btn" text="Gather harvest · continue" class="btn"
                            style="background-color: rgb(22, 38, 31); border-color: rgb(43, 106, 74); color: rgb(127, 196, 154); margin-top: 8px; display: none;" />
         </engine:VisualElement>

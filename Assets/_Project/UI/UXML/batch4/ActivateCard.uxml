@@ -117,7 +117,7 @@
         </engine:ScrollView>
 
         <engine:VisualElement class="activate-footer">
-            <engine:Button name="activate-btn" text="Select a card to activate" class="btn btn--disabled" />
+            <engine:Button name="activate-btn" text="Select A Card To Activate" class="btn btn--disabled" />
         </engine:VisualElement>
 
     </engine:VisualElement>

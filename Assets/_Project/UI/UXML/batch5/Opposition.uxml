@@ -42,7 +42,7 @@
         <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
             <engine:Label text="choose a rival forging stone" class="eyebrow" />
             <engine:VisualElement name="rival-cards" class="tray__cards" />
-            <engine:Button name="target-next" text="Oppose this rival" class="btn btn--primary" style="margin-top: 12px;" />
+            <engine:Button name="target-next" text="Oppose This Rival" class="btn btn--primary" style="margin-top: 12px;" />
         </engine:VisualElement>
 
         <!-- step 1: fee -->
@@ -77,7 +77,7 @@
                 <engine:VisualElement name="die-set" class="die-big die-big--you"><engine:Label name="die-set-pip" text="?" class="die-big__pip" style="color: rgb(232, 185, 74);" /></engine:VisualElement>
             </engine:VisualElement>
             <engine:Label name="set-sign" text="" style="font-size: 13px; color: rgb(244, 211, 94); -unity-text-align: middle-center; display: none;" />
-            <engine:Button name="o-roll-btn" text="Roll for your sign" class="btn btn--primary" style="margin-top: 8px;" />
+            <engine:Button name="o-roll-btn" text="Roll For Your Sign" class="btn btn--primary" style="margin-top: 8px;" />
         </engine:VisualElement>
 
         <!-- step 3: alignment tally -->
@@ -98,7 +98,7 @@
                 <engine:Label name="foe-total" text="2" class="tally__pts" style="color: rgb(240, 144, 138); font-size: 16px;" />
             </engine:VisualElement>
 
-            <engine:Button name="o-resolve-btn" text="Resolve the Opposition" class="btn btn--primary" style="margin-top: 10px;" />
+            <engine:Button name="o-resolve-btn" text="Resolve The Opposition" class="btn btn--primary" style="margin-top: 10px;" />
         </engine:VisualElement>
 
         <!-- ===== STASIS RESULT (#33) — hidden until resolved ===== -->
@@ -114,7 +114,7 @@
                 </engine:VisualElement>
             </engine:VisualElement>
             <engine:VisualElement style="padding: 4px 14px 16px;">
-                <engine:Button name="stasis-done-btn" text="Back to the forge" class="btn btn--primary" />
+                <engine:Button name="stasis-done-btn" text="Back To The Forge" class="btn btn--primary" />
             </engine:VisualElement>
         </engine:VisualElement>
 

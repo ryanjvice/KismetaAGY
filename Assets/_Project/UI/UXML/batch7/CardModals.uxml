@@ -160,7 +160,7 @@
             <engine:VisualElement class="card-modal__body card-modal__body--grow">
                 <engine:VisualElement name="moon-cards" class="fate-chip-row moon-cards" />
                 <engine:Label name="moon-count" text="Keeping: 0 / 2" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 8px; margin-bottom: 8px;" />
-                <engine:Button name="moon-confirm" text="Confirm keep" class="btn btn--primary" />
+                <engine:Button name="moon-confirm" text="Confirm Keep" class="btn btn--primary" />
             </engine:VisualElement>
         </engine:VisualElement>
 

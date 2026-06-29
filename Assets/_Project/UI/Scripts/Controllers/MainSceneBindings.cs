@@ -238,6 +238,36 @@ namespace Kismeta.UI.Controllers
                 hint.text = "Review your board while you wait";
         }
 
+        public static void BindYieldedTurnBanner(
+            VisualElement? root,
+            GameSession session,
+            GameLoop loop,
+            string locationPhrase,
+            string defaultBanner,
+            string phaseEndPhrase)
+        {
+            if (root == null) return;
+
+            int activeId = loop.ActivePlayerId;
+            var banner = root.Q<Label>("turn-banner");
+            var hint = root.Q<Label>("hint-label");
+
+            if (activeId >= 0 && activeId < session.Players.Count
+                && activeId != loop.LocalHumanPlayerId)
+            {
+                var name = CeremonyBindings.PlayerName(session, activeId);
+                if (banner != null)
+                    banner.text = $"{name} is {locationPhrase}";
+            }
+            else if (banner != null)
+            {
+                banner.text = defaultBanner;
+            }
+
+            if (hint != null)
+                hint.text = phaseEndPhrase;
+        }
+
         public static void BindCauldrons(VisualElement? root, PublicPlayerView? local, GameSession? session = null) =>
             CauldronHubBindings.Bind(root, local, session);
 

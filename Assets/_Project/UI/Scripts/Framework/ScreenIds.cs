@@ -15,10 +15,13 @@ namespace Kismeta.UI
         public const string AgekeeperContest = "AgekeeperContest";
         // Season main scenes (Phase 3)
         public const string SpringHub = "SpringHub";
+        public const string SpringPassed = "SpringPassed";
         public const string SummerMain = "SummerMain";
         public const string SummerHub = "SummerHub";
+        public const string SummerPassed = "SummerPassed";
         public const string AutumnMain = "AutumnMain";
         public const string AutumnHub = "AutumnHub";
+        public const string AutumnPassed = "AutumnPassed";
         public const string WinterHub = "WinterHub";
         // Batch 2 ceremonies (Phase 4)
         public const string RoundOpen = "RoundOpen";

@@ -31,11 +31,11 @@ MonoBehaviour:
     _tier: 1
     _order: 1
     _beat: The Agekeeper rolls, and the heavens choose the age for all.
-    _charge: Roll the Cosmic Age die \u2014 one of twelve signs sets this round's
-      Sign, Planet, and Element.
+    _charge: "Roll the Cosmic Age die \u2014 one of twelve signs sets this round's
+      Sign, Planet, and Element."
     _stakes: These three Aspects govern every harvest bonus and alignment all round.
     _verbs:
-    - Cast the age
+    - Cast The Age
     _breadcrumb: 
   - _id: spring.sign
     _season: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
     _stakes: Your sign is an alignment source AND grants a personal cosmic effect
       that lasts until Winter.
     _verbs:
-    - Roll your zodiac die
+    - Roll Your Zodiac Die
     _breadcrumb: 
   - _id: spring.harvest
     _season: 0
@@ -58,7 +58,7 @@ MonoBehaviour:
       the Agekeeper.
     _stakes: Sign +3, Planet +2, Element +1.
     _verbs:
-    - Deal & commune
+    - Deal & Commune
     _breadcrumb: 
   - _id: spring.hub
     _season: 0
@@ -70,9 +70,19 @@ MonoBehaviour:
     _stakes: Spread cards score alignment and activate Crucibles but can be stolen
       in a Duel. Hand cards are safe but idle.
     _verbs:
-    - Commune with Cards
-    - Build a House
-    - Proceed to Summer
+    - Commune With Cards
+    - Build A House
+    - Proceed To Summer
+    _breadcrumb: 
+  - _id: spring.passed
+    _season: 0
+    _tier: 1
+    _order: 4
+    _beat: "You yielded the wheel \u2014 spring waits on your rivals."
+    _charge: Spring ends when every player passes in a row without acting.
+    _stakes: You will be asked to respond if a rival's action requires your input.
+    _verbs:
+    - Waiting
     _breadcrumb: 
   - _id: spring.commune
     _season: 0
@@ -84,7 +94,7 @@ MonoBehaviour:
     _stakes: Spread cards score alignment and activate Crucibles but can be stolen
       in a Duel. Hand cards are safe but idle.
     _verbs:
-    - Lock the tableau
+    - Lock The Tableau
     _breadcrumb: 
   - _id: spring.buildhouse
     _season: 0
@@ -96,7 +106,7 @@ MonoBehaviour:
     _stakes: "Houses are permanent \u2014 the card is spent for good. You may only
       build on the sign you rolled this round."
     _verbs:
-    - Raise the House
+    - Raise The House
     _breadcrumb: 
   - _id: spring.lock
     _season: 0
@@ -133,7 +143,17 @@ MonoBehaviour:
     - Craft
     - Consort
     - Activate
-    - Pass
+    - Finish Turn
+    _breadcrumb: 
+  - _id: summer.passed
+    _season: 1
+    _tier: 1
+    _order: 1
+    _beat: "You yielded the contest \u2014 the high sun waits on your rivals."
+    _charge: Summer ends when every player passes in a row without acting.
+    _stakes: You will be asked to respond if a rival's action requires your input.
+    _verbs:
+    - Waiting
     _breadcrumb: 
   - _id: summer.activate
     _season: 1
@@ -169,7 +189,7 @@ MonoBehaviour:
     _stakes: "Houses are permanent \u2014 the cards are spent for good and cannot
       be reclaimed. Build deliberately."
     _verbs:
-    - Raise the House
+    - Raise The House
     _breadcrumb: 
   - _id: summer.wards
     _season: 1
@@ -181,7 +201,7 @@ MonoBehaviour:
     _stakes: Crucible wards are permanent; Adept wards return if the Adept leaves
       play. An unwarded active card can be gambited for free.
     _verbs:
-    - Seal the wards
+    - Seal The Wards
     _breadcrumb: 
   - _id: summer.trade
     _season: 1
@@ -193,7 +213,7 @@ MonoBehaviour:
     _stakes: Hidden Hand cards cannot be requested. In Magnus mode, misaligned players
       trade 2:1.
     _verbs:
-    - Complete trade
+    - Complete Trade
     _breadcrumb: 
   - _id: summer.duel
     _season: 1
@@ -205,7 +225,7 @@ MonoBehaviour:
     _stakes: Lose, and your ante returns to the deck. Only Spread cards can be targeted;
       the Hand is safe.
     _verbs:
-    - Ante & roll
+    - Ante & Roll
     _breadcrumb: 
   - _id: summer.gambit
     _season: 1
@@ -217,7 +237,7 @@ MonoBehaviour:
     _stakes: "Lose, and your offered card is Arrested \u2014 pay 1 Salt to free it,
       and you can't re-gambit that rival this round."
     _verbs:
-    - Challenge this rival
+    - Challenge This Rival
     _breadcrumb: 
   - _id: autumn.intro
     _season: 2
@@ -242,6 +262,17 @@ MonoBehaviour:
     _verbs:
     - Survey
     _breadcrumb: Survey
+  - _id: autumn.passed
+    _season: 2
+    _tier: 1
+    _order: 2
+    _beat: "You stepped back from the flames \u2014 the forge still burns for your
+      rivals."
+    _charge: Autumn ends when every player passes in a row without acting.
+    _stakes: You will be asked to respond if a rival's action requires your input.
+    _verbs:
+    - Waiting
+    _breadcrumb: Waiting
   - _id: summer.opposition
     _season: 1
     _tier: 1
@@ -312,7 +343,7 @@ MonoBehaviour:
       closes.
     _stakes: 
     _verbs:
-    - Unlock cards
+    - Unlock Cards
     _breadcrumb: 
   - _id: winter.wager
     _season: 3
@@ -324,8 +355,8 @@ MonoBehaviour:
     _stakes: Guess wrong and the cards are lost to the Fates. Major Arcana in your
       Arcanum cannot be wagered.
     _verbs:
-    - Place wager
-    - Skip wager
+    - Place Wager
+    - Skip Wager
     _breadcrumb: 
   - _id: winter.limits
     _season: 3
@@ -336,7 +367,7 @@ MonoBehaviour:
       Adepts remain.
     _stakes: 
     _verbs:
-    - Enforce limits
+    - Enforce Limits
     _breadcrumb: 
   - _id: winter.transit
     _season: 3
@@ -348,6 +379,6 @@ MonoBehaviour:
       a new age begins, unless the Great Work is done."
     _stakes: 
     _verbs:
-    - Turn the wheel
-    - cast the next age
+    - Turn The Wheel
+    - Cast The Next Age
     _breadcrumb: 

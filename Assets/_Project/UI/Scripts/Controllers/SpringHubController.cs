@@ -435,7 +435,7 @@ namespace Kismeta.UI.Controllers
 
             if (_rolling)
             {
-                btn.text = "Roll your zodiac die";
+                btn.text = "Roll Your Zodiac Die";
                 btn.SetEnabled(false);
                 btn.EnableInClassList("btn--disabled", true);
                 return;
@@ -451,12 +451,12 @@ namespace Kismeta.UI.Controllers
             switch (hint)
             {
                 case ActionHint.RollZodiac:
-                    btn.text = "Roll your zodiac die";
+                    btn.text = "Roll Your Zodiac Die";
                     btn.SetEnabled(true);
                     btn.EnableInClassList("btn--disabled", false);
                     break;
                 case ActionHint.AcknowledgeSign:
-                    btn.text = "Continue to Harvest";
+                    btn.text = "Continue To Harvest";
                     btn.SetEnabled(true);
                     btn.EnableInClassList("btn--disabled", false);
                     break;
@@ -486,7 +486,7 @@ namespace Kismeta.UI.Controllers
 
             bool valid = _handIds.Count <= WinterRules.HandLimit;
             bool canAct = bridge.CanSubmit;
-            btn.text = "Lock the tableau";
+            btn.text = "Lock The Tableau";
             btn.SetEnabled(canAct && valid);
             btn.EnableInClassList("btn--disabled", !canAct || !valid);
         }

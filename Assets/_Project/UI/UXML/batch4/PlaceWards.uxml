@@ -75,7 +75,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 2px 14px 16px;">
-            <engine:Button name="seal-btn" text="Seal the wards" class="btn btn--primary" />
+            <engine:Button name="seal-btn" text="Seal The Wards" class="btn btn--primary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

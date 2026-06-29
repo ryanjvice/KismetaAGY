@@ -176,13 +176,13 @@ namespace Kismeta.UI.Controllers
             {
                 btn.RemoveFromClassList("btn--disabled");
                 btn.AddToClassList("btn--primary");
-                btn.text = $"Fire — advance to {player.StonePosition.Advance()}";
+                btn.text = $"Fire — Advance To {player.StonePosition.Advance()}";
             }
             else
             {
                 btn.AddToClassList("btn--disabled");
                 btn.RemoveFromClassList("btn--primary");
-                btn.text = crucibleDef == null ? "Select a crucible slot" : "Complete alignment & cost";
+                btn.text = crucibleDef == null ? "Select A Crucible Slot" : "Complete Alignment & Cost";
             }
         }
 

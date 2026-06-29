@@ -75,7 +75,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="menu-screen__footer">
-            <engine:Button name="begin-btn" text="Set the cosmic age" class="btn btn--primary menu-screen__cta" />
+            <engine:Button name="begin-btn" text="Set The Cosmic Age" class="btn btn--primary menu-screen__cta" />
         </engine:VisualElement>
 
     </engine:VisualElement>

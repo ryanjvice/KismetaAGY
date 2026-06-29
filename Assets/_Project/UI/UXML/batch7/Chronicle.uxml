@@ -94,7 +94,7 @@
 
         <engine:VisualElement style="padding: 0 14px 16px; flex-direction: row;">
             <engine:Button name="back-btn" text="Back" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
-            <engine:Button name="newgame-btn" text="New game" class="btn btn--primary" style="flex-grow: 1;" />
+            <engine:Button name="newgame-btn" text="New Game" class="btn btn--primary" style="flex-grow: 1;" />
         </engine:VisualElement>
 
     </engine:VisualElement>

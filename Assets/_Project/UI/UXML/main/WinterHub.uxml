@@ -26,12 +26,12 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--multi stage-cta--winter">
-                <engine:Button name="continue-btn" text="Unlock cards" class="actionbtn btn btn--primary" style="display: none;" />
-                <engine:Button name="craft-btn" text="Craft reagents" class="actionbtn btn btn--primary" style="display: none;" />
-                <engine:Button name="wager-btn" text="Fateful wager" class="actionbtn btn btn--primary" style="display: none;" />
-                <engine:Button name="limits-btn" text="Enforce limits" class="actionbtn btn btn--primary" style="display: none;" />
-                <engine:Button name="transit-btn" text="Transit the age" class="actionbtn btn btn--primary" style="display: none;" />
-                <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
+                <engine:Button name="continue-btn" text="Unlock Cards" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="craft-btn" text="Craft Reagents" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="wager-btn" text="Fateful Wager" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="limits-btn" text="Enforce Limits" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="transit-btn" text="Transit The Age" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="pass-btn" text="Finish Turn" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 
             <engine:Instance template="PlayerInventoryOverlay" />

@@ -54,10 +54,13 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _settingsScreen;
         [SerializeField] private VisualTreeAsset _agekeeperContest;
         [SerializeField] private VisualTreeAsset _springHub;
+        [SerializeField] private VisualTreeAsset _springPassed;
         [SerializeField] private VisualTreeAsset _summerMain;
         [SerializeField] private VisualTreeAsset _summerHub;
+        [SerializeField] private VisualTreeAsset _summerPassed;
         [SerializeField] private VisualTreeAsset _autumnMain;
         [SerializeField] private VisualTreeAsset _autumnHub;
+        [SerializeField] private VisualTreeAsset _autumnPassed;
         [SerializeField] private VisualTreeAsset _winterHub;
         [SerializeField] private VisualTreeAsset _roundOpen;
         [SerializeField] private VisualTreeAsset _springIntro;
@@ -183,10 +186,13 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<SettingsScreenController>();
             EnsureController<AgekeeperContestController>();
             EnsureController<SpringHubController>();
+            EnsureController<SpringPassedController>();
             EnsureController<SummerSceneController>();
             EnsureController<SummerHubController>();
+            EnsureController<SummerPassedController>();
             EnsureController<AutumnSceneController>();
             EnsureController<AutumnHubController>();
+            EnsureController<AutumnPassedController>();
             EnsureController<WinterHubController>();
             EnsureController<RoundOpenController>();
             EnsureController<AgeClosingController>();
@@ -261,7 +267,7 @@ namespace Kismeta.Game.Bootstrap
                 router.ConfigureScreens(
                     _titleScreen, null, _waitingHud, _setupSheet,
                     _joinScreen, _resumeScreen, _codexScreen, _settingsScreen, _agekeeperContest,
-                    _springHub, _summerMain, _summerHub, _autumnMain, _autumnHub, _winterHub,
+                    _springHub, _springPassed, _summerMain, _summerHub, _summerPassed, _autumnMain, _autumnHub, _autumnPassed, _winterHub,
                     _roundOpen, _springIntro, _summerIntro,
                     _autumnIntro, _winterIntro, _ageClosing,
                     _springHarvest, _winterUnlock, _fatefulWager, _craftReagent, _cardLimits,

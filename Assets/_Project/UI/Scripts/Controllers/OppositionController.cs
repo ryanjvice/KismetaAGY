@@ -182,7 +182,7 @@ namespace Kismeta.UI.Controllers
             else
             {
                 btn.AddToClassList("btn--disabled");
-                btn.text = $"Pay {cap - _fee.Total} more";
+                btn.text = $"Pay {cap - _fee.Total} More";
                 btn.SetEnabled(false);
             }
         }

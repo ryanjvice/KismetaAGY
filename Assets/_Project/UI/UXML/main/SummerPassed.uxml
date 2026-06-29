@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/SummerActions.uss" />
+    <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
+    <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
+    <engine:Template src="../shell/CauldronHub.uxml" name="CauldronHub" />
+
+    <engine:VisualElement name="summer-passed" class="screen screen--summer screen--yielded">
+
+        <engine:VisualElement class="screen__body">
+            <engine:Instance template="GameHeaderOverlay" />
+
+            <engine:VisualElement class="central-panel">
+            <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
+                <engine:Label name="turn-banner" text="You passed — waiting for summer to end" class="yielded-banner" />
+                <engine:Instance template="CauldronHub" />
+                <engine:Label name="hint-label" text="Summer ends when everyone passes in a row" class="yielded-hint" />
+                <engine:Label name="activity-label" text="" class="yielded-activity" />
+            </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:Instance template="PlayerInventoryOverlay" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

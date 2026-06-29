@@ -8,7 +8,7 @@ Unity UI Toolkit assets ported from `Docs/wireframes/`. This folder is the **pro
 |------|----------|
 | `USS/` | Shared `Kismeta.uss` (canonical) + per-screen stylesheets |
 | `UXML/batch1/` | Title, SetupSheet, Join, Resume, Codex, AgekeeperContest |
-| `UXML/main/` | Season main scenes: SpringHub, SummerMain, **SummerHub**, AutumnMain, **AutumnHub**, WinterHub |
+| `UXML/main/` | Season main scenes: SpringHub, **SpringPassed**, SummerMain, **SummerHub**, **SummerPassed**, AutumnMain, **AutumnHub**, **AutumnPassed**, WinterHub |
 | `UXML/batch2/` | Ceremony screens: RoundOpen, AgeOpening, season intros, AgeClosing |
 | `UXML/batch3/` | Spring/Winter step screens: Commune, WinterUnlock, FatefulWager, CardLimits |
 | `UXML/shell/` | `AppShell.uxml`, `WaitingHud` |
@@ -66,7 +66,7 @@ Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `
 
 **Summer play-test path:**
 
-Reach Summer → **Craft** sheet → craft reagent → **Activate** crucible → **Craft** → build house → place ward → **Pass** → pass-turn confirm → **SummerHub** (while rivals act) → your turn returns to **SummerMain** → Autumn intro.
+Reach Summer → **Craft** sheet → craft reagent → **Activate** crucible → **Craft** → build house → place ward → **Pass** → pass-turn confirm → **SummerPassed** (while rivals act; auto-pass on your next slots) → Autumn intro.
 
 ## Phase 5 complete — Batch 3 Spring & Winter steps
 
@@ -88,9 +88,16 @@ Title → setup → agekeeper → RoundOpen → AgeOpening → SpringIntro → *
 
 ## Phase 3 complete — Season main scenes
 
-- **Routing:** `GamePresenter` maps `Season` → `SpringHub` / `SummerMain` / `AutumnMain` / `WinterHub` on human turns; **SummerHub** / **AutumnHub** while rivals act in free-action phases; generic `WaitingHud` elsewhere.
+- **Routing:** `GamePresenter` maps `Season` → `SpringHub` / `SummerMain` / `AutumnMain` / `WinterHub` on human turns; **SpringPassed** / **SummerPassed** / **AutumnPassed** after the human confirms Pass (yield persists until phase end or a response hint); **SummerHub** / **AutumnHub** while rivals act when not yielded; generic `WaitingHud` elsewhere.
 - **Bind:** Status bar, rivals strip, spread dock, step rails (Spring/Winter), cauldrons (Summer), stone label (Autumn) from `GamePublicView`.
-- **Pass:** Summer, Autumn, and Winter main scenes wire **Pass** via `CommandBridge` during free-action phases.
+- **Pass:** Spring hub **Proceed to Summer**, and Summer/Autumn End confirm modals, mark the player **yielded** once and route to **SpringPassed** / **SummerPassed** / **AutumnPassed**; the loop **auto-passes** future pool turn slots without reopening confirm UI. Winter main scene passes directly via `CommandBridge`.
+
+### Spring / Summer / Autumn yield and future responses
+
+- **Yield state** lives in `GameLoop` for Spring, Summer, and Autumn free-action pools (`IsPlayerYielded`, `MarkPlayerYielded`, `ClearYield`).
+- **Auto-pass:** `TryResolveYieldedPoolCommand` returns `PassActionCommand` (Spring) or `PassCrucibleActionCommand` (Summer/Autumn) while yielded.
+- **Break yield:** any non-pool `ActionHint` clears yield for that player before blocking on hot-seat (e.g. future `SpringHubResponse`, `SummerContestResponse`, `AutumnForgeResponse`).
+- **Activity feed (optional):** passed screens show the latest `GameLoop.OnLog` line while yielded.
 - **Card table** opens from season menu buttons via `EndOverlayHost` (Batch 7).
 
 ## Phase 2 complete — Batch 1 shell
@@ -234,7 +241,7 @@ Autumn Oppose button  ──► ContestOverlayHost (Opposition)
 
 ### Autumn play-test path
 
-Reach Autumn → **Fire** (mantle + alignment + cost) → **Temper** (after full forging round) → **Oppose** (Batch 5) → **Cards** review → enter **Stasis** (via opposition loss) → **Leave Stasis** (2 Salt) → **Pass** → End Autumn confirm → Winter intro.
+Reach Autumn → **Fire** (mantle + alignment + cost) → **Temper** (after full forging round) → **Oppose** (Batch 5) → **Cards** review → enter **Stasis** (via opposition loss) → **Leave Stasis** (2 Salt) → **Pass** → End Autumn confirm → **AutumnPassed** (auto-pass until phase ends) → Winter intro.
 
 ## Phase 9 — Batch 7: End and overlays
 

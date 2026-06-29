@@ -26,7 +26,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="actionbar">
-            <engine:Button name="pass-btn" text="Pass" class="actionbtn btn btn--secondary" />
+            <engine:Button name="pass-btn" text="Finish Turn" class="actionbtn btn btn--primary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

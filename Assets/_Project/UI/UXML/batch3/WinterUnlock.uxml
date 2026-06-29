@@ -98,7 +98,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 2px 14px 16px;">
-            <engine:Button name="unlock-done-btn" text="Done · to the Fateful Wager" class="btn btn--primary" />
+            <engine:Button name="unlock-done-btn" text="Done · To The Fateful Wager" class="btn btn--primary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

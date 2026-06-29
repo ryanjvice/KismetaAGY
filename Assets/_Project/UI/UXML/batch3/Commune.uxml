@@ -96,7 +96,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 2px 14px 16px;">
-            <engine:Button name="lock-btn" text="Lock the tableau · to Summer" class="btn btn--primary" />
+            <engine:Button name="lock-btn" text="Lock The Tableau · To Summer" class="btn btn--primary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

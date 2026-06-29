@@ -83,8 +83,8 @@ namespace Kismeta.UI.Controllers
                 transit.EnableInClassList("btn--primary", valid);
                 transit.SetEnabled(valid);
                 transit.text = valid
-                    ? "Transit the age · pass the key"
-                    : $"Discard {toDiscard} more to transit";
+                    ? "Transit The Age · Pass The Key"
+                    : $"Discard {toDiscard} More To Transit";
             }
 
             RebuildCraftPanel(player);

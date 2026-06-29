@@ -31,7 +31,7 @@
         <engine:Label name="wager-flag" text="Your Pisces wager travels with you — it resolves when the next age is cast."
                       style="font-size: 10px; color: rgb(205, 176, 224); margin-top: 14px; white-space: normal; -unity-text-align: middle-center;" />
 
-        <engine:Button name="transit-btn" text="Close the age" class="btn btn--primary" style="align-self: stretch; margin-top: 18px;" />
+        <engine:Button name="transit-btn" text="Close The Age" class="btn btn--primary" style="align-self: stretch; margin-top: 18px;" />
 
     </engine:VisualElement>
 </engine:UXML>

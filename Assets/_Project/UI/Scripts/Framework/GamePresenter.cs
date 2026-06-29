@@ -261,7 +261,25 @@ namespace Kismeta.UI
             RefreshActiveScreenIfNeeded();
         }
 
-        private void OnLoopLog(string _) => RefreshActiveScreenIfNeeded();
+        private void OnLoopLog(string message)
+        {
+            NotifyPassedScreenActivity(message);
+            RefreshActiveScreenIfNeeded();
+        }
+
+        private void NotifyPassedScreenActivity(string message)
+        {
+            if (_loop == null || !_loop.IsLocalHumanYielded || string.IsNullOrWhiteSpace(message))
+                return;
+
+            var controller = _router.ActiveController;
+            if (controller is SpringPassedController springPassed)
+                springPassed.NotifyActivity(message);
+            else if (controller is SummerPassedController summerPassed)
+                summerPassed.NotifyActivity(message);
+            else if (controller is AutumnPassedController autumnPassed)
+                autumnPassed.NotifyActivity(message);
+        }
 
         private void RefreshActiveScreenIfNeeded()
         {
@@ -508,8 +526,11 @@ namespace Kismeta.UI
         {
             ActionHint.Commune => ScreenIds.SpringHub,
             ActionHint.SpringAction => ScreenIds.SpringHub,
+            ActionHint.SpringHubResponse => ScreenIds.SpringHub,
             ActionHint.ConfirmHarvest => ScreenIds.SpringHarvest,
             ActionHint.DiscardToLimit => ScreenIds.CardLimits,
+            ActionHint.SummerContestResponse => ScreenIds.SummerMain,
+            ActionHint.AutumnForgeResponse => ScreenIds.AutumnMain,
             _ => ResolveSeasonMainScreen(season)
         };
 
@@ -553,6 +574,24 @@ namespace Kismeta.UI
 
         private void WireSeasonHubNavigation()
         {
+            var springHub = _router.GetController<SpringHubController>(ScreenIds.SpringHub);
+            if (springHub != null)
+            {
+                springHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                springHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
+                springHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                springHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+            }
+
+            var springPassed = _router.GetController<SpringPassedController>(ScreenIds.SpringPassed);
+            if (springPassed != null)
+            {
+                springPassed.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                springPassed.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
+                springPassed.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                springPassed.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+            }
+
             var summerHub = _router.GetController<SummerHubController>(ScreenIds.SummerHub);
             if (summerHub != null)
             {
@@ -562,6 +601,15 @@ namespace Kismeta.UI
                 summerHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
+            var summerPassed = _router.GetController<SummerPassedController>(ScreenIds.SummerPassed);
+            if (summerPassed != null)
+            {
+                summerPassed.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                summerPassed.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
+                summerPassed.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                summerPassed.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+            }
+
             var autumnHub = _router.GetController<AutumnHubController>(ScreenIds.AutumnHub);
             if (autumnHub != null)
             {
@@ -569,6 +617,15 @@ namespace Kismeta.UI
                 autumnHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 autumnHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 autumnHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+            }
+
+            var autumnPassed = _router.GetController<AutumnPassedController>(ScreenIds.AutumnPassed);
+            if (autumnPassed != null)
+            {
+                autumnPassed.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
+                autumnPassed.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
+                autumnPassed.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                autumnPassed.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
         }
 
@@ -742,12 +799,27 @@ namespace Kismeta.UI
             _ => ScreenIds.Waiting
         };
 
-        private static string ResolveSpectatorScreen(Season season) => season switch
+        private string ResolveSpectatorScreen(Season season)
         {
-            Season.Summer => ScreenIds.SummerHub,
-            Season.Autumn => ScreenIds.AutumnHub,
-            _ => ScreenIds.Waiting
-        };
+            if (_loop != null && _loop.IsLocalHumanYielded)
+            {
+                return season switch
+                {
+                    Season.Spring => ScreenIds.SpringPassed,
+                    Season.Summer => ScreenIds.SummerPassed,
+                    Season.Autumn => ScreenIds.AutumnPassed,
+                    _ => ScreenIds.Waiting
+                };
+            }
+
+            return season switch
+            {
+                Season.Spring => ScreenIds.Waiting,
+                Season.Summer => ScreenIds.SummerHub,
+                Season.Autumn => ScreenIds.AutumnHub,
+                _ => ScreenIds.Waiting
+            };
+        }
 
         private static string ResolveSeasonMainScreen(Season season) => season switch
         {
@@ -825,6 +897,11 @@ namespace Kismeta.UI
                 _springOverlays?.BindState(_session, _bridge);
                 _endOverlays?.BindState(_session, _loop, _bridge);
             }
+            else if (controller is SpringPassedController springPassed)
+            {
+                springPassed.BindState(_session, _loop, _bridge);
+                _endOverlays?.BindState(_session, _loop, _bridge);
+            }
             else if (controller is SummerSceneController summer)
             {
                 summer.BindState(_session, _loop, _bridge);
@@ -835,6 +912,11 @@ namespace Kismeta.UI
             else if (controller is SummerHubController summerHub)
             {
                 summerHub.BindState(_session, _loop, _bridge);
+                _endOverlays?.BindState(_session, _loop, _bridge);
+            }
+            else if (controller is SummerPassedController summerPassed)
+            {
+                summerPassed.BindState(_session, _loop, _bridge);
                 _endOverlays?.BindState(_session, _loop, _bridge);
             }
             else if (controller is AutumnSceneController autumn)
@@ -848,6 +930,11 @@ namespace Kismeta.UI
             else if (controller is AutumnHubController autumnHub)
             {
                 autumnHub.BindState(_session, _loop, _bridge);
+                _endOverlays?.BindState(_session, _loop, _bridge);
+            }
+            else if (controller is AutumnPassedController autumnPassed)
+            {
+                autumnPassed.BindState(_session, _loop, _bridge);
                 _endOverlays?.BindState(_session, _loop, _bridge);
             }
             else if (controller is WinterHubController winter)

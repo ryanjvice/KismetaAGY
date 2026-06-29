@@ -57,7 +57,7 @@
                 <engine:VisualElement name="ante-cards" class="tray__cards" />
             </engine:VisualElement>
 
-            <engine:Button name="setup-next" text="Ante &amp; roll" class="btn btn--primary" style="margin-top: 12px;" />
+            <engine:Button name="setup-next" text="Ante &amp; Roll" class="btn btn--primary" style="margin-top: 12px;" />
         </engine:VisualElement>
 
         <!-- roll -->
@@ -73,7 +73,7 @@
                     <engine:Label name="die-foe-name" text="rival" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 4px;" />
                 </engine:VisualElement>
             </engine:VisualElement>
-            <engine:Button name="roll-btn" text="Roll the dice" class="btn btn--primary" />
+            <engine:Button name="roll-btn" text="Roll The Dice" class="btn btn--primary" />
             <engine:Label name="roll-outcome" text="" style="font-size: 12px; color: rgb(243, 233, 210); -unity-text-align: middle-center; margin-top: 10px; display: none;" />
         </engine:VisualElement>
 

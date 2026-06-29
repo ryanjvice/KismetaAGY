@@ -69,7 +69,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 2px 14px 16px;">
-            <engine:Button name="propose-btn" text="Complete trade" class="btn btn--primary" />
+            <engine:Button name="propose-btn" text="Complete Trade" class="btn btn--primary" />
             <engine:Label text="Cards swap immediately in hot-seat play"
                           style="font-size: 9px; color: rgb(106,122,138); -unity-text-align: middle-center; margin-top: 7px;" />
         </engine:VisualElement>

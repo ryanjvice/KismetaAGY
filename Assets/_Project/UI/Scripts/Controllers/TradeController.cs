@@ -112,7 +112,7 @@ namespace Kismeta.UI.Controllers
             var btn = Btn("propose-btn");
             if (btn != null)
             {
-                btn.text = "Complete trade";
+                btn.text = "Complete Trade";
                 bool hasCards = _give.Count > 0 || _get.Count > 0;
                 bool ratioOk = _session == null || ContestBindings.IsTradeRatioValid(
                     _session, _playerId, _rivalId, _give.Count, _get.Count);

@@ -41,7 +41,7 @@
             <engine:Label text="choose a rival" class="eyebrow" />
             <engine:VisualElement name="rival-cards" class="tray__cards" style="margin-bottom: 8px;" />
             <engine:Label name="ward-note" text="select a rival to see ward fee" style="font-size: 10px; color: rgb(224,200,120); margin-bottom: 6px;" />
-            <engine:Button name="g-target-next" text="Challenge this rival" class="btn btn--primary" style="margin-top: 8px;" />
+            <engine:Button name="g-target-next" text="Challenge This Rival" class="btn btn--primary" style="margin-top: 8px;" />
         </engine:VisualElement>
 
         <!-- step 2: pay ward fee (reuses stepper; skipped if unwarded) -->
@@ -74,7 +74,7 @@
             <engine:Label text="stake a matching-type card" class="eyebrow" />
             <engine:Label text="win to swap · lose and it's arrested (1 Salt to free)" style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 8px; white-space: normal;" />
             <engine:VisualElement name="stake-cards" class="tray__cards" />
-            <engine:Button name="g-stake-next" text="Stake &amp; roll" class="btn btn--primary" style="margin-top: 12px;" />
+            <engine:Button name="g-stake-next" text="Stake &amp; Roll" class="btn btn--primary" style="margin-top: 12px;" />
         </engine:VisualElement>
 
         <!-- step 4: roll -->
@@ -90,7 +90,7 @@
                     <engine:Label text="Iolanthe" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 4px;" />
                 </engine:VisualElement>
             </engine:VisualElement>
-            <engine:Button name="g-roll-btn" text="Roll the dice" class="btn btn--primary" />
+            <engine:Button name="g-roll-btn" text="Roll The Dice" class="btn btn--primary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

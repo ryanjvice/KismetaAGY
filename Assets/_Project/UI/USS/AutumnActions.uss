@@ -530,3 +530,10 @@
 .autumn-info-btn:hover {
     border-color: rgb(96, 140, 200);
 }
+
+.screen--yielded .forge-panel {
+    opacity: 0.94;
+}
+.screen--yielded .yielded-banner {
+    color: rgb(196, 118, 64);
+}

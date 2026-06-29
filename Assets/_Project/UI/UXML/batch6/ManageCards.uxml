@@ -59,7 +59,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement style="padding: 0 14px 16px;">
-            <engine:Button name="forge-btn" text="Back to the forge" class="btn btn--primary" />
+            <engine:Button name="forge-btn" text="Back To The Forge" class="btn btn--primary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

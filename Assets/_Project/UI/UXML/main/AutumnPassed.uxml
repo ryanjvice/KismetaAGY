@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/AutumnActions.uss" />
+    <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
+    <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
+
+    <engine:VisualElement name="autumn-passed" class="screen screen--autumn screen--yielded">
+
+        <engine:VisualElement class="screen__body">
+            <engine:Instance template="GameHeaderOverlay" />
+
+            <engine:VisualElement class="central-panel">
+            <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">
+                <engine:Label name="turn-banner" text="You passed — waiting at the forge" class="yielded-banner" />
+                <engine:VisualElement class="forge-panel">
+                    <engine:Label name="hint-label" text="Autumn ends when everyone passes in a row" class="yielded-hint forge-panel__hint" />
+                    <engine:VisualElement name="board-stage" class="forge-stage">
+                        <engine:VisualElement name="forge-mandala" class="forge-mandala" />
+                        <engine:VisualElement class="stone-marker forge-pos forge-pos--0" />
+                        <engine:VisualElement class="stone-marker forge-pos forge-pos--1 stone-marker--inner" />
+                        <engine:VisualElement class="stone-marker forge-pos forge-pos--2" />
+                        <engine:VisualElement class="stone-marker forge-pos forge-pos--3 stone-marker--inner" />
+                        <engine:VisualElement class="stone-marker forge-pos forge-pos--4" />
+                        <engine:VisualElement class="stone-marker forge-pos forge-pos--5 stone-marker--inner" />
+                        <engine:VisualElement class="stone-marker forge-pos forge-pos--6" />
+                        <engine:VisualElement class="stone-marker forge-pos forge-pos--7 stone-marker--inner" />
+                        <engine:VisualElement name="stone-marker-altar" class="stone-marker forge-pos forge-pos--altar" />
+                        <engine:VisualElement name="player-stones" class="player-stones" />
+                    </engine:VisualElement>
+                    <engine:VisualElement name="stasis-row" class="forge-bottom-row">
+                        <engine:VisualElement name="stasis-slot-0" class="stasis-slot">
+                            <engine:VisualElement class="stasis-slot__stone" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="stasis-slot-1" class="stasis-slot">
+                            <engine:VisualElement class="stasis-slot__stone" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="cauldron-mini" class="cauldron-mini">
+                            <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--wands" />
+                            <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--cups" />
+                            <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--pentacles" />
+                            <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--swords" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="stasis-slot-2" class="stasis-slot">
+                            <engine:VisualElement class="stasis-slot__stone" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="stasis-slot-3" class="stasis-slot">
+                            <engine:VisualElement class="stasis-slot__stone" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:Label name="activity-label" text="" class="yielded-activity" />
+            </engine:VisualElement>
+            </engine:VisualElement>
+
+            <engine:Instance template="PlayerInventoryOverlay" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>
