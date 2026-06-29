@@ -60,6 +60,10 @@
     --arcanum-bg: rgb(36, 16, 40);
     --arcanum-border: rgb(106, 74, 138);
     --arcanum-text: rgb(205, 176, 224);
+    --fate-chip-bg: rgb(58, 22, 38);
+    --fate-chip-border: rgb(214, 128, 160);
+    --adept-chip-bg: rgb(36, 16, 40);
+    --adept-chip-border: rgb(154, 122, 192);
     --panel-dark: rgba(22, 10, 28, 0.85);
     --panel-darker: rgba(16, 10, 18, 0.9);
     --border-subtle: rgb(106, 74, 42);
@@ -653,6 +657,14 @@
 
 .inventory-summary__count--reagent {
     color: rgb(180, 210, 240);
+}
+
+.inventory-summary__count--wager {
+    color: rgb(220, 180, 120);
+}
+
+.inventory-summary__count--hidden {
+    display: none;
 }
 
 .inventory-toggle-btn {
@@ -1345,6 +1357,14 @@
 .card-chip--cups { background-color: var(--suit-cups); }
 .card-chip--pentacles { background-color: var(--suit-pentacles); }
 .card-chip--swords { background-color: var(--suit-swords); }
+.card-chip--fate {
+    background-color: var(--fate-chip-bg);
+    border-color: var(--fate-chip-border);
+}
+.card-chip--adept {
+    background-color: var(--adept-chip-bg);
+    border-color: var(--adept-chip-border);
+}
 .card-chip__top {
     flex-direction: row;
     justify-content: space-between;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Kismeta.Core.Commands;
@@ -69,6 +70,15 @@ namespace Kismeta.Core.Tests
 
         private static void SetSeason(GameSession session, Season season) =>
             session.Phase.SetSeason(season);
+
+        private static void AssertInventoryConsistent(GameSession session, string? context = null)
+        {
+            var result = SessionInventoryAudit.Audit(session, context);
+            Assert.IsTrue(result.IsConsistent,
+                context == null
+                    ? string.Join("; ", result.Violations)
+                    : $"{context}: {string.Join("; ", result.Violations)}");
+        }
 
         // ─── GameSetupService tests ────────────────────────────────────────────────
 
@@ -1355,6 +1365,12 @@ namespace Kismeta.Core.Tests
         {
             var ids = new List<string>();
             var player = session.Players[playerId];
+            foreach (var id in player.Spread)
+            {
+                if (!session.Board.CommonDiscard.Contains(id))
+                    session.Board.CommonDiscard.Add(id);
+                session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
+            }
             player.Spread.Clear();
             for (int i = 0; i < count; i++)
             {
@@ -1608,6 +1624,164 @@ namespace Kismeta.Core.Tests
             Assert.AreEqual(0, exchange.Legs[0].FromPlayerId);
             Assert.AreEqual(1, exchange.Legs[0].ToPlayerId);
             Assert.AreEqual(ReagentType.Salt, exchange.Legs[0].Items[0].ReagentType);
+        }
+
+        // ─── SessionInventoryAudit tests ───────────────────────────────────────────
+
+        [Test]
+        public void Setup_InventoryIsConsistent()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AssertInventoryConsistent(session, "after setup");
+        }
+
+        [Test]
+        public void Setup_MajorArcanaRedeals_HaveDiscardZone()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            foreach (var id in session.Board.CommonDiscard)
+            {
+                var inst = session.GetCard(id);
+                Assert.IsNotNull(inst, $"Discard card {id} missing from registry.");
+                Assert.AreEqual(CardZone.Discard, inst!.Zone,
+                    $"Card {id} in CommonDiscard should have Zone=Discard.");
+            }
+        }
+
+        [Test]
+        public void FreeArrested_SpendsSalt_RestoresActiveSlot()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player = session.Players[0];
+            var slot = player.CrucibleSlots[0];
+            slot.Arrest();
+            player.AddReagent(ReagentType.Salt, 1);
+            SetSeason(session, Season.Summer);
+
+            var result = session.Apply(new FreeArrestedCommand(0, 0));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(CrucibleCardState.Active, slot.State);
+            Assert.AreEqual(0, player.GetReagent(ReagentType.Salt));
+            AssertInventoryConsistent(session, "after FreeArrested");
+        }
+
+        [Test]
+        public void MoonDecision_InvalidKeepCount_LeavesPoolIntact()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player = session.Players[0];
+            session.Board.PendingFateDecisions.Add((0, "fate-moon", 18));
+            var moonIds = new List<string>();
+            for (int i = 0; i < 4; i++)
+            {
+                string id = $"moon-{i}";
+                var c = new CardInstance(id, "minor.cups.seven.1", CardZone.Hand, 0);
+                session.RegisterCard(c);
+                player.Hand.Add(id);
+                session.Board.FateMoonDrawnCardIds.Add(id);
+                moonIds.Add(id);
+            }
+
+            var resolver = new FateCardResolver(db);
+            var result = resolver.HandleMoonDecision(session, 0, new List<string> { moonIds[0] });
+
+            Assert.IsFalse(result.IsOk, "Moon must require exactly 2 kept cards.");
+            Assert.AreEqual(4, session.Board.FateMoonDrawnCardIds.Count);
+            Assert.AreEqual(4, player.Hand.Count);
+            AssertInventoryConsistent(session, "after invalid Moon decision");
+        }
+
+        [Test]
+        public void Duel_AttackerWins_InventoryConsistent()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var ante = PopulateSpread(session, 0, 1, "duel-audit-ante");
+            var targets = PopulateSpread(session, 1, 2, "duel-audit-target");
+
+            var combat = new CombatRules(FindDuelSeed(attackerWins: true));
+            var result = combat.TryDuel(session, 0, 1, targets[0], ante[0]);
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            AssertInventoryConsistent(session, "after duel win");
+        }
+
+        [Test]
+        public void Trade_Quickplay_InventoryConsistent()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, mode: GameMode.Quickplay);
+            var offer = PopulateSpread(session, 0, 1, "trade-audit");
+            var request = PopulateSpread(session, 1, 1, "trade-audit");
+
+            var trade = new TradeService(db);
+            var result = trade.TryTrade(session, 0, 1, offer, request);
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            AssertInventoryConsistent(session, "after trade");
+        }
+
+        [Test]
+        public void Commune_ReassignsCards_InventoryConsistent()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player = session.Players[0];
+            player.Hand.Clear();
+            player.Spread.Clear();
+            var spreadIds = new List<string>();
+            var handIds = new List<string>();
+            for (int i = 0; i < 2; i++)
+            {
+                string sid = $"commune-s-{i}";
+                var sc = new CardInstance(sid, "minor.cups.seven.1", CardZone.Spread, 0);
+                session.RegisterCard(sc);
+                player.Spread.Add(sid);
+                spreadIds.Add(sid);
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                string hid = $"commune-h-{i}";
+                var hc = new CardInstance(hid, "minor.wands.three.1", CardZone.Hand, 0);
+                session.RegisterCard(hc);
+                player.Hand.Add(hid);
+                handIds.Add(hid);
+            }
+
+            var result = session.Apply(new CommuneCommand(0, spreadIds, handIds));
+            Assert.IsTrue(result.IsOk, result.Message);
+            AssertInventoryConsistent(session, "after commune");
+        }
+
+        [Test]
+        public void FatefulWager_PlaceAndResolve_InventoryConsistent()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player = session.Players[0];
+            var cardIds = new List<string>();
+            foreach (var id in player.Spread)
+                cardIds.Add(id);
+            if (cardIds.Count == 0)
+            {
+                cardIds.AddRange(PopulateSpread(session, 0, 1, "wager-audit"));
+            }
+            else
+            {
+                cardIds = cardIds.GetRange(0, Math.Min(1, cardIds.Count));
+            }
+
+            var place = session.Apply(new PlaceFatefulWagerCommand(0, ZodiacSign.Aries, cardIds));
+            Assert.IsTrue(place.IsOk, place.Message);
+            AssertInventoryConsistent(session, "after wager place");
+
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            session.Rules!.Winter.ResolveWagers(session, ZodiacSign.Aries);
+            AssertInventoryConsistent(session, "after wager resolve");
         }
 
         private sealed class SeededContestRng : System.Random

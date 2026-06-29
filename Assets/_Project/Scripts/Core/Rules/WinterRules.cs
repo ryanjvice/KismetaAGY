@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
@@ -201,6 +202,7 @@ namespace Kismeta.Core.Rules
         }
 
         /// <summary>Winter Step 3: discard Fate cards from Arcanum, then trim Spread and Hand.</summary>
+        [Obsolete("Use TryDiscardToLimit via DiscardToLimitCommand instead. This path does not update CardInstance zones.")]
         public void EnforceLimits(GameSession session)
         {
             ClearFateCards(session);

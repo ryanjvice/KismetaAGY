@@ -22,6 +22,7 @@ namespace Kismeta.UI.Components
             SetCountLabel(root, "summary-spread-count", "S", player.Spread.Count);
             SetCountLabel(root, "summary-hand-count", "H", player.HandCardCount);
             SetCountLabel(root, "summary-arcanum-count", "A", player.Arcanum.Count);
+            SetWagerCountLabel(root, player.FatefulWagerCount);
             SetCountLabel(root, "summary-reagent-total", "R", ReagentTotal(player));
         }
 
@@ -45,6 +46,8 @@ namespace Kismeta.UI.Components
             counts.Add(MakeCountLabel("S", player.Spread.Count, "inventory-summary__count--spread"));
             counts.Add(MakeCountLabel("H", player.HandCardCount, "inventory-summary__count--hand"));
             counts.Add(MakeCountLabel("A", player.Arcanum.Count, "inventory-summary__count--arcanum"));
+            if (player.FatefulWagerCount > 0)
+                counts.Add(MakeCountLabel("W", player.FatefulWagerCount, "inventory-summary__count--wager"));
             counts.Add(MakeCountLabel("R", ReagentTotal(player), "inventory-summary__count--reagent"));
             row.Add(counts);
 
@@ -56,6 +59,22 @@ namespace Kismeta.UI.Components
             var lbl = root.Q<Label>(name);
             if (lbl != null)
                 lbl.text = $"{prefix} {count}";
+        }
+
+        static void SetWagerCountLabel(VisualElement root, int count)
+        {
+            var lbl = root.Q<Label>("summary-wager-count");
+            if (lbl == null) return;
+            if (count > 0)
+            {
+                lbl.text = $"W {count}";
+                lbl.RemoveFromClassList("inventory-summary__count--hidden");
+            }
+            else
+            {
+                lbl.text = "";
+                lbl.AddToClassList("inventory-summary__count--hidden");
+            }
         }
 
         static Label MakeCountLabel(string prefix, int count, string modifierClass)

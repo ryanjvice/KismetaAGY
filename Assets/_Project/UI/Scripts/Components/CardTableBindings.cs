@@ -165,12 +165,10 @@ namespace Kismeta.UI.Components
                         var inst = session.GetCard(cardId);
                         var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
                         if (def == null) continue;
-                        arcRow.Add(MakeChip(
+                        arcRow.Add(CardChipFactory.CreateForArcanum(
                             def,
-                            cardId,
-                            aligned: false,
-                            onInspect,
-                            def.IsMajorArcana ? "★" : null));
+                            instanceId: cardId,
+                            onInspect: onInspect));
                     }
                     block.Add(arcRow);
                 }

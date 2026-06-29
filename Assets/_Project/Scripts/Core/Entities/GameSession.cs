@@ -98,81 +98,81 @@ namespace Kismeta.Core.Entities
 
                 // ── Setup ─────────────────────────────────────────────────────────
                 SetupGameCommand     _   => _rules is not null
-                    ? _rules.Setup.Setup(this)
+                    ? ApplyWithAudit(_rules.Setup.Setup(this), command)
                     : CommandResult.NotImplemented(nameof(SetupGameCommand)),
 
                 // ── Spring ────────────────────────────────────────────────────────
                 RollCosmicAgeCommand cmd => _rules is not null
-                    ? RunVoid(() =>
+                    ? ApplyWithAudit(RunVoid(() =>
                     {
                         _rules.Harvest.RollCosmicAge(this);
                         _rules.Winter.ResolveWagers(this, Board.CosmicAgeSign);
-                    })
+                    }), command)
                     : CommandResult.NotImplemented(nameof(RollCosmicAgeCommand)),
 
                 RollZodiacCommand    cmd => _rules is not null
-                    ? RunVoid(() => _rules.Harvest.RollZodiac(this, cmd.PlayerId))
+                    ? ApplyWithAudit(RunVoid(() => _rules.Harvest.RollZodiac(this, cmd.PlayerId)), command)
                     : CommandResult.NotImplemented(nameof(RollZodiacCommand)),
 
                 HarvestCommand       cmd => _rules is not null
-                    ? RunVoid(() => _rules.Harvest.ExecuteHarvest(this, cmd.PlayerId))
+                    ? ApplyWithAudit(RunVoid(() => _rules.Harvest.ExecuteHarvest(this, cmd.PlayerId)), command)
                     : CommandResult.NotImplemented(nameof(HarvestCommand)),
 
                 CommuneCommand       cmd => _rules is not null
-                    ? _rules.Harvest.HandleCommune(this, cmd.PlayerId, cmd.SpreadCardIds, cmd.HandCardIds)
+                    ? ApplyWithAudit(_rules.Harvest.HandleCommune(this, cmd.PlayerId, cmd.SpreadCardIds, cmd.HandCardIds), command)
                     : CommandResult.NotImplemented(nameof(CommuneCommand)),
 
                 BuyAdeptCommand      cmd => _rules is not null
-                    ? _rules.Harvest.HandleBuyAdept(this, cmd.PlayerId, cmd.AdeptCardId,
-                        cmd.PaymentCardIds, cmd.SwapOutAdeptId)
+                    ? ApplyWithAudit(_rules.Harvest.HandleBuyAdept(this, cmd.PlayerId, cmd.AdeptCardId,
+                        cmd.PaymentCardIds, cmd.SwapOutAdeptId), command)
                     : CommandResult.NotImplemented(nameof(BuyAdeptCommand)),
 
                 DeclineAdeptCommand  cmd => _rules is not null
-                    ? _rules.Harvest.HandleDeclineAdept(this, cmd.PlayerId, cmd.AdeptCardId)
+                    ? ApplyWithAudit(_rules.Harvest.HandleDeclineAdept(this, cmd.PlayerId, cmd.AdeptCardId), command)
                     : CommandResult.NotImplemented(nameof(DeclineAdeptCommand)),
 
                 // ── Spring extensions ─────────────────────────────────────────────
                 BuildAstralHouseCommand  cmd => _rules?.AstralHouse is not null
-                    ? _rules.AstralHouse.TryBuild(this, cmd.PlayerId, cmd.Sign, cmd.PaymentCardIds)
+                    ? ApplyWithAudit(_rules.AstralHouse.TryBuild(this, cmd.PlayerId, cmd.Sign, cmd.PaymentCardIds), command)
                     : CommandResult.NotImplemented(nameof(BuildAstralHouseCommand)),
 
                 // ── Summer ────────────────────────────────────────────────────────
                 ActivateCrucibleCommand cmd => _rules is not null
-                    ? _rules.Crucible.TryActivate(this, cmd.PlayerId, cmd.SlotIndex, cmd.CardInstanceIds)
+                    ? ApplyWithAudit(_rules.Crucible.TryActivate(this, cmd.PlayerId, cmd.SlotIndex, cmd.CardInstanceIds), command)
                     : CommandResult.NotImplemented(nameof(ActivateCrucibleCommand)),
 
                 CraftReagentCommand  cmd => _rules is not null
-                    ? _rules.Crafting.TryCraft(this, cmd.PlayerId, cmd.ReagentType, cmd.CardInstanceIds)
+                    ? ApplyWithAudit(_rules.Crafting.TryCraft(this, cmd.PlayerId, cmd.ReagentType, cmd.CardInstanceIds), command)
                     : CommandResult.NotImplemented(nameof(CraftReagentCommand)),
 
                 // ── Autumn ────────────────────────────────────────────────────────
                 FireStoneCommand     cmd => _rules is not null
-                    ? _rules.Crucible.TryFire(this, cmd.PlayerId, cmd.SlotIndex, cmd.AlignmentCardIds)
+                    ? ApplyWithAudit(_rules.Crucible.TryFire(this, cmd.PlayerId, cmd.SlotIndex, cmd.AlignmentCardIds), command)
                     : CommandResult.NotImplemented(nameof(FireStoneCommand)),
 
                 TemperCommand        cmd => _rules is not null
-                    ? _rules.Crucible.TryTemper(this, cmd.PlayerId)
+                    ? ApplyWithAudit(_rules.Crucible.TryTemper(this, cmd.PlayerId), command)
                     : CommandResult.NotImplemented(nameof(TemperCommand)),
 
                 InitiateOppositionCommand cmd => _rules is not null
-                    ? _rules.Crucible.TryOppose(this, cmd.AttackerId, cmd.DefenderId)
+                    ? ApplyWithAudit(_rules.Crucible.TryOppose(this, cmd.AttackerId, cmd.DefenderId), command)
                     : CommandResult.NotImplemented(nameof(InitiateOppositionCommand)),
 
                 LeaveStasisCommand       cmd => _rules is not null
-                    ? _rules.Crucible.TryLeaveStasis(this, cmd.PlayerId)
+                    ? ApplyWithAudit(_rules.Crucible.TryLeaveStasis(this, cmd.PlayerId), command)
                     : CommandResult.NotImplemented(nameof(LeaveStasisCommand)),
 
                 // ── Winter ────────────────────────────────────────────────────────
                 WinterMoveCardCommand    cmd => _rules is not null
-                    ? _rules.Winter.TryMoveCard(this, cmd.PlayerId, cmd.CardId, cmd.ToSpread)
+                    ? ApplyWithAudit(_rules.Winter.TryMoveCard(this, cmd.PlayerId, cmd.CardId, cmd.ToSpread), command)
                     : CommandResult.NotImplemented(nameof(WinterMoveCardCommand)),
 
                 PlaceFatefulWagerCommand cmd => _rules is not null
-                    ? _rules.Winter.TryPlaceWager(this, cmd.PlayerId, cmd.PredictedSign, cmd.CardIds)
+                    ? ApplyWithAudit(_rules.Winter.TryPlaceWager(this, cmd.PlayerId, cmd.PredictedSign, cmd.CardIds), command)
                     : CommandResult.NotImplemented(nameof(PlaceFatefulWagerCommand)),
 
                 DiscardToLimitCommand    cmd => _rules is not null
-                    ? _rules.Winter.TryDiscardToLimit(this, cmd.PlayerId, cmd.DiscardSpreadIds, cmd.DiscardHandIds)
+                    ? ApplyWithAudit(_rules.Winter.TryDiscardToLimit(this, cmd.PlayerId, cmd.DiscardSpreadIds, cmd.DiscardHandIds), command)
                     : CommandResult.NotImplemented(nameof(DiscardToLimitCommand)),
 
                 // EnforceCardLimitsCommand was superseded by the per-player DiscardToLimit flow;
@@ -181,60 +181,67 @@ namespace Kismeta.Core.Entities
                     CommandResult.Invalid("EnforceCardLimitsCommand is deprecated — use DiscardToLimitCommand instead."),
 
                 TransitAgeCommand    _   => _rules is not null
-                    ? RunVoid(() => _rules.Winter.Transit(this))
+                    ? ApplyWithAudit(RunVoid(() => _rules.Winter.Transit(this)), command)
                     : CommandResult.NotImplemented(nameof(TransitAgeCommand)),
 
                 // ── Fate async decisions ──────────────────────────────────────────
                 FateMoonDecisionCommand   cmd => _rules?.FateResolver is not null
-                    ? _rules.FateResolver.HandleMoonDecision(this, cmd.PlayerId, cmd.KeepCardIds)
+                    ? ApplyWithAudit(_rules.FateResolver.HandleMoonDecision(this, cmd.PlayerId, cmd.KeepCardIds), command)
                     : CommandResult.NotImplemented(nameof(FateMoonDecisionCommand)),
 
                 FateReagentChoiceCommand  cmd => _rules?.FateResolver is not null
-                    ? _rules.FateResolver.HandleFoolReagentChoice(this, cmd.PlayerId, cmd.ReagentType)
+                    ? ApplyWithAudit(_rules.FateResolver.HandleFoolReagentChoice(this, cmd.PlayerId, cmd.ReagentType), command)
                     : CommandResult.NotImplemented(nameof(FateReagentChoiceCommand)),
 
                 FateLoversChoiceCommand   cmd => _rules?.FateResolver is not null
-                    ? _rules.FateResolver.HandleLoversChoice(this, cmd.PlayerId, cmd.DrawCards,
-                        cmd.ChosenReagent, cmd.ChooserId)
+                    ? ApplyWithAudit(_rules.FateResolver.HandleLoversChoice(this, cmd.PlayerId, cmd.DrawCards,
+                        cmd.ChosenReagent, cmd.ChooserId), command)
                     : CommandResult.NotImplemented(nameof(FateLoversChoiceCommand)),
 
                 // ── Ward placement ────────────────────────────────────────────────
                 PlaceCardWardCommand  cmd => _rules is not null
-                    ? _rules.Crucible.TryPlaceCardWard(this, cmd.PlayerId, cmd.SlotIndex, cmd.ReagentType)
+                    ? ApplyWithAudit(_rules.Crucible.TryPlaceCardWard(this, cmd.PlayerId, cmd.SlotIndex, cmd.ReagentType), command)
                     : CommandResult.NotImplemented(nameof(PlaceCardWardCommand)),
 
                 PlaceStoneWardCommand cmd => _rules is not null
-                    ? _rules.Crucible.TryPlaceStoneWard(this, cmd.PlayerId, cmd.ReagentType)
+                    ? ApplyWithAudit(_rules.Crucible.TryPlaceStoneWard(this, cmd.PlayerId, cmd.ReagentType), command)
                     : CommandResult.NotImplemented(nameof(PlaceStoneWardCommand)),
 
                 RefreshAdeptCommand   cmd => _rules is not null
-                    ? _rules.Crucible.TryRefreshAdept(this, cmd.PlayerId, cmd.AdeptCardId)
+                    ? ApplyWithAudit(_rules.Crucible.TryRefreshAdept(this, cmd.PlayerId, cmd.AdeptCardId), command)
                     : CommandResult.NotImplemented(nameof(RefreshAdeptCommand)),
 
                 DirectTradeCommand    cmd => _rules?.Trade is not null
-                    ? _rules.Trade.TryTrade(this, cmd.PlayerId, cmd.TargetId,
-                        cmd.OfferCardIds, cmd.RequestCardIds)
+                    ? ApplyWithAudit(_rules.Trade.TryTrade(this, cmd.PlayerId, cmd.TargetId,
+                        cmd.OfferCardIds, cmd.RequestCardIds), command)
                     : CommandResult.NotImplemented(nameof(DirectTradeCommand)),
 
                 // ── Combat ────────────────────────────────────────────────────────
                 InitiateDuelCommand   cmd => _rules?.Combat is not null
-                    ? _rules.Combat.TryDuel(this, cmd.AttackerId, cmd.DefenderId, cmd.TargetCardId, cmd.AnteCardId)
+                    ? ApplyWithAudit(_rules.Combat.TryDuel(this, cmd.AttackerId, cmd.DefenderId, cmd.TargetCardId, cmd.AnteCardId), command)
                     : CommandResult.NotImplemented(nameof(InitiateDuelCommand)),
 
                 InitiateGambitCommand cmd => _rules?.Combat is not null
-                    ? _rules.Combat.TryGambit(this, cmd.AttackerId, cmd.DefenderId, cmd.OfferedCardId)
+                    ? ApplyWithAudit(_rules.Combat.TryGambit(this, cmd.AttackerId, cmd.DefenderId, cmd.OfferedCardId), command)
                     : CommandResult.NotImplemented(nameof(InitiateGambitCommand)),
 
                 FreeArrestedCommand   cmd => _rules?.Combat is not null
-                    ? _rules.Combat.TryFreeArrested(this, cmd.PlayerId, cmd.SlotIndex)
+                    ? ApplyWithAudit(_rules.Combat.TryFreeArrested(this, cmd.PlayerId, cmd.SlotIndex), command)
                     : CommandResult.NotImplemented(nameof(FreeArrestedCommand)),
 
                 // ── Pass actions ──────────────────────────────────────────────────
-                PassActionCommand        _ => CommandResult.Ok("Action passed."),
-                PassCrucibleActionCommand _ => CommandResult.Ok("Crucible action passed."),
+                PassActionCommand        _ => ApplyWithAudit(CommandResult.Ok("Action passed."), command),
+                PassCrucibleActionCommand _ => ApplyWithAudit(CommandResult.Ok("Crucible action passed."), command),
 
                 _                          => CommandResult.NotImplemented(command.GetType().Name)
             };
+        }
+
+        private CommandResult ApplyWithAudit(CommandResult result, IGameCommand command)
+        {
+            if (result.IsOk)
+                SessionInventoryAudit.RunIfEnabled(this, command.GetType().Name);
+            return result;
         }
 
         // ─── Private handlers ─────────────────────────────────────────────────────

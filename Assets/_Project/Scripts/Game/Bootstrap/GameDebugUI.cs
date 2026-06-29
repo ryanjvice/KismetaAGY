@@ -84,6 +84,22 @@ namespace Kismeta.Game.Bootstrap
 
             session.OnEvent += evt => AddLog(FormatEvent(evt));
             loop.OnLog      += msg => AddLog($"[Loop] {msg}");
+            SessionInventoryAudit.OnViolation += OnInventoryViolation;
+        }
+
+        private readonly List<string> _inventoryViolations = new(32);
+
+        void OnDestroy()
+        {
+            SessionInventoryAudit.OnViolation -= OnInventoryViolation;
+        }
+
+        void OnInventoryViolation(SessionInventoryAuditResult result)
+        {
+            foreach (var v in result.Violations)
+                _inventoryViolations.Add(result.Context == null ? v.ToString() : $"[{result.Context}] {v}");
+            while (_inventoryViolations.Count > 50)
+                _inventoryViolations.RemoveAt(0);
         }
 
         // ─── OnGUI entry ──────────────────────────────────────────────────────────
@@ -124,6 +140,25 @@ namespace Kismeta.Game.Bootstrap
             GUILayout.Label($"Deck: {board.CommonDeckCount}  Disc: {board.CommonDiscardCount}");
             GUILayout.Label($"CardLock: {(_session.CardLockActive ? "YES" : "no")}  Over: {_session.IsOver}");
 
+            var audit = SessionInventoryAudit.Audit(_session, "debug-panel");
+            if (audit.IsConsistent)
+                GUILayout.Label("Inventory: OK");
+            else
+            {
+                GUI.color = Color.red;
+                GUILayout.Label($"Inventory: {audit.Violations.Count} issue(s)");
+                GUI.color = Color.white;
+                for (int i = 0; i < Math.Min(4, audit.Violations.Count); i++)
+                    GUILayout.Label($"  {audit.Violations[i]}");
+            }
+
+            if (_inventoryViolations.Count > 0)
+            {
+                GUI.color = new Color(1f, 0.7f, 0.4f);
+                GUILayout.Label($"Recent audit log: {_inventoryViolations[^1]}");
+                GUI.color = Color.white;
+            }
+
             GUILayout.Space(6f);
             GUILayout.Label("── PLAYERS ──");
 
@@ -143,7 +178,8 @@ namespace Kismeta.Game.Bootstrap
             GUILayout.Label($"   Stone: {p.StonePosition}  [{p.StoneState}]" +
                 (p.StoneWardCount > 0 ? $"  🛡️×{p.StoneWardCount}" : "") +
                 (p.ReturnedFromStasisThisRound ? "  (stasis return)" : ""));
-            GUILayout.Label($"   Hand:{p.Hand.Count} Spr:{p.Spread.Count} Arc:{p.Arcanum.Count}");
+            GUILayout.Label($"   Hand:{p.Hand.Count} Spr:{p.Spread.Count} Arc:{p.Arcanum.Count}" +
+                (p.FatefulWagerCards.Count > 0 ? $" Wgr:{p.FatefulWagerCards.Count}" : ""));
             GUILayout.Label(
                 $"   Sa:{p.GetReagent(ReagentType.Salt)} " +
                 $"Su:{p.GetReagent(ReagentType.Sulphur)} " +

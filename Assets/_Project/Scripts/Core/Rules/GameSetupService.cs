@@ -225,6 +225,7 @@ namespace Kismeta.Core.Rules
                     if (def != null && def.IsMajorArcana)
                     {
                         session.Board.CommonDiscard.Add(id);
+                        session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
                         continue;
                     }
 

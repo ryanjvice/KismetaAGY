@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
@@ -60,6 +61,33 @@ namespace Kismeta.UI.Tests
             var chip = root.Q("player-block-1")?.Q(className: "card-chip");
             Assert.IsNotNull(chip);
             Assert.IsTrue(chip!.ClassListContains("card-chip--inspectable"));
+        }
+
+        [Test]
+        public void ArcanumChips_ShowFateAdeptStylesAndRomanNumerals()
+        {
+            const string fateId = "rival-fate-card";
+            const string adeptId = "rival-adept-card";
+            var session = BuildSessionWithRivalArcanum(
+                (fateId, "major.fate.11"),
+                (adeptId, "major.adept.4"));
+
+            var root = BuildSummerRoot();
+            SummerRosterBindings.Populate(root, session, localPlayerId: 0, _ => { });
+
+            var arcanumCol = root.Q("player-block-1")?.Q(className: "player-block__zone-col--arcanum");
+            Assert.IsNotNull(arcanumCol, "Expected rival arcanum column in roster.");
+
+            var chips = arcanumCol!.Query(className: "card-chip").ToList();
+            Assert.AreEqual(2, chips.Count);
+
+            var fateChip = chips.FirstOrDefault(c => c.ClassListContains("card-chip--fate"));
+            var adeptChip = chips.FirstOrDefault(c => c.ClassListContains("card-chip--adept"));
+            Assert.IsNotNull(fateChip, "Expected a Fate arcanum chip.");
+            Assert.IsNotNull(adeptChip, "Expected an Adept arcanum chip.");
+
+            Assert.AreEqual("XI", fateChip!.Q<Label>(className: "card-chip__rank")?.text);
+            Assert.AreEqual("IV", adeptChip!.Q<Label>(className: "card-chip__rank")?.text);
         }
 
         static VisualElement BuildSummerRoot()
@@ -125,6 +153,35 @@ namespace Kismeta.UI.Tests
             var session = new GameSession("summer-roster-test", GameMode.Quickplay, players, rules);
             session.Players[1].Spread.Add(cardId);
             session.RegisterCard(new CardInstance(cardId, definitionId, CardZone.Spread, 1));
+            return session;
+        }
+
+        GameSession BuildSessionWithRivalArcanum(params (string cardId, string definitionId)[] cards)
+        {
+            var codexPath = Path.Combine(Application.dataPath,
+                "_Project/Data/Resources/crucible-codex.json");
+            var codexDb = CrucibleCodexDatabase.LoadFromJson(File.ReadAllText(codexPath));
+            var rules = new GameRuleSet(
+                cardDatabase: _db,
+                codexDatabase: codexDb,
+                setup: new GameSetupService(_db, 42),
+                harvest: new SpringRules(_db, 42),
+                crucible: new CrucibleRules(_db, codexDb, seed: 42),
+                crafting: new CraftingRules(_db),
+                winter: new WinterRules(_db),
+                validator: new ActionValidator());
+
+            var players = new List<PlayerState>
+            {
+                new(0, PlayerColor.Red),
+                new(1, PlayerColor.Blue),
+            };
+            var session = new GameSession("summer-roster-test", GameMode.Quickplay, players, rules);
+            foreach (var (cardId, definitionId) in cards)
+            {
+                session.Players[1].Arcanum.Add(cardId);
+                session.RegisterCard(new CardInstance(cardId, definitionId, CardZone.Arcanum, 1));
+            }
             return session;
         }
     }

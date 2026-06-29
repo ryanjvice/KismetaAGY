@@ -184,10 +184,12 @@ namespace Kismeta.Core.Players
 
             // Resolve Fate cards that were drawn (auto + async)
             await ResolvePendingFatesAsync(ct);
+            AuditInventory("after ResolvePendingFates");
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
             // Resolve Adept purchase decisions queued during harvest
             await ResolvePendingAdeptsAsync(ct);
+            AuditInventory("after ResolvePendingAdepts");
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
             Log("Spring — Step 4: Spring Hub (Commune / Build a House)");
@@ -196,6 +198,7 @@ namespace Kismeta.Core.Players
 
             Log("Spring — Step 5: Card Lock");
             Apply(new SetCardLockCommand(true));
+            AuditInventory("end Spring");
         }
 
         // ─── Fate card resolution ─────────────────────────────────────────────────
@@ -224,8 +227,11 @@ namespace Kismeta.Core.Players
                         _session.Board.FateMoonDrawnCardIds.Clear();
                         DrawCards(playerId, 4, _session.Board.FateMoonDrawnCardIds);
                         var moonCmd = await RequestAsync(playerId, ActionHint.FateMoonDecision, ct, fateCardId);
-                        Apply(moonCmd);
-                        _session.Board.FateMoonDrawnCardIds.Clear();
+                        var moonResult = Apply(moonCmd);
+                        if (moonResult.IsOk)
+                            _session.Board.FateMoonDrawnCardIds.Clear();
+                        else
+                            Log($"[WARN] Moon decision rejected: {moonResult.Message}");
                         break;
 
                     case 0: // Fool: drawer draws 2; each opponent picks 1 Reagent
@@ -281,7 +287,12 @@ namespace Kismeta.Core.Players
                 if (ct.IsCancellationRequested) break;
                 Log($"Spring — Adept decision: P{playerId} offered {adeptCardId}");
                 var cmd = await RequestAsync(playerId, ActionHint.AdeptDecision, ct, adeptCardId);
-                Apply(cmd);
+                var result = Apply(cmd);
+                if (!result.IsOk)
+                {
+                    pending.Add((playerId, adeptCardId));
+                    Log($"[WARN] Adept decision rejected, re-queued: {result.Message}");
+                }
             }
         }
 
@@ -305,6 +316,7 @@ namespace Kismeta.Core.Players
 
             Log("Summer — Free-Action Pool (Trade / Duel / Gambit / Opposition)");
             await RunFreeActionPool(ActionHint.SummerAction, ct);
+            AuditInventory("end Summer");
         }
 
         // ─── Autumn ───────────────────────────────────────────────────────────────
@@ -317,6 +329,7 @@ namespace Kismeta.Core.Players
 
             Log("Autumn — Free-Action Pool (Craft / Activate / Forge)");
             await RunFreeActionPool(ActionHint.AutumnAction, ct);
+            AuditInventory("end Autumn");
         }
 
         // ─── Winter ───────────────────────────────────────────────────────────────
@@ -338,6 +351,7 @@ namespace Kismeta.Core.Players
 
             Log("Winter — Step 4: Transit Age");
             await RunAgeClosingCeremonyAsync(ct);
+            AuditInventory("end Winter");
         }
 
         private async Task RunAgeOpenCeremonyAsync(CancellationToken ct)
@@ -581,6 +595,16 @@ namespace Kismeta.Core.Players
         }
 
         private void Log(string msg) => OnLog?.Invoke(msg);
+
+        private void AuditInventory(string context)
+        {
+            var result = SessionInventoryAudit.Audit(_session, context);
+            if (!result.IsConsistent)
+            {
+                foreach (var v in result.Violations)
+                    Log($"[InventoryAudit/{context}] {v}");
+            }
+        }
     }
 
     /// <summary>Hints passed to a controller indicating what kind of action is expected.</summary>

@@ -30,6 +30,13 @@ namespace Kismeta.Core.Entities
             }
         }
 
+        /// <summary>Restore an arrested slot to Active (e.g. after paying Salt).</summary>
+        public void UnArrest()
+        {
+            if (State == CrucibleCardState.Arrested)
+                State = CrucibleCardState.Active;
+        }
+
         public void RemoveCoal() => HasCoal = false;
 
         public void Fire(int currentRound)

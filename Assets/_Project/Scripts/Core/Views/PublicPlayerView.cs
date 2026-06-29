@@ -23,6 +23,8 @@ namespace Kismeta.Core.Views
         public IReadOnlyList<string> Arcanum { get; }
 
         public int HandCardCount { get; }
+        /// <summary>Cards staked in Fateful Wager limbo (not in Spread/Hand until resolved).</summary>
+        public int FatefulWagerCount { get; }
 
         public StonePosition StonePosition              { get; }
         public StoneState StoneState                    { get; }
@@ -50,9 +52,10 @@ namespace Kismeta.Core.Views
             IsAgekeeper   = p.IsAgekeeper;
             CurrentSign   = p.CurrentSign;
             AssignedCodex = p.AssignedCodex;
-            Spread = p.Spread.AsReadOnly();
-            Arcanum = p.Arcanum.AsReadOnly();
+            Spread = new List<string>(p.Spread).AsReadOnly();
+            Arcanum = new List<string>(p.Arcanum).AsReadOnly();
             HandCardCount = p.Hand.Count;
+            FatefulWagerCount = p.FatefulWagerCards.Count;
             StonePosition               = p.StonePosition;
             StoneState                  = p.StoneState;
             StoneWardCount              = p.StoneWardCount;

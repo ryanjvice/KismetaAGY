@@ -270,7 +270,33 @@ namespace Kismeta.UI
                 TryShowQueuedExchange();
             }
 
-            RefreshActiveScreenIfNeeded();
+            if (IsInventoryMutationEvent(evt))
+                RefreshInventoryAfterMutation();
+            else
+                RefreshActiveScreenIfNeeded();
+        }
+
+        static bool IsInventoryMutationEvent(IGameEvent evt) => evt switch
+        {
+            TradeCompletedEvent => true,
+            DuelResolvedEvent => true,
+            GambitResolvedEvent => true,
+            FatefulWagerPlacedEvent => true,
+            FatefulWagerResolvedEvent => true,
+            HarvestCatastropheEvent => true,
+            CardsDrawnEvent => true,
+            AdeptPurchasedEvent => true,
+            AdeptDeclinedEvent => true,
+            ReagentCraftedEvent => true,
+            CardsDiscardedToLimitEvent => true,
+            CardMovedToZoneEvent => true,
+            _ => false
+        };
+
+        private void RefreshInventoryAfterMutation()
+        {
+            RefreshPlayerHud();
+            RefreshActiveScreen();
         }
 
         private void OnLoopLog(string message)

@@ -37,6 +37,25 @@ namespace Kismeta.UI.Components
                 instanceId, onInspect, inspectViaButton);
         }
 
+        public static VisualElement CreateForArcanum(
+            CardDefinition def,
+            bool selected = false,
+            bool aligned = false,
+            string? instanceId = null,
+            Action<string>? onInspect = null,
+            bool inspectViaButton = false)
+        {
+            var rankLabel = RomanNumerals.ToArcanaLabel(def.ArcanaNumber);
+            var chip = CreateInternal(rankLabel, Suit.None, def.Planet, selected, aligned,
+                instanceId, onInspect, inspectViaButton, applySuitClass: false);
+
+            chip.AddToClassList(def.MajorArcanaType == MajorArcanaType.Fate
+                ? "card-chip--fate"
+                : "card-chip--adept");
+
+            return chip;
+        }
+
         static VisualElement CreateInternal(
             string rankLabel,
             Suit suit,
@@ -45,11 +64,13 @@ namespace Kismeta.UI.Components
             bool aligned,
             string? instanceId,
             Action<string>? onInspect,
-            bool inspectViaButton)
+            bool inspectViaButton,
+            bool applySuitClass = true)
         {
             var chip = new VisualElement();
             chip.AddToClassList("card-chip");
-            chip.AddToClassList(SuitClass(suit));
+            if (applySuitClass)
+                chip.AddToClassList(SuitClass(suit));
             if (selected || aligned)
                 chip.AddToClassList("card-chip--selected");
 

@@ -177,12 +177,13 @@ namespace Kismeta.UI.Components
                     var inst = session.GetCard(cardId);
                     var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
                     if (def == null) continue;
-                    zone.Add(MakeChip(
+                    var chip = CardChipFactory.CreateForArcanum(
                         def,
-                        cardId,
-                        aligned: false,
-                        onInspect,
-                        def.IsMajorArcana ? "★" : null));
+                        instanceId: cardId,
+                        inspectViaButton: true);
+                    if (onInspect != null)
+                        WireChipInspect(chip, cardId, onInspect);
+                    zone.Add(chip);
                 }
             }
 

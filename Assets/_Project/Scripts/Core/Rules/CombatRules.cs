@@ -189,7 +189,8 @@ namespace Kismeta.Core.Rules
             if (!player.SpendReagent(ReagentType.Salt, 1))
                 return CommandResult.Invalid("Freeing an Arrested card costs 1 Salt.");
 
-            slot.Activate(); // restore to Active
+            slot.UnArrest();
+            session.GetCard(slot.CardInstanceId)?.SetArrested(false);
             return CommandResult.Ok($"Crucible slot {slotIndex} freed from Arrest.");
         }
     }

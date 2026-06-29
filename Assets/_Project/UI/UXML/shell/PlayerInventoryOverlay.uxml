@@ -11,6 +11,7 @@
                 <engine:Label name="summary-spread-count" text="S 0" class="inventory-summary__count inventory-summary__count--spread" />
                 <engine:Label name="summary-hand-count" text="H 0" class="inventory-summary__count inventory-summary__count--hand" />
                 <engine:Label name="summary-arcanum-count" text="A 0" class="inventory-summary__count inventory-summary__count--arcanum" />
+                <engine:Label name="summary-wager-count" text="" class="inventory-summary__count inventory-summary__count--wager" />
                 <engine:Label name="summary-reagent-total" text="R 0" class="inventory-summary__count inventory-summary__count--reagent" />
             </engine:VisualElement>
             <engine:Button name="effects-fab" text="Effects" class="effects-fab btn btn--secondary" />

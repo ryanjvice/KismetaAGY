@@ -391,8 +391,11 @@ namespace Kismeta.UI.Controllers
                 if (inst == null) continue;
                 var def = db.GetById(inst.DefinitionId);
                 if (def == null) continue;
-                strip.Add(CardChipFactory.CreateFromDefinition(
-                    def, instanceId: cardId, onInspect: onInspect, inspectViaButton: true));
+                strip.Add(zone == DockZone.Arcanum
+                    ? CardChipFactory.CreateForArcanum(
+                        def, instanceId: cardId, onInspect: onInspect, inspectViaButton: true)
+                    : CardChipFactory.CreateFromDefinition(
+                        def, instanceId: cardId, onInspect: onInspect, inspectViaButton: true));
             }
         }
     }
