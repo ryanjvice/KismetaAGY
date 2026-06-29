@@ -25,6 +25,7 @@
 .swap-zone__cards {
     flex-direction: row;
     flex-wrap: wrap;
+    min-height: var(--card-chip-h);
 }
 .swap-zone__cards > .card-chip { margin-right: 6px; margin-bottom: 6px; }
 

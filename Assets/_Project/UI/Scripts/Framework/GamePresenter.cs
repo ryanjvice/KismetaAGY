@@ -539,7 +539,7 @@ namespace Kismeta.UI
             if (winter != null)
             {
                 winter.OnOpenCraft = OpenWinterCraft;
-                winter.OnOpenWager = () => _router.GoTo(ScreenIds.FatefulWager);
+                winter.OnOpenWager = OpenWinterWager;
             }
 
             var wager = _router.GetController<FatefulWagerController>(ScreenIds.FatefulWager);
@@ -858,6 +858,15 @@ namespace Kismeta.UI
                 };
             }
             _router.GoTo(ScreenIds.CraftReagent);
+        }
+
+        void OpenWinterWager()
+        {
+            var wager = _router.GetController<FatefulWagerController>(ScreenIds.FatefulWager);
+            if (wager != null)
+                wager.OnBack = () => _router.GoTo(ScreenIds.WinterHub);
+            _router.GoTo(ScreenIds.FatefulWager);
+            RefreshActiveScreen();
         }
 
         private static bool IsSpringHubSubScreen(string? screenId) =>

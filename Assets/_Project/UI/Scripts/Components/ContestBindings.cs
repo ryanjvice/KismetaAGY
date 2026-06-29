@@ -78,7 +78,7 @@ namespace Kismeta.UI.Components
                 bool isSelected = selected.Contains(cardId);
                 var chip = CardChipFactory.CreateFromDefinition(def, selected: isSelected);
                 chip.userData = cardId;
-                chip.RegisterCallback<ClickEvent>(_ =>
+                CardChipFactory.WireTap(chip, () =>
                 {
                     if (!multiSelect)
                     {

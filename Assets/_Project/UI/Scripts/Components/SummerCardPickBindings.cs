@@ -50,19 +50,8 @@ namespace Kismeta.UI.Components
             }
         }
 
-        static void WireChip(VisualElement chip, Action onTap)
-        {
-            chip.pickingMode = PickingMode.Position;
-            chip.style.cursor = new StyleCursor(StyleKeyword.Auto);
-            foreach (var child in chip.Children())
-                child.pickingMode = PickingMode.Ignore;
-            chip.RegisterCallback<ClickEvent>(evt =>
-            {
-                evt.StopPropagation();
-                UiMotion.PulseChip(chip);
-                onTap();
-            });
-        }
+        static void WireChip(VisualElement chip, Action onTap) =>
+            CardChipFactory.WireTap(chip, onTap);
 
         public static List<string> CollectMinorCards(GameSession session, PlayerState player)
         {

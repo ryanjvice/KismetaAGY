@@ -38,7 +38,7 @@ namespace Kismeta.UI.Components
             float angle = 0f;
             while (Time.realtimeSinceStartup - start < durationSec)
             {
-                angle += ZodiacWheelSpinDegPerSec * Time.deltaTime;
+                angle -= ZodiacWheelSpinDegPerSec * Time.deltaTime;
                 wheel.style.rotate = new Rotate(angle);
                 yield return null;
             }

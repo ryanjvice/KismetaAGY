@@ -17,10 +17,8 @@
 
         <engine:VisualElement class="statusbar" style="background-color: rgb(22,32,46); border-bottom-color: rgb(43,58,74);">
             <engine:VisualElement class="statusbar__left">
-                <engine:VisualElement class="statusbar__sigil" style="border-color: rgb(106, 74, 138);">
-                    <engine:Label text="&#xeb6c;" class="ti-icon" style="color: rgb(205, 176, 224);" />
-                </engine:VisualElement>
-                <engine:VisualElement>
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
+                <engine:VisualElement style="margin-left: 4px;">
                     <engine:Label text="Fateful Wager" class="statusbar__title" style="color: rgb(205, 176, 224);" />
                     <engine:Label text="optional · bet on the next age" class="statusbar__sub" style="color: rgb(122,138,154);" />
                 </engine:VisualElement>
@@ -55,19 +53,13 @@
         <engine:VisualElement style="padding: 10px 14px 4px;">
             <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <engine:Label text="stake from your hand" class="eyebrow" style="margin-bottom: 0;" />
-                <engine:Label name="stake-count" text="3 staked" style="font-size: 10px; color: rgb(205, 176, 224);" />
+                <engine:Label name="stake-count" text="0 staked" style="font-size: 10px; color: rgb(205, 176, 224);" />
             </engine:VisualElement>
-            <engine:VisualElement name="stake-cards" class="swap-zone__cards">
-                <engine:VisualElement class="card-chip card-chip--swords card-chip--selected"><engine:Label text="9" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--pentacles card-chip--selected"><engine:Label text="J" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--cups card-chip--selected"><engine:Label text="2" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--swords"><engine:Label text="5" class="card-chip__rank" /></engine:VisualElement>
-                <engine:VisualElement class="card-chip card-chip--wands"><engine:Label text="4" class="card-chip__rank" /></engine:VisualElement>
-            </engine:VisualElement>
+            <engine:VisualElement name="stake-cards" class="swap-zone__cards" />
         </engine:VisualElement>
 
         <engine:VisualElement class="tip tip--arcanum">
-            <engine:Label name="odds-line" text="If Pisces rules next age, your 3 staked cards double to 6. If wrong, they're lost. Resolves next Spring."
+            <engine:Label name="odds-line" text="Select a sign and stake cards from your spread or hand. Skip if you prefer."
                           class="tip__text" style="color: rgb(184,154,192);" />
         </engine:VisualElement>
 

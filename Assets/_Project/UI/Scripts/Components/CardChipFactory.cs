@@ -103,9 +103,6 @@ namespace Kismeta.UI.Components
                 bottomRow.Add(icon);
             }
 
-            if (onInspect != null && !string.IsNullOrEmpty(instanceId))
-                WireInspect(chip, instanceId, onInspect);
-
             chip.Add(bottomRow);
 
             if (aligned)
@@ -116,23 +113,45 @@ namespace Kismeta.UI.Components
                 chip.Add(dot);
             }
 
+            if (onInspect != null && !string.IsNullOrEmpty(instanceId))
+                WireInspect(chip, instanceId, onInspect);
+
             return chip;
+        }
+
+        public static void WireTap(VisualElement chip, Action onTap, bool pulse = true)
+        {
+            chip.pickingMode = PickingMode.Position;
+            chip.style.cursor = new StyleCursor(StyleKeyword.Auto);
+            chip.AddToClassList("card-chip--tappable");
+
+            chip.Q(className: "card-chip__hit")?.RemoveFromHierarchy();
+            SetIgnorePicking(chip);
+
+            var hit = new VisualElement();
+            hit.AddToClassList("card-chip__hit");
+            hit.pickingMode = PickingMode.Position;
+            chip.Add(hit);
+
+            hit.AddManipulator(new Clickable(() =>
+            {
+                if (pulse) UiMotion.PulseChip(chip);
+                onTap();
+            }));
         }
 
         static void WireInspect(VisualElement chip, string instanceId, Action<string> onInspect)
         {
-            chip.pickingMode = PickingMode.Position;
-            chip.style.cursor = new StyleCursor(StyleKeyword.Auto);
-            SetIgnorePicking(chip);
-
             var cardId = instanceId;
-            chip.AddManipulator(new Clickable(() => onInspect(cardId)));
+            WireTap(chip, () => onInspect(cardId), pulse: false);
         }
 
         static void SetIgnorePicking(VisualElement root)
         {
             foreach (var child in root.Children())
             {
+                if (child.ClassListContains("card-chip__hit"))
+                    continue;
                 child.pickingMode = PickingMode.Ignore;
                 SetIgnorePicking(child);
             }

@@ -1854,6 +1854,18 @@
     font-size: var(--font-title);
 }
 
+.card-chip--tappable {
+    cursor: pointer;
+}
+
+.card-chip__hit {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
 .card-chip--inspectable {
     cursor: pointer;
     padding-bottom: 12px;

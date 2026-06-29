@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
@@ -21,6 +22,12 @@ namespace Kismeta.UI.Components
         {
             var scroll = root.Q<ScrollView>("players");
             if (scroll == null) return;
+
+            var layoutKey = BuildLayoutKey(session, localPlayerId);
+            if (scroll.userData as string == layoutKey)
+                return;
+
+            scroll.userData = layoutKey;
             scroll.Clear();
 
             var view = GamePublicView.From(session);
@@ -301,5 +308,29 @@ namespace Kismeta.UI.Components
             >= 2 => "Bronze",
             _ => "Lead"
         };
+
+        static string BuildLayoutKey(GameSession session, int localPlayerId)
+        {
+            var view = GamePublicView.From(session);
+            var players = new List<PublicPlayerView>(view.Players);
+            players.Sort((a, b) => CompareByThreat(session, a, b));
+
+            var sb = new StringBuilder();
+            foreach (var p in players)
+            {
+                if (p.PlayerId == localPlayerId)
+                    continue;
+
+                sb.Append(p.PlayerId).Append(':');
+                sb.Append(string.Join(",", p.Spread)).Append('|');
+                sb.Append(string.Join(",", p.Arcanum)).Append('|');
+                foreach (var slot in p.CrucibleSlots)
+                    sb.Append(slot.CardInstanceId).Append('@').Append((int)slot.State).Append(',');
+                sb.Append(';');
+            }
+
+            sb.Append(session.Board.CosmicAgeSign);
+            return sb.ToString();
+        }
     }
 }

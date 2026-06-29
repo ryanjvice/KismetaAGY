@@ -17,6 +17,7 @@ namespace Kismeta.UI.Controllers
         public override string ScreenId => ScreenIds.FatefulWager;
 
         public Action? OnCompleted;
+        public Action? OnBack;
 
         static readonly string[] SignSlugs =
         {
@@ -26,13 +27,21 @@ namespace Kismeta.UI.Controllers
 
         readonly HashSet<string> _staked = new();
         string _selectedSlug = "pisces";
+        string _lastTrayLayoutKey = "";
 
         GameSession? _session;
         CommandBridge? _bridge;
         int _playerId = -1;
 
+        protected override void Unwire()
+        {
+            _lastTrayLayoutKey = "";
+        }
+
         protected override void Wire()
         {
+            Btn("back-btn")!.clicked += () => OnBack?.Invoke();
+
             foreach (var slug in SignSlugs)
             {
                 var s = slug;
@@ -50,8 +59,8 @@ namespace Kismeta.UI.Controllers
         {
             _session = session;
             _bridge = bridge;
-            _playerId = bridge.ActivePlayerId;
-            if (Root == null) return;
+            _playerId = SummerActionBindings.ResolvePlayerId(session, bridge);
+            if (Root == null || _playerId < 0) return;
 
             SelectSign(_selectedSlug);
             RebuildStakeTray();
@@ -72,6 +81,16 @@ namespace Kismeta.UI.Controllers
         {
             var tray = El("stake-cards");
             if (tray == null || _session == null) return;
+
+            var layoutKey = BuildTrayLayoutKey();
+            if (layoutKey == _lastTrayLayoutKey)
+            {
+                if (Lbl("stake-count") != null)
+                    Lbl("stake-count")!.text = $"{_staked.Count} staked";
+                return;
+            }
+
+            _lastTrayLayoutKey = layoutKey;
             tray.Clear();
 
             var player = _session.Players[_playerId];
@@ -95,13 +114,37 @@ namespace Kismeta.UI.Controllers
             bool staked = _staked.Contains(cardId);
             var chip = CardChipFactory.CreateFromDefinition(def, selected: staked);
             chip.userData = cardId;
-            chip.RegisterCallback<ClickEvent>(_ =>
+            CardChipFactory.WireTap(chip, () =>
             {
-                if (_staked.Contains(cardId)) _staked.Remove(cardId); else _staked.Add(cardId);
+                if (_staked.Contains(cardId)) _staked.Remove(cardId);
+                else _staked.Add(cardId);
                 RebuildStakeTray();
                 UpdatePlaceButton();
             });
             tray.Add(chip);
+        }
+
+        string BuildTrayLayoutKey()
+        {
+            if (_session == null || _playerId < 0) return "";
+            var player = _session.Players[_playerId];
+            var spread = new List<string>();
+            foreach (var id in player.Spread)
+            {
+                if (TapSwapBindings.IsMinorArcana(_session, id))
+                    spread.Add(id);
+            }
+            var hand = new List<string>();
+            foreach (var id in player.Hand)
+            {
+                if (TapSwapBindings.IsMinorArcana(_session, id))
+                    hand.Add(id);
+            }
+            spread.Sort();
+            hand.Sort();
+            var staked = new List<string>(_staked);
+            staked.Sort();
+            return string.Join(",", spread) + "|" + string.Join(",", hand) + "|" + string.Join(",", staked);
         }
 
         void UpdateOddsLine()

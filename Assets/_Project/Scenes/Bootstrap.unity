@@ -130,6 +130,60 @@ GameObject:
   - component: {fileID: 1085875160}
   - component: {fileID: 1085875159}
   - component: {fileID: 1085875161}
+  - component: {fileID: 1085875215}
+  - component: {fileID: 1085875214}
+  - component: {fileID: 1085875213}
+  - component: {fileID: 1085875212}
+  - component: {fileID: 1085875211}
+  - component: {fileID: 1085875210}
+  - component: {fileID: 1085875209}
+  - component: {fileID: 1085875208}
+  - component: {fileID: 1085875207}
+  - component: {fileID: 1085875206}
+  - component: {fileID: 1085875205}
+  - component: {fileID: 1085875204}
+  - component: {fileID: 1085875203}
+  - component: {fileID: 1085875202}
+  - component: {fileID: 1085875201}
+  - component: {fileID: 1085875200}
+  - component: {fileID: 1085875199}
+  - component: {fileID: 1085875198}
+  - component: {fileID: 1085875197}
+  - component: {fileID: 1085875196}
+  - component: {fileID: 1085875195}
+  - component: {fileID: 1085875194}
+  - component: {fileID: 1085875193}
+  - component: {fileID: 1085875192}
+  - component: {fileID: 1085875191}
+  - component: {fileID: 1085875190}
+  - component: {fileID: 1085875189}
+  - component: {fileID: 1085875188}
+  - component: {fileID: 1085875187}
+  - component: {fileID: 1085875186}
+  - component: {fileID: 1085875185}
+  - component: {fileID: 1085875184}
+  - component: {fileID: 1085875183}
+  - component: {fileID: 1085875182}
+  - component: {fileID: 1085875181}
+  - component: {fileID: 1085875180}
+  - component: {fileID: 1085875179}
+  - component: {fileID: 1085875178}
+  - component: {fileID: 1085875177}
+  - component: {fileID: 1085875176}
+  - component: {fileID: 1085875175}
+  - component: {fileID: 1085875174}
+  - component: {fileID: 1085875173}
+  - component: {fileID: 1085875172}
+  - component: {fileID: 1085875171}
+  - component: {fileID: 1085875170}
+  - component: {fileID: 1085875169}
+  - component: {fileID: 1085875168}
+  - component: {fileID: 1085875167}
+  - component: {fileID: 1085875166}
+  - component: {fileID: 1085875165}
+  - component: {fileID: 1085875164}
+  - component: {fileID: 1085875163}
+  - component: {fileID: 1085875162}
   m_Layer: 0
   m_Name: GameBootstrap
   m_TagString: Untagged
@@ -163,12 +217,16 @@ MonoBehaviour:
   _joinScreen: {fileID: 9197481963319205126, guid: 519a817f310314b48bb262c3b086169d, type: 3}
   _resumeScreen: {fileID: 9197481963319205126, guid: 26748abde5aa099428c318a8600db94a, type: 3}
   _codexScreen: {fileID: 9197481963319205126, guid: ca63949183879644ca18fdf0e1a01d7b, type: 3}
+  _settingsScreen: {fileID: 9197481963319205126, guid: faba220889bef8443934394907f29569, type: 3}
   _agekeeperContest: {fileID: 9197481963319205126, guid: 23d4f7ba6d5a48d48aec740b12deaa19, type: 3}
   _springHub: {fileID: 9197481963319205126, guid: 8d5f0b3c2e9a5147b6c7d8e9f0a1b2c3, type: 3}
+  _springPassed: {fileID: 0}
   _summerMain: {fileID: 9197481963319205126, guid: 9e6a1c4d3f0b6258c7d8e9f0a1b2c3d4, type: 3}
   _summerHub: {fileID: 9197481963319205126, guid: 22ed65e6eea61014f97ddcfcf3fecf21, type: 3}
+  _summerPassed: {fileID: 9197481963319205126, guid: fe74c72c19eef2b43a2d3b35eb0a8b0d, type: 3}
   _autumnMain: {fileID: 9197481963319205126, guid: af7b2d5e4a1c7369d8e9f0a1b2c3d4e5, type: 3}
   _autumnHub: {fileID: 9197481963319205126, guid: a569256228a74bb4ba8e9fa800cd07e3, type: 3}
+  _autumnPassed: {fileID: 9197481963319205126, guid: c57132cbc4b338f4cbb89a47eebd3113, type: 3}
   _winterHub: {fileID: 9197481963319205126, guid: b08c3e6f5b2d8470e9f0a1b2c3d4e5f6, type: 3}
   _roundOpen: {fileID: 9197481963319205126, guid: b942f813a17814243849d29e04159747, type: 3}
   _springIntro: {fileID: 9197481963319205126, guid: 4e09362452192ac47b52b6e8e04e0f05, type: 3}
@@ -239,6 +297,660 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &1085875162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8206991fbbfc3874b88390d5bf953ead, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Chronicle.GameChronicle
+--- !u!114 &1085875163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94d66508bc389994ab8a27136e2157a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.EndOverlayHost
+--- !u!114 &1085875164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f38d20824d81d984e8668696359d3cf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.CardModalsController
+--- !u!114 &1085875165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca05949385c47f54a97d06211c468994, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.CardTableController
+--- !u!114 &1085875166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48b26f1490b89704ea0b41b2c7f89f1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.ChronicleController
+--- !u!114 &1085875167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bcad371b12ea2043896f6728113e9bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.VictoryController
+--- !u!114 &1085875168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75a216b9fefb9674a857610f5db75f54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.AutumnOverlayHost
+--- !u!114 &1085875169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cb71e2c93e0b7247b177601a51f9216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.EndAutumnController
+--- !u!114 &1085875170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9823212e98529b94ca2aee8f40707b9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.LeaveStasisController
+--- !u!114 &1085875171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aae49e9df0d749a40a11628082d541b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.ManageCardsController
+--- !u!114 &1085875172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d90043f96853b1a43b2563b6fa3214f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.TemperStoneController
+--- !u!114 &1085875173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 159caf813f8f12d4ca25465c6bf97032, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.FireStoneController
+--- !u!114 &1085875174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ab93b63be82cbd45bd2c1ff51bda9a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.OppositionController
+--- !u!114 &1085875175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c07d5dc8716a1547811674a3a581328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.GambitController
+--- !u!114 &1085875176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3942ca48fa537fc449d902a6e7f798bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.DuelController
+--- !u!114 &1085875177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcd18bf56b6fb548a858ed8a4115187, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.TradeController
+--- !u!114 &1085875178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72d32fb88a6833940baf53f49a9edda5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.ContestOverlayHost
+--- !u!114 &1085875179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06d1e8c9f0b27394051627a8192b3c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.EndSummerController
+--- !u!114 &1085875180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5c0d7b8e9a16283940516f708192a34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.PlaceWardsController
+--- !u!114 &1085875181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4b9c6a7d8f05172839405e6f7081923, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.BuildHouseController
+--- !u!114 &1085875182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3a8b5f6c7e94061728394d5e6f70812, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.ActivateCardController
+--- !u!114 &1085875183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2f7a4e5b6d8395061728c3d4e5f6071, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.CraftReagentController
+--- !u!114 &1085875184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e6f3d4a5c7284950617b2c3d4e5f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.SummerSheetsController
+--- !u!114 &1085875185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab013f72a43a9f349a95357d7c13989a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.SpringOverlayHost
+--- !u!114 &1085875186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17e2f9d0a1c38405162738b92c3d4e56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.SummerOverlayHost
+--- !u!114 &1085875187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f6071829a3b4c5d6e7f80912345678, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.CardLimitsController
+--- !u!114 &1085875188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aa1be9e0dffe54489f6b057770b1688, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.FatefulWagerController
+--- !u!114 &1085875189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15cade3d84fb16f4eaa5234d1eb3910d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.WinterUnlockController
+--- !u!114 &1085875190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17a358651ec346b47b2892687b534134, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.SpringHarvestController
+--- !u!114 &1085875191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6071829345a6b7c8d9e04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.WinterIntroController
+--- !u!114 &1085875192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6071829345a6b7c8d9e03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.AutumnIntroController
+--- !u!114 &1085875193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6071829345a6b7c8d9e02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.SummerIntroController
+--- !u!114 &1085875194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6071829345a6b7c8d9e01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.SpringIntroController
+--- !u!114 &1085875195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f6a7b8c9d061234e5f607182934a50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.AgeClosingController
+--- !u!114 &1085875196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3d4e5f6a7b849012c3d4e5f60718230, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.RoundOpenController
+--- !u!114 &1085875197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4c072838f61c8b423d4e5f60718293a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.WinterHubController
+--- !u!114 &1085875198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6ea87009a431094f800438adaa04069, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.AutumnPassedController
+--- !u!114 &1085875199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74aff6072482457489d854efbc928b82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.AutumnHubController
+--- !u!114 &1085875200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3bf61727e50b7a312c3d4e5f6071829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.AutumnSceneController
+--- !u!114 &1085875201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dee44986e968564680d2a6ccf6529aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.SummerPassedController
+--- !u!114 &1085875202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b538910722ffb44183240d76c78083b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.SummerHubController
+--- !u!114 &1085875203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2ae50616d4fa69201b2c3d4e5f60718, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.SummerSceneController
+--- !u!114 &1085875204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c19d4f705c3e9581f0a1b2c3d4e5f607, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.SpringHubController
+--- !u!114 &1085875205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac9cade37dc3c164489ee75b60db41b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.AgekeeperContestController
+--- !u!114 &1085875206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe5a4d0284acc6d4f96ba8f308951a73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.SettingsScreenController
+--- !u!114 &1085875207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13cb7e8e8d83d9142aecd64cc1ba839e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.CodexScreenController
+--- !u!114 &1085875208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17ab39c54f1d283498adaa3a3e9b2b8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.ResumeScreenController
+--- !u!114 &1085875209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a786e98c36e97f841a9537c30104f547, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.JoinScreenController
+--- !u!114 &1085875210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d415311ecb7ffab4ebaf052ca9d5a540, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.PlayerHudController
+--- !u!114 &1085875211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59b760b6168224440a781f26198f437c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.WaitingHudController
+--- !u!114 &1085875212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 711d160e87f27a84c92a6ce45fc56170, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Controllers.TitleScreenController
+--- !u!114 &1085875213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c25ae92dde8d9fa43ba924a46b2362d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.GamePresenter
+  _startAtTitle: 1
+--- !u!114 &1085875214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 205dcb39f1ee38b4da3f0c05760d6eb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.ScreenRouter
+  _screens: []
+  _setupSheet: {fileID: 0}
+--- !u!114 &1085875215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085875158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53a4910f92bbbc44692a205dd3548132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.ViewportLayout
+  _panelSettings: {fileID: 11400000, guid: 2f562a8366d18d844b573c8bef474941, type: 2}
+  _initialScreen: {fileID: 0}
+  _tokenStylesheet: {fileID: 0}
 --- !u!1 &1605099674
 GameObject:
   m_ObjectHideFlags: 0
