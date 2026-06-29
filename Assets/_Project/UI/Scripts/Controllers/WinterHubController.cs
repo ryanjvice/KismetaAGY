@@ -1,11 +1,10 @@
+using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
-using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
 using Kismeta.UI.Narrative;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -14,7 +13,6 @@ namespace Kismeta.UI.Controllers
     {
         public override string ScreenId => ScreenIds.WinterHub;
 
-        public System.Action? OnOpenUnlock;
         public System.Action? OnOpenCraft;
         public System.Action? OnOpenWager;
         public System.Action? OnOpenCardTable;
@@ -26,15 +24,16 @@ namespace Kismeta.UI.Controllers
         GameSession? _session;
         int _localPlayerId;
         DockZone _dockZone = DockZone.Spread;
+        WinterUnlockZoneBindings.ZoneBindState _unlockZones;
 
         protected override void Unwire()
         {
             _dockZone = DockZone.Spread;
+            WinterUnlockZoneBindings.Reset(ref _unlockZones);
         }
 
         protected override void Wire()
         {
-            Btn("continue-btn")!.clicked += () => OnOpenUnlock?.Invoke();
             Btn("craft-btn")!.clicked += () => OnOpenCraft?.Invoke();
             Btn("wager-btn")!.clicked += () => OnOpenWager?.Invoke();
             Btn("pass-btn")!.clicked += OnPass;
@@ -70,12 +69,12 @@ namespace Kismeta.UI.Controllers
         {
             _session = session;
             _bridge = bridge;
-            _localPlayerId = MainSceneBindings.ResolveLocalPlayerId(session, loop, bridge);
+            int resolvedPlayerId = MainSceneBindings.ResolveLocalPlayerId(session, loop, bridge);
+            if (resolvedPlayerId != _localPlayerId)
+                WinterUnlockZoneBindings.Reset(ref _unlockZones);
+            _localPlayerId = resolvedPlayerId;
             if (Root == null) return;
 
-            UiArtBindings.ApplyWinterSeal(El("winter-stage"));
-
-            var view = GamePublicView.From(session);
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             HeaderOverlayBindings.RefreshHeader(
                 Root, session, loop, _localPlayerId, loop.ActivePlayerId, session.Phase.CurrentSeason,
@@ -84,26 +83,37 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindStepRail(
                 El("step-rail"), session.Phase.CurrentStepIndex, 4, "step__dot--active");
 
-            var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
-            if (Lbl("limits-line") != null && local != null)
-            {
-                Lbl("limits-line")!.text =
-                    $"Spread {local.Spread.Count}/5 · Hand {local.HandCardCount}/5";
-            }
-
             RefreshDock();
 
-            BindWinterCta(session, bridge);
+            bool winterAction = bridge.PendingHint == ActionHint.WinterAction;
+            BindUnlockZones(winterAction);
+            BindWinterCta(session, bridge, winterAction);
             NarrativeSlotBindings.BindById(Root, "winter.unlock");
         }
 
-        void BindWinterCta(GameSession session, CommandBridge bridge)
+        void BindUnlockZones(bool winterAction)
         {
-            bool winterAction = bridge.PendingHint == ActionHint.WinterAction;
+            var unlockStage = El("unlock-stage");
+            unlockStage?.EnableInClassList("winter-hub__unlock--hidden", !winterAction);
+
+            if (!winterAction || _session == null || _bridge == null || unlockStage == null)
+                return;
+
+            WinterUnlockZoneBindings.BindZones(
+                ref _unlockZones, unlockStage, _session, _localPlayerId, OnTapMove);
+        }
+
+        void OnTapMove(string cardId, bool fromSpread)
+        {
+            if (_bridge == null) return;
+            _bridge.TrySubmit(new WinterMoveCardCommand(_localPlayerId, cardId, toSpread: !fromSpread));
+        }
+
+        void BindWinterCta(GameSession session, CommandBridge bridge, bool winterAction)
+        {
             var player = session.Players[_localPlayerId];
             bool canWager = winterAction && player.FatefulWagerSign == ZodiacSign.None;
 
-            SetCtaVisible("continue-btn", winterAction);
             SetCtaVisible("craft-btn", winterAction);
             SetCtaVisible("wager-btn", canWager);
             SetCtaVisible("limits-btn", false);

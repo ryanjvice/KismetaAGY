@@ -246,13 +246,6 @@ namespace Kismeta.UI.Controllers
                 player.StoneState, _autumnOverlays, _contestOverlays);
             NarrativeSlotBindings.BindById(Root, stepId);
 
-            if (Lbl("hint-label") != null)
-            {
-                Lbl("hint-label")!.text = autumnAction
-                    ? (_inStasis ? "In Stasis — pay Salt or wait" : "Your turn at the forge")
-                    : "Waiting…";
-            }
-
             RefreshDock();
         }
 

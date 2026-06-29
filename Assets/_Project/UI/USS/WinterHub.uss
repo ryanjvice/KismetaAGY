@@ -1,32 +1,23 @@
 /* Kismeta — WinterHub.uss */
 
 .winter-hub__stage {
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 8px 0 0;
 }
 
-.winter-seal {
-    width: 140px;
-    height: 140px;
-    margin-bottom: 12px;
-    background-image: url("project://database/Assets/_Project/Art/GameSplash/crucibleForge.png");
-    -unity-background-scale-mode: scale-to-fit;
-    border-width: 3px;
-    border-color: var(--winter-accent);
-    border-radius: 70px;
-    opacity: 0.92;
+.winter-hub__narrative {
+    flex-shrink: 0;
 }
 
-.winter-hub__title {
-    margin-bottom: 8px;
+.winter-hub__unlock {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
 }
 
-.winter-hub__limits {
-    margin-bottom: 12px;
-}
-
-.winter-hub__hint {
-    margin-top: 14px;
-    color: var(--winter-accent);
+.winter-hub__unlock--hidden {
+    display: none;
 }

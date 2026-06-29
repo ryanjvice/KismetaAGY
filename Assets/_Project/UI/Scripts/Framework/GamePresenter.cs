@@ -309,8 +309,7 @@ namespace Kismeta.UI
 
             var activeId = _router.CurrentScreenId;
             if (_loop.PendingHumanController == null && _loop.ActivePlayerId < 0
-                && activeId is ScreenIds.WinterUnlock
-                    or ScreenIds.FatefulWager or ScreenIds.CraftReagent or ScreenIds.CardLimits)
+                && activeId is ScreenIds.FatefulWager or ScreenIds.CraftReagent or ScreenIds.CardLimits)
                 return;
 
             if (activeId is ScreenIds.Victory or ScreenIds.Chronicle)
@@ -539,14 +538,9 @@ namespace Kismeta.UI
             var winter = _router.GetController<WinterHubController>(ScreenIds.WinterHub);
             if (winter != null)
             {
-                winter.OnOpenUnlock = () => _router.GoTo(ScreenIds.WinterUnlock);
                 winter.OnOpenCraft = OpenWinterCraft;
                 winter.OnOpenWager = () => _router.GoTo(ScreenIds.FatefulWager);
             }
-
-            var unlock = _router.GetController<WinterUnlockController>(ScreenIds.WinterUnlock);
-            if (unlock != null)
-                unlock.OnDone = () => _router.GoTo(ScreenIds.WinterHub);
 
             var wager = _router.GetController<FatefulWagerController>(ScreenIds.FatefulWager);
             if (wager != null)
@@ -848,7 +842,7 @@ namespace Kismeta.UI
         }
 
         private static bool IsWinterHubSubScreen(string? screenId) =>
-            screenId is ScreenIds.WinterUnlock or ScreenIds.FatefulWager or ScreenIds.CraftReagent;
+            screenId is ScreenIds.FatefulWager or ScreenIds.CraftReagent;
 
         void OpenWinterCraft()
         {

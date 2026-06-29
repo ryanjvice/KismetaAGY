@@ -325,12 +325,12 @@ MonoBehaviour:
     _season: 3
     _tier: 0
     _order: 0
-    _beat: The forge fires bank low. What was gained is reckoned, what was held is
-      loosed, and the wheel turns toward a new age.
+    _beat: "The long night settles in. Make your final preparations for the age ahead
+      \u2014 unlock your hand, craft what you can, and set your wager before the
+      wheel turns."
     _charge: 'Close the age: unlock your cards, place an optional wager, enforce
       limits, and transit to the next age.'
-    _stakes: Only your cards reset. Lit cauldrons, astral houses, active Crucible
-      cards, and your stone's forge position all carry forward.
+    _stakes: 
     _verbs:
     - Begin Winter
     _breadcrumb: 

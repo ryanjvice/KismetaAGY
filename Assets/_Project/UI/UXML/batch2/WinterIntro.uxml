@@ -16,7 +16,7 @@
             <engine:Label text="WINTER" class="intro-name" />
             <engine:Label text="THE LONG NIGHT · CLOSE THE AGE" class="intro-tagline" />
             <engine:Label name="narrative-beat"
-                          text="The forge fires bank low. What was gained is reckoned, what was held is loosed, and the wheel turns toward a new age."
+                          text="The long night settles in. Make your final preparations for the age ahead — unlock your hand, craft what you can, and set your wager before the wheel turns."
                           class="intro-couplet narrative-beat" />
         </engine:VisualElement>
 
@@ -64,14 +64,6 @@
                             <engine:Label text="Transit the age" class="intro-row__label" />
                         </engine:VisualElement>
                     </engine:VisualElement>
-                </engine:VisualElement>
-            </engine:VisualElement>
-
-            <engine:VisualElement class="ceremony-panel-wrap ceremony-panel-wrap--callout">
-                <engine:VisualElement name="narrative-stakes-wrap" class="panel tip--ok narrative-stakes-wrap">
-                    <engine:Label name="narrative-stakes"
-                                  text="Only your cards reset. Lit cauldrons, astral houses, active crucible cards and your stone's forge position all carry into the next age."
-                                  class="tip__text intro-tip__text narrative-stakes" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>

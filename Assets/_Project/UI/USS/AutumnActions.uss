@@ -265,6 +265,7 @@
 
 .screen--autumn .central-panel {
     flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .screen--autumn .screen__body--inventory-pad > .central-panel {
@@ -272,15 +273,20 @@
 }
 
 .screen--autumn .central-panel > .stage {
-    min-height: 400px;
-    flex-shrink: 1;
+    min-height: auto;
+    flex-shrink: 0;
+}
+
+.autumn-main__forge-heading {
+    flex-shrink: 0;
+    margin: 0 var(--space-md);
 }
 
 .autumn-main__crucible-section {
     flex-shrink: 0;
     flex-direction: column;
     align-items: stretch;
-    margin: 0 var(--space-md) var(--space-md);
+    margin: var(--space-sm) var(--space-md) var(--space-md);
 }
 
 .autumn-main__crucible-row {
@@ -515,20 +521,19 @@
 
 /* Info button (replaces the always-visible stakes block) */
 .autumn-info-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 14px;
-    border-width: 1px;
-    border-color: rgb(58, 90, 138);
-    background-color: rgb(18, 26, 40);
-    color: rgb(150, 190, 240);
-    font-size: 15px;
-    padding: 0;
+    min-width: 28px;
+    min-height: 28px;
+    border-width: 0;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(184, 154, 110);
+    font-size: 18px;
+    padding: 0 4px;
     flex-shrink: 0;
 }
 
 .autumn-info-btn:hover {
-    border-color: rgb(96, 140, 200);
+    color: rgb(232, 185, 74);
 }
 
 .screen--yielded .forge-panel {

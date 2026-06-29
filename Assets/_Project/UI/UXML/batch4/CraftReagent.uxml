@@ -5,7 +5,6 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
-    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          CRAFT A REAGENT (#19) -> FORGE RESULT (#20)
@@ -21,19 +20,19 @@
                     <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
                     <engine:VisualElement style="margin-left: 4px;">
                         <engine:Label text="Craft a reagent" class="statusbar__title" style="color: rgb(127, 196, 168);" />
-                        <engine:Label text="3 matching cards → 1 reagent" class="statusbar__sub" />
+                        <engine:Label name="narrative-beat" text="" class="statusbar__sub narrative-beat" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement style="padding: 4px 14px 0;">
-                <engine:Instance template="NarrativeSlots" />
+            <engine:VisualElement class="craft-charge">
+                <engine:Label name="narrative-charge" text="" class="narrative-charge" />
             </engine:VisualElement>
 
             <engine:VisualElement class="craft-body">
 
             <!-- reagent picker -->
-            <engine:VisualElement style="padding: 12px 14px 4px;">
+            <engine:VisualElement style="padding: 8px 14px 2px;">
                 <engine:Label text="choose a reagent to forge" class="eyebrow" />
                 <engine:Button name="pick-salt" class="reagent-pick reagent-pick--salt">
                     <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 6px;" />
@@ -41,7 +40,7 @@
                 </engine:Button>
                 <engine:Label text="Elemental Reagents" class="eyebrow" style="margin-top: 4px;" />
                 <engine:Label text="Each Elemental Reagent requires its Cauldron to be lit in order to craft."
-                              style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 7px; white-space: normal;" />
+                              style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 5px; white-space: normal;" />
                 <engine:VisualElement name="reagent-picker" class="reagent-picker">
                     <engine:Button name="pick-sulphur" class="reagent-pick">
                         <engine:VisualElement class="reagent-dot reagent-dot--sulphur" style="margin-right: 6px;" />
@@ -63,10 +62,10 @@
             </engine:VisualElement>
 
             <!-- card pick -->
-            <engine:VisualElement style="padding: 8px 14px 4px;">
+            <engine:VisualElement style="padding: 6px 14px 2px;">
                 <engine:Label name="cauldron-note" text=""
-                              style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 7px; white-space: normal;" />
-                <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 7px;">
+                              style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 5px; white-space: normal;" />
+                <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 5px;">
                     <engine:Label text="tap cards to discard" class="eyebrow" style="margin-bottom: 0;" />
                     <engine:Label name="pick-count" text="0 / 3" style="font-size: 11px; color: rgb(127, 196, 168);" />
                 </engine:VisualElement>
@@ -79,7 +78,7 @@
                               class="tip__text" style="color: rgb(159,196,180);" />
             </engine:VisualElement>
 
-            <engine:VisualElement style="padding: 2px 14px 16px;">
+            <engine:VisualElement style="padding: 2px 14px 10px;">
                 <engine:Button name="forge-btn" text="Forge — needs 3 more cards" class="btn btn--disabled" />
             </engine:VisualElement>
 

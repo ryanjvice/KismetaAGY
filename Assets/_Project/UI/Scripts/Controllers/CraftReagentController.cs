@@ -80,7 +80,7 @@ namespace Kismeta.UI.Controllers
             if (_forged)
             {
                 SetPhaseVisibility(showResult: true);
-                NarrativeSlotBindings.BindById(Root, "summer.craft");
+                BindCraftNarrative();
                 return;
             }
 
@@ -98,7 +98,15 @@ namespace Kismeta.UI.Controllers
             else
                 ApplyReagentUi();
 
-            NarrativeSlotBindings.BindById(Root, "summer.craft");
+            BindCraftNarrative();
+        }
+
+        void BindCraftNarrative()
+        {
+            NarrativeSlotBindings.BindById(
+                Root,
+                "summer.craft",
+                mask: NarrativeSlotMask.Beat | NarrativeSlotMask.Charge);
         }
 
         void SelectDefaultReagent()

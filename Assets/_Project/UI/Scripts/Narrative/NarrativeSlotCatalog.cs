@@ -247,9 +247,9 @@ namespace Kismeta.UI.Narrative
                 Season.Winter,
                 NarrativeSlotTier.Transition,
                 0,
-                "The forge fires bank low. What was gained is reckoned, what was held is loosed, and the wheel turns toward a new age.",
+                "The long night settles in. Make your final preparations for the age ahead — unlock your hand, craft what you can, and set your wager before the wheel turns.",
                 "Close the age: unlock your cards, place an optional wager, enforce limits, and transit to the next age.",
-                "Only your cards reset. Lit cauldrons, astral houses, active Crucible cards, and your stone's forge position all carry forward.",
+                string.Empty,
                 new[] { "Begin Winter" }),
             new NarrativeSlotEntry(
                 "winter.unlock",

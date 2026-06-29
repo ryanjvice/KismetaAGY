@@ -4,6 +4,7 @@
     xmlns:editor="UnityEditor.UIElements">
 
     <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/SummerActions.uss" />
     <engine:Style src="../../USS/AutumnActions.uss" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
@@ -12,6 +13,14 @@
 
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
+
+            <engine:VisualElement class="autumn-main__forge-heading">
+                <engine:VisualElement class="summer-roster__header">
+                    <engine:VisualElement class="summer-roster__header-line" />
+                    <engine:Label text="The Forge" class="summer-roster__heading" />
+                    <engine:VisualElement class="summer-roster__header-line" />
+                </engine:VisualElement>
+            </engine:VisualElement>
 
             <engine:VisualElement class="central-panel">
             <engine:VisualElement class="stage" style="align-items: center; justify-content: center;">

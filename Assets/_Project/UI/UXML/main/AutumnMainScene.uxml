@@ -28,6 +28,14 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
+            <engine:VisualElement class="autumn-main__forge-heading">
+                <engine:VisualElement class="summer-roster__header">
+                    <engine:VisualElement class="summer-roster__header-line" />
+                    <engine:Label text="The Forge" class="summer-roster__heading" />
+                    <engine:VisualElement class="summer-roster__header-line" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
             <engine:VisualElement class="central-panel">
                 <engine:VisualElement name="autumn-cauldron-stage" class="stage" style="align-items: center; justify-content: center; display: none;">
                     <engine:Instance template="CauldronHub" />
@@ -35,7 +43,6 @@
 
                 <engine:VisualElement name="autumn-forge-stage" class="stage" style="align-items: center; justify-content: center;">
                     <engine:VisualElement class="forge-panel">
-                        <engine:Label name="hint-label" text="Your turn" class="text-hint forge-panel__hint" />
                         <engine:VisualElement name="board-stage" class="forge-stage">
                             <engine:VisualElement name="forge-mandala" class="forge-mandala" />
                             <engine:VisualElement class="stone-marker forge-pos forge-pos--0" />
@@ -111,7 +118,7 @@
 
             <engine:VisualElement class="stage-cta stage-cta--multi">
                 <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                    <engine:Button name="stasis-btn" text="Stasis" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="stasis-btn" text="Stasis" class="actionbtn btn btn--stasis" />
                     <engine:Button name="pass-btn" text="Finish Turn" class="actionbtn btn btn--primary" />
                 </engine:VisualElement>
             </engine:VisualElement>

@@ -144,6 +144,38 @@
     padding-bottom: var(--space-xs);
 }
 
+/* Craft reagent — compact layout so pick + forge fit in modal without clipping */
+#craft-reagent .statusbar {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+#craft-reagent .statusbar .narrative-beat {
+    margin-bottom: 0;
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+#craft-reagent .craft-charge {
+    padding: 2px 14px 0;
+}
+
+#craft-reagent .craft-charge .narrative-charge {
+    margin-bottom: 4px;
+    font-size: var(--font-label);
+}
+
+#craft-reagent .reagent-pick {
+    padding: 7px 9px;
+    margin-bottom: 5px;
+}
+
+#craft-reagent .tip {
+    padding: 6px 9px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
 .reagent-pick {
     width: 48%;
     flex-direction: row; align-items: center;

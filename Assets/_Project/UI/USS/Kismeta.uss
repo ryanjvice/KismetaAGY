@@ -16,6 +16,9 @@
     --action-bg: rgba(74, 58, 16, 0.96);
     --action-border: var(--gold-bright);
     --action-text: var(--gold-bright);
+    --stasis-btn-bg: rgba(18, 16, 36, 0.96);
+    --stasis-btn-border: rgb(90, 110, 168);
+    --stasis-btn-text: rgb(158, 201, 224);
     --muted: rgb(184, 154, 110);
     --muted-dim: rgb(138, 106, 122);
     --burgundy-deep: rgb(26, 5, 5);
@@ -1444,6 +1447,27 @@
     background-color: rgba(42, 32, 14, 0.72);
     border-color: rgb(106, 90, 58);
     color: rgb(138, 122, 90);
+}
+
+.btn--stasis {
+    background-color: var(--stasis-btn-bg);
+    border-color: var(--stasis-btn-border);
+    border-width: 2px;
+    color: var(--stasis-btn-text);
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/FuturaCyrillicDemi.asset");
+    font-size: var(--font-body);
+}
+
+.btn--stasis.actionbtn,
+.actionbar .btn--stasis.actionbtn,
+.stage-cta .btn--stasis.actionbtn {
+    font-size: var(--font-body);
+}
+
+.btn--stasis.btn--disabled {
+    background-color: rgba(22, 20, 38, 0.72);
+    border-color: rgb(58, 68, 106);
+    color: rgb(106, 122, 154);
 }
 
 .btn--secondary { background-color: rgba(22, 10, 28, 0.88); border-color: var(--border-gold); border-width: 1px; color: var(--muted); }
