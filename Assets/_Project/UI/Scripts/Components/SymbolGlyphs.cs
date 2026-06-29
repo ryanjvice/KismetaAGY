@@ -130,7 +130,7 @@ namespace Kismeta.UI.Components
         public static string SuitGlyph(Suit suit) => suit switch
         {
             Suit.Wands => "\uebcb",
-            Suit.Cups => "\uea97",
+            Suit.Cups => "\ueab7",
             Suit.Pentacles => "\ueb82",
             Suit.Swords => "\uf030",
             _ => "\u00b7"

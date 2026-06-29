@@ -21,6 +21,7 @@ namespace Kismeta.UI.Controllers
 
         public Action? OnOpenCardTable;
         public Action? OnOpenActiveEffects;
+        public Action<int>? OnOpenPlayerEffects;
         public Action<string>? OnInspectCard;
         public Action<int>? OnRivalSelected;
 
@@ -144,7 +145,12 @@ namespace Kismeta.UI.Controllers
         void RefreshRoster()
         {
             if (Root == null || _session == null) return;
-            SummerRosterBindings.Populate(Root, _session, _localPlayerId, OnInspectCard);
+            SummerRosterBindings.Populate(
+                Root,
+                _session,
+                _localPlayerId,
+                OnInspectCard,
+                id => OnOpenPlayerEffects?.Invoke(id));
         }
 
         public void RefreshActionGroupRail()

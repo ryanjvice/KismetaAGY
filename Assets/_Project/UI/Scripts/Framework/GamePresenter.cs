@@ -555,6 +555,7 @@ namespace Kismeta.UI
             summer.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
             summer.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
             summer.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+            summer.OnOpenPlayerEffects = id => _endOverlays?.ShowActiveEffects(id);
             summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
 
             summer.OnPass = () => _summerOverlays?.ShowEndSummer();

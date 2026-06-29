@@ -20,7 +20,7 @@ namespace Kismeta.UI.Editor
 
         private const string ZodiacSymbolCharset = "♈♉♊♋♌♍♎♏♐♑♒♓";
         private const string PlanetSymbolCharset = "☉☽☿♀♂♃♄";
-        private const string TablerIconCharset = "\uec2c\uebcb\uea97\ueb82\uf030\ued4f\uec34\ueac5";
+        private const string TablerIconCharset = "\uec2c\uebcb\uea97\ueab7\ueb82\uf030\ued4f\uec34\ueac5";
 
         // Latin display copy + zodiac names + astrological symbols + common punctuation.
         private const string CommonUiCharset =

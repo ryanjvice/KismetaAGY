@@ -18,7 +18,8 @@ namespace Kismeta.UI.Components
             VisualElement root,
             GameSession session,
             int localPlayerId,
-            Action<string>? onInspect)
+            Action<string>? onInspect,
+            Action<int>? onOpenEffects = null)
         {
             var scroll = root.Q<ScrollView>("players");
             if (scroll == null) return;
@@ -51,7 +52,7 @@ namespace Kismeta.UI.Components
                 block.AddToClassList("player-block");
                 block.style.borderLeftColor = new StyleColor(PlayerUiNames.PlayerColor(p.PlayerId));
 
-                block.Add(BuildHeader(p, inStasis, threat));
+                block.Add(BuildHeader(p, inStasis, threat, onOpenEffects));
 
                 block.Add(MakeEyebrow("spread"));
                 var spreadRow = MakeCardZone();
@@ -83,7 +84,11 @@ namespace Kismeta.UI.Components
             }
         }
 
-        static VisualElement BuildHeader(PublicPlayerView p, bool inStasis, int threat)
+        static VisualElement BuildHeader(
+            PublicPlayerView p,
+            bool inStasis,
+            int threat,
+            Action<int>? onOpenEffects)
         {
             var header = new VisualElement();
             header.AddToClassList("player-block__header");
@@ -125,12 +130,23 @@ namespace Kismeta.UI.Components
                 header.Add(badge);
             }
 
+            var hand = new Label($"Hand {p.HandCardCount}");
+            hand.AddToClassList("player-block__hand-count");
+            header.Add(hand);
+
             header.Add(new VisualElement { style = { flexGrow = 1 } });
 
-            var hand = new Label($"hand {p.HandCardCount}");
-            hand.style.fontSize = 9;
-            hand.style.color = new StyleColor(new Color(0.48f, 0.54f, 0.6f));
-            header.Add(hand);
+            if (onOpenEffects != null)
+            {
+                int playerId = p.PlayerId;
+                var effectsBtn = new Button { text = "Effects" };
+                effectsBtn.name = $"effects-btn-{playerId}";
+                effectsBtn.AddToClassList("player-block__effects-btn");
+                effectsBtn.AddToClassList("btn--secondary");
+                effectsBtn.clicked += () => onOpenEffects.Invoke(playerId);
+                effectsBtn.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
+                header.Add(effectsBtn);
+            }
 
             return header;
         }

@@ -6,13 +6,13 @@ namespace Kismeta.UI.Components
 {
     public static class ActiveEffectsRows
     {
-        public static void Populate(VisualElement? root, ActiveEffectsSnapshot snapshot)
+        public static void Populate(VisualElement? root, ActiveEffectsSnapshot snapshot, string? subtitleOverride = null)
         {
             if (root == null) return;
 
             var subtitle = root.Q<Label>("active-effects-subtitle");
             if (subtitle != null)
-                subtitle.text = snapshot.Subtitle;
+                subtitle.text = subtitleOverride ?? snapshot.Subtitle;
 
             PopulateFeatured(root.Q<VisualElement>("cosmic-age-featured"), snapshot.CosmicAge);
             ActiveEffectsAccordion.Populate(root.Q<VisualElement>("sections-list"), snapshot.Sections);

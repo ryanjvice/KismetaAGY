@@ -725,6 +725,22 @@
     margin-bottom: 2px;
 }
 
+.player-block__hand-count {
+    font-size: 9px;
+    color: rgb(122, 138, 153);
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+.player-block__effects-btn {
+    flex-shrink: 0;
+    min-height: 22px;
+    min-width: 48px;
+    padding: 2px 8px;
+    font-size: 9px;
+    margin-left: 6px;
+}
+
 .screen--summer .player-block__eyebrow {
     margin-bottom: 2px;
 }

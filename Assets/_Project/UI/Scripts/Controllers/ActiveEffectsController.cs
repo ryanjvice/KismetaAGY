@@ -13,6 +13,10 @@ namespace Kismeta.UI.Controllers
         GameSession? _session;
         CommandBridge? _bridge;
         int _bindKey = int.MinValue;
+        int _focusPlayerId = -1;
+        int _localPlayerId = -1;
+
+        public void SetFocus(int playerId) => _focusPlayerId = playerId;
 
         protected override void Wire()
         {
@@ -24,6 +28,7 @@ namespace Kismeta.UI.Controllers
         {
             ApplyHostLayout(tall: false);
             _bindKey = int.MinValue;
+            _focusPlayerId = -1;
         }
 
         void ApplyHostLayout(bool tall)
@@ -38,7 +43,8 @@ namespace Kismeta.UI.Controllers
             _bridge = bridge;
             if (Root == null) return;
 
-            int playerId = MainSceneBindings.ResolveLocalPlayerId(session, loop, bridge);
+            _localPlayerId = MainSceneBindings.ResolveLocalPlayerId(session, loop, bridge);
+            int playerId = _focusPlayerId >= 0 ? _focusPlayerId : _localPlayerId;
             if (playerId < 0) return;
 
             int bindKey = ComputeBindKey(session, playerId);
@@ -46,7 +52,11 @@ namespace Kismeta.UI.Controllers
             _bindKey = bindKey;
 
             var snapshot = ActiveEffectsService.Build(session, playerId);
-            ActiveEffectsRows.Populate(Root, snapshot);
+            string subtitle = snapshot.Subtitle;
+            if (playerId != _localPlayerId && _localPlayerId >= 0)
+                subtitle = $"{PlayerUiNames.ShortName(playerId)} · {subtitle}";
+
+            ActiveEffectsRows.Populate(Root, snapshot, subtitle);
         }
 
         static int ComputeBindKey(GameSession session, int playerId)

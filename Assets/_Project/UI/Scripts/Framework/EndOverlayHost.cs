@@ -30,6 +30,7 @@ namespace Kismeta.UI
         ActiveOverlay _active = ActiveOverlay.None;
         bool _reopenCardTableAfterInspect;
         int _cardTableFocusPlayerId = -1;
+        int _activeEffectsFocusPlayerId = -1;
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
 
@@ -69,7 +70,7 @@ namespace Kismeta.UI
             Dismiss();
         }
 
-        public void ShowActiveEffects()
+        public void ShowActiveEffects(int focusPlayerId = -1)
         {
             EnsureControllers();
             if (_activeEffects == null)
@@ -79,6 +80,7 @@ namespace Kismeta.UI
             }
 
             _reopenCardTableAfterInspect = false;
+            _activeEffectsFocusPlayerId = focusPlayerId;
             ShowOverlay(_activeEffects, _activeEffectsCtrl, WireActiveEffects, ActiveOverlay.ActiveEffects);
         }
 
@@ -230,7 +232,11 @@ namespace Kismeta.UI
                 _table?.BindState(_session, _bridge);
             }
             else if (_active == ActiveOverlay.ActiveEffects)
+            {
+                _activeEffectsCtrl?.SetFocus(_activeEffectsFocusPlayerId);
+                _activeEffectsFocusPlayerId = -1;
                 _activeEffectsCtrl?.BindState(_session, _loop, _bridge!);
+            }
         }
 
         void WireActiveEffects()
