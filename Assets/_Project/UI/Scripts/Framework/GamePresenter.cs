@@ -10,6 +10,7 @@ using Kismeta.Core.Players;
 using Kismeta.UI.Chronicle;
 using Kismeta.UI.Components;
 using Kismeta.UI.Controllers;
+using Kismeta.UI.Diagnostics;
 using Kismeta.UI.Setup;
 using UnityEngine;
 
@@ -254,7 +255,7 @@ namespace Kismeta.UI
                 return;
             }
 
-            if (_contestOverlays?.IsDefenderDuelUiPending == true)
+            if (_contestOverlays?.IsContestDuelUiPending == true)
                 return;
 
             if (ShouldHoldGameplayRouting())
@@ -274,7 +275,7 @@ namespace Kismeta.UI
                     _fateModalOpen = false;
                     _lastFateModalKey = null;
                 }
-                if (!IsContestResponseHint(hint) && _contestOverlays?.IsDefenderDuelUiPending != true)
+                if (!IsContestResponseHint(hint) && _contestOverlays?.IsContestDuelUiPending != true)
                     _contestResponseOpen = false;
                 if (hint != ActionHint.AdeptDecision)
                 {
@@ -600,7 +601,7 @@ namespace Kismeta.UI
                 return;
             }
 
-            if (_contestOverlays?.IsDefenderDuelUiPending == true)
+            if (_contestOverlays?.IsContestDuelUiPending == true)
                 return;
 
             if (ShouldHoldGameplayRouting())
@@ -991,6 +992,14 @@ namespace Kismeta.UI
             }
 
             var next = _exchangeQueue.Peek();
+            if (_contestOverlays?.IsContestDuelUiPending == true)
+            {
+                // #region agent log
+                DebugSessionLog.Write("D", "GamePresenter.TryShowQueuedExchange", "blocked duel ui pending",
+                    "{\"kind\":\"" + next.Kind + "\",\"pendingAcks\":" + _pendingHumanExchangeAcks + "}");
+                // #endregion
+                return;
+            }
             if (_contestOverlays?.IsResponseActive == true)
                 return;
             if (IsBlockingOverlayOpen(next))
@@ -1001,6 +1010,10 @@ namespace Kismeta.UI
             if (_contestOverlays?.IsOpen == true)
                 _contestOverlays.ReleaseStaleActiveState();
             bool shown = _exchangeOverlays.Show(next);
+            // #region agent log
+            DebugSessionLog.Write("C", "GamePresenter.TryShowQueuedExchange", shown ? "show ok" : "show failed",
+                "{\"kind\":\"" + next.Kind + "\",\"pendingAcks\":" + _pendingHumanExchangeAcks + "}");
+            // #endregion
             if (!shown)
             {
                 _exchangeConfirmRequiresAck = false;
@@ -1010,6 +1023,8 @@ namespace Kismeta.UI
 
         bool ShouldReplaceStaleExchange(PlayerExchangeEvent next)
         {
+            if (_contestOverlays?.IsContestDuelUiPending == true)
+                return false;
             if (_contestOverlays?.IsResponseActive == true)
                 return false;
             if (_contestOverlays?.IsOpen == true)
@@ -1073,6 +1088,9 @@ namespace Kismeta.UI
         private bool IsBlockingOverlayOpen(PlayerExchangeEvent? next = null)
         {
             if (_exchangeOverlays?.IsOpen == true) return true;
+
+            if (_contestOverlays?.IsContestDuelUiPending == true)
+                return true;
 
             bool combatExchange = next != null
                 && (next.Kind == ExchangeKind.Duel || next.Kind == ExchangeKind.Gambit)

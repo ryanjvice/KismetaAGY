@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Components;
+using Kismeta.UI.Diagnostics;
 using Kismeta.UI.Narrative;
 using Kismeta.UI.Controllers;
 using UnityEngine;
@@ -22,6 +23,10 @@ namespace Kismeta.UI.Controllers
         readonly HashSet<string> _target = new();
         readonly HashSet<string> _ante = new();
         bool _rolling;
+        bool _awaitingContinue;
+
+        public bool IsDuelRollInProgress => _rolling;
+        public bool IsAwaitingDuelContinue => _awaitingContinue;
 
         public System.Action? OnBack;
         public System.Action? OnCompleted;
@@ -30,7 +35,24 @@ namespace Kismeta.UI.Controllers
         {
             Btn("back-btn")!.clicked += () => OnBack?.Invoke();
             Btn("setup-next")!.clicked += OnSetupNext;
-            Btn("roll-btn")!.clicked += () => { if (!_rolling) StartCoroutine(DoRoll()); };
+            Btn("roll-btn")!.clicked += OnRollClicked;
+        }
+
+        void OnRollClicked()
+        {
+            if (_awaitingContinue)
+            {
+                _awaitingContinue = false;
+                // #region agent log
+                DebugSessionLog.Write("A", "DuelController.OnRollClicked", "continue to exchange",
+                    "{\"playerId\":" + _playerId + "}");
+                // #endregion
+                OnCompleted?.Invoke();
+                return;
+            }
+
+            if (!_rolling)
+                StartCoroutine(DoRoll());
         }
 
         public void SetPreselectedRival(int? rivalId) => _preselectedRival = rivalId;
@@ -45,6 +67,7 @@ namespace Kismeta.UI.Controllers
             _target.Clear();
             _ante.Clear();
             _rolling = false;
+            _awaitingContinue = false;
 
             if (Root == null || _playerId < 0) return;
 
@@ -116,6 +139,12 @@ namespace Kismeta.UI.Controllers
             Lbl("die-you-pip")!.text = "?";
             Lbl("die-foe-pip")!.text = "?";
             Lbl("roll-outcome")!.style.display = DisplayStyle.None;
+            var rollBtn = Btn("roll-btn");
+            if (rollBtn != null)
+            {
+                rollBtn.text = "Roll Die";
+                rollBtn.SetEnabled(true);
+            }
 
             var foeName = Lbl("die-foe-name");
             if (foeName != null && _session != null)
@@ -134,6 +163,10 @@ namespace Kismeta.UI.Controllers
             DuelResolvedEvent? resolved = null;
             DuelDeclinedEvent? declined = null;
             var cmd = new InitiateDuelCommand(_playerId, _rivalId, GetFirst(_target), GetFirst(_ante));
+            // #region agent log
+            DebugSessionLog.Write("B", "DuelController.DoRoll", "initiate submitted",
+                "{\"playerId\":" + _playerId + ",\"rivalId\":" + _rivalId + "}");
+            // #endregion
             _bridge.TrySubmit(cmd);
 
             yield return WaitForEvent(_session, (DuelResolvedEvent e) => resolved = e);
@@ -144,7 +177,27 @@ namespace Kismeta.UI.Controllers
             {
                 yield return RollDie(Lbl("die-you-pip"), resolved.AttackRoll);
                 yield return RollDie(Lbl("die-foe-pip"), resolved.DefendRoll);
-                OnCompleted?.Invoke();
+
+                var outcome = Lbl("roll-outcome");
+                if (outcome != null)
+                {
+                    bool won = resolved.WinnerId == _playerId;
+                    outcome.style.display = DisplayStyle.Flex;
+                    outcome.text = won ? "You won the duel!" : "You lost the duel.";
+                }
+
+                var rollBtn = Btn("roll-btn");
+                if (rollBtn != null)
+                {
+                    rollBtn.text = "Continue";
+                    rollBtn.SetEnabled(true);
+                }
+                _awaitingContinue = true;
+                _rolling = false;
+                // #region agent log
+                DebugSessionLog.Write("A", "DuelController.DoRoll", "roll animation complete",
+                    "{\"playerId\":" + _playerId + ",\"won\":" + (resolved.WinnerId == _playerId ? "true" : "false") + "}");
+                // #endregion
             }
             else if (declined != null)
             {

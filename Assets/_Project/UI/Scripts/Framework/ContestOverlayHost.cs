@@ -49,6 +49,12 @@ namespace Kismeta.UI
 
         public bool IsDefenderDuelUiPending => IsDefenderRollInProgress || IsAwaitingDuelContinue;
 
+        public bool IsAttackerDuelUiPending =>
+            _active == ActiveContest.Duel
+            && (_duelCtrl != null && (_duelCtrl.IsDuelRollInProgress || _duelCtrl.IsAwaitingDuelContinue));
+
+        public bool IsContestDuelUiPending => IsDefenderDuelUiPending || IsAttackerDuelUiPending;
+
         public System.Action? OnResponseCompleted;
 
         public int? ActiveSummerGroupIndex => _active switch
@@ -118,7 +124,7 @@ namespace Kismeta.UI
         public void DismissIfNotHumanTurn()
         {
             if (_bridge != null && _bridge.CanSubmit) return;
-            if (IsDefenderDuelUiPending) return;
+            if (IsContestDuelUiPending) return;
             Dismiss();
         }
 
@@ -282,7 +288,11 @@ namespace Kismeta.UI
         {
             if (_duelCtrl == null) return;
             _duelCtrl.OnBack = Dismiss;
-            _duelCtrl.OnCompleted = Dismiss;
+            _duelCtrl.OnCompleted = () =>
+            {
+                ReleaseStaleActiveState();
+                OnResponseCompleted?.Invoke();
+            };
         }
 
         void WireGambit()
