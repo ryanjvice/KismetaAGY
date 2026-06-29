@@ -8,6 +8,7 @@
     <engine:Style src="../../USS/AutumnActions.uss" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
+    <engine:Template src="../shell/CentralPanelInspectFab.uxml" name="CentralPanelInspectFab" />
 
     <engine:VisualElement name="autumn-hub" class="screen screen--autumn">
 
@@ -62,6 +63,7 @@
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
+            <engine:Instance template="CentralPanelInspectFab" />
             </engine:VisualElement>
 
             <engine:Instance template="PlayerInventoryOverlay" />

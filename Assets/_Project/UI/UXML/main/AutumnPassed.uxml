@@ -8,6 +8,7 @@
     <engine:Style src="../../USS/AutumnActions.uss" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
+    <engine:Template src="../shell/CentralPanelInspectFab.uxml" name="CentralPanelInspectFab" />
 
     <engine:VisualElement name="autumn-passed" class="screen screen--autumn screen--yielded">
 
@@ -63,6 +64,7 @@
                 </engine:VisualElement>
                 <engine:Label name="activity-label" text="" class="yielded-activity" />
             </engine:VisualElement>
+            <engine:Instance template="CentralPanelInspectFab" />
             </engine:VisualElement>
 
             <engine:Instance template="PlayerInventoryOverlay" />

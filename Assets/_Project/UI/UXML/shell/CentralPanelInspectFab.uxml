@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/CentralPanelInspect.uss" />
+
+    <engine:VisualElement name="central-panel-inspect" class="central-panel-inspect" picking-mode="Ignore">
+        <engine:Button name="central-panel-inspect-fab" text="🔍" class="central-panel-inspect-fab central-panel-inspect-fab--hidden" tooltip="Inspect board" />
+    </engine:VisualElement>
+</engine:UXML>

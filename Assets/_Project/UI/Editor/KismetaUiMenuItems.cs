@@ -48,6 +48,7 @@ namespace Kismeta.UI.Editor
         private const string ActivateCardPath = "Assets/_Project/UI/UXML/batch4/ActivateCard.uxml";
         private const string CrucibleCardDetailPath = "Assets/_Project/UI/UXML/batch4/CrucibleCardDetail.uxml";
         private const string BuildHousePath = "Assets/_Project/UI/UXML/batch4/BuildHouse.uxml";
+        private const string BoardInspectPath = "Assets/_Project/UI/UXML/shell/CentralPanelInspectModal.uxml";
         private const string PlaceWardsPath = "Assets/_Project/UI/UXML/batch4/PlaceWards.uxml";
         private const string EndSummerPath = "Assets/_Project/UI/UXML/batch4/EndSummer.uxml";
         private const string TradePath = "Assets/_Project/UI/UXML/batch5/Trade.uxml";
@@ -59,6 +60,7 @@ namespace Kismeta.UI.Editor
         private const string ManageCardsPath = "Assets/_Project/UI/UXML/batch6/ManageCards.uxml";
         private const string LeaveStasisPath = "Assets/_Project/UI/UXML/batch6/LeaveStasis.uxml";
         private const string EndAutumnPath = "Assets/_Project/UI/UXML/batch6/EndAutumn.uxml";
+        private const string AutumnForgeInspectPath = "Assets/_Project/UI/UXML/shell/AutumnForgeInspect.uxml";
         private const string VictoryPath = "Assets/_Project/UI/UXML/batch7/Victory.uxml";
         private const string ChroniclePath = "Assets/_Project/UI/UXML/batch7/Chronicle.uxml";
         private const string CardTablePath = "Assets/_Project/UI/UXML/batch7/CardTable.uxml";
@@ -210,6 +212,7 @@ namespace Kismeta.UI.Editor
             EnsureComponent<CraftReagentController>(bootstrap.gameObject);
             EnsureComponent<ActivateCardController>(bootstrap.gameObject);
             EnsureComponent<BuildHouseController>(bootstrap.gameObject);
+            EnsureComponent<SpringBoardInspectController>(bootstrap.gameObject);
             EnsureComponent<PlaceWardsController>(bootstrap.gameObject);
             EnsureComponent<EndSummerController>(bootstrap.gameObject);
             EnsureComponent<ContestOverlayHost>(bootstrap.gameObject);
@@ -222,6 +225,7 @@ namespace Kismeta.UI.Editor
             EnsureComponent<ManageCardsController>(bootstrap.gameObject);
             EnsureComponent<LeaveStasisController>(bootstrap.gameObject);
             EnsureComponent<EndAutumnController>(bootstrap.gameObject);
+            EnsureComponent<AutumnForgeInspectController>(bootstrap.gameObject);
             EnsureComponent<AutumnOverlayHost>(bootstrap.gameObject);
             EnsureComponent<VictoryController>(bootstrap.gameObject);
             EnsureComponent<ChronicleController>(bootstrap.gameObject);
@@ -288,6 +292,7 @@ namespace Kismeta.UI.Editor
             var activateCard = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ActivateCardPath);
             var crucibleCardDetail = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CrucibleCardDetailPath);
             var buildHouse = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(BuildHousePath);
+            var boardInspect = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(BoardInspectPath);
             var placeWards = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PlaceWardsPath);
             var endSummer = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(EndSummerPath);
             var trade = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TradePath);
@@ -299,6 +304,7 @@ namespace Kismeta.UI.Editor
             var manageCards = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ManageCardsPath);
             var leaveStasis = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(LeaveStasisPath);
             var endAutumn = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(EndAutumnPath);
+            var autumnForgeInspect = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnForgeInspectPath);
             var victory = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(VictoryPath);
             var chronicle = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ChroniclePath);
             var cardTable = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardTablePath);
@@ -342,6 +348,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_activateCard").objectReferenceValue = activateCard;
             so.FindProperty("_crucibleCardDetail").objectReferenceValue = crucibleCardDetail;
             so.FindProperty("_buildHouse").objectReferenceValue = buildHouse;
+            so.FindProperty("_boardInspect").objectReferenceValue = boardInspect;
             so.FindProperty("_placeWards").objectReferenceValue = placeWards;
             so.FindProperty("_endSummer").objectReferenceValue = endSummer;
             so.FindProperty("_trade").objectReferenceValue = trade;
@@ -353,6 +360,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_manageCards").objectReferenceValue = manageCards;
             so.FindProperty("_leaveStasis").objectReferenceValue = leaveStasis;
             so.FindProperty("_endAutumn").objectReferenceValue = endAutumn;
+            so.FindProperty("_autumnForgeInspect").objectReferenceValue = autumnForgeInspect;
             so.FindProperty("_victory").objectReferenceValue = victory;
             so.FindProperty("_chronicle").objectReferenceValue = chronicle;
             so.FindProperty("_cardTable").objectReferenceValue = cardTable;
@@ -441,6 +449,7 @@ namespace Kismeta.UI.Editor
             host.AddComponent<CraftReagentController>();
             host.AddComponent<ActivateCardController>();
             host.AddComponent<BuildHouseController>();
+            host.AddComponent<SpringBoardInspectController>();
             host.AddComponent<PlaceWardsController>();
             host.AddComponent<EndSummerController>();
             host.AddComponent<ContestOverlayHost>();
@@ -453,6 +462,7 @@ namespace Kismeta.UI.Editor
             host.AddComponent<ManageCardsController>();
             host.AddComponent<LeaveStasisController>();
             host.AddComponent<EndAutumnController>();
+            host.AddComponent<AutumnForgeInspectController>();
             host.AddComponent<AutumnOverlayHost>();
             host.AddComponent<UiResponsiveTest>();
 

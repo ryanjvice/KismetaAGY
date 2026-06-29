@@ -9,6 +9,7 @@
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
     <engine:Template src="../shell/CauldronHub.uxml" name="CauldronHub" />
+    <engine:Template src="../shell/CentralPanelInspectFab.uxml" name="CentralPanelInspectFab" />
 
     <engine:VisualElement name="autumn-main" class="screen screen--autumn">
 
@@ -78,6 +79,7 @@
                         </engine:VisualElement>
                     </engine:VisualElement>
                 </engine:VisualElement>
+                <engine:Instance template="CentralPanelInspectFab" />
             </engine:VisualElement>
 
             <engine:VisualElement class="autumn-main__crucible-section">

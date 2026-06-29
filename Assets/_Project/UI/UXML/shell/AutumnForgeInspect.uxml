@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/AutumnActions.uss" />
+    <engine:Style src="../../USS/CentralPanelInspect.uss" />
+
+    <engine:VisualElement name="autumn-forge-inspect" class="screen screen--autumn autumn-forge-inspect">
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
+                <engine:VisualElement style="margin-left: 4px;">
+                    <engine:Label text="Inspect" class="statusbar__title" style="color: rgb(224, 138, 74);" />
+                    <engine:Label text="the forge at a glance" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:ScrollView name="central-panel-inspect-scroll" class="autumn-forge-inspect__scroll">
+            <engine:VisualElement name="central-panel-inspect-content" class="central-panel-inspect-modal__content" />
+        </engine:ScrollView>
+    </engine:VisualElement>
+</engine:UXML>

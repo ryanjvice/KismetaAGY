@@ -220,7 +220,7 @@ MonoBehaviour:
   _settingsScreen: {fileID: 9197481963319205126, guid: faba220889bef8443934394907f29569, type: 3}
   _agekeeperContest: {fileID: 9197481963319205126, guid: 23d4f7ba6d5a48d48aec740b12deaa19, type: 3}
   _springHub: {fileID: 9197481963319205126, guid: 8d5f0b3c2e9a5147b6c7d8e9f0a1b2c3, type: 3}
-  _springPassed: {fileID: 0}
+  _springPassed: {fileID: 9197481963319205126, guid: a8fd67839a92021479ece502682f11a4, type: 3}
   _summerMain: {fileID: 9197481963319205126, guid: 9e6a1c4d3f0b6258c7d8e9f0a1b2c3d4, type: 3}
   _summerHub: {fileID: 9197481963319205126, guid: 22ed65e6eea61014f97ddcfcf3fecf21, type: 3}
   _summerPassed: {fileID: 9197481963319205126, guid: fe74c72c19eef2b43a2d3b35eb0a8b0d, type: 3}
@@ -237,12 +237,14 @@ MonoBehaviour:
   _springHarvest: {fileID: 9197481963319205126, guid: d4a7bf58b31a6e0438ef56e9dedb8ffc, type: 3}
   _winterUnlock: {fileID: 9197481963319205126, guid: 2a127e9c6e2c5924db4d4e5a87389aa1, type: 3}
   _fatefulWager: {fileID: 9197481963319205126, guid: df8ecc00a3c57bd44ac1509e90459d74, type: 3}
+  _fatefulWagerModals: {fileID: 9197481963319205126, guid: 36f5236b10545734ca3288316fad92d5, type: 3}
   _cardLimits: {fileID: 9197481963319205126, guid: c0d8fbb17e40eb840aa1ddb77db097ec, type: 3}
   _summerSheets: {fileID: 9197481963319205126, guid: df597b49f21bebf42b0bf53e578598ef, type: 3}
   _craftReagent: {fileID: 9197481963319205126, guid: 3ad25c1bbbe875f4a8f4d0d6afd0654a, type: 3}
   _activateCard: {fileID: 9197481963319205126, guid: c2bc9df204537bf4785068ed5a32f5a1, type: 3}
   _crucibleCardDetail: {fileID: 9197481963319205126, guid: a7f3c8e21b4d5690a8e2f1c3d5b6a789, type: 3}
   _buildHouse: {fileID: 9197481963319205126, guid: 17d1b9ef5e64d044294754e593412e12, type: 3}
+  _boardInspect: {fileID: 9197481963319205126, guid: be14948f108dec14fa162aaee52f0b60, type: 3}
   _placeWards: {fileID: 9197481963319205126, guid: 5cc5e001c98bd3547b1f0181ea83ee3b, type: 3}
   _endSummer: {fileID: 9197481963319205126, guid: 230850dabc890f644bd6284cf7cac3ee, type: 3}
   _trade: {fileID: 9197481963319205126, guid: f2de55905a3446a4b85c1f3a2e69d632, type: 3}
@@ -254,11 +256,13 @@ MonoBehaviour:
   _manageCards: {fileID: 9197481963319205126, guid: 0bff89acac9d3e44ca0f2ee82f3ecf82, type: 3}
   _leaveStasis: {fileID: 9197481963319205126, guid: 3db87767ad9f0624a9e057fdf75528a5, type: 3}
   _endAutumn: {fileID: 9197481963319205126, guid: f8a91b2c3d4e5f6071829345a6b7c8d9, type: 3}
+  _autumnForgeInspect: {fileID: 9197481963319205126, guid: 7c6a736f4c76f2e48bc256c092a839b6, type: 3}
   _victory: {fileID: 9197481963319205126, guid: 70b349c22ed1063479200a4d02755dbe, type: 3}
   _chronicle: {fileID: 9197481963319205126, guid: 624d806ec598422479bc052ccc17e80f, type: 3}
   _cardTable: {fileID: 9197481963319205126, guid: dc045ae4584348141b267b1653788577, type: 3}
   _cardModals: {fileID: 9197481963319205126, guid: ac54c31e214722e4b873b14f637bd5d9, type: 3}
   _activeEffects: {fileID: 9197481963319205126, guid: 58d44350f061a48418834e6e3779734c, type: 3}
+  _resourceExchange: {fileID: 9197481963319205126, guid: 6301d3b5a3f8bc04da5068f5dd426942, type: 3}
 --- !u!4 &1085875160
 Transform:
   m_ObjectHideFlags: 0
@@ -934,8 +938,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 205dcb39f1ee38b4da3f0c05760d6eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.ScreenRouter
-  _screens: []
-  _setupSheet: {fileID: 0}
+  _screens:
+  - Id: Title
+    Uxml: {fileID: 9197481963319205126, guid: b44be3fc0d0a8944a96a90543cf35210, type: 3}
+  - Id: Waiting
+    Uxml: {fileID: 9197481963319205126, guid: 23c9356e19d8a3343a869197fd22074c, type: 3}
+  - Id: Join
+    Uxml: {fileID: 9197481963319205126, guid: 519a817f310314b48bb262c3b086169d, type: 3}
+  - Id: Resume
+    Uxml: {fileID: 9197481963319205126, guid: 26748abde5aa099428c318a8600db94a, type: 3}
+  - Id: Codex
+    Uxml: {fileID: 9197481963319205126, guid: ca63949183879644ca18fdf0e1a01d7b, type: 3}
+  - Id: Settings
+    Uxml: {fileID: 9197481963319205126, guid: faba220889bef8443934394907f29569, type: 3}
+  - Id: AgekeeperContest
+    Uxml: {fileID: 9197481963319205126, guid: 23d4f7ba6d5a48d48aec740b12deaa19, type: 3}
+  - Id: SpringHub
+    Uxml: {fileID: 9197481963319205126, guid: 8d5f0b3c2e9a5147b6c7d8e9f0a1b2c3, type: 3}
+  - Id: SpringPassed
+    Uxml: {fileID: 9197481963319205126, guid: a8fd67839a92021479ece502682f11a4, type: 3}
+  - Id: SummerMain
+    Uxml: {fileID: 9197481963319205126, guid: 9e6a1c4d3f0b6258c7d8e9f0a1b2c3d4, type: 3}
+  - Id: SummerHub
+    Uxml: {fileID: 9197481963319205126, guid: 22ed65e6eea61014f97ddcfcf3fecf21, type: 3}
+  - Id: SummerPassed
+    Uxml: {fileID: 9197481963319205126, guid: fe74c72c19eef2b43a2d3b35eb0a8b0d, type: 3}
+  - Id: AutumnMain
+    Uxml: {fileID: 9197481963319205126, guid: af7b2d5e4a1c7369d8e9f0a1b2c3d4e5, type: 3}
+  - Id: AutumnHub
+    Uxml: {fileID: 9197481963319205126, guid: a569256228a74bb4ba8e9fa800cd07e3, type: 3}
+  - Id: AutumnPassed
+    Uxml: {fileID: 9197481963319205126, guid: c57132cbc4b338f4cbb89a47eebd3113, type: 3}
+  - Id: WinterHub
+    Uxml: {fileID: 9197481963319205126, guid: b08c3e6f5b2d8470e9f0a1b2c3d4e5f6, type: 3}
+  - Id: RoundOpen
+    Uxml: {fileID: 9197481963319205126, guid: b942f813a17814243849d29e04159747, type: 3}
+  - Id: SpringIntro
+    Uxml: {fileID: 9197481963319205126, guid: 4e09362452192ac47b52b6e8e04e0f05, type: 3}
+  - Id: SummerIntro
+    Uxml: {fileID: 9197481963319205126, guid: 6aa31afeddf576a4f82c25986dfeb309, type: 3}
+  - Id: AutumnIntro
+    Uxml: {fileID: 9197481963319205126, guid: e38dccfb4ba682341bf8d69b540f1545, type: 3}
+  - Id: WinterIntro
+    Uxml: {fileID: 9197481963319205126, guid: 6542ba701070b694b89a0f0561232a31, type: 3}
+  - Id: AgeClosing
+    Uxml: {fileID: 9197481963319205126, guid: c409715823e777440a4e755e751e4376, type: 3}
+  - Id: SpringHarvest
+    Uxml: {fileID: 9197481963319205126, guid: d4a7bf58b31a6e0438ef56e9dedb8ffc, type: 3}
+  - Id: WinterUnlock
+    Uxml: {fileID: 9197481963319205126, guid: 2a127e9c6e2c5924db4d4e5a87389aa1, type: 3}
+  - Id: FatefulWager
+    Uxml: {fileID: 9197481963319205126, guid: df8ecc00a3c57bd44ac1509e90459d74, type: 3}
+  - Id: CraftReagent
+    Uxml: {fileID: 9197481963319205126, guid: 3ad25c1bbbe875f4a8f4d0d6afd0654a, type: 3}
+  - Id: CardLimits
+    Uxml: {fileID: 9197481963319205126, guid: c0d8fbb17e40eb840aa1ddb77db097ec, type: 3}
+  - Id: Victory
+    Uxml: {fileID: 9197481963319205126, guid: 70b349c22ed1063479200a4d02755dbe, type: 3}
+  - Id: Chronicle
+    Uxml: {fileID: 9197481963319205126, guid: 624d806ec598422479bc052ccc17e80f, type: 3}
+  _setupSheet: {fileID: 9197481963319205126, guid: f349b93fc3fde7647b0c740e772f9ca7, type: 3}
 --- !u!114 &1085875215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -950,7 +1012,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.ViewportLayout
   _panelSettings: {fileID: 11400000, guid: 2f562a8366d18d844b573c8bef474941, type: 2}
   _initialScreen: {fileID: 0}
-  _tokenStylesheet: {fileID: 0}
+  _tokenStylesheet: {fileID: 7433441132597879392, guid: bed134053719e06468cd37b394f0068e, type: 3}
 --- !u!1 &1605099674
 GameObject:
   m_ObjectHideFlags: 0

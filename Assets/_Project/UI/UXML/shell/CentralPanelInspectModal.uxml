@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/SpringSteps.uss" />
+    <engine:Style src="../../USS/CentralPanelInspect.uss" />
+    <engine:Style src="../../USS/ActiveEffects.uss" />
+    <engine:Style src="../../USS/EndAndOverlays.uss" />
+
+    <engine:VisualElement name="spring-board-inspect" class="screen screen--spring spring-board-inspect">
+        <engine:VisualElement class="statusbar">
+            <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px;" />
+                <engine:VisualElement style="margin-left: 4px;">
+                    <engine:Label text="Inspect" class="statusbar__title" style="color: rgb(232, 185, 74);" />
+                    <engine:Label text="zodiac board at a glance" class="statusbar__sub" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:ScrollView name="central-panel-inspect-scroll" class="spring-board-inspect__scroll">
+            <engine:VisualElement name="central-panel-inspect-content" class="central-panel-inspect-modal__content" />
+        </engine:ScrollView>
+    </engine:VisualElement>
+</engine:UXML>

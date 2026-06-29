@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 namespace Kismeta.UI
 {
     /// <summary>
-    /// Manages Autumn action overlays (Fire, Temper, Manage Cards, Leave Stasis, End Autumn).
+    /// Manages Autumn action overlays (Fire, Temper, Manage Cards, Leave Stasis, End Autumn, forge inspect).
     /// </summary>
     public sealed class AutumnOverlayHost : MonoBehaviour
     {
@@ -16,6 +16,7 @@ namespace Kismeta.UI
         VisualTreeAsset? _manageCards;
         VisualTreeAsset? _leaveStasis;
         VisualTreeAsset? _endAutumn;
+        VisualTreeAsset? _forgeInspect;
 
         ViewportLayout? _layout;
         GameSession? _session;
@@ -26,8 +27,9 @@ namespace Kismeta.UI
         ManageCardsController? _manage;
         LeaveStasisController? _leaveStasisCtrl;
         EndAutumnController? _endAutumnCtrl;
+        AutumnForgeInspectController? _forgeInspectCtrl;
 
-        enum ActiveOverlay { None, Fire, Temper, Manage, LeaveStasis, EndAutumn }
+        enum ActiveOverlay { None, Fire, Temper, Manage, LeaveStasis, EndAutumn, ForgeInspect }
         ActiveOverlay _active = ActiveOverlay.None;
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
@@ -57,13 +59,15 @@ namespace Kismeta.UI
             VisualTreeAsset temperStone,
             VisualTreeAsset manageCards,
             VisualTreeAsset leaveStasis,
-            VisualTreeAsset endAutumn)
+            VisualTreeAsset endAutumn,
+            VisualTreeAsset? forgeInspect = null)
         {
             _fireStone = fireStone;
             _temperStone = temperStone;
             _manageCards = manageCards;
             _leaveStasis = leaveStasis;
             _endAutumn = endAutumn;
+            _forgeInspect = forgeInspect;
             EnsureControllers();
         }
 
@@ -75,12 +79,16 @@ namespace Kismeta.UI
             _manage ??= GetComponent<ManageCardsController>();
             _leaveStasisCtrl ??= GetComponent<LeaveStasisController>();
             _endAutumnCtrl ??= GetComponent<EndAutumnController>();
+            _forgeInspectCtrl ??= GetComponent<AutumnForgeInspectController>();
         }
 
         public void BindState(GameSession session, CommandBridge bridge)
         {
             _session = session;
             _bridge = bridge;
+
+            if (_layout != null && _layout.IsOverlayVisible && session != null)
+                RefreshOpenOverlay();
         }
 
         public void DismissIfNotHumanTurn()
@@ -95,6 +103,18 @@ namespace Kismeta.UI
         public void ShowLeaveStasis() { EnsureControllers(); ShowOverlay(_leaveStasis, _leaveStasisCtrl, WireLeaveStasis, ActiveOverlay.LeaveStasis); }
         public void ShowEndAutumn() { EnsureControllers(); ShowOverlay(_endAutumn, _endAutumnCtrl, WireEndAutumn, ActiveOverlay.EndAutumn); }
 
+        public void ShowForgeInspect()
+        {
+            EnsureControllers();
+            ShowOverlay(_forgeInspect, _forgeInspectCtrl, WireForgeInspect, ActiveOverlay.ForgeInspect);
+        }
+
+        public void DismissForgeInspect()
+        {
+            if (_active != ActiveOverlay.ForgeInspect) return;
+            Dismiss();
+        }
+
         public void Dismiss()
         {
             _active = ActiveOverlay.None;
@@ -103,6 +123,7 @@ namespace Kismeta.UI
             _manage?.Detach();
             _leaveStasisCtrl?.Detach();
             _endAutumnCtrl?.Detach();
+            _forgeInspectCtrl?.Detach();
             _layout?.DismissOverlay();
             NotifyOverlayChanged();
         }
@@ -125,14 +146,28 @@ namespace Kismeta.UI
 
         void RefreshOpenOverlay()
         {
-            if (_session == null || _bridge == null) return;
+            if (_session == null) return;
+
             switch (_active)
             {
-                case ActiveOverlay.Fire: _fire?.BindState(_session, _bridge); break;
-                case ActiveOverlay.Temper: _temper?.BindState(_session, _bridge); break;
-                case ActiveOverlay.Manage: _manage?.BindState(_session, _bridge); break;
-                case ActiveOverlay.LeaveStasis: _leaveStasisCtrl?.BindState(_session, _bridge); break;
-                case ActiveOverlay.EndAutumn: _endAutumnCtrl?.BindState(_session, _bridge); break;
+                case ActiveOverlay.Fire when _bridge != null:
+                    _fire?.BindState(_session, _bridge);
+                    break;
+                case ActiveOverlay.Temper when _bridge != null:
+                    _temper?.BindState(_session, _bridge);
+                    break;
+                case ActiveOverlay.Manage when _bridge != null:
+                    _manage?.BindState(_session, _bridge);
+                    break;
+                case ActiveOverlay.LeaveStasis when _bridge != null:
+                    _leaveStasisCtrl?.BindState(_session, _bridge);
+                    break;
+                case ActiveOverlay.EndAutumn when _bridge != null:
+                    _endAutumnCtrl?.BindState(_session, _bridge);
+                    break;
+                case ActiveOverlay.ForgeInspect:
+                    _forgeInspectCtrl?.BindState(_session);
+                    break;
             }
         }
 
@@ -173,6 +208,12 @@ namespace Kismeta.UI
                 if (_bridge?.TrySubmitPass() == true)
                     Dismiss();
             };
+        }
+
+        void WireForgeInspect()
+        {
+            if (_forgeInspectCtrl == null) return;
+            _forgeInspectCtrl.OnBack = Dismiss;
         }
     }
 }

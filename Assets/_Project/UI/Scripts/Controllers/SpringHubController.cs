@@ -24,6 +24,8 @@ namespace Kismeta.UI.Controllers
         public System.Action<string>? OnInspectCard;
         public System.Action<int>? OnRivalSelected;
         public System.Action? OnBuildHouse;
+        public System.Action? OnOpenBoardInspect;
+        public System.Action? OnDismissBoardInspect;
 
         readonly List<string> _spreadIds = new();
         readonly List<string> _handIds = new();
@@ -51,6 +53,7 @@ namespace Kismeta.UI.Controllers
             UnwireClick(Btn("commune-lock-btn"), OnCommuneLock);
             UnwireClick(Btn("info-btn"), OnInfoOpen);
             UnwireClick(Btn("info-close-btn"), OnInfoClose);
+            CentralPanelInspectBindings.Unwire();
             _wheelBindKey = int.MinValue;
             _rolling = false;
             _justFinishedRollSpin = false;
@@ -83,6 +86,7 @@ namespace Kismeta.UI.Controllers
                 OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
+            CentralPanelInspectBindings.Wire(Root, () => OnOpenBoardInspect?.Invoke());
         }
 
         static void WireClick(Button? btn, Action handler)
@@ -151,6 +155,10 @@ namespace Kismeta.UI.Controllers
                 El("step-rail"), ResolveStepIndex(session, player, hint), 5, "step__dot--active");
 
             BindPhaseVisibility(isHub, isWheel, _communeSubviewOpen);
+            CentralPanelInspectBindings.SetFabVisible(
+                Root,
+                isHub && !_communeSubviewOpen,
+                () => OnDismissBoardInspect?.Invoke());
 
             if (_communeSubviewOpen && isHub)
                 BindCommune(session, bridge);

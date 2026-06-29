@@ -18,7 +18,7 @@ namespace Kismeta.UI.Components
             ActiveEffectsAccordion.Populate(root.Q<VisualElement>("sections-list"), snapshot.Sections);
         }
 
-        static void PopulateFeatured(VisualElement? host, ActiveEffectItem item)
+        public static void PopulateFeatured(VisualElement? host, ActiveEffectItem item)
         {
             if (host == null) return;
             host.Clear();

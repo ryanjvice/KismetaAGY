@@ -7,6 +7,7 @@
     <engine:Style src="../../USS/SpringSteps.uss" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
+    <engine:Template src="../shell/CentralPanelInspectFab.uxml" name="CentralPanelInspectFab" />
 
     <engine:VisualElement name="spring-hub" class="screen screen--spring">
         <engine:Label text="Spring hub — zodiac board, commune, build a house, and advance to Summer." class="sr-only" />
@@ -107,6 +108,7 @@
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
+            <engine:Instance template="CentralPanelInspectFab" />
             </engine:VisualElement>
 
             <engine:VisualElement name="wheel-cta" class="stage-cta stage-cta--single">
@@ -135,6 +137,7 @@
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
+
         </engine:VisualElement>
 
     </engine:VisualElement>

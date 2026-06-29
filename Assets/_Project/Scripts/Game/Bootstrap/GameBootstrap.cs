@@ -78,6 +78,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _activateCard;
         [SerializeField] private VisualTreeAsset _crucibleCardDetail;
         [SerializeField] private VisualTreeAsset _buildHouse;
+        [SerializeField] private VisualTreeAsset _boardInspect;
         [SerializeField] private VisualTreeAsset _placeWards;
         [SerializeField] private VisualTreeAsset _endSummer;
         [SerializeField] private VisualTreeAsset _trade;
@@ -89,6 +90,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _manageCards;
         [SerializeField] private VisualTreeAsset _leaveStasis;
         [SerializeField] private VisualTreeAsset _endAutumn;
+        [SerializeField] private VisualTreeAsset _autumnForgeInspect;
         [SerializeField] private VisualTreeAsset _victory;
         [SerializeField] private VisualTreeAsset _chronicle;
         [SerializeField] private VisualTreeAsset _cardTable;
@@ -215,6 +217,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<ActivateCardController>();
             EnsureController<CrucibleCardDetailController>();
             EnsureController<BuildHouseController>();
+            EnsureController<SpringBoardInspectController>();
             EnsureController<PlaceWardsController>();
             EnsureController<EndSummerController>();
             EnsureController<ContestOverlayHost>();
@@ -227,6 +230,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<ManageCardsController>();
             EnsureController<LeaveStasisController>();
             EnsureController<EndAutumnController>();
+            EnsureController<AutumnForgeInspectController>();
             EnsureController<AutumnOverlayHost>();
             EnsureController<VictoryController>();
             EnsureController<ChronicleController>();
@@ -248,14 +252,14 @@ namespace Kismeta.Game.Bootstrap
                 _placeWards, _endSummer);
 
             var springOverlays = GetComponent<SpringOverlayHost>();
-            springOverlays?.Configure(_buildHouse);
+            springOverlays?.Configure(_buildHouse, _boardInspect);
 
             var contestOverlays = GetComponent<ContestOverlayHost>();
             contestOverlays?.Configure(_trade, _duel, _gambit, _opposition);
 
             var autumnOverlays = GetComponent<AutumnOverlayHost>();
             autumnOverlays?.Configure(
-                _fireStone, _temperStone, _manageCards, _leaveStasis, _endAutumn);
+                _fireStone, _temperStone, _manageCards, _leaveStasis, _endAutumn, _autumnForgeInspect);
 
             var endOverlays = GetComponent<EndOverlayHost>();
             endOverlays?.Configure(_cardTable, _cardModals, _activeEffects, _crucibleCardDetail);

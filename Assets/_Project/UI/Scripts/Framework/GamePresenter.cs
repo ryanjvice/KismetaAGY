@@ -668,6 +668,8 @@ namespace Kismeta.UI
                 autumnHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 autumnHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 autumnHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+                autumnHub.OnOpenForgeInspect = () => _autumnOverlays?.ShowForgeInspect();
+                autumnHub.OnDismissForgeInspect = () => _autumnOverlays?.DismissForgeInspect();
             }
 
             var autumnPassed = _router.GetController<AutumnPassedController>(ScreenIds.AutumnPassed);
@@ -677,6 +679,8 @@ namespace Kismeta.UI
                 autumnPassed.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 autumnPassed.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 autumnPassed.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+                autumnPassed.OnOpenForgeInspect = () => _autumnOverlays?.ShowForgeInspect();
+                autumnPassed.OnDismissForgeInspect = () => _autumnOverlays?.DismissForgeInspect();
             }
         }
 
@@ -705,6 +709,8 @@ namespace Kismeta.UI
             autumn.OnTemper = () => _autumnOverlays.ShowTemper();
             autumn.OnLeaveStasis = () => _autumnOverlays.ShowLeaveStasis();
             autumn.OnPass = () => _autumnOverlays.ShowEndAutumn();
+            autumn.OnOpenForgeInspect = () => _autumnOverlays?.ShowForgeInspect();
+            autumn.OnDismissForgeInspect = () => _autumnOverlays?.DismissForgeInspect();
 
             // Craft / Activate reuse the season-agnostic Summer overlay controllers.
             autumn.OnCraft = () => _summerOverlays?.ShowCraftReagent();
@@ -875,6 +881,8 @@ namespace Kismeta.UI
                     spring.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
                     spring.OnInspectCard = id => _endOverlays.ShowInspect(id);
                     spring.OnBuildHouse = () => _springOverlays?.ShowBuildHouse();
+                    spring.OnOpenBoardInspect = () => _springOverlays?.ShowBoardInspect();
+                    spring.OnDismissBoardInspect = () => _springOverlays?.DismissBoardInspect();
                 }
 
                 var winter = _router.GetController<WinterHubController>(ScreenIds.WinterHub);

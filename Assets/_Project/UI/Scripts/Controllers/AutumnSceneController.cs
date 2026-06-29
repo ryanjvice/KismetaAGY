@@ -37,6 +37,8 @@ namespace Kismeta.UI.Controllers
         public Action? OnOpenActiveEffects;
         public Action<string>? OnInspectCard;
         public Action<int>? OnRivalSelected;
+        public Action? OnOpenForgeInspect;
+        public Action? OnDismissForgeInspect;
 
         CommandBridge? _bridge;
         GameSession? _session;
@@ -58,6 +60,7 @@ namespace Kismeta.UI.Controllers
             _dockZone = DockZone.Spread;
             CauldronHubBindings.UnwireCauldrons(Root);
             SummerCrucibleRowBindings.Unwire(Root);
+            CentralPanelInspectBindings.Unwire();
         }
 
         protected override void Wire()
@@ -82,6 +85,7 @@ namespace Kismeta.UI.Controllers
                 OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
+            CentralPanelInspectBindings.Wire(Root, () => OnOpenForgeInspect?.Invoke());
             CauldronHubBindings.WireCauldrons(
                 Root,
                 suit => OnCauldronClicked?.Invoke(suit),
@@ -185,6 +189,11 @@ namespace Kismeta.UI.Controllers
             var forge = El("autumn-forge-stage");
             if (forge != null)
                 forge.style.display = _centralView == CentralView.Forge ? DisplayStyle.Flex : DisplayStyle.None;
+
+            CentralPanelInspectBindings.SetFabVisible(
+                Root,
+                _centralView == CentralView.Forge,
+                () => OnDismissForgeInspect?.Invoke());
         }
 
         bool CanAutumnAction() =>

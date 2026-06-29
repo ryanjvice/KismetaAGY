@@ -18,6 +18,8 @@ namespace Kismeta.UI.Controllers
         public Action? OnOpenActiveEffects;
         public Action<string>? OnInspectCard;
         public Action<int>? OnRivalSelected;
+        public Action? OnOpenForgeInspect;
+        public Action? OnDismissForgeInspect;
 
         GameSession? _session;
         int _localPlayerId;
@@ -28,6 +30,7 @@ namespace Kismeta.UI.Controllers
         {
             _dockZone = DockZone.Spread;
             _lastActivity = null;
+            CentralPanelInspectBindings.Unwire();
         }
 
         protected override void Wire()
@@ -40,6 +43,7 @@ namespace Kismeta.UI.Controllers
                 OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
+            CentralPanelInspectBindings.Wire(Root, () => OnOpenForgeInspect?.Invoke());
         }
 
         void OnHandToggle()
@@ -90,6 +94,8 @@ namespace Kismeta.UI.Controllers
                 El("board-stage"), El("stasis-row"), session, _localPlayerId);
             CrucibleForgeBindings.ApplyCauldronReagents(El("cauldron-mini"), player);
             RestoreActivityLabel();
+
+            CentralPanelInspectBindings.SetFabVisible(Root, true, () => OnDismissForgeInspect?.Invoke());
         }
 
         public void NotifyActivity(string message)
