@@ -20,8 +20,8 @@
 
             <engine:VisualElement name="hub-actionbar" class="spring-hub__actionbar spring-hub__actionbar--hidden">
                 <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                    <engine:Button name="commune-btn" text="Commune with Cards" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="build-house-btn" text="Build a House" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="commune-btn" text="Commune With Cards" class="actionbtn btn btn--action" />
+                    <engine:Button name="build-house-btn" text="Build A House" class="actionbtn btn btn--action" />
                 </engine:VisualElement>
             </engine:VisualElement>
 

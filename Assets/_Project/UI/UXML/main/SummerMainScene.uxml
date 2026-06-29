@@ -21,10 +21,10 @@
 
             <engine:VisualElement class="summer-main__actionbar">
                 <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                    <engine:Button name="trade-btn" text="Trade" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="duel-btn" text="Duel" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="gambit-btn" text="Gambit" class="actionbtn btn btn--secondary" />
-                    <engine:Button name="opposition-btn" text="Opposition" class="actionbtn btn btn--secondary" />
+                    <engine:Button name="trade-btn" text="Trade" class="actionbtn btn btn--action" />
+                    <engine:Button name="duel-btn" text="Duel" class="actionbtn btn btn--action" />
+                    <engine:Button name="gambit-btn" text="Gambit" class="actionbtn btn btn--action" />
+                    <engine:Button name="opposition-btn" text="Opposition" class="actionbtn btn btn--action" />
                 </engine:VisualElement>
             </engine:VisualElement>
 

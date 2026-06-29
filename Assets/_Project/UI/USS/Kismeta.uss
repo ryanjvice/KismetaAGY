@@ -13,6 +13,9 @@
     --gold: rgb(232, 185, 74);
     --gold-deep: rgb(201, 150, 47);
     --gold-bright: rgb(244, 211, 94);
+    --action-bg: rgba(74, 58, 16, 0.96);
+    --action-border: var(--gold-bright);
+    --action-text: var(--gold-bright);
     --muted: rgb(184, 154, 110);
     --muted-dim: rgb(138, 106, 122);
     --burgundy-deep: rgb(26, 5, 5);
@@ -1422,6 +1425,27 @@
 .stage-cta .btn--primary.actionbtn {
     font-size: var(--font-body);
 }
+
+.btn--action {
+    background-color: var(--action-bg);
+    border-color: var(--action-border);
+    border-width: 2px;
+    color: var(--action-text);
+    -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/FuturaCyrillicDemi.asset");
+    font-size: var(--font-body);
+}
+
+.btn--action.actionbtn,
+.actionbar .btn--action.actionbtn {
+    font-size: var(--font-body);
+}
+
+.btn--action.btn--disabled {
+    background-color: rgba(42, 32, 14, 0.72);
+    border-color: rgb(106, 90, 58);
+    color: rgb(138, 122, 90);
+}
+
 .btn--secondary { background-color: rgba(22, 10, 28, 0.88); border-color: var(--border-gold); border-width: 1px; color: var(--muted); }
 .btn--disabled { background-color: rgb(42, 21, 48); border-color: var(--border-subtle); color: rgb(90, 74, 106); }
 .btn:hover { opacity: 0.92; }
