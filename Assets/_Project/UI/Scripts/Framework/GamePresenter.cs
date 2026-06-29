@@ -1012,7 +1012,7 @@ namespace Kismeta.UI
         }
 
         private static bool IsWinterHubSubScreen(string? screenId) =>
-            screenId is ScreenIds.FatefulWager or ScreenIds.CraftReagent;
+            screenId is ScreenIds.FatefulWager or ScreenIds.CraftReagent or ScreenIds.CardLimits;
 
         void OpenWinterCraft()
         {
@@ -1133,7 +1133,10 @@ namespace Kismeta.UI
             else if (controller is CraftReagentController craftReagent)
                 craftReagent.BindState(_session, _bridge);
             else if (controller is CardLimitsController cardLimits)
+            {
+                cardLimits.OnBack = () => _router.GoTo(ScreenIds.WinterHub);
                 cardLimits.BindState(_session, _bridge);
+            }
             else if (controller is VictoryController victory && _chronicle != null)
                 victory.BindState(_session, _chronicle);
             else if (controller is ChronicleController chronicleCtrl && _chronicle != null)

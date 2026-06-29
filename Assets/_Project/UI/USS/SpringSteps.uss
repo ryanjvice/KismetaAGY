@@ -4,6 +4,9 @@
 
 /* tap-to-swap: two stacked zones (Spread / Hand) with movable chips */
 .swap-zone {
+    flex-direction: column;
+    align-items: stretch;
+    overflow: visible;
     border-radius: var(--radius-lg);
     border-width: 1px;
     padding: 10px 12px;
@@ -25,9 +28,29 @@
 .swap-zone__cards {
     flex-direction: row;
     flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    width: 100%;
     min-height: var(--card-chip-h);
+    height: auto;
+    overflow: visible;
 }
 .swap-zone__cards > .card-chip { margin-right: 6px; margin-bottom: 6px; }
+
+/* Card limits — scroll body + pinned footer + craft accordion */
+#card-limits .card-limits-scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+}
+#card-limits .card-limits-scroll__content {
+    flex-shrink: 0;
+    flex-direction: column;
+}
+#card-limits .card-limits-footer {
+    flex-shrink: 0;
+    padding: 2px 14px 16px;
+}
 
 /* a card showing its alignment value tag */
 .card-chip__tag {

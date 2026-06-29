@@ -5,119 +5,84 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
-    <engine:Style src="../../USS/SummerActions.uss" />
     <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
-         CARD LIMITS (#42) — rearrange, craft, discard down to 5/5.
+         CARD LIMITS (#42) — rearrange, discard down to 5/5.
          Tap chips to move between zones; tap red-edged chips to discard.
-         Craft excess cards into reagents before confirming discard.
+         Craft reagents and fateful wagers live on the Winter hub.
          ============================================================ -->
     <engine:VisualElement name="card-limits" class="screen screen--winter">
 
         <engine:VisualElement class="statusbar" style="background-color: rgb(22,32,46); border-bottom-color: rgb(43,58,74);">
             <engine:VisualElement class="statusbar__left">
+                <engine:Button name="back-btn" text="&#8592;" style="background-color: rgba(0,0,0,0); border-width: 0; color: rgb(184, 154, 110); font-size: 18px; margin-right: 4px;" />
                 <engine:VisualElement class="statusbar__sigil" style="border-color: rgb(224,160,96);">
                     <engine:Label text="&#xec4f;" class="ti-icon" style="color: rgb(224,160,96);" />
                 </engine:VisualElement>
                 <engine:VisualElement>
                     <engine:Label text="Card limits" class="statusbar__title" style="color: rgb(240,192,136);" />
-                    <engine:Label text="rearrange, craft, discard down to 5 per zone" class="statusbar__sub" style="color: rgb(122,138,154);" />
+                    <engine:Label text="rearrange and discard down to 5 per zone" class="statusbar__sub" style="color: rgb(122,138,154);" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <engine:VisualElement style="padding: 4px 14px 0;">
-            <engine:Instance template="NarrativeSlots" />
-        </engine:VisualElement>
-
-        <engine:VisualElement style="padding: 10px 14px 4px;">
-            <engine:VisualElement class="readout" style="background-color: rgb(22,32,46); border-color: rgb(43,58,74);">
-                <engine:VisualElement class="readout__metric">
-                    <engine:Label name="spread-limit" text="4 / 5" class="readout__value" style="color: rgb(127, 196, 168);" />
-                    <engine:Label text="spread" class="readout__label" />
+        <engine:ScrollView name="card-limits-scroll" class="card-limits-scroll">
+            <engine:VisualElement class="card-limits-scroll__content">
+                <engine:VisualElement style="padding: 4px 14px 0;">
+                    <engine:Instance template="NarrativeSlots" />
                 </engine:VisualElement>
-                <engine:VisualElement class="readout__metric">
-                    <engine:Label name="hand-limit" text="6 / 5" class="readout__value" style="color: rgb(224,160,96);" />
-                    <engine:Label text="hand · over" class="readout__label" />
+
+                <engine:VisualElement class="tip tip--arcanum" style="margin-top: 4px;">
+                    <engine:Label text="Return to the Winter hub to craft reagents or place a fateful wager before you transit."
+                                  class="tip__text" style="color: rgb(184,154,192); white-space: normal;" />
                 </engine:VisualElement>
-                <engine:VisualElement class="readout__metric">
-                    <engine:Label name="to-discard" text="1" class="readout__value" style="color: rgb(240, 144, 138);" />
-                    <engine:Label text="to discard" class="readout__label" />
+
+                <engine:VisualElement style="padding: 10px 14px 4px;">
+                    <engine:VisualElement class="readout" style="background-color: rgb(22,32,46); border-color: rgb(43,58,74);">
+                        <engine:VisualElement class="readout__metric">
+                            <engine:Label name="spread-limit" text="4 / 5" class="readout__value" style="color: rgb(127, 196, 168);" />
+                            <engine:Label text="spread" class="readout__label" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="readout__metric">
+                            <engine:Label name="hand-limit" text="6 / 5" class="readout__value" style="color: rgb(224,160,96);" />
+                            <engine:Label text="hand · over" class="readout__label" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="readout__metric">
+                            <engine:Label name="to-discard" text="1" class="readout__value" style="color: rgb(240, 144, 138);" />
+                            <engine:Label text="to discard" class="readout__label" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+
+                <engine:VisualElement style="padding: 4px 14px 0;">
+                    <engine:VisualElement class="swap-zone swap-zone--spread" style="background-color: rgb(22,32,46);">
+                        <engine:VisualElement class="swap-zone__header">
+                            <engine:Label text="Spread — tap to move · tap red-edged to discard" style="font-size: 12px; color: rgb(244, 211, 94);" />
+                            <engine:Label name="spread-tally" text="4 / 5" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="spread-cards" class="swap-zone__cards" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+
+                <engine:VisualElement style="padding: 4px 14px 0;">
+                    <engine:VisualElement class="swap-zone swap-zone--hand" style="background-color: rgb(22,16,28);">
+                        <engine:VisualElement class="swap-zone__header">
+                            <engine:Label text="Hand — tap to move · tap red-edged to discard" style="font-size: 12px; color: rgb(158, 201, 224);" />
+                            <engine:Label name="hand-tally" text="6 / 5" style="font-size: 10px; color: rgb(224,160,96);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="hand-cards" class="swap-zone__cards" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+
+                <engine:VisualElement class="tip tip--ok">
+                    <engine:Label text="Wagered cards are set aside and don't count. Fates return to the deck; Adepts stay in your Arcanum."
+                                  class="tip__text" style="color: rgb(159,196,180);" />
                 </engine:VisualElement>
             </engine:VisualElement>
-        </engine:VisualElement>
+        </engine:ScrollView>
 
-        <engine:VisualElement style="padding: 4px 14px 0;">
-            <engine:VisualElement class="swap-zone swap-zone--spread" style="background-color: rgb(22,32,46);">
-                <engine:VisualElement class="swap-zone__header">
-                    <engine:Label text="Spread — tap to move · tap red-edged to discard" style="font-size: 12px; color: rgb(244, 211, 94);" />
-                    <engine:Label name="spread-tally" text="4 / 5" style="font-size: 10px; color: rgb(184, 154, 110);" />
-                </engine:VisualElement>
-                <engine:VisualElement name="spread-cards" class="swap-zone__cards" />
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <engine:VisualElement style="padding: 4px 14px 0;">
-            <engine:VisualElement class="swap-zone swap-zone--hand" style="background-color: rgb(22,16,28);">
-                <engine:VisualElement class="swap-zone__header">
-                    <engine:Label text="Hand — tap to move · tap red-edged to discard" style="font-size: 12px; color: rgb(158, 201, 224);" />
-                    <engine:Label name="hand-tally" text="6 / 5" style="font-size: 10px; color: rgb(224,160,96);" />
-                </engine:VisualElement>
-                <engine:VisualElement name="hand-cards" class="swap-zone__cards" />
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <!-- inline craft: turn excess cards into reagents before discarding -->
-        <engine:VisualElement name="craft-section" style="padding: 8px 14px 0;">
-            <engine:Label text="Craft reagents" class="eyebrow" />
-            <engine:Label text="Use excess cards before you discard. Same rules as Summer."
-                          style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 6px; white-space: normal;" />
-            <engine:Button name="pick-salt" class="reagent-pick reagent-pick--salt">
-                <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 6px;" />
-                <engine:Label text="Salt (any 3)" style="font-size: 11px; color: rgb(243, 233, 210);" />
-            </engine:Button>
-            <engine:Label text="Elemental Reagents" class="eyebrow" style="margin-top: 4px;" />
-            <engine:VisualElement name="reagent-picker" class="reagent-picker">
-                <engine:Button name="pick-sulphur" class="reagent-pick">
-                    <engine:VisualElement class="reagent-dot reagent-dot--sulphur" style="margin-right: 6px;" />
-                    <engine:Label text="Sulphur" style="font-size: 11px; color: rgb(243, 233, 210);" />
-                </engine:Button>
-                <engine:Button name="pick-vitriol" class="reagent-pick">
-                    <engine:VisualElement class="reagent-dot reagent-dot--vitriol" style="margin-right: 6px;" />
-                    <engine:Label text="Vitriol" style="font-size: 11px; color: rgb(243, 233, 210);" />
-                </engine:Button>
-                <engine:Button name="pick-aqua" class="reagent-pick">
-                    <engine:VisualElement class="reagent-dot reagent-dot--aqua" style="margin-right: 6px;" />
-                    <engine:Label text="Aqua Regia" style="font-size: 11px; color: rgb(243, 233, 210);" />
-                </engine:Button>
-                <engine:Button name="pick-quicksilver" class="reagent-pick">
-                    <engine:VisualElement class="reagent-dot reagent-dot--quick" style="margin-right: 6px;" />
-                    <engine:Label text="Quicksilver" style="font-size: 11px; color: rgb(243, 233, 210);" />
-                </engine:Button>
-            </engine:VisualElement>
-            <engine:Label name="cauldron-note" text=""
-                          style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 6px; margin-bottom: 7px; white-space: normal;" />
-            <engine:VisualElement style="flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 7px;">
-                <engine:Label name="craft-pick-label" text="tap cards to pay" class="eyebrow" style="margin-bottom: 0;" />
-                <engine:Label name="pick-count" text="0 / 3" style="font-size: 11px; color: rgb(127, 196, 168);" />
-            </engine:VisualElement>
-            <engine:VisualElement name="card-pool" class="formula card-pool" />
-            <engine:VisualElement class="tip tip--ok" style="margin-top: 6px;">
-                <engine:Label name="contract-line" text="3 cards → 1 Salt"
-                              class="tip__text" style="color: rgb(159,196,180);" />
-            </engine:VisualElement>
-            <engine:VisualElement style="padding: 2px 0 8px;">
-                <engine:Button name="forge-btn" text="Forge — needs 3 more cards" class="btn btn--disabled" />
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <engine:VisualElement class="tip tip--ok">
-            <engine:Label text="Wagered cards are set aside and don't count. Fates return to the deck; Adepts stay in your Arcanum."
-                          class="tip__text" style="color: rgb(159,196,180);" />
-        </engine:VisualElement>
-
-        <engine:VisualElement style="padding: 2px 14px 16px;">
+        <engine:VisualElement class="card-limits-footer">
             <engine:Button name="transit-btn" text="Discard 1 more to transit" class="btn btn--disabled" />
         </engine:VisualElement>
 

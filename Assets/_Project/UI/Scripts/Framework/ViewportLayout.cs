@@ -523,6 +523,8 @@ namespace Kismeta.UI
             float insetPad = bottomInset + 8f;
             ApplyFooterBottomPad(screen.Q(className: "title-menu"), insetPad, 16f);
             ApplyFooterBottomPad(screen.Q(className: "menu-screen__footer"), insetPad, 24f);
+            ApplyFooterBottomPad(screen.Q(className: "card-limits-footer"), insetPad, 16f);
+            ApplyFooterBottomPad(screen.Q(className: "activate-footer"), insetPad, 16f);
         }
 
         static void ApplyFooterBottomPad(VisualElement? footer, float minFromSafeArea, float ussDefault)
