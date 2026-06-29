@@ -107,6 +107,22 @@
     margin-bottom: 0;
 }
 
+.spring-hub-info-btn {
+    min-width: 28px;
+    min-height: 28px;
+    border-width: 0;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(184, 154, 110);
+    font-size: 18px;
+    padding: 0 4px;
+    flex-shrink: 0;
+}
+
+.spring-hub-info-btn:hover {
+    color: rgb(232, 185, 74);
+}
+
 .spring-hub__stage { align-items: center; }
 
 .spring-hub__actionbar {
@@ -230,18 +246,9 @@
     padding: 0 var(--space-xs) var(--space-xs);
 }
 
-.spring-hub__stakes {
-    flex-shrink: 0;
-    margin: 0 var(--space-md) var(--space-sm);
-}
-
 #wheel-cta {
     position: relative;
     z-index: 21;
-}
-
-.spring-hub__stakes .narrative-stakes-wrap {
-    margin: 0;
 }
 
 .wheel-stack {
