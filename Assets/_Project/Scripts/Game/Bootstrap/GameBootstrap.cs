@@ -97,6 +97,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _cardTable;
         [SerializeField] private VisualTreeAsset _cardModals;
         [SerializeField] private VisualTreeAsset _activeEffects;
+        [SerializeField] private VisualTreeAsset _crucibleCodexReference;
         [SerializeField] private VisualTreeAsset _resourceExchange;
 
         private CardDatabase? _db;
@@ -239,6 +240,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<CardTableController>();
             EnsureController<CardModalsController>();
             EnsureController<ActiveEffectsController>();
+            EnsureController<CrucibleCodexReferenceController>();
             EnsureController<EndOverlayHost>();
             EnsureController<ExchangeOverlayHost>();
             EnsureController<ResourceExchangeController>();
@@ -264,7 +266,7 @@ namespace Kismeta.Game.Bootstrap
                 _fireStone, _temperStone, _manageCards, _leaveStasis, _endAutumn, _autumnForgeInspect);
 
             var endOverlays = GetComponent<EndOverlayHost>();
-            endOverlays?.Configure(_cardTable, _cardModals, _activeEffects, _crucibleCardDetail);
+            endOverlays?.Configure(_cardTable, _cardModals, _activeEffects, _crucibleCardDetail, _crucibleCodexReference);
 
             var exchangeOverlays = GetComponent<ExchangeOverlayHost>();
             exchangeOverlays?.Configure(_resourceExchange);

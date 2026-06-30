@@ -686,6 +686,7 @@
     margin-left: var(--space-xs);
 }
 
+.inventory-summary-row .codex-fab,
 .inventory-summary-row .effects-fab {
     position: relative;
     top: auto;
@@ -750,6 +751,7 @@
     border-radius: var(--radius-md);
 }
 
+.codex-fab--hidden,
 .effects-fab--hidden {
     display: none;
 }
@@ -764,6 +766,7 @@
 }
 
 .hub-fab-stack .table-fab,
+.hub-fab-stack .codex-fab,
 .hub-fab-stack .effects-fab {
     position: relative;
     top: auto;
@@ -781,6 +784,7 @@
     margin-bottom: 0;
 }
 
+.hub-fab-stack .codex-fab--hidden,
 .hub-fab-stack .effects-fab--hidden {
     display: none;
 }

@@ -6,8 +6,8 @@ namespace Kismeta.UI.Diagnostics
 {
     internal static class DebugSessionLog
     {
-        const string SessionId = "a10709";
-        static readonly string LogPath = Path.Combine(Application.dataPath, "..", "debug-a10709.log");
+        const string SessionId = "c9ea32";
+        static readonly string LogPath = Path.Combine(Application.dataPath, "..", "debug-c9ea32.log");
 
         public static void Write(string hypothesisId, string location, string message, string dataJson)
         {

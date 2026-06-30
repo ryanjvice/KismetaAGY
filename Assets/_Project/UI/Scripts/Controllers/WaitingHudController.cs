@@ -3,6 +3,7 @@ using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI;
 using Kismeta.UI.Components;
+using Kismeta.UI.Diagnostics;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -23,6 +24,15 @@ namespace Kismeta.UI.Controllers
             if (Lbl("season-label") != null)
                 Lbl("season-label")!.text =
                     $"{session.Phase.CurrentSeason} — {session.Phase.CurrentStep.Name}";
+
+            if (loop.PendingHumanController != null)
+            {
+                // #region agent log
+                DebugSessionLog.Write("E", "WaitingHudController.BindState", "waiting hud during human turn",
+                    "{\"hint\":\"" + loop.PendingHint + "\",\"step\":\"" + session.Phase.CurrentStep.Name +
+                    "\",\"label\":\"" + FormatWaitingLabel(session, loop).Replace("\"", "'") + "\"}");
+                // #endregion
+            }
         }
 
         static string FormatWaitingLabel(GameSession session, GameLoop loop)

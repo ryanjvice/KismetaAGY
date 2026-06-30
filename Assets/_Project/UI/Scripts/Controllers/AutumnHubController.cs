@@ -15,6 +15,7 @@ namespace Kismeta.UI.Controllers
 
         public Action? OnOpenCardTable;
         public Action? OnOpenActiveEffects;
+        public Action? OnOpenCrucibleCodex;
         public Action<string>? OnInspectCard;
         public Action<int>? OnRivalSelected;
         public Action? OnOpenForgeInspect;
@@ -37,7 +38,8 @@ namespace Kismeta.UI.Controllers
                 OnHandToggle = OnHandToggle,
                 OnArcanumToggle = OnArcanumToggle,
                 OnOpenCardTable = () => OnOpenCardTable?.Invoke(),
-                OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke()
+                OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke(),
+                OnOpenCrucibleCodex = () => OnOpenCrucibleCodex?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
             CentralPanelInspectBindings.Wire(Root, () => OnOpenForgeInspect?.Invoke());

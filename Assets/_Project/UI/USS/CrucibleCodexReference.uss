@@ -1,0 +1,213 @@
+/* Crucible Codex quick-reference panel */
+
+.crucible-codex {
+    width: 100%;
+    max-width: 360px;
+    align-self: stretch;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    background-color: rgb(18, 16, 22);
+    border-width: 2px;
+    border-color: var(--border-gold);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.crucible-codex__header {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 14px 14px 10px;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--border-subtle);
+}
+
+.crucible-codex__icon {
+    font-size: 16px;
+    color: var(--gold-bright);
+    margin-right: 8px;
+    margin-top: 2px;
+}
+
+.crucible-codex__header-text {
+    flex-grow: 1;
+}
+
+.crucible-codex__title {
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: rgb(243, 233, 210);
+}
+
+.crucible-codex__subtitle {
+    font-size: 10px;
+    color: rgb(154, 138, 172);
+    margin-top: 2px;
+    white-space: normal;
+}
+
+.crucible-codex__close {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: rgb(184, 154, 110);
+    font-size: 16px;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 0;
+}
+
+.crucible-codex__scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    padding: 10px 12px 14px;
+}
+
+.crucible-codex__section-head {
+    flex-direction: column;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--border-subtle);
+}
+
+.crucible-codex__section-head--spaced {
+    margin-top: 14px;
+}
+
+.crucible-codex__section-header {
+    font-size: 11px;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+    color: rgb(232, 185, 74);
+    margin-bottom: 3px;
+}
+
+.crucible-codex__section-tagline {
+    font-size: 9px;
+    color: rgb(154, 138, 172);
+    white-space: normal;
+    letter-spacing: 0.3px;
+}
+
+.crucible-codex__section {
+    flex-direction: column;
+    margin-bottom: 4px;
+}
+
+.crucible-codex__empty {
+    font-size: 10px;
+    color: rgb(154, 138, 172);
+    white-space: normal;
+    margin-bottom: 8px;
+}
+
+.crucible-codex__row {
+    background-color: rgb(24, 20, 30);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 9px 10px;
+    margin-bottom: 8px;
+}
+
+.crucible-codex__row-header {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.crucible-codex__slot-pill {
+    min-width: 22px;
+    min-height: 22px;
+    border-radius: 11px;
+    border-width: 1px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+}
+
+.crucible-codex__slot-pill-label {
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: rgb(243, 233, 210);
+}
+
+.crucible-codex__slot-pill--red {
+    background-color: rgb(58, 22, 22);
+    border-color: rgb(180, 72, 72);
+}
+
+.crucible-codex__slot-pill--blue {
+    background-color: rgb(22, 30, 58);
+    border-color: rgb(72, 110, 180);
+}
+
+.crucible-codex__slot-pill--green {
+    background-color: rgb(22, 44, 28);
+    border-color: rgb(72, 140, 88);
+}
+
+.crucible-codex__slot-pill--yellow {
+    background-color: rgb(48, 40, 18);
+    border-color: rgb(180, 150, 60);
+}
+
+.crucible-codex__row-title {
+    flex-grow: 1;
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: rgb(243, 233, 210);
+    white-space: normal;
+}
+
+.crucible-codex__state-badge {
+    border-radius: 8px;
+    padding: 2px 6px;
+    background-color: rgb(36, 32, 44);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+}
+
+.crucible-codex__state-badge-label {
+    font-size: 8px;
+    color: rgb(184, 154, 110);
+}
+
+.crucible-codex__req {
+    font-size: 10px;
+    color: rgb(184, 154, 110);
+    white-space: normal;
+    margin-bottom: 3px;
+}
+
+.crucible-codex__progress {
+    font-size: 10px;
+    color: rgb(243, 233, 210);
+    white-space: normal;
+}
+
+.crucible-codex__progress--ready {
+    color: rgb(93, 202, 165);
+}
+
+.crucible-codex__card-name {
+    font-size: 10px;
+    color: rgb(232, 185, 74);
+    margin-bottom: 4px;
+    white-space: normal;
+}
+
+.crucible-codex__formula {
+    font-size: 10px;
+    color: rgb(243, 233, 210);
+    white-space: normal;
+    margin-bottom: 6px;
+}
+
+.crucible-codex__cost {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}

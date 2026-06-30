@@ -67,6 +67,7 @@ namespace Kismeta.UI.Editor
         private const string CardTablePath = "Assets/_Project/UI/UXML/batch7/CardTable.uxml";
         private const string CardModalsPath = "Assets/_Project/UI/UXML/batch7/CardModals.uxml";
         private const string ActiveEffectsPath = "Assets/_Project/UI/UXML/batch7/ActiveEffects.uxml";
+        private const string CrucibleCodexReferencePath = "Assets/_Project/UI/UXML/batch7/CrucibleCodexReference.uxml";
         private const string ResourceExchangePath = "Assets/_Project/UI/UXML/batch7/ResourceExchange.uxml";
         private const string UiTestScenePath = "Assets/_Project/Scenes/UITest.unity";
         private const string WaitingHudPath = "Assets/_Project/UI/UXML/shell/WaitingHud.uxml";
@@ -233,6 +234,8 @@ namespace Kismeta.UI.Editor
             EnsureComponent<ChronicleController>(bootstrap.gameObject);
             EnsureComponent<CardTableController>(bootstrap.gameObject);
             EnsureComponent<CardModalsController>(bootstrap.gameObject);
+            EnsureComponent<ActiveEffectsController>(bootstrap.gameObject);
+            EnsureComponent<CrucibleCodexReferenceController>(bootstrap.gameObject);
             EnsureComponent<EndOverlayHost>(bootstrap.gameObject);
             EnsureComponent<GameChronicle>(bootstrap.gameObject);
 
@@ -313,6 +316,7 @@ namespace Kismeta.UI.Editor
             var cardTable = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardTablePath);
             var cardModals = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CardModalsPath);
             var activeEffects = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ActiveEffectsPath);
+            var crucibleCodexReference = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CrucibleCodexReferencePath);
             var resourceExchange = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResourceExchangePath);
 
             var so = new SerializedObject(bootstrap);
@@ -370,6 +374,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_cardTable").objectReferenceValue = cardTable;
             so.FindProperty("_cardModals").objectReferenceValue = cardModals;
             so.FindProperty("_activeEffects").objectReferenceValue = activeEffects;
+            so.FindProperty("_crucibleCodexReference").objectReferenceValue = crucibleCodexReference;
             so.FindProperty("_resourceExchange").objectReferenceValue = resourceExchange;
             so.FindProperty("_useProductionUi").boolValue = true;
             so.ApplyModifiedPropertiesWithoutUndo();

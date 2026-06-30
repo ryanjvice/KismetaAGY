@@ -17,6 +17,7 @@ namespace Kismeta.UI
         VisualTreeAsset? _cardModals;
         VisualTreeAsset? _activeEffects;
         VisualTreeAsset? _crucibleCardDetail;
+        VisualTreeAsset? _crucibleCodexReference;
 
         ViewportLayout? _layout;
         GameSession? _session;
@@ -27,8 +28,9 @@ namespace Kismeta.UI
         CardModalsController? _modals;
         ActiveEffectsController? _activeEffectsCtrl;
         CrucibleCardDetailController? _crucibleDetail;
+        CrucibleCodexReferenceController? _crucibleCodexCtrl;
 
-        enum ActiveOverlay { None, CardTable, CardModals, ActiveEffects, CrucibleDetail }
+        enum ActiveOverlay { None, CardTable, CardModals, ActiveEffects, CrucibleDetail, CrucibleCodex }
         ActiveOverlay _active = ActiveOverlay.None;
         bool _reopenCardTableAfterInspect;
         int _cardTableFocusPlayerId = -1;
@@ -47,12 +49,14 @@ namespace Kismeta.UI
             VisualTreeAsset cardTable,
             VisualTreeAsset cardModals,
             VisualTreeAsset? activeEffects = null,
-            VisualTreeAsset? crucibleCardDetail = null)
+            VisualTreeAsset? crucibleCardDetail = null,
+            VisualTreeAsset? crucibleCodexReference = null)
         {
             _cardTable = cardTable;
             _cardModals = cardModals;
             _activeEffects = activeEffects;
             _crucibleCardDetail = crucibleCardDetail;
+            _crucibleCodexReference = crucibleCodexReference;
             EnsureControllers();
         }
 
@@ -63,6 +67,7 @@ namespace Kismeta.UI
             _modals ??= GetComponent<CardModalsController>();
             _activeEffectsCtrl ??= GetComponent<ActiveEffectsController>();
             _crucibleDetail ??= GetComponent<CrucibleCardDetailController>();
+            _crucibleCodexCtrl ??= GetComponent<CrucibleCodexReferenceController>();
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -90,6 +95,19 @@ namespace Kismeta.UI
             _reopenCardTableAfterInspect = false;
             _activeEffectsFocusPlayerId = focusPlayerId;
             ShowOverlay(_activeEffects, _activeEffectsCtrl, WireActiveEffects, ActiveOverlay.ActiveEffects);
+        }
+
+        public void ShowCrucibleCodex()
+        {
+            EnsureControllers();
+            if (_crucibleCodexReference == null)
+            {
+                Debug.LogWarning("[EndOverlayHost] CrucibleCodexReference UXML not assigned — run Kismeta → UI → Wire Bootstrap UI References.");
+                return;
+            }
+
+            _reopenCardTableAfterInspect = false;
+            ShowOverlay(_crucibleCodexReference, _crucibleCodexCtrl, WireCrucibleCodex, ActiveOverlay.CrucibleCodex);
         }
 
         public void ShowCardTable(int focusPlayerId = -1)
@@ -230,6 +248,7 @@ namespace Kismeta.UI
             _modals?.Detach();
             _activeEffectsCtrl?.Detach();
             _crucibleDetail?.Detach();
+            _crucibleCodexCtrl?.Detach();
             _layout?.DismissOverlay();
         }
 
@@ -283,6 +302,10 @@ namespace Kismeta.UI
             {
                 _crucibleDetail?.BindState(_session, _bridge);
             }
+            else if (_active == ActiveOverlay.CrucibleCodex)
+            {
+                _crucibleCodexCtrl?.BindState(_session, _loop, _bridge!);
+            }
         }
 
         void WireActiveEffects()
@@ -314,6 +337,12 @@ namespace Kismeta.UI
         {
             if (_crucibleDetail == null) return;
             _crucibleDetail.OnClose = OnModalDone;
+        }
+
+        void WireCrucibleCodex()
+        {
+            if (_crucibleCodexCtrl == null) return;
+            _crucibleCodexCtrl.OnClose = Dismiss;
         }
 
         void OnModalDone()

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/CrucibleCodexReference.uss" />
+
+    <engine:VisualElement name="crucible-codex" class="modal crucible-codex">
+        <engine:VisualElement class="crucible-codex__header">
+            <engine:Label text="&#xea6f;" class="ti-icon crucible-codex__icon" />
+            <engine:VisualElement class="crucible-codex__header-text">
+                <engine:Label text="Crucible codex" class="crucible-codex__title" />
+                <engine:Label name="crucible-codex-subtitle" text="Codex A · activation &amp; fire reference" class="crucible-codex__subtitle" />
+            </engine:VisualElement>
+            <engine:Button name="crucible-codex-close" text="&#10005;" class="crucible-codex__close" />
+        </engine:VisualElement>
+
+        <engine:ScrollView name="crucible-codex-scroll" class="crucible-codex__scroll">
+            <engine:VisualElement class="crucible-codex__section-head">
+                <engine:Label text="Activation formulas" class="crucible-codex__section-header" />
+                <engine:Label text="Activate crucible cards and unlock elemental reagents" class="crucible-codex__section-tagline" />
+            </engine:VisualElement>
+            <engine:VisualElement name="activation-section" class="crucible-codex__section" />
+            <engine:VisualElement class="crucible-codex__section-head crucible-codex__section-head--spaced">
+                <engine:Label text="Alchemical formulas" class="crucible-codex__section-header" />
+                <engine:Label text="Advance the stone" class="crucible-codex__section-tagline" />
+            </engine:VisualElement>
+            <engine:VisualElement name="alchemical-section" class="crucible-codex__section" />
+        </engine:ScrollView>
+    </engine:VisualElement>
+</engine:UXML>

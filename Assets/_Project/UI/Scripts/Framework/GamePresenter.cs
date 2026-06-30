@@ -216,9 +216,23 @@ namespace Kismeta.UI
             {
                 _lastCeremonyStep = ceremony;
                 if (ceremony != null)
-                    RouteIfNeeded(MapCeremonyScreen(ceremony.Value));
+                {
+                    var ceremonyTarget = MapCeremonyScreen(ceremony.Value);
+                    // #region agent log
+                    DebugSessionLog.Write("A", "GamePresenter.Update", "ceremony step changed",
+                        "{\"step\":\"" + ceremony.Value + "\",\"target\":\"" + ceremonyTarget +
+                        "\",\"current\":\"" + (_router.CurrentScreenId ?? "") + "\"}");
+                    // #endregion
+                    RouteIfNeeded(ceremonyTarget);
+                }
                 else
+                {
+                    // #region agent log
+                    DebugSessionLog.Write("A", "GamePresenter.Update", "ceremony cleared",
+                        "{\"current\":\"" + (_router.CurrentScreenId ?? "") + "\",\"hint\":\"" + _loop.PendingHint + "\"}");
+                    // #endregion
                     RouteGameplay();
+                }
                 RefreshActiveScreen();
                 return;
             }
@@ -605,7 +619,15 @@ namespace Kismeta.UI
                 return;
 
             if (ShouldHoldGameplayRouting())
+            {
+                // #region agent log
+                DebugSessionLog.Write("B", "GamePresenter.RouteGameplay", "held by exchange gate",
+                    "{\"current\":\"" + (_router.CurrentScreenId ?? "") + "\",\"hint\":\"" + _loop.PendingHint +
+                    "\",\"humanPending\":" + (_loop.PendingHumanController != null ? "true" : "false") +
+                    ",\"exchangeQ\":" + _exchangeQueue.Count + ",\"pendingAcks\":" + _pendingHumanExchangeAcks + "}");
+                // #endregion
                 return;
+            }
 
             if (_loop.PendingHumanController == null)
             {
@@ -615,12 +637,26 @@ namespace Kismeta.UI
                 _autumnOverlays?.DismissIfNotHumanTurn();
                 _endOverlays?.DismissIfNotHumanTurn();
                 _adeptModalOpen = false;
-                RouteIfNeeded(ResolveSpectatorScreen(_session.Phase.CurrentSeason));
+                var spectatorTarget = ResolveSpectatorScreen(_session.Phase.CurrentSeason);
+                // #region agent log
+                if (_router.CurrentScreenId != spectatorTarget)
+                    DebugSessionLog.Write("D", "GamePresenter.RouteGameplay", "spectator route",
+                        "{\"from\":\"" + (_router.CurrentScreenId ?? "") + "\",\"to\":\"" + spectatorTarget +
+                        "\",\"season\":\"" + _session.Phase.CurrentSeason + "\"}");
+                // #endregion
+                RouteIfNeeded(spectatorTarget);
                 RefreshActiveScreen();
                 return;
             }
 
-            RouteIfNeeded(ResolveGameplayScreen(_session.Phase.CurrentSeason, _loop.PendingHint));
+            var gameplayTarget = ResolveGameplayScreen(_session.Phase.CurrentSeason, _loop.PendingHint);
+            // #region agent log
+            if (_router.CurrentScreenId != gameplayTarget)
+                DebugSessionLog.Write("C", "GamePresenter.RouteGameplay", "human route",
+                    "{\"from\":\"" + (_router.CurrentScreenId ?? "") + "\",\"to\":\"" + gameplayTarget +
+                    "\",\"hint\":\"" + _loop.PendingHint + "\",\"step\":\"" + _session.Phase.CurrentStep.Name + "\"}");
+            // #endregion
+            RouteIfNeeded(gameplayTarget);
             RefreshActiveScreen();
         }
 
@@ -689,6 +725,7 @@ namespace Kismeta.UI
             summer.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
             summer.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
             summer.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+            summer.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
             summer.OnOpenPlayerEffects = id => _endOverlays?.ShowActiveEffects(id);
             summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
 
@@ -709,6 +746,7 @@ namespace Kismeta.UI
                 springHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
                 springHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 springHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                springHub.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
                 springHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
@@ -718,6 +756,7 @@ namespace Kismeta.UI
                 springPassed.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
                 springPassed.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 springPassed.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                springPassed.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
                 springPassed.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
@@ -727,6 +766,7 @@ namespace Kismeta.UI
                 summerHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
                 summerHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 summerHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                summerHub.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
                 summerHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
@@ -736,6 +776,7 @@ namespace Kismeta.UI
                 summerPassed.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
                 summerPassed.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 summerPassed.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                summerPassed.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
                 summerPassed.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
@@ -745,6 +786,7 @@ namespace Kismeta.UI
                 autumnHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
                 autumnHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 autumnHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                autumnHub.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
                 autumnHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
                 autumnHub.OnOpenForgeInspect = () => _autumnOverlays?.ShowForgeInspect();
                 autumnHub.OnDismissForgeInspect = () => _autumnOverlays?.DismissForgeInspect();
@@ -756,6 +798,7 @@ namespace Kismeta.UI
                 autumnPassed.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
                 autumnPassed.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 autumnPassed.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                autumnPassed.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
                 autumnPassed.OnInspectCard = id => _endOverlays?.ShowInspect(id);
                 autumnPassed.OnOpenForgeInspect = () => _autumnOverlays?.ShowForgeInspect();
                 autumnPassed.OnDismissForgeInspect = () => _autumnOverlays?.DismissForgeInspect();
@@ -814,6 +857,7 @@ namespace Kismeta.UI
             autumn.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
             autumn.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
             autumn.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+            autumn.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
             autumn.OnInspectCard = id => _endOverlays?.ShowInspect(id);
         }
 
@@ -1123,6 +1167,7 @@ namespace Kismeta.UI
                     spring.OnOpenCardTable = () => _endOverlays.ShowCardTable();
                     spring.OnRivalSelected = id => _endOverlays.ShowCardTable(id);
                     spring.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
+                    spring.OnOpenCrucibleCodex = () => _endOverlays.ShowCrucibleCodex();
                     spring.OnInspectCard = id => _endOverlays.ShowInspect(id);
                     spring.OnBuildHouse = () => _springOverlays?.ShowBuildHouse();
                     spring.OnOpenBoardInspect = () => _springOverlays?.ShowBoardInspect();
@@ -1135,6 +1180,7 @@ namespace Kismeta.UI
                     winter.OnOpenCardTable = () => _endOverlays.ShowCardTable();
                     winter.OnRivalSelected = id => _endOverlays.ShowCardTable(id);
                     winter.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
+                    winter.OnOpenCrucibleCodex = () => _endOverlays.ShowCrucibleCodex();
                     winter.OnInspectCard = id => _endOverlays.ShowInspect(id);
                 }
             }

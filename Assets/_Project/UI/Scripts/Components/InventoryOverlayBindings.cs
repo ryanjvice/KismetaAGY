@@ -17,6 +17,7 @@ namespace Kismeta.UI.Components
             public Action? OnArcanumToggle;
             public Action? OnOpenCardTable;
             public Action? OnOpenActiveEffects;
+            public Action? OnOpenCrucibleCodex;
         }
 
         public static void Wire(VisualElement? root, Callbacks callbacks)
@@ -27,6 +28,7 @@ namespace Kismeta.UI.Components
             root.Q<Button>("arcanum-btn")?.RegisterCallback<ClickEvent>(_ => callbacks.OnArcanumToggle?.Invoke());
             root.Q<Button>("inventory-toggle-btn")?.RegisterCallback<ClickEvent>(_ => ToggleExpanded(root));
             root.Q<Button>("table-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenCardTable?.Invoke());
+            root.Q<Button>("codex-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenCrucibleCodex?.Invoke());
             root.Q<Button>("effects-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenActiveEffects?.Invoke());
 
             SetExpanded(root, s_expanded, animate: false);
@@ -87,9 +89,12 @@ namespace Kismeta.UI.Components
         {
             OverlayRoot(root)?.EnableInClassList("player-inventory-overlay--hidden", !visible);
             var tableFab = root?.Q<Button>("table-fab");
+            var codexFab = root?.Q<Button>("codex-fab");
             var effectsFab = root?.Q<Button>("effects-fab");
             if (tableFab != null)
                 tableFab.EnableInClassList("table-fab--hidden", !visible);
+            if (codexFab != null)
+                codexFab.EnableInClassList("codex-fab--hidden", !visible);
             if (effectsFab != null)
                 effectsFab.EnableInClassList("effects-fab--hidden", !visible);
             root?.Q(className: "hub-fab-stack")
