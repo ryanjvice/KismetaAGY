@@ -19,7 +19,7 @@
 
             <engine:VisualElement class="autumn-main__toolbar">
                 <engine:VisualElement class="narrative-toolbar">
-                    <engine:Button name="info-btn" text="ℹ" class="narrative-toolbar__info-btn" />
+                    <engine:Button name="info-btn" text="🗓️" class="narrative-toolbar__info-btn" />
                     <engine:Label name="narrative-beat" text="" class="narrative-beat" />
                     <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
                 </engine:VisualElement>

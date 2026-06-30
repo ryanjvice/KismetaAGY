@@ -82,6 +82,15 @@ namespace Kismeta.UI.Narrative
                 "This age's sign shapes everything — which cards harvest well, which alignments score, and your own cosmic effect for the round.",
                 new[] { "Begin Spring" }),
             new NarrativeSlotEntry(
+                "spring.focus",
+                Season.Spring,
+                NarrativeSlotTier.Transition,
+                0,
+                string.Empty,
+                "Before cards lock, use your tools — read effects, commune, and check whether an Astral House is worth building.",
+                string.Empty,
+                new[] { "Focus" }),
+            new NarrativeSlotEntry(
                 "spring.setage",
                 Season.Spring,
                 NarrativeSlotTier.Action,
@@ -166,6 +175,15 @@ namespace Kismeta.UI.Narrative
                 "Take any actions, in any order, as many as you can fuel — no fixed order, no turn limit.",
                 string.Empty,
                 new[] { "Begin Summer" }),
+            new NarrativeSlotEntry(
+                "summer.focus",
+                Season.Summer,
+                NarrativeSlotTier.Transition,
+                0,
+                string.Empty,
+                "This round is for consorting and contesting — review Codex and the Table, then Trade, Duel, Gambit, and Opposition as opportunities arise.",
+                string.Empty,
+                new[] { "Focus" }),
             new NarrativeSlotEntry(
                 "summer.hub",
                 Season.Summer,
@@ -261,6 +279,15 @@ namespace Kismeta.UI.Narrative
                 string.Empty,
                 new[] { "Begin Winter" }),
             new NarrativeSlotEntry(
+                "winter.focus",
+                Season.Winter,
+                NarrativeSlotTier.Transition,
+                0,
+                string.Empty,
+                "The age is closing — reorganize, wager wisely, and trim to limits before transit.",
+                string.Empty,
+                new[] { "Focus" }),
+            new NarrativeSlotEntry(
                 "winter.unlock",
                 Season.Winter,
                 NarrativeSlotTier.Action,
@@ -310,6 +337,15 @@ namespace Kismeta.UI.Narrative
                 string.Empty,
                 new[] { "Begin Autumn" },
                 "Forging"),
+            new NarrativeSlotEntry(
+                "autumn.focus",
+                Season.Autumn,
+                NarrativeSlotTier.Transition,
+                0,
+                string.Empty,
+                "The forge is live — cross-check Codex costs before you Fire, Temper, or break Stasis.",
+                string.Empty,
+                new[] { "Focus" }),
             new NarrativeSlotEntry(
                 "autumn.survey",
                 Season.Autumn,

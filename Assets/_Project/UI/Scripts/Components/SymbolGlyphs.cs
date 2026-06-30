@@ -10,6 +10,8 @@ namespace Kismeta.UI.Components
         public const string ZodiacFontClass = "font-zodiac";
         public const string TablerIconClass = "ti-icon";
         public const string InfoGlyph = "\u2139";
+        /// <summary>Season intro recap toolbar button — distinct from general info icons.</summary>
+        public const string SeasonRecapGlyph = "\U0001F5D3\uFE0F";
         public const string MenuGlyph = "\uec42";
         public const string ExternalLinkGlyph = "\uea99";
         public const string ChevronDownGlyph = "\uea5f";

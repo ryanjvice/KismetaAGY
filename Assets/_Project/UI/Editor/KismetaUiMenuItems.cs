@@ -38,6 +38,7 @@ namespace Kismeta.UI.Editor
         private const string SummerIntroPath = "Assets/_Project/UI/UXML/batch2/SummerIntro.uxml";
         private const string AutumnIntroPath = "Assets/_Project/UI/UXML/batch2/AutumnIntro.uxml";
         private const string WinterIntroPath = "Assets/_Project/UI/UXML/batch2/WinterIntro.uxml";
+        private const string SeasonInfoRecapPath = "Assets/_Project/UI/UXML/shell/SeasonInfoRecap.uxml";
         private const string AgeClosingPath = "Assets/_Project/UI/UXML/batch2/AgeClosing.uxml";
         private const string SpringHarvestPath = "Assets/_Project/UI/UXML/batch3/SpringHarvest.uxml";
         private const string WinterUnlockPath = "Assets/_Project/UI/UXML/batch3/WinterUnlock.uxml";
@@ -289,6 +290,7 @@ namespace Kismeta.UI.Editor
             var summerIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerIntroPath);
             var autumnIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnIntroPath);
             var winterIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterIntroPath);
+            var seasonInfoRecap = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SeasonInfoRecapPath);
             var ageClosing = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeClosingPath);
             var springHarvest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHarvestPath);
             var winterUnlock = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterUnlockPath);
@@ -348,6 +350,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_summerIntro").objectReferenceValue = summerIntro;
             so.FindProperty("_autumnIntro").objectReferenceValue = autumnIntro;
             so.FindProperty("_winterIntro").objectReferenceValue = winterIntro;
+            so.FindProperty("_seasonInfoRecap").objectReferenceValue = seasonInfoRecap;
             so.FindProperty("_ageClosing").objectReferenceValue = ageClosing;
             so.FindProperty("_springHarvest").objectReferenceValue = springHarvest;
             so.FindProperty("_winterUnlock").objectReferenceValue = winterUnlock;
@@ -515,6 +518,7 @@ namespace Kismeta.UI.Editor
             var summerIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SummerIntroPath);
             var autumnIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AutumnIntroPath);
             var winterIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterIntroPath);
+            var seasonInfoRecap = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SeasonInfoRecapPath);
             var ageClosing = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgeClosingPath);
             var springHarvest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHarvestPath);
             var winterUnlock = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WinterUnlockPath);

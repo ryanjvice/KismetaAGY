@@ -205,6 +205,13 @@
 
 .intro-row__num--violet .intro-row__num-label { color: rgb(184, 154, 192); }
 
+.intro-row__num--amber {
+    background-color: rgb(52, 34, 12);
+    border-color: rgb(184, 122, 58);
+}
+
+.intro-row__num--amber .intro-row__num-label { color: rgb(232, 196, 120); }
+
 .intro-row__num--winter {
     background-color: rgb(22, 32, 42);
     border-color: rgb(43, 74, 106);

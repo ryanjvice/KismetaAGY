@@ -176,7 +176,10 @@ namespace Kismeta.UI.Components
             }
 
             float headerHeight = overlay!.resolvedStyle.height;
-            float headerReserve = headerHeight > 0f ? headerHeight : CollapsedHeaderFallbackPx;
+            float headerPadTop = overlay.resolvedStyle.paddingTop;
+            float headerReserve = headerHeight > 0f
+                ? headerHeight
+                : CollapsedHeaderFallbackPx + headerPadTop;
             float topOffset = headerReserve + HeaderContentGapPx;
 
             if (toolbar != null && IsNarrativeToolbarVisible(toolbar))

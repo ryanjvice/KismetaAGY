@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:Style src="../../USS/Kismeta.uss" />
+    <engine:Style src="../../USS/AgeCeremony.uss" />
+    <engine:Style src="../../USS/SeasonIntro.uss" />
+    <engine:Style src="../../USS/SeasonInfoRecap.uss" />
+
+    <engine:VisualElement name="season-info-recap" class="screen screen--menu season-info-recap">
+
+        <engine:VisualElement name="recap-hero" class="season-info-recap__hero panel--gold">
+            <engine:VisualElement class="season-info-recap__hero-row">
+                <engine:VisualElement class="intro-sigil season-info-recap__sigil">
+                    <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
+                </engine:VisualElement>
+                <engine:VisualElement class="season-info-recap__hero-text">
+                    <engine:Label name="intro-name" text="SPRING" class="intro-name season-info-recap__name" />
+                    <engine:Label name="intro-tagline" text="" class="intro-tagline season-info-recap__tagline" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="menu-screen__tabs season-info-recap__tabs">
+            <engine:Button name="tab-overview" text="Overview" class="codex-tab codex-tab--active" />
+            <engine:Button name="tab-focus" text="Focus" class="codex-tab" />
+        </engine:VisualElement>
+
+        <engine:ScrollView name="recap-body" class="season-info-recap__body">
+            <engine:VisualElement name="overview-pane" class="season-info-recap__pane">
+                <engine:VisualElement name="overview-host" class="season-info-recap__overview-host" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="focus-pane" class="season-info-recap__pane season-info-recap__pane--hidden">
+                <engine:VisualElement class="season-info-recap__focus-block panel intro-content-panel">
+                    <engine:Label name="focus-tip" text="" class="intro-info-panel__subtitle narrative-charge season-info-recap__focus-tip" />
+                </engine:VisualElement>
+
+                <engine:VisualElement class="season-info-recap__focus-block panel intro-content-panel">
+                    <engine:Label text="Focus this season" class="eyebrow intro-content-panel__eyebrow" />
+                    <engine:VisualElement name="focus-tips" class="season-info-recap__step-list" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:ScrollView>
+
+        <engine:VisualElement class="menu-screen__footer">
+            <engine:Button name="close-btn" text="Close" class="btn btn--primary menu-screen__cta" />
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

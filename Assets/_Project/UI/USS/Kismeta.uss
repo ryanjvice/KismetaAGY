@@ -473,6 +473,14 @@
     border-bottom-width: 2px;
     border-bottom-color: var(--border-gold);
     background-color: rgba(12, 8, 10, 0.92);
+    picking-mode: ignore;
+}
+
+.game-header-overlay .main-menu-btn,
+.game-header-overlay .header-toggle-btn,
+.game-header-overlay .rivals,
+.game-header-overlay .header-detail {
+    picking-mode: position;
 }
 
 .game-header-overlay--hidden {

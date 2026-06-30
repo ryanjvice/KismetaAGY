@@ -1,0 +1,142 @@
+/* Kismeta — SeasonInfoRecap.uss
+   Tabbed season info overlay (Overview + Focus). */
+
+.season-info-recap {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+}
+
+.season-info-recap__hero {
+    flex-shrink: 0;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 8px 12px 4px;
+    padding: 8px 10px;
+}
+
+.season-info-recap__hero-row {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.season-info-recap__sigil {
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    margin-bottom: 0;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.season-info-recap__sigil .intro-sigil__art {
+    width: 28px;
+    height: 28px;
+}
+
+.season-info-recap__hero-text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.season-info-recap .season-info-recap__name {
+    font-size: 18px;
+    letter-spacing: 2px;
+    -unity-text-align: upper-left;
+    margin: 0;
+    padding: 0;
+}
+
+.season-info-recap .season-info-recap__tagline {
+    font-size: 9px;
+    letter-spacing: 1px;
+    margin-top: 2px;
+    -unity-text-align: upper-left;
+    white-space: normal;
+}
+
+.season-info-recap__tabs {
+    flex-shrink: 0;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+.season-info-recap__body {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    margin: 0 12px;
+}
+
+.season-info-recap__body .unity-scroll-view__content-container {
+    width: 100%;
+    align-items: stretch;
+}
+
+.season-info-recap__pane {
+    flex-direction: column;
+    width: 100%;
+    align-self: stretch;
+    padding-bottom: 8px;
+}
+
+.season-info-recap__focus-block {
+    flex-shrink: 0;
+    width: 100%;
+    align-self: stretch;
+    margin-bottom: 8px;
+}
+
+.season-info-recap__focus-block:last-child {
+    margin-bottom: 0;
+}
+
+.season-info-recap__pane--hidden {
+    display: none;
+}
+
+.season-info-recap__overview-host {
+    flex-direction: column;
+    width: 100%;
+}
+
+.season-info-recap__overview-host .ceremony-reveal-body {
+    margin-top: 0;
+}
+
+.season-info-recap__focus-tip {
+    white-space: normal;
+    -unity-text-align: upper-left;
+}
+
+.season-info-recap__season-note {
+    font-size: var(--font-label);
+    color: var(--muted);
+    margin-bottom: 6px;
+    white-space: normal;
+}
+
+.season-info-recap__step-list {
+    flex-direction: column;
+    width: 100%;
+}
+
+.season-info-recap__step-list .intro-row {
+    margin-bottom: 6px;
+}
+
+.season-info-recap__step-list .text-muted {
+    margin-top: 2px;
+}
+
+.season-info-recap__clone-hidden {
+    display: none;
+}
+
+.season-info-recap .menu-screen__footer {
+    flex-shrink: 0;
+}

@@ -10,6 +10,9 @@ namespace Kismeta.UI.Narrative
         public static string ResolveSeasonIntro(Season season) =>
             $"{season.ToString().ToLowerInvariant()}.intro";
 
+        public static string ResolveSeasonFocus(Season season) =>
+            $"{season.ToString().ToLowerInvariant()}.focus";
+
         public static string ResolveSpringHub(ActionHint hint, bool isCommuneSubview)
         {
             if (isCommuneSubview || hint == ActionHint.Commune)

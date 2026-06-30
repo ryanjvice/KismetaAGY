@@ -68,6 +68,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _summerIntro;
         [SerializeField] private VisualTreeAsset _autumnIntro;
         [SerializeField] private VisualTreeAsset _winterIntro;
+        [SerializeField] private VisualTreeAsset _seasonInfoRecap;
         [SerializeField] private VisualTreeAsset _ageClosing;
         [SerializeField] private VisualTreeAsset _springHarvest;
         [SerializeField] private VisualTreeAsset _winterUnlock;
@@ -263,7 +264,7 @@ namespace Kismeta.Game.Bootstrap
             springOverlays?.Configure(_buildHouse, _boardInspect);
 
             var introRecap = GetComponent<SeasonIntroRecapHost>();
-            introRecap?.Configure(_springIntro, _summerIntro, _autumnIntro, _winterIntro);
+            introRecap?.Configure(_seasonInfoRecap, _springIntro, _summerIntro, _autumnIntro, _winterIntro);
 
             var contestOverlays = GetComponent<ContestOverlayHost>();
             contestOverlays?.Configure(_trade, _duel, _gambit, _opposition, _contestResponse);
@@ -296,6 +297,12 @@ namespace Kismeta.Game.Bootstrap
                 {
                     _mainMenuSheet = UnityEditor.AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
                         "Assets/_Project/UI/UXML/batch1/MainMenuSheet.uxml");
+                }
+
+                if (_seasonInfoRecap == null)
+                {
+                    _seasonInfoRecap = UnityEditor.AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                        "Assets/_Project/UI/UXML/shell/SeasonInfoRecap.uxml");
                 }
 #endif
 

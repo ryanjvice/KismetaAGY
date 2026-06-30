@@ -92,6 +92,7 @@ namespace Kismeta.UI
             _exchangeOverlays = GetComponent<ExchangeOverlayHost>();
             _wagerOverlays = GetComponent<WagerOverlayHost>();
             _introRecapHost = GetComponent<SeasonIntroRecapHost>();
+            NarrativeToolbarBindings.ConfigureIntroRecapHost(_introRecapHost);
             _playerHud = GetComponent<PlayerHudController>();
         }
 
@@ -1471,8 +1472,14 @@ namespace Kismeta.UI
 
         private void WireIntroRecap()
         {
+            _introRecapHost ??= GetComponent<SeasonIntroRecapHost>();
+            NarrativeToolbarBindings.ConfigureIntroRecapHost(_introRecapHost);
+
             if (_introRecapHost == null)
+            {
+                Debug.LogWarning("[GamePresenter] SeasonIntroRecapHost missing — info buttons will not open recap.");
                 return;
+            }
 
             var springHub = _router.GetController<SpringHubController>(ScreenIds.SpringHub);
             if (springHub != null) springHub.IntroRecapHost = _introRecapHost;
