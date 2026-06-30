@@ -234,6 +234,7 @@ MonoBehaviour:
   _summerIntro: {fileID: 9197481963319205126, guid: 6aa31afeddf576a4f82c25986dfeb309, type: 3}
   _autumnIntro: {fileID: 9197481963319205126, guid: e38dccfb4ba682341bf8d69b540f1545, type: 3}
   _winterIntro: {fileID: 9197481963319205126, guid: 6542ba701070b694b89a0f0561232a31, type: 3}
+  _seasonInfoRecap: {fileID: 9197481963319205126, guid: 8d06d594b841e4048a7999ca715d1903, type: 3}
   _ageClosing: {fileID: 9197481963319205126, guid: c409715823e777440a4e755e751e4376, type: 3}
   _springHarvest: {fileID: 9197481963319205126, guid: d4a7bf58b31a6e0438ef56e9dedb8ffc, type: 3}
   _winterUnlock: {fileID: 9197481963319205126, guid: 2a127e9c6e2c5924db4d4e5a87389aa1, type: 3}
