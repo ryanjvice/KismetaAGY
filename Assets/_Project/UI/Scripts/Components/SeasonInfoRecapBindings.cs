@@ -10,28 +10,113 @@ namespace Kismeta.UI.Components
     {
         public const string TabOverview = "overview";
         public const string TabFocus = "focus";
+        public const string PrimaryActionBtnName = "primary-action-btn";
+
+        sealed class IntroRecapState
+        {
+            public bool TabsWired;
+            public bool ContentPopulated;
+            public string ActiveTab = TabOverview;
+        }
+
+        public static VisualElement ResolveSheetRoot(VisualElement root) =>
+            root.Q<VisualElement>("season-info-recap") ?? root;
+
+        static IntroRecapState GetState(VisualElement root)
+        {
+            var sheet = ResolveSheetRoot(root);
+            if (sheet.userData is IntroRecapState state)
+                return state;
+
+            state = new IntroRecapState();
+            sheet.userData = state;
+            return state;
+        }
 
         public static void Populate(
             VisualElement root,
             Season season,
             VisualTreeAsset? seasonIntroAsset,
+            Action? onTabChanged = null,
+            bool resetTabToOverview = false)
+        {
+            if (root == null)
+                return;
+
+            var sheet = ResolveSheetRoot(root);
+            var state = GetState(sheet);
+            if (resetTabToOverview)
+                state.ActiveTab = TabOverview;
+
+            CeremonyBindings.ApplySeasonIntroClass(sheet, season);
+            UiArtBindings.ApplyIntroSigil(sheet);
+
+            if (FocusLadderDefinitions.TryGetHero(season, out var hero))
+            {
+                SetText(sheet, "intro-name", hero.Name);
+                SetText(sheet, "intro-tagline", hero.Tagline);
+            }
+
+            PopulateOverview(sheet, season, seasonIntroAsset);
+            PopulateFocus(sheet, season);
+            ApplyTabSelection(sheet, state.ActiveTab, onTabChanged);
+            state.ContentPopulated = true;
+        }
+
+        public static void PopulateCeremony(
+            VisualElement root,
+            Season season,
+            VisualTreeAsset? overviewAsset,
             Action? onTabChanged = null)
         {
             if (root == null)
                 return;
 
-            CeremonyBindings.ApplySeasonIntroClass(root, season);
-            UiArtBindings.ApplyIntroSigil(root);
+            var sheet = ResolveSheetRoot(root);
+            sheet.EnableInClassList("season-info-recap--ceremony", true);
 
-            if (FocusLadderDefinitions.TryGetHero(season, out var hero))
+            var state = GetState(sheet);
+            if (state.ContentPopulated)
             {
-                SetText(root, "intro-name", hero.Name);
-                SetText(root, "intro-tagline", hero.Tagline);
+                ApplyPrimaryAction(sheet, ResolveCeremonyPrimaryLabel(season));
+                return;
             }
 
-            PopulateOverview(root, season, seasonIntroAsset);
-            PopulateFocus(root, season);
-            SelectTab(root, TabOverview, onTabChanged);
+            Populate(sheet, season, overviewAsset, onTabChanged);
+            ApplyPrimaryAction(sheet, ResolveCeremonyPrimaryLabel(season));
+        }
+
+        public static void PopulateRecap(
+            VisualElement root,
+            Season season,
+            VisualTreeAsset? overviewAsset,
+            Action? onTabChanged = null)
+        {
+            if (root == null)
+                return;
+
+            var sheet = ResolveSheetRoot(root);
+            sheet.EnableInClassList("season-info-recap--ceremony", false);
+            GetState(sheet).ContentPopulated = false;
+            Populate(sheet, season, overviewAsset, onTabChanged, resetTabToOverview: true);
+            ApplyPrimaryAction(sheet, "Close");
+        }
+
+        public static void ApplyPrimaryAction(VisualElement root, string label)
+        {
+            var btn = ResolveSheetRoot(root).Q<Button>(PrimaryActionBtnName);
+            if (btn != null)
+                btn.text = label ?? string.Empty;
+        }
+
+        public static string ResolveCeremonyPrimaryLabel(Season season)
+        {
+            var catalog = NarrativeSlotCatalog.Load();
+            var introId = NarrativeStepResolver.ResolveSeasonIntro(season);
+            if (catalog.TryGet(introId, out var entry) && entry.Verbs.Length > 0)
+                return entry.Verbs[0];
+
+            return "Continue";
         }
 
         public static void WireTabs(VisualElement root, Action? onTabChanged = null)
@@ -39,29 +124,75 @@ namespace Kismeta.UI.Components
             if (root == null)
                 return;
 
-            root.Q<Button>("tab-overview")?.RegisterCallback<ClickEvent>(_ =>
-                SelectTab(root, TabOverview, onTabChanged));
-            root.Q<Button>("tab-focus")?.RegisterCallback<ClickEvent>(_ =>
-                SelectTab(root, TabFocus, onTabChanged));
+            var sheet = ResolveSheetRoot(root);
+            var state = GetState(sheet);
+            if (state.TabsWired)
+                return;
+
+            state.TabsWired = true;
+            WireTabTarget(sheet, "tab-overview", TabOverview, onTabChanged);
+            WireTabTarget(sheet, "tab-focus", TabFocus, onTabChanged);
         }
 
         public static void SelectTab(VisualElement root, string tabId, Action? onTabChanged = null)
         {
+            if (root == null)
+                return;
+
+            ApplyTabSelection(ResolveSheetRoot(root), tabId, onTabChanged);
+        }
+
+        static void ApplyTabSelection(VisualElement sheet, string tabId, Action? onTabChanged = null)
+        {
+            if (tabId != TabOverview && tabId != TabFocus)
+                tabId = TabOverview;
+
+            GetState(sheet).ActiveTab = tabId;
             bool overview = tabId == TabOverview;
 
-            root.Q<Button>("tab-overview")
+            sheet.Q<VisualElement>("tab-overview")
                 ?.EnableInClassList("codex-tab--active", overview);
-            root.Q<Button>("tab-focus")
+            sheet.Q<VisualElement>("tab-focus")
                 ?.EnableInClassList("codex-tab--active", !overview);
 
-            var overviewPane = root.Q<VisualElement>("overview-pane");
-            var focusPane = root.Q<VisualElement>("focus-pane");
+            var overviewPane = sheet.Q<VisualElement>("overview-pane");
+            var focusPane = sheet.Q<VisualElement>("focus-pane");
             if (overviewPane != null)
                 overviewPane.EnableInClassList("season-info-recap__pane--hidden", !overview);
             if (focusPane != null)
                 focusPane.EnableInClassList("season-info-recap__pane--hidden", overview);
 
             onTabChanged?.Invoke();
+        }
+
+        static void WireTabTarget(VisualElement sheet, string name, string tabId, Action? onTabChanged)
+        {
+            var tab = sheet.Q<VisualElement>(name);
+            if (tab == null)
+                return;
+
+            tab.pickingMode = PickingMode.Position;
+            tab.focusable = true;
+            SetIgnorePicking(tab);
+
+            tab.Q(className: "season-info-recap__tab-hit")?.RemoveFromHierarchy();
+
+            var hit = new VisualElement();
+            hit.AddToClassList("season-info-recap__tab-hit");
+            hit.pickingMode = PickingMode.Position;
+            tab.Add(hit);
+            hit.AddManipulator(new Clickable(() => ApplyTabSelection(sheet, tabId, onTabChanged)));
+        }
+
+        static void SetIgnorePicking(VisualElement root)
+        {
+            foreach (var child in root.Children())
+            {
+                if (child.ClassListContains("season-info-recap__tab-hit"))
+                    continue;
+                child.pickingMode = PickingMode.Ignore;
+                SetIgnorePicking(child);
+            }
         }
 
         static void PopulateOverview(VisualElement root, Season season, VisualTreeAsset? seasonIntroAsset)
@@ -78,7 +209,10 @@ namespace Kismeta.UI.Components
             cloneRoot.Q(className: "menu-screen__hero")?.AddToClassList("season-info-recap__clone-hidden");
             cloneRoot.Q(className: "menu-screen__footer")?.AddToClassList("season-info-recap__clone-hidden");
 
-            NarrativeSlotBindings.BindById(cloneRoot, NarrativeStepResolver.ResolveSeasonIntro(season));
+            var bindRoot = cloneRoot.Q(className: "ceremony-reveal-body")
+                ?? cloneRoot.Q(className: "season-intro-overview")
+                ?? cloneRoot;
+            NarrativeSlotBindings.BindById(bindRoot, NarrativeStepResolver.ResolveSeasonIntro(season));
         }
 
         static void PopulateFocus(VisualElement root, Season season)
@@ -117,21 +251,26 @@ namespace Kismeta.UI.Components
         {
             var row = new VisualElement();
             row.AddToClassList("intro-row");
+            row.pickingMode = PickingMode.Ignore;
 
             var numWrap = new VisualElement();
             numWrap.AddToClassList("intro-row__num");
             numWrap.AddToClassList(FocusLadderDefinitions.RowNumClassForIndex(number - 1));
+            numWrap.pickingMode = PickingMode.Ignore;
 
             var numLabel = new Label { text = number.ToString() };
             numLabel.AddToClassList("intro-row__num-label");
+            numLabel.pickingMode = PickingMode.Ignore;
             numWrap.Add(numLabel);
             row.Add(numWrap);
 
             var textWrap = new VisualElement();
             textWrap.style.flexGrow = 1;
+            textWrap.pickingMode = PickingMode.Ignore;
 
             var titleLabel = new Label { text = title };
             titleLabel.AddToClassList("intro-row__label");
+            titleLabel.pickingMode = PickingMode.Ignore;
             textWrap.Add(titleLabel);
 
             if (!string.IsNullOrWhiteSpace(description) && description != title)
@@ -141,6 +280,7 @@ namespace Kismeta.UI.Components
                 descLabel.style.whiteSpace = WhiteSpace.Normal;
                 descLabel.style.fontSize = 11;
                 descLabel.style.marginTop = 2;
+                descLabel.pickingMode = PickingMode.Ignore;
                 textWrap.Add(descLabel);
             }
 

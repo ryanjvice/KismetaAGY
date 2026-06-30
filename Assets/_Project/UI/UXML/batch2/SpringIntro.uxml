@@ -7,76 +7,57 @@
     <engine:Style src="../../USS/AgeCeremony.uss" />
     <engine:Style src="../../USS/SeasonIntro.uss" />
 
-    <engine:VisualElement name="spring-intro" class="screen screen--menu intro--spring">
-
-        <engine:VisualElement class="menu-screen__hero panel--gold">
-            <engine:VisualElement class="intro-sigil">
-                <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
-            </engine:VisualElement>
-            <engine:Label text="SPRING" class="intro-name" />
-            <engine:Label text="THE WHEEL TURNS · SET THE AGE" class="intro-tagline" />
-            <engine:Label name="narrative-beat"
-                          text="A new age dawns over Kismeta. The stars take their stations, and the alchemists gather their fortune."
-                          class="intro-couplet narrative-beat" />
-        </engine:VisualElement>
-
-        <engine:VisualElement class="ceremony-reveal-body">
-            <engine:VisualElement class="ceremony-panel-wrap">
-                <engine:VisualElement class="panel intro-info-panel">
-                    <engine:VisualElement class="intro-info-panel__icon-wrap">
-                        <engine:Label text="&#xea6c;" class="ti-icon" />
-                    </engine:VisualElement>
-                    <engine:VisualElement class="intro-info-panel__body">
-                        <engine:Label text="a new age is cast" class="eyebrow intro-info-panel__eyebrow" />
-                        <engine:Label name="narrative-charge"
-                                      text="the Agekeeper rolls to set the cosmic age for all"
-                                      class="intro-info-panel__subtitle narrative-charge" />
-                    </engine:VisualElement>
+    <engine:VisualElement name="spring-intro-overview" class="ceremony-reveal-body season-intro-overview">
+        <engine:VisualElement class="ceremony-panel-wrap">
+            <engine:VisualElement class="panel intro-info-panel">
+                <engine:VisualElement class="intro-info-panel__icon-wrap">
+                    <engine:Label text="&#xea6c;" class="ti-icon" />
                 </engine:VisualElement>
-            </engine:VisualElement>
-
-            <engine:VisualElement class="ceremony-panel-wrap">
-                <engine:VisualElement class="panel intro-content-panel">
-                    <engine:Label text="five steps to open the round" class="eyebrow intro-content-panel__eyebrow" />
-                    <engine:VisualElement name="intro-steps">
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--gold">
-                                <engine:Label text="1" class="intro-row__num-label" />
-                            </engine:VisualElement>
-                            <engine:Label text="Set the Cosmic Age" class="intro-row__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--green">
-                                <engine:Label text="2" class="intro-row__num-label" />
-                            </engine:VisualElement>
-                            <engine:Label text="Determine Your Sign" class="intro-row__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--gold">
-                                <engine:Label text="3" class="intro-row__num-label" />
-                            </engine:VisualElement>
-                            <engine:Label text="Harvest Cards" class="intro-row__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--purple">
-                                <engine:Label text="4" class="intro-row__num-label" />
-                            </engine:VisualElement>
-                            <engine:Label text="Commune" class="intro-row__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--violet">
-                                <engine:Label text="5" class="intro-row__num-label" />
-                            </engine:VisualElement>
-                            <engine:Label text="Card Lock" class="intro-row__label" />
-                        </engine:VisualElement>
-                    </engine:VisualElement>
+                <engine:VisualElement class="intro-info-panel__body">
+                    <engine:Label text="a new age is cast" class="eyebrow intro-info-panel__eyebrow" />
+                    <engine:Label name="narrative-charge"
+                                  text="the Agekeeper rolls to set the cosmic age for all"
+                                  class="intro-info-panel__subtitle narrative-charge" />
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <engine:VisualElement class="menu-screen__footer">
-            <engine:Button name="begin-btn" text="Set The Cosmic Age" class="btn btn--primary menu-screen__cta" />
+        <engine:VisualElement class="ceremony-panel-wrap">
+            <engine:VisualElement class="panel intro-content-panel">
+                <engine:Label text="five steps to open the round" class="eyebrow intro-content-panel__eyebrow" />
+                <engine:VisualElement name="intro-steps">
+                    <engine:VisualElement class="intro-row">
+                        <engine:VisualElement class="intro-row__num intro-row__num--gold">
+                            <engine:Label text="1" class="intro-row__num-label" />
+                        </engine:VisualElement>
+                        <engine:Label text="Set the Cosmic Age" class="intro-row__label" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-row">
+                        <engine:VisualElement class="intro-row__num intro-row__num--green">
+                            <engine:Label text="2" class="intro-row__num-label" />
+                        </engine:VisualElement>
+                        <engine:Label text="Determine Your Sign" class="intro-row__label" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-row">
+                        <engine:VisualElement class="intro-row__num intro-row__num--gold">
+                            <engine:Label text="3" class="intro-row__num-label" />
+                        </engine:VisualElement>
+                        <engine:Label text="Harvest Cards" class="intro-row__label" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-row">
+                        <engine:VisualElement class="intro-row__num intro-row__num--purple">
+                            <engine:Label text="4" class="intro-row__num-label" />
+                        </engine:VisualElement>
+                        <engine:Label text="Commune" class="intro-row__label" />
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-row">
+                        <engine:VisualElement class="intro-row__num intro-row__num--violet">
+                            <engine:Label text="5" class="intro-row__num-label" />
+                        </engine:VisualElement>
+                        <engine:Label text="Card Lock" class="intro-row__label" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
         </engine:VisualElement>
-
     </engine:VisualElement>
 </engine:UXML>

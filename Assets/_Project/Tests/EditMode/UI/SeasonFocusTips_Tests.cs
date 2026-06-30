@@ -71,6 +71,93 @@ namespace Kismeta.UI.Tests
                 season.ToString());
         }
 
+        [Test]
+        public void PopulateCeremony_SetsPrimaryLabelFromNarrativeVerb()
+        {
+            var root = InstantiateRecapShell();
+            var overview = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                "Assets/_Project/UI/UXML/batch2/SpringIntro.uxml");
+
+            SeasonInfoRecapBindings.PopulateCeremony(root, Season.Spring, overview);
+
+            var btn = root.Q<Button>(SeasonInfoRecapBindings.PrimaryActionBtnName);
+            Assert.IsNotNull(btn);
+            Assert.AreEqual("Begin Spring", btn!.text);
+            Assert.IsTrue(root.ClassListContains("season-info-recap--ceremony"));
+        }
+
+        [Test]
+        public void PopulateCeremony_LoadsOverviewFragment([Values] Season season)
+        {
+            var overviewPath = season switch
+            {
+                Season.Spring => "Assets/_Project/UI/UXML/batch2/SpringIntro.uxml",
+                Season.Summer => "Assets/_Project/UI/UXML/batch2/SummerIntro.uxml",
+                Season.Autumn => "Assets/_Project/UI/UXML/batch2/AutumnIntro.uxml",
+                Season.Winter => "Assets/_Project/UI/UXML/batch2/WinterIntro.uxml",
+                _ => "Assets/_Project/UI/UXML/batch2/SpringIntro.uxml"
+            };
+
+            var root = InstantiateRecapShell();
+            var overview = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(overviewPath);
+            Assert.IsNotNull(overview, overviewPath);
+
+            SeasonInfoRecapBindings.PopulateCeremony(root, season, overview);
+
+            var host = root.Q<VisualElement>("overview-host");
+            Assert.IsNotNull(host);
+            Assert.AreEqual(1, host!.childCount, season.ToString());
+            Assert.IsNotNull(host[0].Q(className: "season-intro-overview"));
+        }
+
+        [Test]
+        public void SelectTab_PersistsAcrossPopulate()
+        {
+            var root = InstantiateRecapShell();
+            SeasonInfoRecapBindings.WireTabs(root);
+            SeasonInfoRecapBindings.SelectTab(root, SeasonInfoRecapBindings.TabFocus);
+
+            SeasonInfoRecapBindings.Populate(root, Season.Summer, seasonIntroAsset: null);
+
+            Assert.IsTrue(
+                root.Q<VisualElement>("tab-focus")!.ClassListContains("codex-tab--active"));
+            Assert.IsFalse(
+                root.Q<VisualElement>("focus-pane")!.ClassListContains("season-info-recap__pane--hidden"));
+        }
+
+        [Test]
+        public void PopulateRecap_ResetsToOverviewTab()
+        {
+            var root = InstantiateRecapShell();
+            SeasonInfoRecapBindings.WireTabs(root);
+            SeasonInfoRecapBindings.SelectTab(root, SeasonInfoRecapBindings.TabFocus);
+
+            SeasonInfoRecapBindings.PopulateRecap(root, Season.Summer, overviewAsset: null);
+
+            Assert.IsTrue(
+                root.Q<VisualElement>("tab-overview")!.ClassListContains("codex-tab--active"));
+        }
+
+        [Test]
+        public void PopulateCeremony_SkipsContentRebuildWhenAlreadyPopulated()
+        {
+            var root = InstantiateRecapShell();
+            var overview = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                "Assets/_Project/UI/UXML/batch2/SpringIntro.uxml");
+
+            SeasonInfoRecapBindings.PopulateCeremony(root, Season.Spring, overview);
+            SeasonInfoRecapBindings.SelectTab(root, SeasonInfoRecapBindings.TabFocus);
+
+            var host = root.Q<VisualElement>("overview-host");
+            Assert.IsNotNull(host);
+            var overviewChild = host!.ElementAt(0);
+
+            SeasonInfoRecapBindings.PopulateCeremony(root, Season.Spring, overview);
+
+            Assert.AreSame(overviewChild, host.ElementAt(0));
+            Assert.IsTrue(root.Q<Button>("tab-focus")!.ClassListContains("codex-tab--active"));
+        }
+
         static VisualElement InstantiateRecapShell()
         {
             var asset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SeasonInfoRecapPath);

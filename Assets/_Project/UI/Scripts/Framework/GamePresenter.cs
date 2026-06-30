@@ -158,6 +158,7 @@ namespace Kismeta.UI
             WireStepScreens();
             WireSummerNavigation();
             WireSeasonHubNavigation();
+            WireSeasonIntroOverviews();
             WireIntroRecap();
             WireContestNavigation();
             WireAutumnNavigation();
@@ -265,7 +266,6 @@ namespace Kismeta.UI
             if (ceremony != null)
             {
                 RouteIfNeeded(MapCeremonyScreen(ceremony.Value));
-                RefreshActiveScreen();
                 return;
             }
 
@@ -1507,6 +1507,29 @@ namespace Kismeta.UI
 
             var winterHub = _router.GetController<WinterHubController>(ScreenIds.WinterHub);
             if (winterHub != null) winterHub.IntroRecapHost = _introRecapHost;
+        }
+
+        private void WireSeasonIntroOverviews()
+        {
+            _introRecapHost ??= GetComponent<SeasonIntroRecapHost>();
+            if (_introRecapHost == null)
+                return;
+
+            var springIntro = _router.GetController<SpringIntroController>(ScreenIds.SpringIntro);
+            if (springIntro != null)
+                springIntro.OverviewAsset = _introRecapHost.GetOverviewAsset(Season.Spring);
+
+            var summerIntro = _router.GetController<SummerIntroController>(ScreenIds.SummerIntro);
+            if (summerIntro != null)
+                summerIntro.OverviewAsset = _introRecapHost.GetOverviewAsset(Season.Summer);
+
+            var autumnIntro = _router.GetController<AutumnIntroController>(ScreenIds.AutumnIntro);
+            if (autumnIntro != null)
+                autumnIntro.OverviewAsset = _introRecapHost.GetOverviewAsset(Season.Autumn);
+
+            var winterIntro = _router.GetController<WinterIntroController>(ScreenIds.WinterIntro);
+            if (winterIntro != null)
+                winterIntro.OverviewAsset = _introRecapHost.GetOverviewAsset(Season.Winter);
         }
 
         private static bool IsWinterHubSubScreen(string? screenId) =>

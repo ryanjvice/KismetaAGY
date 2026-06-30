@@ -7,73 +7,54 @@
     <engine:Style src="../../USS/AgeCeremony.uss" />
     <engine:Style src="../../USS/SeasonIntro.uss" />
 
-    <engine:VisualElement name="autumn-intro" class="screen screen--menu intro--autumn">
-
-        <engine:VisualElement class="menu-screen__hero panel--gold">
-            <engine:VisualElement class="intro-sigil">
-                <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
-            </engine:VisualElement>
-            <engine:Label text="AUTUMN" class="intro-name" />
-            <engine:Label text="THE FORGE SEASON · CRAFT &amp; FORGE" class="intro-tagline" />
-            <engine:Label name="narrative-beat"
-                          text="The crucible runs hot. Craft your reagents, activate your formulas, and drive your stone toward gold."
-                          class="intro-couplet narrative-beat" />
-        </engine:VisualElement>
-
-        <engine:VisualElement class="ceremony-reveal-body">
-            <engine:VisualElement class="ceremony-panel-wrap">
-                <engine:VisualElement class="panel intro-info-panel">
-                    <engine:VisualElement class="intro-info-panel__icon-wrap">
-                        <engine:Label text="&#xea6c;" class="ti-icon" />
-                    </engine:VisualElement>
-                    <engine:VisualElement class="intro-info-panel__body">
-                        <engine:Label text="craft · activate · forge" class="eyebrow intro-info-panel__eyebrow" />
-                        <engine:Label name="narrative-charge"
-                                      text="take any actions, in any order, as many as you can fuel — craft, activate, and advance at the forge"
-                                      class="intro-info-panel__subtitle narrative-charge" />
-                    </engine:VisualElement>
+    <engine:VisualElement name="autumn-intro-overview" class="ceremony-reveal-body season-intro-overview">
+        <engine:VisualElement class="ceremony-panel-wrap">
+            <engine:VisualElement class="panel intro-info-panel">
+                <engine:VisualElement class="intro-info-panel__icon-wrap">
+                    <engine:Label text="&#xea6c;" class="ti-icon" />
+                </engine:VisualElement>
+                <engine:VisualElement class="intro-info-panel__body">
+                    <engine:Label text="craft · activate · forge" class="eyebrow intro-info-panel__eyebrow" />
+                    <engine:Label name="narrative-charge"
+                                  text="take any actions, in any order, as many as you can fuel — craft, activate, and advance at the forge"
+                                  class="intro-info-panel__subtitle narrative-charge" />
                 </engine:VisualElement>
             </engine:VisualElement>
+        </engine:VisualElement>
 
-            <engine:VisualElement class="ceremony-panel-wrap">
-                <engine:VisualElement class="panel intro-content-panel">
-                    <engine:Label text="at the forge — act freely" class="eyebrow intro-content-panel__eyebrow" />
-                    <engine:VisualElement name="intro-actions" class="intro-actions">
-                        <engine:VisualElement class="intro-action-row">
-                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--green">
-                                <engine:Label text="&#xebd9;" class="ti-icon" />
-                            </engine:VisualElement>
-                            <engine:VisualElement class="intro-action-row__text">
-                                <engine:Label text="Craft" class="intro-action-row__title" />
-                                <engine:Label text="discard 3 matching cards into a lit cauldron" class="intro-action-row__subtitle" />
-                            </engine:VisualElement>
+        <engine:VisualElement class="ceremony-panel-wrap">
+            <engine:VisualElement class="panel intro-content-panel">
+                <engine:Label text="at the forge — act freely" class="eyebrow intro-content-panel__eyebrow" />
+                <engine:VisualElement name="intro-actions" class="intro-actions">
+                    <engine:VisualElement class="intro-action-row">
+                        <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--green">
+                            <engine:Label text="&#xebd9;" class="ti-icon" />
                         </engine:VisualElement>
-                        <engine:VisualElement class="intro-action-row">
-                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--gold">
-                                <engine:Label text="&#xea2c;" class="ti-icon" />
-                            </engine:VisualElement>
-                            <engine:VisualElement class="intro-action-row__text">
-                                <engine:Label text="Activate" class="intro-action-row__title" />
-                                <engine:Label text="complete a crucible formula, light its cauldron" class="intro-action-row__subtitle" />
-                            </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row__text">
+                            <engine:Label text="Craft" class="intro-action-row__title" />
+                            <engine:Label text="discard 3 matching cards into a lit cauldron" class="intro-action-row__subtitle" />
                         </engine:VisualElement>
-                        <engine:VisualElement class="intro-action-row">
-                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--forge">
-                                <engine:Label text="&#xec3a;" class="ti-icon" />
-                            </engine:VisualElement>
-                            <engine:VisualElement class="intro-action-row__text">
-                                <engine:Label text="Forge" class="intro-action-row__title" />
-                                <engine:Label text="fire your stone into the forge, or temper when the round is done" class="intro-action-row__subtitle" />
-                            </engine:VisualElement>
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-action-row">
+                        <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--gold">
+                            <engine:Label text="&#xea2c;" class="ti-icon" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row__text">
+                            <engine:Label text="Activate" class="intro-action-row__title" />
+                            <engine:Label text="complete a crucible formula, light its cauldron" class="intro-action-row__subtitle" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-action-row">
+                        <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--forge">
+                            <engine:Label text="&#xec3a;" class="ti-icon" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row__text">
+                            <engine:Label text="Forge" class="intro-action-row__title" />
+                            <engine:Label text="fire your stone into the forge, or temper when the round is done" class="intro-action-row__subtitle" />
                         </engine:VisualElement>
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
-
-        <engine:VisualElement class="menu-screen__footer">
-            <engine:Button name="begin-btn" text="Begin Autumn" class="btn btn--primary menu-screen__cta" />
-        </engine:VisualElement>
-
     </engine:VisualElement>
 </engine:UXML>

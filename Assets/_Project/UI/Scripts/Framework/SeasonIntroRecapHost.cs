@@ -86,10 +86,10 @@ namespace Kismeta.UI
             if (root == null)
                 return;
 
-            SeasonInfoRecapBindings.Populate(root, season, introAsset);
+            SeasonInfoRecapBindings.PopulateRecap(root, season, introAsset);
             SeasonInfoRecapBindings.WireTabs(root);
 
-            var close = root.Q<Button>("close-btn");
+            var close = root.Q<Button>(SeasonInfoRecapBindings.PrimaryActionBtnName);
             if (close != null)
             {
                 _closeClickHandler ??= Dismiss;
@@ -103,6 +103,8 @@ namespace Kismeta.UI
             UnwireClose();
             _layout?.DismissOverlay();
         }
+
+        public VisualTreeAsset? GetOverviewAsset(Season season) => ResolveIntroAsset(season);
 
         VisualTreeAsset? ResolveIntroAsset(Season season) => season switch
         {

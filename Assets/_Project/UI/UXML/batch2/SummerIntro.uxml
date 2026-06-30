@@ -7,82 +7,63 @@
     <engine:Style src="../../USS/AgeCeremony.uss" />
     <engine:Style src="../../USS/SeasonIntro.uss" />
 
-    <engine:VisualElement name="summer-intro" class="screen screen--menu intro--summer">
-
-        <engine:VisualElement class="menu-screen__hero panel--gold">
-            <engine:VisualElement class="intro-sigil">
-                <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
-            </engine:VisualElement>
-            <engine:Label text="SUMMER" class="intro-name" />
-            <engine:Label text="THE HIGH SUN · CONSORT &amp; CONTEST" class="intro-tagline" />
-            <engine:Label name="narrative-beat"
-                          text="The sun rides high and the work is long. Trade, duel, gambit, and oppose your rivals beneath the high sun."
-                          class="intro-couplet narrative-beat" />
-        </engine:VisualElement>
-
-        <engine:VisualElement class="ceremony-reveal-body">
-            <engine:VisualElement class="ceremony-panel-wrap">
-                <engine:VisualElement class="panel intro-info-panel">
-                    <engine:VisualElement class="intro-info-panel__icon-wrap">
-                        <engine:Label text="&#xea6c;" class="ti-icon" />
-                    </engine:VisualElement>
-                    <engine:VisualElement class="intro-info-panel__body">
-                        <engine:Label text="cards are locked · contests await" class="eyebrow intro-info-panel__eyebrow" />
-                        <engine:Label name="narrative-charge"
-                                      text="take any actions, in any order, as many as you can fuel"
-                                      class="intro-info-panel__subtitle narrative-charge" />
-                    </engine:VisualElement>
+    <engine:VisualElement name="summer-intro-overview" class="ceremony-reveal-body season-intro-overview">
+        <engine:VisualElement class="ceremony-panel-wrap">
+            <engine:VisualElement class="panel intro-info-panel">
+                <engine:VisualElement class="intro-info-panel__icon-wrap">
+                    <engine:Label text="&#xea6c;" class="ti-icon" />
+                </engine:VisualElement>
+                <engine:VisualElement class="intro-info-panel__body">
+                    <engine:Label text="cards are locked · contests await" class="eyebrow intro-info-panel__eyebrow" />
+                    <engine:Label name="narrative-charge"
+                                  text="take any actions, in any order, as many as you can fuel"
+                                  class="intro-info-panel__subtitle narrative-charge" />
                 </engine:VisualElement>
             </engine:VisualElement>
+        </engine:VisualElement>
 
-            <engine:VisualElement class="ceremony-panel-wrap">
-                <engine:VisualElement class="panel intro-content-panel">
-                    <engine:Label text="with rivals — contest freely" class="eyebrow intro-content-panel__eyebrow" />
-                    <engine:VisualElement name="intro-actions" class="intro-actions">
-                        <engine:VisualElement class="intro-action-row">
-                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--blue">
-                                <engine:Label text="&#xeb2e;" class="ti-icon" />
-                            </engine:VisualElement>
-                            <engine:VisualElement class="intro-action-row__text">
-                                <engine:Label text="Trade" class="intro-action-row__title" />
-                                <engine:Label text="propose a card swap with a rival" class="intro-action-row__subtitle" />
-                            </engine:VisualElement>
+        <engine:VisualElement class="ceremony-panel-wrap">
+            <engine:VisualElement class="panel intro-content-panel">
+                <engine:Label text="with rivals — contest freely" class="eyebrow intro-content-panel__eyebrow" />
+                <engine:VisualElement name="intro-actions" class="intro-actions">
+                    <engine:VisualElement class="intro-action-row">
+                        <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--blue">
+                            <engine:Label text="&#xeb2e;" class="ti-icon" />
                         </engine:VisualElement>
-                        <engine:VisualElement class="intro-action-row">
-                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--red">
-                                <engine:Label text="&#xeb4c;" class="ti-icon" />
-                            </engine:VisualElement>
-                            <engine:VisualElement class="intro-action-row__text">
-                                <engine:Label text="Duel" class="intro-action-row__title" />
-                                <engine:Label text="ante a card, roll, winner takes a spread card" class="intro-action-row__subtitle" />
-                            </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row__text">
+                            <engine:Label text="Trade" class="intro-action-row__title" />
+                            <engine:Label text="propose a card swap with a rival" class="intro-action-row__subtitle" />
                         </engine:VisualElement>
-                        <engine:VisualElement class="intro-action-row">
-                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--caution">
-                                <engine:Label text="&#xed29;" class="ti-icon" />
-                            </engine:VisualElement>
-                            <engine:VisualElement class="intro-action-row__text">
-                                <engine:Label text="Gambit" class="intro-action-row__title" />
-                                <engine:Label text="pay the ward fee, stake a card for an active card" class="intro-action-row__subtitle" />
-                            </engine:VisualElement>
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-action-row">
+                        <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--red">
+                            <engine:Label text="&#xeb4c;" class="ti-icon" />
                         </engine:VisualElement>
-                        <engine:VisualElement class="intro-action-row">
-                            <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--forge">
-                                <engine:Label text="&#xeb4c;" class="ti-icon" />
-                            </engine:VisualElement>
-                            <engine:VisualElement class="intro-action-row__text">
-                                <engine:Label text="Opposition" class="intro-action-row__title" />
-                                <engine:Label text="pay the ward fee, roll, tally alignment to send their stone to stasis" class="intro-action-row__subtitle" />
-                            </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row__text">
+                            <engine:Label text="Duel" class="intro-action-row__title" />
+                            <engine:Label text="ante a card, roll, winner takes a spread card" class="intro-action-row__subtitle" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-action-row">
+                        <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--caution">
+                            <engine:Label text="&#xed29;" class="ti-icon" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row__text">
+                            <engine:Label text="Gambit" class="intro-action-row__title" />
+                            <engine:Label text="pay the ward fee, stake a card for an active card" class="intro-action-row__subtitle" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-action-row">
+                        <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--forge">
+                            <engine:Label text="&#xeb4c;" class="ti-icon" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row__text">
+                            <engine:Label text="Opposition" class="intro-action-row__title" />
+                            <engine:Label text="pay the ward fee, roll, tally alignment to send their stone to stasis" class="intro-action-row__subtitle" />
                         </engine:VisualElement>
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
-
-        <engine:VisualElement class="menu-screen__footer">
-            <engine:Button name="begin-btn" text="Begin Summer" class="btn btn--primary menu-screen__cta" />
-        </engine:VisualElement>
-
     </engine:VisualElement>
 </engine:UXML>

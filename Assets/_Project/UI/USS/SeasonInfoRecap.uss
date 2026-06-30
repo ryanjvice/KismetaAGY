@@ -62,7 +62,37 @@
 .season-info-recap__tabs {
     flex-shrink: 0;
     margin-top: 0;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    padding: 6px 16px 4px;
+    picking-mode: position;
+}
+
+.season-info-recap__tab {
+    position: relative;
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--touch-min);
+    picking-mode: position;
+}
+
+.season-info-recap__tab-label {
+    -unity-text-align: middle-center;
+    color: var(--muted);
+    picking-mode: ignore;
+}
+
+.season-info-recap__tab.codex-tab--active .season-info-recap__tab-label {
+    color: var(--ink);
+}
+
+.season-info-recap__tab-hit {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
 }
 
 .season-info-recap__body {
@@ -135,6 +165,25 @@
 
 .season-info-recap__clone-hidden {
     display: none;
+}
+
+.season-info-recap--ceremony {
+    flex-grow: 1;
+}
+
+.season-info-recap--ceremony .menu-screen__footer {
+    flex-shrink: 0;
+    padding-top: 12px;
+    padding-bottom: 20px;
+}
+
+.season-info-recap__overview-host .season-intro-overview {
+    margin-top: 0;
+}
+
+.season-info-recap__overview-host .ceremony-panel-wrap {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .season-info-recap .menu-screen__footer {

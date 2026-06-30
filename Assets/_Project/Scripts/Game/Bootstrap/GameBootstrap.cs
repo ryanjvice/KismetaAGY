@@ -310,8 +310,7 @@ namespace Kismeta.Game.Bootstrap
                     _titleScreen, null, _waitingHud, _setupSheet,
                     _joinScreen, _resumeScreen, null, _settingsScreen, _gameOverviewIntro, _agekeeperContest,
                     _springHub, _springPassed, _summerMain, _summerHub, _summerPassed, _autumnMain, _autumnHub, _autumnPassed, _winterHub,
-                    _roundOpen, _springIntro, _summerIntro,
-                    _autumnIntro, _winterIntro, _ageClosing,
+                    _roundOpen, _seasonInfoRecap, _seasonInfoRecap, _seasonInfoRecap, _seasonInfoRecap, _ageClosing,
                     _springHarvest, _winterUnlock, _fatefulWager, _craftReagent, _cardLimits,
                     _victory, _chronicle, _mainMenuSheet);
                 router.ConfigureMainMenuSheet(_mainMenuSheet);

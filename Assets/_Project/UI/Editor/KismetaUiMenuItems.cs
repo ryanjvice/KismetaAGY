@@ -416,8 +416,7 @@ namespace Kismeta.UI.Editor
                     title, null, waiting, setup,
                     join, resume, null, settings, gameOverviewIntro, agekeeperContest,
                     springHub, springPassed, summerMain, summerHub, summerPassed, autumnMain, autumnHub, autumnPassed, winterHub,
-                    roundOpen, springIntro, summerIntro,
-                    autumnIntro, winterIntro, ageClosing,
+                    roundOpen, seasonInfoRecap, seasonInfoRecap, seasonInfoRecap, seasonInfoRecap, ageClosing,
                     springHarvest, winterUnlock, fatefulWager, craftReagent, cardLimits,
                     victory, chronicle);
                 EditorUtility.SetDirty(router);

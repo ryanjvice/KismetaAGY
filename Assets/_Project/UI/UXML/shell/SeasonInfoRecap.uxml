@@ -23,11 +23,15 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="menu-screen__tabs season-info-recap__tabs">
-            <engine:Button name="tab-overview" text="Overview" class="codex-tab codex-tab--active" />
-            <engine:Button name="tab-focus" text="Focus" class="codex-tab" />
+            <engine:VisualElement name="tab-overview" class="codex-tab codex-tab--active season-info-recap__tab">
+                <engine:Label text="Overview" class="season-info-recap__tab-label" picking-mode="Ignore" />
+            </engine:VisualElement>
+            <engine:VisualElement name="tab-focus" class="codex-tab season-info-recap__tab">
+                <engine:Label text="Focus" class="season-info-recap__tab-label" picking-mode="Ignore" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
-        <engine:ScrollView name="recap-body" class="season-info-recap__body">
+        <engine:ScrollView name="recap-body" class="season-info-recap__body" picking-mode="Position">
             <engine:VisualElement name="overview-pane" class="season-info-recap__pane">
                 <engine:VisualElement name="overview-host" class="season-info-recap__overview-host" />
             </engine:VisualElement>
@@ -45,7 +49,7 @@
         </engine:ScrollView>
 
         <engine:VisualElement class="menu-screen__footer">
-            <engine:Button name="close-btn" text="Close" class="btn btn--primary menu-screen__cta" />
+            <engine:Button name="primary-action-btn" text="Close" class="btn btn--primary menu-screen__cta" />
         </engine:VisualElement>
 
     </engine:VisualElement>

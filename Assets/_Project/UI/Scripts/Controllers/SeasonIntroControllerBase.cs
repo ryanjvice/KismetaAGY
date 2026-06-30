@@ -1,9 +1,9 @@
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
-using Kismeta.UI;
 using Kismeta.UI.Components;
-using Kismeta.UI.Narrative;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
 {
@@ -13,17 +13,32 @@ namespace Kismeta.UI.Controllers
 
         CeremonyGate? _gate;
 
+        public VisualTreeAsset? OverviewAsset { get; set; }
+
         protected override void Wire()
         {
-            Btn("begin-btn")!.clicked += () => _gate?.Complete();
+            SeasonInfoRecapBindings.WireTabs(Root);
+            var btn = Btn(SeasonInfoRecapBindings.PrimaryActionBtnName);
+            if (btn != null)
+                btn.clicked += OnPrimaryAction;
+        }
+
+        protected override void Unwire()
+        {
+            var btn = Btn(SeasonInfoRecapBindings.PrimaryActionBtnName);
+            if (btn != null)
+                btn.clicked -= OnPrimaryAction;
         }
 
         public void BindState(GameSession session, CeremonyGate gate)
         {
             _gate = gate;
-            CeremonyBindings.ApplySeasonIntroClass(Root, IntroSeason);
-            UiArtBindings.ApplyIntroSigil(Root);
-            NarrativeSlotBindings.BindById(Root, NarrativeStepResolver.ResolveSeasonIntro(IntroSeason));
+            if (Root == null)
+                return;
+
+            SeasonInfoRecapBindings.PopulateCeremony(Root, IntroSeason, OverviewAsset);
         }
+
+        void OnPrimaryAction() => _gate?.Complete();
     }
 }
