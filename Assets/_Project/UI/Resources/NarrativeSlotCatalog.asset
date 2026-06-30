@@ -13,12 +13,24 @@ MonoBehaviour:
   m_Name: NarrativeSlotCatalog
   m_EditorClassIdentifier: Kismeta.UI::Kismeta.UI.Narrative.NarrativeSlotCatalog
   _entries:
+  - _id: game.overview
+    _season: 0
+    _tier: 0
+    _order: -1
+    _beat: Journey through Cosmic Ages. Align with each sign, forge your stone, and
+      reach the Altar.
+    _charge: Align with each Cosmic Age; work with or defend against Rivals; complete
+      all four Crucible Cards and reach the Altar.
+    _stakes: 
+    _verbs:
+    - Determine the Agekeeper
+    _breadcrumb: 
   - _id: spring.intro
     _season: 0
     _tier: 0
     _order: 0
-    _beat: A new age dawns over Kismeta. The stars take their stations, and the alchemists
-      gather their fortune.
+    _beat: A new age dawns. Set the sign, claim your place on the wheel, and gather
+      your harvest.
     _charge: 'Open the round: set the cosmic age, find your sign, and gather your
       harvest.'
     _stakes: "This age's sign shapes everything \u2014 which cards harvest well,
@@ -26,11 +38,23 @@ MonoBehaviour:
     _verbs:
     - Begin Spring
     _breadcrumb: 
+  - _id: spring.focus
+    _season: 0
+    _tier: 0
+    _order: 0
+    _beat: 
+    _charge: "Before cards lock, use your tools \u2014 read effects, commune, and
+      check whether an Astral House is worth building."
+    _stakes: 
+    _verbs:
+    - Focus
+    _breadcrumb: 
   - _id: spring.setage
     _season: 0
     _tier: 1
     _order: 1
-    _beat: The Agekeeper rolls, and the heavens choose the age for all.
+    _beat: Roll the Cosmic Age die, and let the heavens set this round's Sign for
+      all.
     _charge: "Roll the Cosmic Age die \u2014 one of twelve signs sets this round's
       Sign, Planet, and Element."
     _stakes: These three Aspects govern every harvest bonus and alignment all round.
@@ -41,7 +65,8 @@ MonoBehaviour:
     _season: 0
     _tier: 1
     _order: 2
-    _beat: Your own die falls, and the cosmos names you for the age.
+    _beat: Roll your Zodiac die and take your sign. The cosmos marks you for this
+      age.
     _charge: "Roll your Zodiac die and move your meeple to your sign \u2014 your
       identity for this round."
     _stakes: Your sign is an alignment source AND grants a personal cosmic effect
@@ -53,7 +78,7 @@ MonoBehaviour:
     _season: 0
     _tier: 1
     _order: 3
-    _beat: The age is generous to those who align with it.
+    _beat: Tally your alignment bonuses and take your harvest from the Agekeeper.
     _charge: Tally your bonus from every source, then take your full harvest from
       the Agekeeper.
     _stakes: Sign +3, Planet +2, Element +1.
@@ -64,7 +89,7 @@ MonoBehaviour:
     _season: 0
     _tier: 1
     _order: 4
-    _beat: "The wheel shows where every soul stands \u2014 study it before you choose."
+    _beat: Study the wheel. Commune, build a House, and prepare for Summer.
     _charge: Commune with your cards, build an Astral House on your sign, and review
       the table before Summer.
     _stakes: Spread cards score alignment and activate Crucibles but can be stolen
@@ -78,7 +103,7 @@ MonoBehaviour:
     _season: 0
     _tier: 1
     _order: 4
-    _beat: "You yielded the wheel \u2014 spring waits on your rivals."
+    _beat: You yielded the wheel, and spring waits on your rivals.
     _charge: Spring ends when every player passes in a row without acting.
     _stakes: You will be asked to respond if a rival's action requires your input.
     _verbs:
@@ -88,7 +113,7 @@ MonoBehaviour:
     _season: 0
     _tier: 1
     _order: 4
-    _beat: "Lay your fortune out \u2014 what you show, and what you keep."
+    _beat: Sort your fortune. Place cards in Spread, Hand, and Arcanum.
     _charge: Sort your cards into Spread (visible engine) and Hand (hidden reserve).
       Major Arcana go to your Arcanum.
     _stakes: Spread cards score alignment and activate Crucibles but can be stolen
@@ -100,7 +125,8 @@ MonoBehaviour:
     _season: 0
     _tier: 1
     _order: 4
-    _beat: A permanent anchor rises in an ever-turning sky.
+    _beat: Raise a House on your sign. Pay one planet-matching card and anchor the
+      sky.
     _charge: "Pay 1 card matching your sign's planet to raise a House on your current
       sign \u2014 a permanent harvest source and cosmic effect."
     _stakes: "Houses are permanent \u2014 the card is spent for good. You may only
@@ -112,7 +138,7 @@ MonoBehaviour:
     _season: 0
     _tier: 1
     _order: 5
-    _beat: The stars fix what you have wrought.
+    _beat: Lock your tableau. Spread and Hand freeze until Winter releases them.
     _charge: "Confirm your placement \u2014 cards freeze between Spread and Hand
       until Winter."
     _stakes: Over-load your Spread and you expose value to theft; under-load it and
@@ -124,19 +150,30 @@ MonoBehaviour:
     _season: 1
     _tier: 0
     _order: 0
-    _beat: The sun rides high and the work is long. Trade, duel, gambit, and oppose
-      your rivals beneath the high sun.
+    _beat: The sun rides high. Craft, activate, trade, duel, gambit, and oppose as
+      you will.
     _charge: "Take any actions, in any order, as many as you can fuel \u2014 no fixed
       order, no turn limit."
     _stakes: 
     _verbs:
     - Begin Summer
     _breadcrumb: 
+  - _id: summer.focus
+    _season: 1
+    _tier: 0
+    _order: 0
+    _beat: 
+    _charge: "This round is for consorting and contesting \u2014 review Codex and
+      the Table, then Trade, Duel, Gambit, and Opposition as opportunities arise."
+    _stakes: 
+    _verbs:
+    - Focus
+    _breadcrumb: 
   - _id: summer.hub
     _season: 1
     _tier: 1
     _order: 1
-    _beat: The sun rides high and the work is long.
+    _beat: Take your turn beneath the high sun. Craft, consort, or activate.
     _charge: Take any actions, in any order, as many as you can fuel.
     _stakes: 
     _verbs:
@@ -149,7 +186,7 @@ MonoBehaviour:
     _season: 1
     _tier: 1
     _order: 1
-    _beat: "You yielded the contest \u2014 the high sun waits on your rivals."
+    _beat: You yielded the contest, and the high sun waits on your rivals.
     _charge: Summer ends when every player passes in a row without acting.
     _stakes: You will be asked to respond if a rival's action requires your input.
     _verbs:
@@ -159,7 +196,7 @@ MonoBehaviour:
     _season: 1
     _tier: 1
     _order: 2
-    _beat: The formula handed down by the Fates comes due.
+    _beat: Activate a Crucible. Complete its Codex formula and light the cauldron.
     _charge: Collect a Codex card set in your Spread, discard it, light the matching
       cauldron, and flip the Crucible card face-up.
     _stakes: "The coal can never be moved once placed \u2014 light the cauldron your
@@ -171,7 +208,7 @@ MonoBehaviour:
     _season: 1
     _tier: 1
     _order: 3
-    _beat: Raw cards become the fuel of transmutation.
+    _beat: Craft a reagent. Feed three suit-matched cards into a lit cauldron.
     _charge: "Discard 3 suit-matching cards into a lit cauldron to craft 1 elemental
       reagent. Salt needs no cauldron \u2014 any 3 cards."
     _stakes: Reagents only transfer by Trade. Each elemental type needs its own cauldron
@@ -183,7 +220,8 @@ MonoBehaviour:
     _season: 1
     _tier: 1
     _order: 4
-    _beat: A permanent anchor rises in an ever-turning sky.
+    _beat: Raise a House on your sign. Pay two planet-matching cards and stake the
+      sky.
     _charge: "Pay 2 cards matching your sign's planet to raise a House \u2014 a permanent
       harvest source, opposition boost, and cosmic effect."
     _stakes: "Houses are permanent \u2014 the cards are spent for good and cannot
@@ -195,7 +233,7 @@ MonoBehaviour:
     _season: 1
     _tier: 1
     _order: 5
-    _beat: Set your tolls before the rivals come.
+    _beat: Set your wards. Place reagents on Active cards before rivals come.
     _charge: Place reagents on your Active Crucible or Adept cards to set the fee
       challengers must pay to Gambit them.
     _stakes: Crucible wards are permanent; Adept wards return if the Adept leaves
@@ -207,7 +245,8 @@ MonoBehaviour:
     _season: 1
     _tier: 1
     _order: 6
-    _beat: Bargains struck beneath the high sun.
+    _beat: Strike a bargain. Exchange cards, reagents, or Active Crucibles with a
+      rival.
     _charge: "Exchange cards, reagents, or Active Crucible cards freely with a rival
       \u2014 the only way to move reagents."
     _stakes: Hidden Hand cards cannot be requested. In Magnus mode, misaligned players
@@ -219,7 +258,7 @@ MonoBehaviour:
     _season: 1
     _tier: 1
     _order: 7
-    _beat: Steel meets steel over a coveted card.
+    _beat: Duel for a Spread card. Ante your own and roll against a rival.
     _charge: "Name a card in a rival's Spread, ante a card of your own, and roll
       \u2014 higher roll takes the prize."
     _stakes: Lose, and your ante returns to the deck. Only Spread cards can be targeted;
@@ -231,7 +270,7 @@ MonoBehaviour:
     _season: 1
     _tier: 1
     _order: 8
-    _beat: A wager against the Fates themselves.
+    _beat: Gambit a rival's Active card. Pay their ward fee and roll for the prize.
     _charge: Stake one of your Active cards to seize a rival's Crucible or Adept
       card. Pay their ward fee, then roll.
     _stakes: "Lose, and your offered card is Arrested \u2014 pay 1 Salt to free it,
@@ -243,14 +282,25 @@ MonoBehaviour:
     _season: 2
     _tier: 0
     _order: 0
-    _beat: The crucible runs hot. Craft your reagents, activate your formulas, and
-      drive your stone toward gold.
+    _beat: The crucible runs hot. Craft, activate, fire your stone, and drive it
+      toward gold.
     _charge: "Take any actions, in any order, as many as you can fuel \u2014 craft,
       activate, and advance at the forge."
     _stakes: 
     _verbs:
     - Begin Autumn
     _breadcrumb: Forging
+  - _id: autumn.focus
+    _season: 2
+    _tier: 0
+    _order: 0
+    _beat: 
+    _charge: "The forge is live \u2014 cross-check Codex costs before you Fire, Temper,
+      or break Stasis."
+    _stakes: 
+    _verbs:
+    - Focus
+    _breadcrumb: 
   - _id: autumn.survey
     _season: 2
     _tier: 1
@@ -266,8 +316,7 @@ MonoBehaviour:
     _season: 2
     _tier: 1
     _order: 2
-    _beat: "You stepped back from the flames \u2014 the forge still burns for your
-      rivals."
+    _beat: You stepped back from the flames. The forge still burns for your rivals.
     _charge: Autumn ends when every player passes in a row without acting.
     _stakes: You will be asked to respond if a rival's action requires your input.
     _verbs:
@@ -301,7 +350,7 @@ MonoBehaviour:
     _season: 2
     _tier: 1
     _order: 4
-    _beat: A full round in the fire, and the stage is sealed forever.
+    _beat: Temper your stone. Advance it to the next Mantle and seal this stage.
     _charge: Advance a stone that has forged a full round to the next Mantle space
       and discard its Crucible card.
     _stakes: "A stone that returned from Stasis this round cannot Temper yet \u2014
@@ -313,7 +362,7 @@ MonoBehaviour:
     _season: 2
     _tier: 1
     _order: 5
-    _beat: Rekindle a stalled stone.
+    _beat: Leave Stasis. Pay Salt and return your stone to the forge.
     _charge: Pay 2 Salt to return your stone to its old forge position and resume
       forging.
     _stakes: If your old position is taken, you must wait a round or win a Stasis
@@ -325,20 +374,30 @@ MonoBehaviour:
     _season: 3
     _tier: 0
     _order: 0
-    _beat: "The long night settles in. Make your final preparations for the age ahead
-      \u2014 unlock your hand, craft what you can, and set your wager before the
-      wheel turns."
+    _beat: The long night settles in. Unlock, wager, trim your hand, and turn the
+      wheel.
     _charge: 'Close the age: unlock your cards, place an optional wager, enforce
       limits, and transit to the next age.'
     _stakes: 
     _verbs:
     - Begin Winter
     _breadcrumb: 
+  - _id: winter.focus
+    _season: 3
+    _tier: 0
+    _order: 0
+    _beat: 
+    _charge: "The age is closing \u2014 reorganize, wager wisely, and trim to limits
+      before transit."
+    _stakes: 
+    _verbs:
+    - Focus
+    _breadcrumb: 
   - _id: winter.unlock
     _season: 3
     _tier: 1
     _order: 1
-    _beat: The stars release their hold.
+    _beat: Unlock your cards. Move freely between Hand and Spread one last time.
     _charge: Move cards freely between Hand and Spread one last time before the age
       closes.
     _stakes: 
@@ -362,7 +421,7 @@ MonoBehaviour:
     _season: 3
     _tier: 1
     _order: 3
-    _beat: Pare back to what you can carry into the dark.
+    _beat: Enforce your limits. Discard down to five Spread and five Hand.
     _charge: Discard down to 5 Spread and 5 Hand. Return all Fate cards to the deck;
       Adepts remain.
     _stakes: 
@@ -373,8 +432,7 @@ MonoBehaviour:
     _season: 3
     _tier: 1
     _order: 4
-    _beat: The key passes, and the wheel turns toward a sign unknown until the dice
-      fall.
+    _beat: Turn the wheel. Pass the key and begin the next Cosmic Age.
     _charge: "The Agekeeper shuffles the deck and passes the key clockwise \u2014
       a new age begins, unless the Great Work is done."
     _stakes: 

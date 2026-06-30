@@ -48,11 +48,6 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <engine:VisualElement class="tip tip--caution">
-            <engine:Label text="Houses are permanent — the cards are spent for good and cannot be reclaimed. Build deliberately."
-                          class="tip__text" style="color: rgb(224,200,120);" />
-        </engine:VisualElement>
-
         <engine:VisualElement style="padding: 2px 14px 16px;">
             <engine:Button name="build-btn" text="Raise the House on Scorpio" class="btn"
                            style="background-color: var(--arcanum-bg); border-color: rgb(154,122,192); color: var(--arcanum-text);" />

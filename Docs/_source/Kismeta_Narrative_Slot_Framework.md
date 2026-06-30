@@ -87,7 +87,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *A new age dawns over Kismeta. The stars take their stations, and the alchemists gather their fortune.* |
+| **Cosmic beat** | *A new age dawns. Set the sign, claim your place on the wheel, and gather your harvest.* |
 | **Your charge** | Open the round: set the cosmic age, find your sign, and gather your harvest. |
 | **The stakes** | This age's sign shapes everything — which cards harvest well, which alignments score, and your own cosmic effect for the round. |
 | **The verb** | Begin Spring |
@@ -96,7 +96,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *The Agekeeper rolls, and the heavens choose the age for all.* |
+| **Cosmic beat** | *Roll the Cosmic Age die, and let the heavens set this round's Sign for all.* |
 | **Your charge** | Read the age's three Aspects — Sign, Planet, Element — and its cosmic effect aloud. |
 | **The stakes** | Every harvest bonus and alignment this round is measured against these three Aspects. |
 | **The verb** | Cast the age |
@@ -105,7 +105,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *Your own die falls, and the cosmos names you for the age.* |
+| **Cosmic beat** | *Roll your Zodiac die and take your sign. The cosmos marks you for this age.* |
 | **Your charge** | Roll your Zodiac die and move your meeple to your sign — your identity for this round. |
 | **The stakes** | Your sign is an alignment source AND grants a personal cosmic effect that lasts until Winter. |
 | **The verb** | Roll your zodiac die |
@@ -114,7 +114,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *The age is generous to those who align with it.* |
+| **Cosmic beat** | *Tally your alignment bonuses and take your harvest from the Agekeeper.* |
 | **Your charge** | Tally your bonus from every source, then take your full harvest from the Agekeeper. |
 | **The stakes** | Each source scores only its single highest Aspect — Sign +3, Planet +2, Element +1. Nothing stacks within a source. |
 | **The verb** | Deal & commune |
@@ -123,7 +123,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *Lay your fortune out — what you show, and what you keep.* |
+| **Cosmic beat** | *Sort your fortune. Place cards in Spread, Hand, and Arcanum.* |
 | **Your charge** | Sort your cards into Spread (visible engine) and Hand (hidden reserve). Major Arcana go to your Arcanum. |
 | **The stakes** | Spread cards score alignment and activate Crucibles but can be stolen in a Duel. Hand cards are safe but idle. |
 | **The verb** | Lock the tableau · to Summer |
@@ -132,7 +132,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *The stars fix what you have wrought.* |
+| **Cosmic beat** | *Lock your tableau. Spread and Hand freeze until Winter releases them.* |
 | **Your charge** | Confirm your placement — cards freeze between Spread and Hand until Winter. |
 | **The stakes** | Over-load your Spread and you expose value to theft; under-load it and you starve your engine. This is binding. |
 | **The verb** | Lock 🔒 |
@@ -143,7 +143,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *The sun rides high and the work is long. Forge your reagents, raise your houses, and reckon with your rivals.* |
+| **Cosmic beat** | *The sun rides high. Craft, activate, trade, duel, gambit, and oppose as you will.* |
 | **Your charge** | Take any actions, in any order, as many as you can fuel — no fixed order, no turn limit. |
 | **The stakes** | This is where the round is won or lost. Repeat actions as long as you have cards and reagents to spend. |
 | **The verb** | Begin Summer |
@@ -152,7 +152,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *The formula handed down by the Fates comes due.* |
+| **Cosmic beat** | *Activate a Crucible. Complete its Codex formula and light the cauldron.* |
 | **Your charge** | Collect a Codex card set in your Spread, discard it, light the matching cauldron, and flip the Crucible card face-up. |
 | **The stakes** | The coal can never be moved once placed — light the cauldron your higher-tier cards will demand. |
 | **The verb** | Activate |
@@ -161,7 +161,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *Raw cards become the fuel of transmutation.* |
+| **Cosmic beat** | *Craft a reagent. Feed three suit-matched cards into a lit cauldron.* |
 | **Your charge** | Discard 3 suit-matching cards into a lit cauldron to craft 1 elemental reagent. Salt needs no cauldron — any 3 cards. |
 | **The stakes** | Reagents only transfer by Trade. Each elemental type needs its own cauldron lit first. |
 | **The verb** | Forge |
@@ -170,7 +170,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *A permanent anchor rises in an ever-turning sky.* |
+| **Cosmic beat** | *Raise a House on your sign. Pay two planet-matching cards and stake the sky.* |
 | **Your charge** | Pay 2 cards matching your sign's planet to raise a House — a permanent harvest source, opposition boost, and cosmic effect. |
 | **The stakes** | Houses are permanent — the cards are spent for good and cannot be reclaimed. Build deliberately. |
 | **The verb** | Raise the House |
@@ -179,7 +179,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *Set your tolls before the rivals come.* |
+| **Cosmic beat** | *Set your wards. Place reagents on Active cards before rivals come.* |
 | **Your charge** | Place reagents on your Active Crucible or Adept cards to set the fee challengers must pay to Gambit them. |
 | **The stakes** | Crucible wards are permanent; Adept wards return if the Adept leaves play. An unwarded active card can be gambited for free. |
 | **The verb** | Seal the wards |
@@ -188,7 +188,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *Bargains struck beneath the high sun.* |
+| **Cosmic beat** | *Strike a bargain. Exchange cards, reagents, or Active Crucibles with a rival.* |
 | **Your charge** | Exchange cards, reagents, or Active Crucible cards freely with a rival — the only way to move reagents. |
 | **The stakes** | Hidden Hand cards cannot be requested. In Magnus mode, misaligned players trade 2:1. |
 | **The verb** | Complete trade |
@@ -197,7 +197,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *Steel meets steel over a coveted card.* |
+| **Cosmic beat** | *Duel for a Spread card. Ante your own and roll against a rival.* |
 | **Your charge** | Name a card in a rival's Spread, ante a card of your own, and roll — higher roll takes the prize. |
 | **The stakes** | Lose, and your ante returns to the deck. Only Spread cards can be targeted; the Hand is safe. |
 | **The verb** | Ante & roll |
@@ -206,7 +206,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *A wager against the Fates themselves.* |
+| **Cosmic beat** | *Gambit a rival's Active card. Pay their ward fee and roll for the prize.* |
 | **Your charge** | Stake one of your Active cards to seize a rival's Crucible or Adept card. Pay their ward fee, then roll. |
 | **The stakes** | Lose, and your offered card is Arrested — pay 1 Salt to free it, and you can't re-gambit that rival this round. |
 | **The verb** | Challenge this rival |
@@ -217,7 +217,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *The crucible runs hot. Drive your stone toward gold — but a forging stone is a stone exposed.* |
+| **Cosmic beat** | *The crucible runs hot. Craft, activate, fire your stone, and drive it toward gold.* |
 | **Your charge** | Advance your stone through the forge — and oppose any rival that dares to forge. |
 | **The stakes** | The moment your stone enters the forge it can be Opposed. Weigh advancing now against waiting for a safer age. |
 | **The verb** | Begin Autumn |
@@ -253,7 +253,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *A full round in the fire, and the stage is sealed forever.* |
+| **Cosmic beat** | *Temper your stone. Advance it to the next Mantle and seal this stage.* |
 | **Your charge** | Advance a stone that has forged a full round to the next Mantle space and discard its Crucible card. |
 | **The stakes** | A stone that returned from Stasis this round cannot Temper yet — it must forge a full round first. |
 | **The verb** | Temper |
@@ -262,7 +262,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *Rekindle a stalled stone.* |
+| **Cosmic beat** | *Leave Stasis. Pay Salt and return your stone to the forge.* |
 | **Your charge** | Pay 2 Salt to return your stone to its old forge position and resume forging. |
 | **The stakes** | If your old position is taken, you must wait a round or win a Stasis Opposition to swap into it. |
 | **The verb** | Leave Stasis |
@@ -273,7 +273,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *The forge fires bank low. What was gained is reckoned, what was held is loosed, and the wheel turns toward a new age.* |
+| **Cosmic beat** | *The long night settles in. Unlock, wager, trim your hand, and turn the wheel.* |
 | **Your charge** | Close the age: unlock your cards, place an optional wager, enforce limits, and transit to the next age. |
 | **The stakes** | Only your cards reset. Lit cauldrons, astral houses, active Crucible cards, and your stone's forge position all carry forward. |
 | **The verb** | Begin Winter |
@@ -282,7 +282,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *The stars release their hold.* |
+| **Cosmic beat** | *Unlock your cards. Move freely between Hand and Spread one last time.* |
 | **Your charge** | Move cards freely between Hand and Spread one last time before the age closes. |
 | **The stakes** | — *(no stakes shown on this step)* |
 | **The verb** | Unlock cards |
@@ -300,7 +300,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *Pare back to what you can carry into the dark.* |
+| **Cosmic beat** | *Enforce your limits. Discard down to five Spread and five Hand.* |
 | **Your charge** | Discard down to 5 Spread and 5 Hand. Return all Fate cards to the deck; Adepts remain. |
 | **The stakes** | — *(no stakes shown on this step)* |
 | **The verb** | Enforce limits |
@@ -309,7 +309,7 @@ The complete slot text for all 26 steps, grouped by season. Transition steps are
 
 | Slot | Text |
 |---|---|
-| **Cosmic beat** | *The key passes, and the wheel turns toward a sign unknown until the dice fall.* |
+| **Cosmic beat** | *Turn the wheel. Pass the key and begin the next Cosmic Age.* |
 | **Your charge** | The Agekeeper shuffles the deck and passes the key clockwise — a new age begins, unless the Great Work is done. |
 | **The stakes** | — *(no stakes shown on this step)* |
 | **The verb** | Turn the wheel · cast the next age |

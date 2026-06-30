@@ -1847,20 +1847,12 @@
     font-size: 11px;
 }
 
-.narrative-toolbar__info-btn {
-    min-width: 28px;
-    min-height: 28px;
-    border-width: 0;
-    border-radius: 0;
-    background-color: rgba(0, 0, 0, 0);
-    color: rgb(184, 154, 110);
-    font-size: 18px;
-    padding: 0 4px;
+.narrative-toolbar .narrative-toolbar__info-btn {
     flex-shrink: 0;
-}
-
-.narrative-toolbar__info-btn:hover {
-    color: rgb(232, 185, 74);
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px 8px;
+    font-size: 16px;
 }
 
 .narrative-toolbar--no-info .narrative-toolbar__info-btn {

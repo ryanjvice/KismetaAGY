@@ -75,11 +75,15 @@ namespace Kismeta.UI.Controllers
             var btn = Btn("build-btn");
             if (btn != null)
             {
-                btn.SetEnabled(canBuild && _selected.Count == 1);
-                btn.EnableInClassList("btn--disabled", !canBuild || _selected.Count != 1);
-                btn.text = canBuild
-                    ? $"Raise the House on {sign}"
-                    : reason;
+                bool hasRequiredCard = cards.Count > 0;
+                bool readyToBuild = canBuild && hasRequiredCard && _selected.Count == 1;
+                btn.SetEnabled(readyToBuild);
+                btn.EnableInClassList("btn--disabled", !readyToBuild);
+                btn.text = !canBuild
+                    ? reason
+                    : !hasRequiredCard
+                        ? $"Need 1 {planet} card"
+                        : $"Raise the House on {sign}";
             }
         }
 
