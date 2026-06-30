@@ -31,7 +31,7 @@
 
         <engine:VisualElement style="padding: 12px 14px 4px;">
             <engine:Label text="cost — 2 Mars cards" class="eyebrow" />
-            <engine:VisualElement name="cost-cards" class="formula">
+            <engine:VisualElement name="cost-cards" class="formula card-pool">
                 <engine:VisualElement class="card-chip card-chip--wands card-chip--selected"><engine:Label text="7" class="card-chip__rank" /><engine:Label text="Mars" class="card-chip__tag" style="background-color: rgb(240,153,123);" /></engine:VisualElement>
                 <engine:VisualElement class="card-chip card-chip--wands card-chip--selected"><engine:Label text="A" class="card-chip__rank" /><engine:Label text="Mars" class="card-chip__tag" style="background-color: rgb(240,153,123);" /></engine:VisualElement>
             </engine:VisualElement>

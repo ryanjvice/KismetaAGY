@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
@@ -12,6 +13,7 @@ namespace Kismeta.UI.Controllers
     public sealed class BuildHouseController : OverlayController
     {
         readonly HashSet<string> _selected = new();
+        string _lastPoolLayoutKey = "";
 
         GameSession? _session;
         CommandBridge? _bridge;
@@ -26,6 +28,17 @@ namespace Kismeta.UI.Controllers
             Btn("build-btn")!.clicked += OnBuild;
         }
 
+        protected override void Unwire()
+        {
+            _lastPoolLayoutKey = "";
+        }
+
+        protected override void Bind()
+        {
+            _selected.Clear();
+            _lastPoolLayoutKey = "";
+        }
+
         public void BindState(GameSession session, CommandBridge bridge)
         {
             _session = session;
@@ -33,7 +46,6 @@ namespace Kismeta.UI.Controllers
             _playerId = SummerActionBindings.ResolvePlayerId(session, bridge);
             if (Root == null || _playerId < 0) return;
 
-            _selected.Clear();
             RefreshUi();
             NarrativeSlotBindings.BindById(Root, "spring.buildhouse");
         }
@@ -53,7 +65,12 @@ namespace Kismeta.UI.Controllers
             bool canBuild = CanBuild(player, sign, out string reason);
             var cards = CollectEligibleCards(player, planet);
 
-            SummerCardPickBindings.RebuildPool(Root, _session, cards, _selected, null, OnCardToggle);
+            var layoutKey = BuildPoolLayoutKey(cards, _selected);
+            if (layoutKey != _lastPoolLayoutKey)
+            {
+                _lastPoolLayoutKey = layoutKey;
+                SummerCardPickBindings.RebuildPool(Root, _session, cards, _selected, null, OnCardToggle);
+            }
 
             var btn = Btn("build-btn");
             if (btn != null)
@@ -120,6 +137,13 @@ namespace Kismeta.UI.Controllers
             var def = inst != null ? db.GetById(inst.DefinitionId) : null;
             if (def != null && def.Planet == planet)
                 list.Add(id);
+        }
+
+        static string BuildPoolLayoutKey(IReadOnlyList<string> cards, HashSet<string> selected)
+        {
+            var sortedCards = cards.OrderBy(id => id).ToList();
+            var sortedSelected = selected.OrderBy(id => id).ToList();
+            return string.Join(",", sortedCards) + "|" + string.Join(",", sortedSelected);
         }
 
         void OnCardToggle(string cardId)
