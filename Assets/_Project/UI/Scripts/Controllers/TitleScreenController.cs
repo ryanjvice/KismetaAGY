@@ -14,7 +14,7 @@ namespace Kismeta.UI.Controllers
         public Action OnNewGame;
         public Action OnResume;
         public Action OnJoin;
-        public Action OnCodex;
+        public Action OnRules;
         public Action OnSettings;
 
         const float StarChartSpeedDegPerSec = -3f;
@@ -46,7 +46,7 @@ namespace Kismeta.UI.Controllers
             Btn("new-game-btn")!.clicked += () => OnNewGame?.Invoke();
             Btn("resume-btn")!.clicked += () => OnResume?.Invoke();
             Btn("join-btn")!.clicked += () => OnJoin?.Invoke();
-            Btn("codex-btn")!.clicked += () => OnCodex?.Invoke();
+            Btn("rules-btn")!.clicked += () => OnRules?.Invoke();
             Btn("settings-btn")!.clicked += () => OnSettings?.Invoke();
         }
 

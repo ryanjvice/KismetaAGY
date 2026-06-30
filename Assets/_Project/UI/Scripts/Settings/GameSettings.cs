@@ -14,6 +14,8 @@ namespace Kismeta.UI.Settings
 
         public const string RulesUrl = "https://www.kismeta.fun";
 
+        public static void OpenRulesWiki() => Application.OpenURL(RulesUrl);
+
         public static float MasterVolume { get; private set; } = 1f;
         public static float MusicVolume { get; private set; } = 1f;
         public static float SfxVolume { get; private set; } = 1f;

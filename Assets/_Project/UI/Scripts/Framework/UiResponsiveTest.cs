@@ -15,7 +15,7 @@ namespace Kismeta.UI
 
         private ViewportLayout _layout;
         private Button _newGameBtn;
-        private Button _codexBtn;
+        private Button _rulesBtn;
 
         private void Awake() => _layout = GetComponent<ViewportLayout>();
 
@@ -35,17 +35,17 @@ namespace Kismeta.UI
             if (_newGameBtn != null)
                 _newGameBtn.clicked += OnNewGame;
 
-            _codexBtn = root.Q<Button>("codex-btn");
-            if (_codexBtn != null)
-                _codexBtn.clicked += OnInspectModal;
+            _rulesBtn = root.Q<Button>("rules-btn");
+            if (_rulesBtn != null)
+                _rulesBtn.clicked += OnInspectModal;
         }
 
         private void OnDisable()
         {
             if (_newGameBtn != null)
                 _newGameBtn.clicked -= OnNewGame;
-            if (_codexBtn != null)
-                _codexBtn.clicked -= OnInspectModal;
+            if (_rulesBtn != null)
+                _rulesBtn.clicked -= OnInspectModal;
         }
 
         private void OnNewGame()

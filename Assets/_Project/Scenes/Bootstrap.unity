@@ -217,8 +217,8 @@ MonoBehaviour:
   _mainMenuSheet: {fileID: 9197481963319205126, guid: a7c3e8914f2b4d6e9a1c0f3b5d8e2a4c, type: 3}
   _joinScreen: {fileID: 9197481963319205126, guid: 519a817f310314b48bb262c3b086169d, type: 3}
   _resumeScreen: {fileID: 9197481963319205126, guid: 26748abde5aa099428c318a8600db94a, type: 3}
-  _codexScreen: {fileID: 9197481963319205126, guid: ca63949183879644ca18fdf0e1a01d7b, type: 3}
   _settingsScreen: {fileID: 9197481963319205126, guid: faba220889bef8443934394907f29569, type: 3}
+  _gameOverviewIntro: {fileID: 9197481963319205126, guid: c5d8ebdbcb0c3034692d4adfeb07ffae, type: 3}
   _agekeeperContest: {fileID: 9197481963319205126, guid: 23d4f7ba6d5a48d48aec740b12deaa19, type: 3}
   _springHub: {fileID: 9197481963319205126, guid: 8d5f0b3c2e9a5147b6c7d8e9f0a1b2c3, type: 3}
   _springPassed: {fileID: 9197481963319205126, guid: a8fd67839a92021479ece502682f11a4, type: 3}
@@ -950,10 +950,10 @@ MonoBehaviour:
     Uxml: {fileID: 9197481963319205126, guid: 519a817f310314b48bb262c3b086169d, type: 3}
   - Id: Resume
     Uxml: {fileID: 9197481963319205126, guid: 26748abde5aa099428c318a8600db94a, type: 3}
-  - Id: Codex
-    Uxml: {fileID: 9197481963319205126, guid: ca63949183879644ca18fdf0e1a01d7b, type: 3}
   - Id: Settings
     Uxml: {fileID: 9197481963319205126, guid: faba220889bef8443934394907f29569, type: 3}
+  - Id: GameOverviewIntro
+    Uxml: {fileID: 9197481963319205126, guid: c5d8ebdbcb0c3034692d4adfeb07ffae, type: 3}
   - Id: AgekeeperContest
     Uxml: {fileID: 9197481963319205126, guid: 23d4f7ba6d5a48d48aec740b12deaa19, type: 3}
   - Id: SpringHub
@@ -1001,7 +1001,7 @@ MonoBehaviour:
   - Id: Chronicle
     Uxml: {fileID: 9197481963319205126, guid: 624d806ec598422479bc052ccc17e80f, type: 3}
   _setupSheet: {fileID: 9197481963319205126, guid: f349b93fc3fde7647b0c740e772f9ca7, type: 3}
-  _mainMenuSheet: {fileID: 9197481963319205126, guid: a7c3e8914f2b4d6e9a1c0f3b5d8e2a4c, type: 3}
+  _mainMenuSheet: {fileID: 0}
 --- !u!114 &1085875215
 MonoBehaviour:
   m_ObjectHideFlags: 0

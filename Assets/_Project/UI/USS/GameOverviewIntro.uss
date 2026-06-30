@@ -1,0 +1,62 @@
+/* Kismeta — GameOverviewIntro.uss
+   Pre-game overview between setup and Agekeeper contest. */
+
+.intro--overview .intro-sigil { border-color: var(--gold-deep); }
+.intro--overview .intro-name { color: var(--gold); }
+.intro--overview .intro-tagline { color: rgb(184, 154, 106); }
+.intro--overview .intro-couplet { color: rgb(184, 168, 146); }
+.intro--overview .intro-info-panel__subtitle { color: rgb(196, 176, 146); }
+.intro--overview .intro-content-panel__eyebrow { color: rgb(154, 130, 90); }
+
+.intro--overview .menu-screen__hero {
+    margin-left: 14px;
+    margin-right: 14px;
+    margin-bottom: 8px;
+    padding-top: 16px;
+    padding-bottom: 12px;
+}
+
+.intro--overview .intro-couplet {
+    max-width: 100%;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.intro--overview .intro-row {
+    align-items: flex-start;
+}
+
+.intro--overview .intro-row__num {
+    margin-top: 1px;
+}
+
+.intro--overview .intro-row__label {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    white-space: normal;
+}
+
+.intro-row__num--red {
+    background-color: rgb(58, 26, 26);
+    border-color: rgb(106, 48, 48);
+}
+
+.intro-row__num--red .intro-row__num-label { color: rgb(240, 176, 160); }
+
+.screen.intro--overview {
+    flex-grow: 1;
+}
+
+.screen.intro--overview .ceremony-reveal-body {
+    flex-grow: 1;
+    flex-shrink: 1;
+    justify-content: flex-start;
+}
+
+.screen.intro--overview .menu-screen__footer {
+    margin-top: auto;
+    flex-shrink: 0;
+    padding-top: 16px;
+    padding-bottom: 24px;
+}

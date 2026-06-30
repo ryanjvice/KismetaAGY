@@ -12,6 +12,7 @@ using Kismeta.UI.Components;
 using Kismeta.UI.Controllers;
 using Kismeta.UI.Diagnostics;
 using Kismeta.UI.Setup;
+using Kismeta.UI.Settings;
 using UnityEngine;
 
 namespace Kismeta.UI
@@ -116,6 +117,7 @@ namespace Kismeta.UI
         {
             WireTitleScreen();
             WireShellScreens();
+            WireGameOverviewIntro();
             WireAgekeeperContest();
             if (_router.CurrentScreenId != ScreenIds.Title)
                 _router.GoTo(ScreenIds.Title);
@@ -150,6 +152,7 @@ namespace Kismeta.UI
 
             WireTitleScreen();
             WireShellScreens();
+            WireGameOverviewIntro();
             WireAgekeeperContest();
             WireStepScreens();
             WireSummerNavigation();
@@ -206,7 +209,7 @@ namespace Kismeta.UI
             _setupSheetState.Detach();
             _router.ShowSetupSheet(
                 onOpened: sheet => _setupSheetState.Attach(sheet),
-                onBegin: BeginAgekeeperContest);
+                onBegin: OnSetupBeginClicked);
         }
 
         private void Update()
@@ -533,11 +536,11 @@ namespace Kismeta.UI
             {
                 _router.ShowSetupSheet(
                     onOpened: sheet => _setupSheetState.Attach(sheet),
-                    onBegin: BeginAgekeeperContest);
+                    onBegin: OnSetupBeginClicked);
             };
             title.OnResume = () => _router.GoTo(ScreenIds.Resume);
             title.OnJoin = () => _router.GoTo(ScreenIds.Join);
-            title.OnCodex = OpenCodex;
+            title.OnRules = () => GameSettings.OpenRulesWiki();
             title.OnSettings = OpenSettings;
         }
 
@@ -560,19 +563,9 @@ namespace Kismeta.UI
                 resume.RebuildList();
             }
 
-            var codex = _router.GetController<CodexScreenController>(ScreenIds.Codex);
-            if (codex != null)
-                codex.OnBack = ReturnToTitle;
-
             var settings = _router.GetController<SettingsScreenController>(ScreenIds.Settings);
             if (settings != null)
                 settings.OnBack = ReturnToTitle;
-        }
-
-        private void OpenCodex()
-        {
-            _router.GoTo(ScreenIds.Codex);
-            _router.GetController<CodexScreenController>(ScreenIds.Codex)?.ShowTab(CodexTabs.Cards);
         }
 
         private void OpenSettings() => _router.GoTo(ScreenIds.Settings);
@@ -594,7 +587,7 @@ namespace Kismeta.UI
             sheet.OnRules = () =>
             {
                 _router.DismissOverlay();
-                OpenRulesFromGame();
+                GameSettings.OpenRulesWiki();
             };
             sheet.OnQuit = () =>
             {
@@ -610,16 +603,6 @@ namespace Kismeta.UI
             OpenSettings();
             RewireShellBackForGame();
             _router.GetController<SettingsScreenController>(ScreenIds.Settings)?.Refresh();
-            RefreshPlayerHud();
-        }
-
-        private void OpenRulesFromGame()
-        {
-            RememberShellReturnScreen();
-            DismissAllOverlays();
-            OpenCodex();
-            RewireShellBackForGame();
-            _router.GetController<CodexScreenController>(ScreenIds.Codex)?.Refresh();
             RefreshPlayerHud();
         }
 
@@ -641,10 +624,6 @@ namespace Kismeta.UI
             var settings = _router.GetController<SettingsScreenController>(ScreenIds.Settings);
             if (settings != null)
                 settings.OnBack = () => ResumeFromShellScreen(returnId);
-
-            var codex = _router.GetController<CodexScreenController>(ScreenIds.Codex);
-            if (codex != null)
-                codex.OnBack = () => ResumeFromShellScreen(returnId);
         }
 
         void ResumeFromShellScreen(string screenId)
@@ -664,6 +643,14 @@ namespace Kismeta.UI
 #endif
         }
 
+        private void WireGameOverviewIntro()
+        {
+            var overview = _router.GetController<GameOverviewIntroController>(ScreenIds.GameOverviewIntro);
+            if (overview == null) return;
+
+            overview.OnContinue = BeginAgekeeperContest;
+        }
+
         private void WireAgekeeperContest()
         {
             var contest = _router.GetController<AgekeeperContestController>(ScreenIds.AgekeeperContest);
@@ -677,10 +664,15 @@ namespace Kismeta.UI
             };
         }
 
-        private void BeginAgekeeperContest()
+        private void OnSetupBeginClicked()
         {
             _pendingSetupConfig = _setupSheetState.Current;
             _setupSheetState.Detach();
+            _router.GoTo(ScreenIds.GameOverviewIntro);
+        }
+
+        private void BeginAgekeeperContest()
+        {
             int humanPlayers = ResolveHumanPlayerCount?.Invoke() ?? 1;
             _router.GoTo(ScreenIds.AgekeeperContest);
             _router.GetController<AgekeeperContestController>(ScreenIds.AgekeeperContest)
@@ -1663,7 +1655,7 @@ namespace Kismeta.UI
 
         static bool ShouldShowPlayerHud(string? screenId) => screenId switch
         {
-            ScreenIds.Title or ScreenIds.Join or ScreenIds.Resume or ScreenIds.Codex
+            ScreenIds.Title or ScreenIds.Join or ScreenIds.Resume
                 or ScreenIds.Settings or ScreenIds.AgekeeperContest or ScreenIds.Victory
                 or ScreenIds.Chronicle => false,
             _ => true

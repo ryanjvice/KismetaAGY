@@ -51,8 +51,8 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _mainMenuSheet;
         [SerializeField] private VisualTreeAsset _joinScreen;
         [SerializeField] private VisualTreeAsset _resumeScreen;
-        [SerializeField] private VisualTreeAsset _codexScreen;
         [SerializeField] private VisualTreeAsset _settingsScreen;
+        [SerializeField] private VisualTreeAsset _gameOverviewIntro;
         [SerializeField] private VisualTreeAsset _agekeeperContest;
         [SerializeField] private VisualTreeAsset _springHub;
         [SerializeField] private VisualTreeAsset _springPassed;
@@ -191,8 +191,8 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<PlayerHudController>();
             EnsureController<JoinScreenController>();
             EnsureController<ResumeScreenController>();
-            EnsureController<CodexScreenController>();
             EnsureController<SettingsScreenController>();
+            EnsureController<GameOverviewIntroController>();
             EnsureController<AgekeeperContestController>();
             EnsureController<SpringHubController>();
             EnsureController<SpringPassedController>();
@@ -301,7 +301,7 @@ namespace Kismeta.Game.Bootstrap
 
                 router.ConfigureScreens(
                     _titleScreen, null, _waitingHud, _setupSheet,
-                    _joinScreen, _resumeScreen, _codexScreen, _settingsScreen, _agekeeperContest,
+                    _joinScreen, _resumeScreen, null, _settingsScreen, _gameOverviewIntro, _agekeeperContest,
                     _springHub, _springPassed, _summerMain, _summerHub, _summerPassed, _autumnMain, _autumnHub, _autumnPassed, _winterHub,
                     _roundOpen, _springIntro, _summerIntro,
                     _autumnIntro, _winterIntro, _ageClosing,

@@ -11,6 +11,7 @@ namespace Kismeta.UI.Components
         public const string TablerIconClass = "ti-icon";
         public const string InfoGlyph = "\u2139";
         public const string MenuGlyph = "\uec42";
+        public const string ExternalLinkGlyph = "\uea99";
         public const string ChevronDownGlyph = "\uea5f";
         public const string ChevronUpGlyph = "\uea62";
 

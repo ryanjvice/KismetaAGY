@@ -1959,6 +1959,12 @@
 
 .mode-row__radio--on { border-color: var(--gold-deep); }
 
+.mode-row__link-icon {
+    font-size: 14px;
+    color: rgb(184, 154, 110);
+    margin-left: 8px;
+}
+
 .ti-icon {
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/tabler-icons.asset");
     font-size: var(--font-title);

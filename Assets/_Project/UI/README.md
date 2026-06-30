@@ -106,7 +106,7 @@ Title → setup → agekeeper → RoundOpen → AgeOpening → SpringIntro → *
 - **Join** — room-code entry; back returns to title (multiplayer stub)
 - **Resume** — empty-state list; persistence stub
 - **Codex** — tabbed reference + search filter (static glossary samples)
-- **Setup sheet** → agekeeper contest → game loop
+- **Setup sheet** → game overview → agekeeper contest → game loop
 - **Agekeeper contest** — zodiac die roll; winner passed to session setup
 
 ## Phase 1 — UI spine (foundation)
@@ -132,7 +132,7 @@ Open `Bootstrap.unity` (or your play scene with `GameBootstrap`), then:
 - GameBootstrap **Use Production Ui** = on
 - **Save the scene** (`Ctrl+S`)
 
-**Play-test:** Title → New game → Start Game → agekeeper contest → **RoundOpen** (roll die) → AgeOpening → SpringIntro → **SpringHub** → **Commune** → season main scenes; season intros between seasons; Winter unlock/wager/limits → **AgeClosing** at Winter end.
+**Play-test:** Title → New game → Start Game → **Game overview** → agekeeper contest → **RoundOpen** (roll die) → AgeOpening → SpringIntro → **SpringHub** → **Commune** → season main scenes; season intros between seasons; Winter unlock/wager/limits → **AgeClosing** at Winter end.
 
 ## Full-bleed / responsive rules
 

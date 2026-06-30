@@ -21,6 +21,7 @@
                 </engine:Button>
                 <engine:Button name="main-menu-rules-btn" class="mode-row">
                     <engine:Label text="Rules" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
+                    <engine:Label text="&#xea99;" class="ti-icon mode-row__link-icon" />
                 </engine:Button>
                 <engine:Button name="main-menu-quit-btn" class="mode-row">
                     <engine:Label text="Quit" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />

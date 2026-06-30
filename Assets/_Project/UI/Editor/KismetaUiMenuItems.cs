@@ -21,8 +21,8 @@ namespace Kismeta.UI.Editor
         private const string MainMenuSheetPath = "Assets/_Project/UI/UXML/batch1/MainMenuSheet.uxml";
         private const string JoinScreenPath = "Assets/_Project/UI/UXML/batch1/JoinScreen.uxml";
         private const string ResumeScreenPath = "Assets/_Project/UI/UXML/batch1/ResumeScreen.uxml";
-        private const string CodexScreenPath = "Assets/_Project/UI/UXML/batch1/CodexScreen.uxml";
         private const string SettingsScreenPath = "Assets/_Project/UI/UXML/batch1/SettingsScreen.uxml";
+        private const string GameOverviewIntroPath = "Assets/_Project/UI/UXML/batch1/GameOverviewIntro.uxml";
         private const string AgekeeperContestPath = "Assets/_Project/UI/UXML/batch1/AgekeeperContest.uxml";
         private const string SpringHubPath = "Assets/_Project/UI/UXML/main/SpringHub.uxml";
         private const string SpringPassedPath = "Assets/_Project/UI/UXML/main/SpringPassed.uxml";
@@ -185,8 +185,8 @@ namespace Kismeta.UI.Editor
             EnsureComponent<PlayerHudController>(bootstrap.gameObject);
             EnsureComponent<JoinScreenController>(bootstrap.gameObject);
             EnsureComponent<ResumeScreenController>(bootstrap.gameObject);
-            EnsureComponent<CodexScreenController>(bootstrap.gameObject);
             EnsureComponent<SettingsScreenController>(bootstrap.gameObject);
+            EnsureComponent<GameOverviewIntroController>(bootstrap.gameObject);
             EnsureComponent<AgekeeperContestController>(bootstrap.gameObject);
             EnsureComponent<SpringHubController>(bootstrap.gameObject);
             EnsureComponent<SpringPassedController>(bootstrap.gameObject);
@@ -272,8 +272,8 @@ namespace Kismeta.UI.Editor
             var mainMenuSheet = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuSheetPath);
             var join = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(JoinScreenPath);
             var resume = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResumeScreenPath);
-            var codex = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CodexScreenPath);
             var settings = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SettingsScreenPath);
+            var gameOverviewIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameOverviewIntroPath);
             var agekeeperContest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgekeeperContestPath);
             var springHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHubPath);
             var springPassed = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringPassedPath);
@@ -331,8 +331,8 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_mainMenuSheet").objectReferenceValue = mainMenuSheet;
             so.FindProperty("_joinScreen").objectReferenceValue = join;
             so.FindProperty("_resumeScreen").objectReferenceValue = resume;
-            so.FindProperty("_codexScreen").objectReferenceValue = codex;
             so.FindProperty("_settingsScreen").objectReferenceValue = settings;
+            so.FindProperty("_gameOverviewIntro").objectReferenceValue = gameOverviewIntro;
             so.FindProperty("_agekeeperContest").objectReferenceValue = agekeeperContest;
             so.FindProperty("_springHub").objectReferenceValue = springHub;
             so.FindProperty("_springPassed").objectReferenceValue = springPassed;
@@ -411,7 +411,7 @@ namespace Kismeta.UI.Editor
             {
                 router.ConfigureScreens(
                     title, null, waiting, setup,
-                    join, resume, codex, settings, agekeeperContest,
+                    join, resume, null, settings, gameOverviewIntro, agekeeperContest,
                     springHub, springPassed, summerMain, summerHub, summerPassed, autumnMain, autumnHub, autumnPassed, winterHub,
                     roundOpen, springIntro, summerIntro,
                     autumnIntro, winterIntro, ageClosing,
@@ -443,8 +443,8 @@ namespace Kismeta.UI.Editor
             host.AddComponent<WaitingHudController>();
             host.AddComponent<JoinScreenController>();
             host.AddComponent<ResumeScreenController>();
-            host.AddComponent<CodexScreenController>();
             host.AddComponent<SettingsScreenController>();
+            host.AddComponent<GameOverviewIntroController>();
             host.AddComponent<AgekeeperContestController>();
             host.AddComponent<SpringHubController>();
             host.AddComponent<SpringPassedController>();
@@ -498,8 +498,8 @@ namespace Kismeta.UI.Editor
             var setupSheet = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SetupSheetPath);
             var joinScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(JoinScreenPath);
             var resumeScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResumeScreenPath);
-            var codexScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CodexScreenPath);
             var settingsScreen = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SettingsScreenPath);
+            var gameOverviewIntro = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(GameOverviewIntroPath);
             var agekeeperContest = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AgekeeperContestPath);
             var springHub = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringHubPath);
             var springPassed = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SpringPassedPath);
@@ -527,7 +527,7 @@ namespace Kismeta.UI.Editor
             var router = host.GetComponent<ScreenRouter>();
             router.ConfigureScreens(
                 titleScreen, null, waitingHud, setupSheet,
-                joinScreen, resumeScreen, codexScreen, settingsScreen, agekeeperContest,
+                joinScreen, resumeScreen, null, settingsScreen, gameOverviewIntro, agekeeperContest,
                 springHub, springPassed, summerMain, summerHub, summerPassed, autumnMain, autumnHub, autumnPassed, winterHub,
                 roundOpen, springIntro, summerIntro,
                 autumnIntro, winterIntro, ageClosing,
@@ -557,7 +557,7 @@ namespace Kismeta.UI.Editor
 
             Directory.CreateDirectory(Path.GetDirectoryName(UiTestScenePath)!);
             EditorSceneManager.SaveScene(scene, UiTestScenePath);
-            Debug.Log($"[Kismeta.UI] UI test scene at {UiTestScenePath}. Play: full-bleed Title; New game = sheet; Codex = inspect modal.");
+            Debug.Log($"[Kismeta.UI] UI test scene at {UiTestScenePath}. Play: full-bleed Title; New game = sheet; Rules = inspect modal.");
         }
 
         [MenuItem("Kismeta/UI/Clean Bootstrap Missing Scripts")]

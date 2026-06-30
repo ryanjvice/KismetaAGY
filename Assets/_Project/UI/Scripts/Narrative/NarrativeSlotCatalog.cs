@@ -30,6 +30,15 @@ namespace Kismeta.UI.Narrative
                 }
             }
 
+            foreach (var e in NarrativeSlotCatalogDefaults.AllEntries)
+            {
+                if (e != null && e.Id == id)
+                {
+                    entry = e;
+                    return true;
+                }
+            }
+
             return false;
         }
 
@@ -363,8 +372,21 @@ namespace Kismeta.UI.Narrative
                 "In Stasis")
         };
 
+        public static IReadOnlyList<NarrativeSlotEntry> GameSlice { get; } = new[]
+        {
+            new NarrativeSlotEntry(
+                "game.overview",
+                Season.Spring,
+                NarrativeSlotTier.Transition,
+                -1,
+                "You and your rival Alchemists journey through Cosmic Ages, each shaped by the stars.",
+                "Align with each Cosmic Age; work with or defend against Rivals; complete all four Crucible Cards and reach the Altar.",
+                string.Empty,
+                new[] { "Determine the Agekeeper" })
+        };
+
         public static IReadOnlyList<NarrativeSlotEntry> AllEntries { get; } = Combine(
-            SpringSlice, SummerSlice, AutumnSlice, WinterSlice);
+            GameSlice, SpringSlice, SummerSlice, AutumnSlice, WinterSlice);
 
         static NarrativeSlotEntry[] Combine(params IReadOnlyList<NarrativeSlotEntry>[] slices)
         {

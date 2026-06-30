@@ -16,7 +16,7 @@ namespace Kismeta.UI.Controllers
         protected override void Wire()
         {
             Btn("back-btn")!.clicked += () => OnBack?.Invoke();
-            Btn("rules-link-btn")!.clicked += () => Application.OpenURL(GameSettings.RulesUrl);
+            Btn("rules-link-btn")!.clicked += () => GameSettings.OpenRulesWiki();
 
             Btn("verbosity-full")!.clicked += () => SetVerbosity(NarrativeVerbosity.Full);
             Btn("verbosity-light")!.clicked += () => SetVerbosity(NarrativeVerbosity.Light);

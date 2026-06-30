@@ -5,6 +5,8 @@ namespace Kismeta.UI.Narrative
 {
     public static class NarrativeStepResolver
     {
+        public static string ResolveGameOverview() => "game.overview";
+
         public static string ResolveSeasonIntro(Season season) =>
             $"{season.ToString().ToLowerInvariant()}.intro";
 

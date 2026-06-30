@@ -12,6 +12,7 @@ namespace Kismeta.UI
         public const string Resume = "Resume";
         public const string Codex = "Codex";
         public const string Settings = "Settings";
+        public const string GameOverviewIntro = "GameOverviewIntro";
         public const string AgekeeperContest = "AgekeeperContest";
         // Season main scenes (Phase 3)
         public const string SpringHub = "SpringHub";

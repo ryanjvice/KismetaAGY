@@ -7,7 +7,7 @@
     <engine:Style src="../../USS/TitleScreen.uss" />
 
     <engine:VisualElement name="title-screen" class="screen screen--title">
-        <engine:Label text="Title screen — start a new game, resume, join, open the codex, or adjust settings." class="sr-only" />
+        <engine:Label text="Title screen — start a new game, resume, join, open the rules wiki, or adjust settings." class="sr-only" />
 
         <engine:VisualElement name="title-hero" class="title-hero">
             <engine:VisualElement class="title-hero__content">
@@ -33,7 +33,10 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="title-menu__row">
-                <engine:Button name="codex-btn" text="Codex" class="btn btn--menu" />
+                <engine:Button name="rules-btn" class="btn btn--menu title-menu__rules-btn">
+                    <engine:Label text="Rules" class="title-menu__rules-label" />
+                    <engine:Label text="&#xea99;" class="ti-icon title-menu__link-icon" />
+                </engine:Button>
                 <engine:Button name="settings-btn" text="Settings" class="btn btn--menu" />
             </engine:VisualElement>
         </engine:VisualElement>
