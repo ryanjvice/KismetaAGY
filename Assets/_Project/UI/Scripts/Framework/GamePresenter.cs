@@ -726,6 +726,7 @@ namespace Kismeta.UI
             summer.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
             summer.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
             summer.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
+            summer.OnOpenProtectiveWards = () => _endOverlays?.ShowProtectiveWards();
             summer.OnOpenPlayerEffects = id => _endOverlays?.ShowActiveEffects(id);
             summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
 
@@ -747,6 +748,7 @@ namespace Kismeta.UI
                 springHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 springHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 springHub.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
+                springHub.OnOpenProtectiveWards = () => _endOverlays?.ShowProtectiveWards();
                 springHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
@@ -757,6 +759,7 @@ namespace Kismeta.UI
                 springPassed.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 springPassed.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 springPassed.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
+                springPassed.OnOpenProtectiveWards = () => _endOverlays?.ShowProtectiveWards();
                 springPassed.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
@@ -767,6 +770,7 @@ namespace Kismeta.UI
                 summerHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 summerHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 summerHub.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
+                summerHub.OnOpenProtectiveWards = () => _endOverlays?.ShowProtectiveWards();
                 summerHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
@@ -777,6 +781,7 @@ namespace Kismeta.UI
                 summerPassed.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 summerPassed.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 summerPassed.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
+                summerPassed.OnOpenProtectiveWards = () => _endOverlays?.ShowProtectiveWards();
                 summerPassed.OnInspectCard = id => _endOverlays?.ShowInspect(id);
             }
 
@@ -787,6 +792,7 @@ namespace Kismeta.UI
                 autumnHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 autumnHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 autumnHub.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
+                autumnHub.OnOpenProtectiveWards = () => _endOverlays?.ShowProtectiveWards();
                 autumnHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
                 autumnHub.OnOpenForgeInspect = () => _autumnOverlays?.ShowForgeInspect();
                 autumnHub.OnDismissForgeInspect = () => _autumnOverlays?.DismissForgeInspect();
@@ -799,6 +805,7 @@ namespace Kismeta.UI
                 autumnPassed.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
                 autumnPassed.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
                 autumnPassed.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
+                autumnPassed.OnOpenProtectiveWards = () => _endOverlays?.ShowProtectiveWards();
                 autumnPassed.OnInspectCard = id => _endOverlays?.ShowInspect(id);
                 autumnPassed.OnOpenForgeInspect = () => _autumnOverlays?.ShowForgeInspect();
                 autumnPassed.OnDismissForgeInspect = () => _autumnOverlays?.DismissForgeInspect();
@@ -858,6 +865,7 @@ namespace Kismeta.UI
             autumn.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
             autumn.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
             autumn.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
+            autumn.OnOpenProtectiveWards = () => _endOverlays?.ShowProtectiveWards();
             autumn.OnInspectCard = id => _endOverlays?.ShowInspect(id);
         }
 
@@ -1168,6 +1176,7 @@ namespace Kismeta.UI
                     spring.OnRivalSelected = id => _endOverlays.ShowCardTable(id);
                     spring.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
                     spring.OnOpenCrucibleCodex = () => _endOverlays.ShowCrucibleCodex();
+                    spring.OnOpenProtectiveWards = () => _endOverlays.ShowProtectiveWards();
                     spring.OnInspectCard = id => _endOverlays.ShowInspect(id);
                     spring.OnBuildHouse = () => _springOverlays?.ShowBuildHouse();
                     spring.OnOpenBoardInspect = () => _springOverlays?.ShowBoardInspect();
@@ -1181,6 +1190,7 @@ namespace Kismeta.UI
                     winter.OnRivalSelected = id => _endOverlays.ShowCardTable(id);
                     winter.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
                     winter.OnOpenCrucibleCodex = () => _endOverlays.ShowCrucibleCodex();
+                    winter.OnOpenProtectiveWards = () => _endOverlays.ShowProtectiveWards();
                     winter.OnInspectCard = id => _endOverlays.ShowInspect(id);
                 }
             }

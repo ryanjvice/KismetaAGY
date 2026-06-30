@@ -38,6 +38,9 @@ namespace Kismeta.Core.Rules
                 PassCrucibleActionCommand _ => CommandResult.Ok(),
                 EnforceCardLimitsCommand _  => CommandResult.Ok(),
                 TransitAgeCommand    _      => CommandResult.Ok(),
+                PlaceCardWardCommand cmd   => ValidatePlayerTurnInSeason(session, cmd.PlayerId, Season.Summer),
+                PlaceAdeptWardCommand cmd  => ValidatePlayerTurnInSeason(session, cmd.PlayerId, Season.Summer),
+                PlaceStoneWardCommand cmd  => ValidatePlayerTurnInSeason(session, cmd.PlayerId, Season.Autumn),
                 _                           => CommandResult.Ok(),
             };
         }
@@ -78,6 +81,17 @@ namespace Kismeta.Core.Rules
         {
             if (session.Phase.CurrentSeason != required)
                 return CommandResult.Invalid($"Action is only available during {required}.");
+            return CommandResult.Ok();
+        }
+
+        private static CommandResult ValidatePlayerTurnInSeason(GameSession session, int playerId, Season required)
+        {
+            var seasonCheck = ValidateSeason(session, required);
+            if (!seasonCheck.IsOk) return seasonCheck;
+
+            if (session.CurrentTurnPlayerId.HasValue && session.CurrentTurnPlayerId.Value != playerId)
+                return CommandResult.Invalid("It is not your turn.");
+
             return CommandResult.Ok();
         }
     }

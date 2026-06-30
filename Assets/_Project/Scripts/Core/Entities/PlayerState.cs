@@ -76,6 +76,9 @@ namespace Kismeta.Core.Entities
         // Crucible Card slots (4 per player)
         public List<PlayerCrucibleSlot> CrucibleSlots { get; } = new();
 
+        /// <summary>Ward counts on Adept cards in Arcanum (keyed by card instance id).</summary>
+        public Dictionary<string, int> AdeptWardCounts { get; } = new();
+
         public PlayerState(int playerId, PlayerColor color)
         {
             PlayerId = playerId;
@@ -100,6 +103,24 @@ namespace Kismeta.Core.Entities
         {
             if (suit != Suit.None)
                 _cauldronLit[(int)suit - 1] = true;
+        }
+
+        public int GetAdeptWardCount(string cardId) =>
+            AdeptWardCounts.TryGetValue(cardId, out var count) ? count : 0;
+
+        public void AddAdeptWard(string cardId)
+        {
+            AdeptWardCounts.TryGetValue(cardId, out var count);
+            AdeptWardCounts[cardId] = count + 1;
+        }
+
+        /// <summary>Removes all wards on the Adept and returns the count cleared.</summary>
+        public int ClearAdeptWards(string cardId)
+        {
+            if (!AdeptWardCounts.TryGetValue(cardId, out var count))
+                return 0;
+            AdeptWardCounts.Remove(cardId);
+            return count;
         }
     }
 }

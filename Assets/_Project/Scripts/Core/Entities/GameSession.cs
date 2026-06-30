@@ -210,6 +210,10 @@ namespace Kismeta.Core.Entities
                     ? ApplyWithAudit(_rules.Crucible.TryPlaceStoneWard(this, cmd.PlayerId, cmd.ReagentType), command)
                     : CommandResult.NotImplemented(nameof(PlaceStoneWardCommand)),
 
+                PlaceAdeptWardCommand cmd => _rules is not null
+                    ? ApplyWithAudit(_rules.Crucible.TryPlaceAdeptWard(this, cmd.PlayerId, cmd.AdeptCardId, cmd.ReagentType), command)
+                    : CommandResult.NotImplemented(nameof(PlaceAdeptWardCommand)),
+
                 RefreshAdeptCommand   cmd => _rules is not null
                     ? ApplyWithAudit(_rules.Crucible.TryRefreshAdept(this, cmd.PlayerId, cmd.AdeptCardId), command)
                     : CommandResult.NotImplemented(nameof(RefreshAdeptCommand)),

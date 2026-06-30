@@ -133,6 +133,24 @@ namespace Kismeta.Core.Commands
         }
     }
 
+    /// <summary>
+    /// Player places a Ward Reagent on an Adept card in their Arcanum.
+    /// Wards return to supply if the Adept leaves play.
+    /// </summary>
+    public sealed class PlaceAdeptWardCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public string AdeptCardId { get; }
+        public ReagentType ReagentType { get; }
+
+        public PlaceAdeptWardCommand(int playerId, string adeptCardId, ReagentType reagentType)
+        {
+            PlayerId     = playerId;
+            AdeptCardId  = adeptCardId;
+            ReagentType  = reagentType;
+        }
+    }
+
     // ── Arcanum refresh ───────────────────────────────────────────────────────
 
     /// <summary>

@@ -29,6 +29,7 @@ namespace Kismeta.Core.Views
         public StonePosition StonePosition              { get; }
         public StoneState StoneState                    { get; }
         public int StoneWardCount                       { get; }
+        public IReadOnlyDictionary<string, int> AdeptWardCounts { get; }
         public bool ReturnedFromStasisThisRound         { get; }
 
         public IReadOnlyDictionary<ReagentType, int> Reagents { get; }
@@ -59,6 +60,7 @@ namespace Kismeta.Core.Views
             StonePosition               = p.StonePosition;
             StoneState                  = p.StoneState;
             StoneWardCount              = p.StoneWardCount;
+            AdeptWardCounts             = new Dictionary<string, int>(p.AdeptWardCounts);
             ReturnedFromStasisThisRound = p.ReturnedFromStasisThisRound;
 
             var reagents = new Dictionary<ReagentType, int>();

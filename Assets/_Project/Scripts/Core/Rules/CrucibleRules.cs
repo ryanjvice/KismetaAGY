@@ -460,6 +460,26 @@ namespace Kismeta.Core.Rules
             return CommandResult.Ok($"Forge Ward placed (total: {player.StoneWardCount}).");
         }
 
+        public CommandResult TryPlaceAdeptWard(GameSession session, int playerId, string adeptCardId,
+            ReagentType reagentType)
+        {
+            var player = session.Players[playerId];
+
+            if (!player.Arcanum.Contains(adeptCardId))
+                return CommandResult.Invalid($"Card {adeptCardId} is not in Player {playerId}'s Arcanum.");
+
+            var inst = session.GetCard(adeptCardId);
+            var def = inst != null ? _db.GetById(inst.DefinitionId) : null;
+            if (def?.MajorArcanaType != MajorArcanaType.Adept)
+                return CommandResult.Invalid("Only Adept cards can receive Adept wards.");
+
+            if (!player.SpendReagent(reagentType, 1))
+                return CommandResult.Invalid($"Not enough {reagentType} to place a Ward.");
+
+            player.AddAdeptWard(adeptCardId);
+            return CommandResult.Ok($"Ward placed on Adept {adeptCardId}.");
+        }
+
         public CommandResult TryRefreshAdept(GameSession session, int playerId, string adeptCardId)
         {
             var player = session.Players[playerId];

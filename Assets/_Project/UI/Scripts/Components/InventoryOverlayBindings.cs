@@ -18,6 +18,7 @@ namespace Kismeta.UI.Components
             public Action? OnOpenCardTable;
             public Action? OnOpenActiveEffects;
             public Action? OnOpenCrucibleCodex;
+            public Action? OnOpenProtectiveWards;
         }
 
         public static void Wire(VisualElement? root, Callbacks callbacks)
@@ -30,6 +31,7 @@ namespace Kismeta.UI.Components
             root.Q<Button>("table-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenCardTable?.Invoke());
             root.Q<Button>("codex-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenCrucibleCodex?.Invoke());
             root.Q<Button>("effects-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenActiveEffects?.Invoke());
+            root.Q<Button>("wards-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenProtectiveWards?.Invoke());
 
             SetExpanded(root, s_expanded, animate: false);
             OverlayRoot(root)?.BringToFront();
@@ -91,12 +93,15 @@ namespace Kismeta.UI.Components
             var tableFab = root?.Q<Button>("table-fab");
             var codexFab = root?.Q<Button>("codex-fab");
             var effectsFab = root?.Q<Button>("effects-fab");
+            var wardsFab = root?.Q<Button>("wards-fab");
             if (tableFab != null)
                 tableFab.EnableInClassList("table-fab--hidden", !visible);
             if (codexFab != null)
                 codexFab.EnableInClassList("codex-fab--hidden", !visible);
             if (effectsFab != null)
                 effectsFab.EnableInClassList("effects-fab--hidden", !visible);
+            if (wardsFab != null)
+                wardsFab.EnableInClassList("wards-fab--hidden", !visible);
             root?.Q(className: "hub-fab-stack")
                 ?.EnableInClassList("hub-fab-stack--hidden", !visible);
             SetNarrativeToolbarVisible(root, visible);

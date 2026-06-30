@@ -33,6 +33,7 @@
                         <engine:Label name="player-planet" text="—" class="cosmic-age-banner__planet" />
                         <engine:Label text="·" class="cosmic-age-banner__sep" />
                         <engine:Label name="player-element" text="—" class="cosmic-age-banner__element" />
+                        <engine:Button name="wards-fab" text="&#xeb24;" tooltip="Protective wards" class="wards-fab btn btn--secondary ti-icon" />
                     </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>

@@ -46,6 +46,10 @@ namespace Kismeta.Core.Rules
         /// <summary>Autumn: place one Ward Reagent on the stone's Forge position (sets Opposition entry fee).</summary>
         CommandResult TryPlaceStoneWard(GameSession session, int playerId, ReagentType reagentType);
 
+        /// <summary>Summer: place one Ward Reagent on an Adept card in Arcanum.</summary>
+        CommandResult TryPlaceAdeptWard(GameSession session, int playerId, string adeptCardId,
+            ReagentType reagentType);
+
         /// <summary>
         /// Summer/Autumn: spend 1 Salt to refresh an Adept card arrested by The Tower,
         /// restoring its contribution to alignment scoring.

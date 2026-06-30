@@ -983,6 +983,29 @@
     flex-shrink: 0;
 }
 
+.player-strip .cosmic-age-banner__row {
+    align-items: center;
+}
+
+.wards-fab {
+    flex-shrink: 0;
+    margin-left: 8px;
+    min-width: 28px;
+    min-height: 28px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    font-size: 14px;
+    border-radius: 6px;
+    border-color: var(--gold-deep);
+    color: var(--gold-light);
+    -unity-text-align: middle-center;
+}
+
+.wards-fab--hidden {
+    display: none;
+}
+
 .rival {
     flex-grow: 1;
     flex-direction: row;

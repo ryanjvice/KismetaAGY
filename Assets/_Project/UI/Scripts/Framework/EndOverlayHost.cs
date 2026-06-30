@@ -18,6 +18,7 @@ namespace Kismeta.UI
         VisualTreeAsset? _activeEffects;
         VisualTreeAsset? _crucibleCardDetail;
         VisualTreeAsset? _crucibleCodexReference;
+        VisualTreeAsset? _placeWards;
 
         ViewportLayout? _layout;
         GameSession? _session;
@@ -29,8 +30,9 @@ namespace Kismeta.UI
         ActiveEffectsController? _activeEffectsCtrl;
         CrucibleCardDetailController? _crucibleDetail;
         CrucibleCodexReferenceController? _crucibleCodexCtrl;
+        PlaceWardsController? _protectiveWardsCtrl;
 
-        enum ActiveOverlay { None, CardTable, CardModals, ActiveEffects, CrucibleDetail, CrucibleCodex }
+        enum ActiveOverlay { None, CardTable, CardModals, ActiveEffects, CrucibleDetail, CrucibleCodex, ProtectiveWards }
         ActiveOverlay _active = ActiveOverlay.None;
         bool _reopenCardTableAfterInspect;
         int _cardTableFocusPlayerId = -1;
@@ -50,13 +52,15 @@ namespace Kismeta.UI
             VisualTreeAsset cardModals,
             VisualTreeAsset? activeEffects = null,
             VisualTreeAsset? crucibleCardDetail = null,
-            VisualTreeAsset? crucibleCodexReference = null)
+            VisualTreeAsset? crucibleCodexReference = null,
+            VisualTreeAsset? placeWards = null)
         {
             _cardTable = cardTable;
             _cardModals = cardModals;
             _activeEffects = activeEffects;
             _crucibleCardDetail = crucibleCardDetail;
             _crucibleCodexReference = crucibleCodexReference;
+            _placeWards = placeWards;
             EnsureControllers();
         }
 
@@ -68,6 +72,7 @@ namespace Kismeta.UI
             _activeEffectsCtrl ??= GetComponent<ActiveEffectsController>();
             _crucibleDetail ??= GetComponent<CrucibleCardDetailController>();
             _crucibleCodexCtrl ??= GetComponent<CrucibleCodexReferenceController>();
+            _protectiveWardsCtrl ??= GetComponent<PlaceWardsController>();
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -108,6 +113,19 @@ namespace Kismeta.UI
 
             _reopenCardTableAfterInspect = false;
             ShowOverlay(_crucibleCodexReference, _crucibleCodexCtrl, WireCrucibleCodex, ActiveOverlay.CrucibleCodex);
+        }
+
+        public void ShowProtectiveWards()
+        {
+            EnsureControllers();
+            if (_placeWards == null)
+            {
+                Debug.LogWarning("[EndOverlayHost] PlaceWards UXML not assigned — run Kismeta → UI → Wire Bootstrap UI References.");
+                return;
+            }
+
+            _reopenCardTableAfterInspect = false;
+            ShowOverlay(_placeWards, _protectiveWardsCtrl, WireProtectiveWards, ActiveOverlay.ProtectiveWards);
         }
 
         public void ShowCardTable(int focusPlayerId = -1)
@@ -249,6 +267,7 @@ namespace Kismeta.UI
             _activeEffectsCtrl?.Detach();
             _crucibleDetail?.Detach();
             _crucibleCodexCtrl?.Detach();
+            _protectiveWardsCtrl?.Detach();
             _layout?.DismissOverlay();
         }
 
@@ -306,6 +325,10 @@ namespace Kismeta.UI
             {
                 _crucibleCodexCtrl?.BindState(_session, _loop, _bridge!);
             }
+            else if (_active == ActiveOverlay.ProtectiveWards)
+            {
+                _protectiveWardsCtrl?.BindState(_session, _loop, _bridge!);
+            }
         }
 
         void WireActiveEffects()
@@ -343,6 +366,13 @@ namespace Kismeta.UI
         {
             if (_crucibleCodexCtrl == null) return;
             _crucibleCodexCtrl.OnClose = Dismiss;
+        }
+
+        void WireProtectiveWards()
+        {
+            if (_protectiveWardsCtrl == null) return;
+            _protectiveWardsCtrl.OnBack = Dismiss;
+            _protectiveWardsCtrl.OnCompleted = RefreshOpenOverlay;
         }
 
         void OnModalDone()

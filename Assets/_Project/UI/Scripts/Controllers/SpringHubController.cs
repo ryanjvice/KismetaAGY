@@ -22,6 +22,7 @@ namespace Kismeta.UI.Controllers
         public System.Action? OnOpenCardTable;
         public System.Action? OnOpenActiveEffects;
         public System.Action? OnOpenCrucibleCodex;
+        public System.Action? OnOpenProtectiveWards;
         public System.Action<string>? OnInspectCard;
         public System.Action<int>? OnRivalSelected;
         public System.Action? OnBuildHouse;
@@ -85,7 +86,8 @@ namespace Kismeta.UI.Controllers
                 OnArcanumToggle = OnArcanumToggle,
                 OnOpenCardTable = () => OnOpenCardTable?.Invoke(),
                 OnOpenActiveEffects = () => OnOpenActiveEffects?.Invoke(),
-                OnOpenCrucibleCodex = () => OnOpenCrucibleCodex?.Invoke()
+                OnOpenCrucibleCodex = () => OnOpenCrucibleCodex?.Invoke(),
+                OnOpenProtectiveWards = () => OnOpenProtectiveWards?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
             CentralPanelInspectBindings.Wire(Root, () => OnOpenBoardInspect?.Invoke());

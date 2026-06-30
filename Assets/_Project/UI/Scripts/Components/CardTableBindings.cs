@@ -165,10 +165,24 @@ namespace Kismeta.UI.Components
                         var inst = session.GetCard(cardId);
                         var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
                         if (def == null) continue;
-                        arcRow.Add(CardChipFactory.CreateForArcanum(
+
+                        var chipRow = new VisualElement();
+                        chipRow.style.flexDirection = FlexDirection.Row;
+                        chipRow.style.alignItems = Align.Center;
+
+                        chipRow.Add(CardChipFactory.CreateForArcanum(
                             def,
                             instanceId: cardId,
                             onInspect: onInspect));
+
+                        if (def.MajorArcanaType == MajorArcanaType.Adept
+                            && p.AdeptWardCounts.TryGetValue(cardId, out var adeptWards)
+                            && adeptWards > 0)
+                        {
+                            chipRow.Add(MakeWardBadge(adeptWards));
+                        }
+
+                        arcRow.Add(chipRow);
                     }
                     block.Add(arcRow);
                 }

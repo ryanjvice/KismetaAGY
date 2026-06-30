@@ -228,6 +228,8 @@ namespace Kismeta.Core.Rules
                 if (!player.Arcanum.Remove(swapOutAdeptId))
                     return CommandResult.Invalid($"SwapOut card {swapOutAdeptId} not in Arcanum.");
 
+                WardRefundHelper.RefundAdeptWards(player, swapOutAdeptId);
+
                 var outInst = session.GetCard(swapOutAdeptId);
                 outInst?.MoveTo(CardZone.Deck, -1);
                 // Shuffle back into deck rather than discard (swap rule)

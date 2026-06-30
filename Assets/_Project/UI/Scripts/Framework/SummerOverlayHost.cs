@@ -153,6 +153,13 @@ namespace Kismeta.UI
 
         public void ShowPlaceWards()
         {
+            var endHost = GetComponent<EndOverlayHost>();
+            if (endHost != null)
+            {
+                endHost.ShowProtectiveWards();
+                return;
+            }
+
             if (!ShowModal(_placeWards, _wards, ActiveOverlay.PlaceWards)) return;
             WireWards();
             RefreshOpenOverlay();

@@ -254,6 +254,7 @@ namespace Kismeta.Core.Rules
                 }
                 else
                 {
+                    WardRefundHelper.RefundAdeptWards(attacker, offeredCardId);
                     attacker.Arcanum.Remove(offeredCardId);
                     session.Board.CommonDiscard.Add(offeredCardId);
                     session.GetCard(offeredCardId)?.MoveTo(CardZone.Discard, -1);
