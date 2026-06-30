@@ -14,7 +14,7 @@
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
 
-            <engine:VisualElement class="summer-hub__toolbar narrative-toolbar--no-info">
+            <engine:VisualElement class="summer-hub__toolbar">
                 <engine:VisualElement class="narrative-toolbar">
                     <engine:Button name="info-btn" text="ℹ" class="narrative-toolbar__info-btn" />
                     <engine:Label name="narrative-beat" text="" class="narrative-beat" />

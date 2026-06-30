@@ -42,6 +42,8 @@ namespace Kismeta.UI.Controllers
         public Action? OnOpenForgeInspect;
         public Action? OnDismissForgeInspect;
 
+        public SeasonIntroRecapHost? IntroRecapHost { get; set; }
+
         CommandBridge? _bridge;
         GameSession? _session;
         int _localPlayerId;
@@ -72,12 +74,7 @@ namespace Kismeta.UI.Controllers
             WireBtn("forge-btn", OnForgeClicked);
             WireBtn("stasis-btn", OnStasisClicked);
             WireBtn("pass-btn", OnPassClicked);
-            WireBtn("info-btn", () => SetInfoPopup(true));
-            WireBtn("info-close-btn", () => SetInfoPopup(false));
-
-            var scrim = El("info-scrim");
-            if (scrim != null)
-                scrim.RegisterCallback<ClickEvent>(_ => SetInfoPopup(false));
+            NarrativeToolbarBindings.WireIntroRecap(Root, Season.Autumn, () => IntroRecapHost);
 
             InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
             {
@@ -177,13 +174,6 @@ namespace Kismeta.UI.Controllers
             }
         }
 
-        void SetInfoPopup(bool visible)
-        {
-            var popup = El("autumn-info-popup");
-            if (popup != null)
-                popup.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
-        }
-
         void ApplyCentralView()
         {
             var cauldron = El("autumn-cauldron-stage");
@@ -258,15 +248,6 @@ namespace Kismeta.UI.Controllers
             var stepId = NarrativeStepResolver.ResolveAutumnAction(
                 player.StoneState, _autumnOverlays, _contestOverlays);
             NarrativeSlotBindings.BindById(Root, stepId, mask: NarrativeSlotMask.Beat);
-
-            var infoPopup = El("autumn-info-popup");
-            if (infoPopup != null)
-            {
-                NarrativeSlotBindings.BindById(
-                    infoPopup,
-                    stepId,
-                    mask: NarrativeSlotMask.Stakes | NarrativeSlotMask.Charge);
-            }
 
             RefreshDock();
 

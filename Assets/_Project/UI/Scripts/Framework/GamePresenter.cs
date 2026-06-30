@@ -37,6 +37,7 @@ namespace Kismeta.UI
         private EndOverlayHost? _endOverlays;
         private ExchangeOverlayHost? _exchangeOverlays;
         private WagerOverlayHost? _wagerOverlays;
+        private SeasonIntroRecapHost? _introRecapHost;
         private PlayerHudController? _playerHud;
         private readonly Queue<PlayerExchangeEvent> _exchangeQueue = new();
         private readonly Queue<FatefulWagerResolvedEvent> _wagerResultQueue = new();
@@ -89,6 +90,7 @@ namespace Kismeta.UI
             _endOverlays = GetComponent<EndOverlayHost>();
             _exchangeOverlays = GetComponent<ExchangeOverlayHost>();
             _wagerOverlays = GetComponent<WagerOverlayHost>();
+            _introRecapHost = GetComponent<SeasonIntroRecapHost>();
             _playerHud = GetComponent<PlayerHudController>();
         }
 
@@ -152,6 +154,7 @@ namespace Kismeta.UI
             WireStepScreens();
             WireSummerNavigation();
             WireSeasonHubNavigation();
+            WireIntroRecap();
             WireContestNavigation();
             WireAutumnNavigation();
             WireActionGroupRailRefresh();
@@ -216,10 +219,23 @@ namespace Kismeta.UI
             if (_loop == null || _session == null || !_inGame)
                 return;
 
+            if (_session.IsOver)
+            {
+                _shellReturnScreenId = null;
+                DismissAllOverlays();
+                RouteIfNeeded(ScreenIds.Victory);
+                RefreshActiveScreen();
+                return;
+            }
+
+            if (IsInGameShellPause())
+                return;
+
             var ceremony = _ceremonyGate?.ActiveStep;
             if (ceremony != _lastCeremonyStep)
             {
                 _lastCeremonyStep = ceremony;
+                _introRecapHost?.Dismiss();
                 if (ceremony != null)
                 {
                     var ceremonyTarget = MapCeremonyScreen(ceremony.Value);
@@ -245,14 +261,6 @@ namespace Kismeta.UI
             if (ceremony != null)
             {
                 RouteIfNeeded(MapCeremonyScreen(ceremony.Value));
-                RefreshActiveScreen();
-                return;
-            }
-
-            if (_session.IsOver)
-            {
-                DismissAllOverlays();
-                RouteIfNeeded(ScreenIds.Victory);
                 RefreshActiveScreen();
                 return;
             }
@@ -286,6 +294,8 @@ namespace Kismeta.UI
 
             if (_humanPending || hint != _lastHint || season != _lastSeason)
             {
+                if (season != _lastSeason)
+                    _introRecapHost?.Dismiss();
                 _humanPending = false;
                 _lastHint = hint;
                 _lastSeason = season;
@@ -311,6 +321,7 @@ namespace Kismeta.UI
         {
             if (evt is GameEndedEvent)
             {
+                _shellReturnScreenId = null;
                 DismissAllOverlays();
                 RouteIfNeeded(ScreenIds.Victory);
                 RefreshActiveScreen();
@@ -414,6 +425,9 @@ namespace Kismeta.UI
             }
 
             if (_layout.IsOverlayVisible)
+                return;
+
+            if (IsInGameShellPause())
                 return;
 
             if (ShouldHoldGameplayRouting())
@@ -592,15 +606,21 @@ namespace Kismeta.UI
         private void OpenSettingsFromGame()
         {
             RememberShellReturnScreen();
+            DismissAllOverlays();
             OpenSettings();
             RewireShellBackForGame();
+            _router.GetController<SettingsScreenController>(ScreenIds.Settings)?.Refresh();
+            RefreshPlayerHud();
         }
 
         private void OpenRulesFromGame()
         {
             RememberShellReturnScreen();
+            DismissAllOverlays();
             OpenCodex();
             RewireShellBackForGame();
+            _router.GetController<CodexScreenController>(ScreenIds.Codex)?.Refresh();
+            RefreshPlayerHud();
         }
 
         void RememberShellReturnScreen()
@@ -608,6 +628,9 @@ namespace Kismeta.UI
             if (_inGame && !string.IsNullOrEmpty(_router.CurrentScreenId))
                 _shellReturnScreenId = _router.CurrentScreenId;
         }
+
+        bool IsInGameShellPause() =>
+            _inGame && !string.IsNullOrEmpty(_shellReturnScreenId);
 
         void RewireShellBackForGame()
         {
@@ -695,11 +718,15 @@ namespace Kismeta.UI
         {
             if (_session!.IsOver)
             {
+                _shellReturnScreenId = null;
                 DismissAllOverlays();
                 RouteIfNeeded(ScreenIds.Victory);
                 RefreshActiveScreen();
                 return;
             }
+
+            if (IsInGameShellPause())
+                return;
 
             if (_contestOverlays?.IsContestDuelUiPending == true)
                 return;
@@ -1336,6 +1363,7 @@ namespace Kismeta.UI
             _endOverlays = GetComponent<EndOverlayHost>();
             _exchangeOverlays = GetComponent<ExchangeOverlayHost>();
             _wagerOverlays = GetComponent<WagerOverlayHost>();
+            _introRecapHost = GetComponent<SeasonIntroRecapHost>();
 
             if (_session != null)
             {
@@ -1357,6 +1385,7 @@ namespace Kismeta.UI
             _endOverlays?.Dismiss();
             _exchangeOverlays?.Dismiss();
             _wagerOverlays?.Dismiss();
+            _introRecapHost?.Dismiss();
             _exchangeQueue.Clear();
             _pendingHumanExchangeAcks = 0;
             _exchangeConfirmRequiresAck = false;
@@ -1444,7 +1473,41 @@ namespace Kismeta.UI
             if (screenId == ScreenIds.Victory && _router.CurrentScreenId == ScreenIds.Chronicle)
                 return;
 
+            _introRecapHost?.Dismiss();
             _router.GoTo(screenId);
+        }
+
+        private void WireIntroRecap()
+        {
+            if (_introRecapHost == null)
+                return;
+
+            var springHub = _router.GetController<SpringHubController>(ScreenIds.SpringHub);
+            if (springHub != null) springHub.IntroRecapHost = _introRecapHost;
+
+            var springPassed = _router.GetController<SpringPassedController>(ScreenIds.SpringPassed);
+            if (springPassed != null) springPassed.IntroRecapHost = _introRecapHost;
+
+            var summerMain = _router.GetController<SummerSceneController>(ScreenIds.SummerMain);
+            if (summerMain != null) summerMain.IntroRecapHost = _introRecapHost;
+
+            var summerHub = _router.GetController<SummerHubController>(ScreenIds.SummerHub);
+            if (summerHub != null) summerHub.IntroRecapHost = _introRecapHost;
+
+            var summerPassed = _router.GetController<SummerPassedController>(ScreenIds.SummerPassed);
+            if (summerPassed != null) summerPassed.IntroRecapHost = _introRecapHost;
+
+            var autumnMain = _router.GetController<AutumnSceneController>(ScreenIds.AutumnMain);
+            if (autumnMain != null) autumnMain.IntroRecapHost = _introRecapHost;
+
+            var autumnHub = _router.GetController<AutumnHubController>(ScreenIds.AutumnHub);
+            if (autumnHub != null) autumnHub.IntroRecapHost = _introRecapHost;
+
+            var autumnPassed = _router.GetController<AutumnPassedController>(ScreenIds.AutumnPassed);
+            if (autumnPassed != null) autumnPassed.IntroRecapHost = _introRecapHost;
+
+            var winterHub = _router.GetController<WinterHubController>(ScreenIds.WinterHub);
+            if (winterHub != null) winterHub.IntroRecapHost = _introRecapHost;
         }
 
         private static bool IsWinterHubSubScreen(string? screenId) =>
@@ -1601,7 +1664,8 @@ namespace Kismeta.UI
         static bool ShouldShowPlayerHud(string? screenId) => screenId switch
         {
             ScreenIds.Title or ScreenIds.Join or ScreenIds.Resume or ScreenIds.Codex
-                or ScreenIds.AgekeeperContest or ScreenIds.Victory or ScreenIds.Chronicle => false,
+                or ScreenIds.Settings or ScreenIds.AgekeeperContest or ScreenIds.Victory
+                or ScreenIds.Chronicle => false,
             _ => true
         };
     }

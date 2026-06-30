@@ -29,6 +29,8 @@ namespace Kismeta.UI.Controllers
         public System.Action? OnOpenBoardInspect;
         public System.Action? OnDismissBoardInspect;
 
+        public SeasonIntroRecapHost? IntroRecapHost { get; set; }
+
         readonly List<string> _spreadIds = new();
         readonly List<string> _handIds = new();
 
@@ -53,8 +55,6 @@ namespace Kismeta.UI.Controllers
             UnwireClick(Btn("build-house-btn"), OnBuildHouseClicked);
             UnwireClick(Btn("proceed-btn"), OnProceedToSummer);
             UnwireClick(Btn("commune-lock-btn"), OnCommuneLock);
-            UnwireClick(Btn("info-btn"), OnInfoOpen);
-            UnwireClick(Btn("info-close-btn"), OnInfoClose);
             CentralPanelInspectBindings.Unwire();
             _wheelBindKey = int.MinValue;
             _rolling = false;
@@ -73,12 +73,7 @@ namespace Kismeta.UI.Controllers
             WireClick(Btn("build-house-btn"), OnBuildHouseClicked);
             WireClick(Btn("proceed-btn"), OnProceedToSummer);
             WireClick(Btn("commune-lock-btn"), OnCommuneLock);
-            WireClick(Btn("info-btn"), OnInfoOpen);
-            WireClick(Btn("info-close-btn"), OnInfoClose);
-
-            var scrim = El("info-scrim");
-            if (scrim != null)
-                scrim.RegisterCallback<ClickEvent>(_ => SetInfoPopup(false));
+            NarrativeToolbarBindings.WireIntroRecap(Root, Season.Spring, () => IntroRecapHost);
 
             InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
             {
@@ -135,7 +130,6 @@ namespace Kismeta.UI.Controllers
                 _communeInitialized = false;
                 _communeZonesBuilt = false;
                 _communeSubviewOpen = false;
-                SetInfoPopup(false);
             }
             _localPlayerId = resolvedPlayerId;
             if (Root == null) return;
@@ -146,10 +140,7 @@ namespace Kismeta.UI.Controllers
             bool isWheel = hint is ActionHint.RollZodiac or ActionHint.AcknowledgeSign;
 
             if (!isHub)
-            {
                 _communeSubviewOpen = false;
-                SetInfoPopup(false);
-            }
 
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             HeaderOverlayBindings.RefreshHeader(
@@ -174,10 +165,6 @@ namespace Kismeta.UI.Controllers
 
             var stepId = NarrativeStepResolver.ResolveSpringHub(hint, _communeSubviewOpen);
             NarrativeSlotBindings.BindById(Root, stepId, mask: NarrativeSlotMask.Beat);
-
-            var infoPopup = El("spring-hub-info-popup");
-            if (infoPopup != null)
-                NarrativeSlotBindings.BindById(infoPopup, stepId, mask: NarrativeSlotMask.Stakes);
 
             VisualElement? chargeRoot = _communeSubviewOpen ? El("commune-stage")
                 : isHub ? El("hub-stage")
@@ -394,19 +381,7 @@ namespace Kismeta.UI.Controllers
             {
                 _communeSubviewOpen = false;
                 _communeInitialized = false;
-                SetInfoPopup(false);
             }
-        }
-
-        void OnInfoOpen() => SetInfoPopup(true);
-
-        void OnInfoClose() => SetInfoPopup(false);
-
-        void SetInfoPopup(bool visible)
-        {
-            var popup = El("spring-hub-info-popup");
-            if (popup != null)
-                popup.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         const float RollSpinSec = 2f;

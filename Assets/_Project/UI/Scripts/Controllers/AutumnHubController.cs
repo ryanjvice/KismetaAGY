@@ -22,6 +22,8 @@ namespace Kismeta.UI.Controllers
         public Action? OnOpenForgeInspect;
         public Action? OnDismissForgeInspect;
 
+        public SeasonIntroRecapHost? IntroRecapHost { get; set; }
+
         GameSession? _session;
         int _localPlayerId;
         DockZone _dockZone = DockZone.Spread;
@@ -45,6 +47,7 @@ namespace Kismeta.UI.Controllers
             });
             HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
             CentralPanelInspectBindings.Wire(Root, () => OnOpenForgeInspect?.Invoke());
+            NarrativeToolbarBindings.WireIntroRecap(Root, Season.Autumn, () => IntroRecapHost);
         }
 
         void OnHandToggle()

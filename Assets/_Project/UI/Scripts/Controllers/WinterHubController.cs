@@ -22,6 +22,8 @@ namespace Kismeta.UI.Controllers
         public System.Action<string>? OnInspectCard;
         public System.Action<int>? OnRivalSelected;
 
+        public SeasonIntroRecapHost? IntroRecapHost { get; set; }
+
         CommandBridge? _bridge;
         GameSession? _session;
         int _localPlayerId;
@@ -39,6 +41,7 @@ namespace Kismeta.UI.Controllers
             Btn("craft-btn")!.clicked += () => OnOpenCraft?.Invoke();
             Btn("wager-btn")!.clicked += () => OnOpenWager?.Invoke();
             Btn("pass-btn")!.clicked += OnPass;
+            NarrativeToolbarBindings.WireIntroRecap(Root, Season.Winter, () => IntroRecapHost);
             InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
             {
                 OnHandToggle = OnHandToggle,

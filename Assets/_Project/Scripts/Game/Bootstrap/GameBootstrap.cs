@@ -217,6 +217,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<CardLimitsController>();
             EnsureController<SummerOverlayHost>();
             EnsureController<SpringOverlayHost>();
+            EnsureController<SeasonIntroRecapHost>();
             EnsureController<SummerSheetsController>();
             EnsureController<CraftReagentController>();
             EnsureController<ActivateCardController>();
@@ -260,6 +261,9 @@ namespace Kismeta.Game.Bootstrap
 
             var springOverlays = GetComponent<SpringOverlayHost>();
             springOverlays?.Configure(_buildHouse, _boardInspect);
+
+            var introRecap = GetComponent<SeasonIntroRecapHost>();
+            introRecap?.Configure(_springIntro, _summerIntro, _autumnIntro, _winterIntro);
 
             var contestOverlays = GetComponent<ContestOverlayHost>();
             contestOverlays?.Configure(_trade, _duel, _gambit, _opposition, _contestResponse);

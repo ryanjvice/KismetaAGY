@@ -20,6 +20,8 @@ namespace Kismeta.UI.Controllers
         public Action<string>? OnInspectCard;
         public Action<int>? OnRivalSelected;
 
+        public SeasonIntroRecapHost? IntroRecapHost { get; set; }
+
         GameSession? _session;
         int _localPlayerId;
         DockZone _dockZone = DockZone.Spread;
@@ -43,6 +45,7 @@ namespace Kismeta.UI.Controllers
                 OnOpenProtectiveWards = () => OnOpenProtectiveWards?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
+            NarrativeToolbarBindings.WireIntroRecap(Root, Season.Spring, () => IntroRecapHost);
         }
 
         void OnHandToggle()

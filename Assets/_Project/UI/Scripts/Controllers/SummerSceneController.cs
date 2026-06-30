@@ -1,4 +1,5 @@
 using System;
+using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI;
@@ -27,6 +28,8 @@ namespace Kismeta.UI.Controllers
         public Action<string>? OnInspectCard;
         public Action<int>? OnRivalSelected;
 
+        public SeasonIntroRecapHost? IntroRecapHost { get; set; }
+
         CommandBridge? _bridge;
         GameSession? _session;
         int _localPlayerId;
@@ -52,12 +55,7 @@ namespace Kismeta.UI.Controllers
             WireBtn("gambit-btn", () => OnGambit?.Invoke());
             WireBtn("opposition-btn", () => OnOpposition?.Invoke());
             WireBtn("pass-btn", () => OnPass?.Invoke());
-            WireBtn("info-btn", () => SetInfoPopup(true));
-            WireBtn("info-close-btn", () => SetInfoPopup(false));
-
-            var scrim = El("info-scrim");
-            if (scrim != null)
-                scrim.RegisterCallback<ClickEvent>(_ => SetInfoPopup(false));
+            NarrativeToolbarBindings.WireIntroRecap(Root, Season.Summer, () => IntroRecapHost);
 
             InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
             {
@@ -127,23 +125,7 @@ namespace Kismeta.UI.Controllers
             var stepId = NarrativeStepResolver.ResolveSummerAction(_summerOverlays, _contestOverlays);
             NarrativeSlotBindings.BindById(Root, stepId, mask: NarrativeSlotMask.Beat);
 
-            var infoPopup = El("summer-info-popup");
-            if (infoPopup != null)
-            {
-                NarrativeSlotBindings.BindById(
-                    infoPopup,
-                    stepId,
-                    mask: NarrativeSlotMask.Stakes | NarrativeSlotMask.Charge);
-            }
-
             HeaderOverlayBindings.ApplyHeaderPad(Root);
-        }
-
-        void SetInfoPopup(bool visible)
-        {
-            var popup = El("summer-info-popup");
-            if (popup != null)
-                popup.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         void RefreshRoster()
