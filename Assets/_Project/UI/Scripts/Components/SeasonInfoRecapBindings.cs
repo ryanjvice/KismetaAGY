@@ -11,11 +11,16 @@ namespace Kismeta.UI.Components
         public const string TabOverview = "overview";
         public const string TabFocus = "focus";
         public const string PrimaryActionBtnName = "primary-action-btn";
+        public const string HubRecapNoteName = "hub-recap-note";
+
+        static readonly string HubRecapNoteText =
+            $"Need a refresher later? On any season screen, tap {SymbolGlyphs.SeasonRecapGlyph} on the story toolbar to reopen this guide.";
 
         sealed class IntroRecapState
         {
             public bool TabsWired;
             public bool ContentPopulated;
+            public bool ShowHubRecapNote;
             public string ActiveTab = TabOverview;
         }
 
@@ -74,11 +79,13 @@ namespace Kismeta.UI.Components
 
             var sheet = ResolveSheetRoot(root);
             sheet.EnableInClassList("season-info-recap--ceremony", true);
+            GetState(sheet).ShowHubRecapNote = true;
 
             var state = GetState(sheet);
             if (state.ContentPopulated)
             {
                 ApplyPrimaryAction(sheet, ResolveCeremonyPrimaryLabel(season));
+                RefreshHubRecapNote(sheet);
                 return;
             }
 
@@ -97,9 +104,31 @@ namespace Kismeta.UI.Components
 
             var sheet = ResolveSheetRoot(root);
             sheet.EnableInClassList("season-info-recap--ceremony", false);
-            GetState(sheet).ContentPopulated = false;
+            var state = GetState(sheet);
+            state.ContentPopulated = false;
+            state.ShowHubRecapNote = false;
             Populate(sheet, season, overviewAsset, onTabChanged, resetTabToOverview: true);
             ApplyPrimaryAction(sheet, "Close");
+        }
+
+        static void RefreshHubRecapNote(VisualElement sheet)
+        {
+            var note = sheet.Q<Label>(HubRecapNoteName);
+            if (note == null)
+                return;
+
+            var state = GetState(sheet);
+            bool visible = state.ShowHubRecapNote && state.ActiveTab == TabOverview;
+            if (visible)
+            {
+                note.text = HubRecapNoteText;
+                note.style.display = DisplayStyle.Flex;
+            }
+            else
+            {
+                note.text = string.Empty;
+                note.style.display = DisplayStyle.None;
+            }
         }
 
         public static void ApplyPrimaryAction(VisualElement root, string label)
@@ -162,6 +191,7 @@ namespace Kismeta.UI.Components
             if (focusPane != null)
                 focusPane.EnableInClassList("season-info-recap__pane--hidden", overview);
 
+            RefreshHubRecapNote(sheet);
             onTabChanged?.Invoke();
         }
 

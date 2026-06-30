@@ -155,7 +155,44 @@ namespace Kismeta.UI.Tests
             SeasonInfoRecapBindings.PopulateCeremony(root, Season.Spring, overview);
 
             Assert.AreSame(overviewChild, host.ElementAt(0));
-            Assert.IsTrue(root.Q<Button>("tab-focus")!.ClassListContains("codex-tab--active"));
+            Assert.IsTrue(root.Q<VisualElement>("tab-focus")!.ClassListContains("codex-tab--active"));
+        }
+
+        [Test]
+        public void PopulateCeremony_ShowsHubRecapNote()
+        {
+            var root = InstantiateRecapShell();
+            SeasonInfoRecapBindings.PopulateCeremony(root, Season.Spring, overviewAsset: null);
+
+            var note = root.Q<Label>(SeasonInfoRecapBindings.HubRecapNoteName);
+            Assert.IsNotNull(note);
+            Assert.AreEqual(DisplayStyle.Flex, note!.style.display);
+            StringAssert.Contains(SymbolGlyphs.SeasonRecapGlyph, note.text);
+        }
+
+        [Test]
+        public void PopulateRecap_HidesHubRecapNote()
+        {
+            var root = InstantiateRecapShell();
+            SeasonInfoRecapBindings.PopulateCeremony(root, Season.Summer, overviewAsset: null);
+            SeasonInfoRecapBindings.PopulateRecap(root, Season.Summer, overviewAsset: null);
+
+            var note = root.Q<Label>(SeasonInfoRecapBindings.HubRecapNoteName);
+            Assert.IsNotNull(note);
+            Assert.AreEqual(DisplayStyle.None, note!.style.display);
+        }
+
+        [Test]
+        public void SelectTab_Focus_HidesHubRecapNoteOnCeremony()
+        {
+            var root = InstantiateRecapShell();
+            SeasonInfoRecapBindings.PopulateCeremony(root, Season.Spring, overviewAsset: null);
+
+            SeasonInfoRecapBindings.SelectTab(root, SeasonInfoRecapBindings.TabFocus);
+
+            var note = root.Q<Label>(SeasonInfoRecapBindings.HubRecapNoteName);
+            Assert.IsNotNull(note);
+            Assert.AreEqual(DisplayStyle.None, note!.style.display);
         }
 
         static VisualElement InstantiateRecapShell()

@@ -48,6 +48,10 @@
             </engine:VisualElement>
         </engine:ScrollView>
 
+        <engine:Label name="hub-recap-note"
+                      text=""
+                      class="season-info-recap__season-note" />
+
         <engine:VisualElement class="menu-screen__footer">
             <engine:Button name="primary-action-btn" text="Close" class="btn btn--primary menu-screen__cta" />
         </engine:VisualElement>

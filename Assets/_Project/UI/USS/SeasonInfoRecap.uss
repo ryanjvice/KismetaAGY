@@ -144,10 +144,13 @@
 }
 
 .season-info-recap__season-note {
+    flex-shrink: 0;
     font-size: var(--font-label);
     color: var(--muted);
-    margin-bottom: 6px;
+    margin: 0 16px 8px;
+    padding: 0 4px;
     white-space: normal;
+    -unity-text-align: middle-center;
 }
 
 .season-info-recap__step-list {
