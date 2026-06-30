@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:VisualElement class="narrative-toolbar">
+        <engine:Button name="info-btn" text="ℹ" class="narrative-toolbar__info-btn" />
+        <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+        <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+    </engine:VisualElement>
+</engine:UXML>

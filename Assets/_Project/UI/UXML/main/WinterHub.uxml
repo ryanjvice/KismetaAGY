@@ -14,6 +14,15 @@
 
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
+
+            <engine:VisualElement class="winter-hub__toolbar narrative-toolbar--no-info">
+                <engine:VisualElement class="narrative-toolbar">
+                    <engine:Button name="info-btn" text="ℹ" class="narrative-toolbar__info-btn" />
+                    <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+                    <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
             <engine:VisualElement class="central-panel">
             <engine:VisualElement name="winter-stage" class="stage winter-hub__stage">
                 <engine:VisualElement class="winter-hub__narrative" style="width: 100%; padding: 0 14px 8px;">

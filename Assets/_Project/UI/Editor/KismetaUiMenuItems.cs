@@ -18,6 +18,7 @@ namespace Kismeta.UI.Editor
         private const string AppShellPath = "Assets/_Project/UI/UXML/shell/AppShell.uxml";
         private const string TitleScreenPath = "Assets/_Project/UI/UXML/batch1/TitleScreen.uxml";
         private const string SetupSheetPath = "Assets/_Project/UI/UXML/batch1/SetupSheet.uxml";
+        private const string MainMenuSheetPath = "Assets/_Project/UI/UXML/batch1/MainMenuSheet.uxml";
         private const string JoinScreenPath = "Assets/_Project/UI/UXML/batch1/JoinScreen.uxml";
         private const string ResumeScreenPath = "Assets/_Project/UI/UXML/batch1/ResumeScreen.uxml";
         private const string CodexScreenPath = "Assets/_Project/UI/UXML/batch1/CodexScreen.uxml";
@@ -267,6 +268,7 @@ namespace Kismeta.UI.Editor
             var title = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TitleScreenPath);
             var waiting = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(WaitingHudPath);
             var setup = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SetupSheetPath);
+            var mainMenuSheet = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuSheetPath);
             var join = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(JoinScreenPath);
             var resume = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ResumeScreenPath);
             var codex = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CodexScreenPath);
@@ -325,6 +327,7 @@ namespace Kismeta.UI.Editor
             so.FindProperty("_titleScreen").objectReferenceValue = title;
             so.FindProperty("_waitingHud").objectReferenceValue = waiting;
             so.FindProperty("_setupSheet").objectReferenceValue = setup;
+            so.FindProperty("_mainMenuSheet").objectReferenceValue = mainMenuSheet;
             so.FindProperty("_joinScreen").objectReferenceValue = join;
             so.FindProperty("_resumeScreen").objectReferenceValue = resume;
             so.FindProperty("_codexScreen").objectReferenceValue = codex;

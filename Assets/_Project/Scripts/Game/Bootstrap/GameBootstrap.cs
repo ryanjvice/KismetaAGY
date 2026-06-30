@@ -48,6 +48,7 @@ namespace Kismeta.Game.Bootstrap
         [SerializeField] private VisualTreeAsset _waitingHud;
         [SerializeField] private VisualTreeAsset _playerHud;
         [SerializeField] private VisualTreeAsset _setupSheet;
+        [SerializeField] private VisualTreeAsset _mainMenuSheet;
         [SerializeField] private VisualTreeAsset _joinScreen;
         [SerializeField] private VisualTreeAsset _resumeScreen;
         [SerializeField] private VisualTreeAsset _codexScreen;
@@ -134,6 +135,7 @@ namespace Kismeta.Game.Bootstrap
                     EnsureProductionUi();
                     _presenter!.SetupBeginRequested += OnSetupBegin;
                     _presenter.NewGameRequested += RequestNewGame;
+                    _presenter.ReturnToMainMenuRequested += ReturnToMainMenu;
                 }
                 else
                 {
@@ -159,6 +161,7 @@ namespace Kismeta.Game.Bootstrap
             {
                 _presenter.SetupBeginRequested -= OnSetupBegin;
                 _presenter.NewGameRequested -= RequestNewGame;
+                _presenter.ReturnToMainMenuRequested -= ReturnToMainMenu;
             }
             _cts.Cancel();
             _cts.Dispose();
@@ -284,6 +287,14 @@ namespace Kismeta.Game.Bootstrap
                     return;
                 }
 
+#if UNITY_EDITOR
+                if (_mainMenuSheet == null)
+                {
+                    _mainMenuSheet = UnityEditor.AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                        "Assets/_Project/UI/UXML/batch1/MainMenuSheet.uxml");
+                }
+#endif
+
                 router.ConfigureScreens(
                     _titleScreen, null, _waitingHud, _setupSheet,
                     _joinScreen, _resumeScreen, _codexScreen, _settingsScreen, _agekeeperContest,
@@ -291,7 +302,8 @@ namespace Kismeta.Game.Bootstrap
                     _roundOpen, _springIntro, _summerIntro,
                     _autumnIntro, _winterIntro, _ageClosing,
                     _springHarvest, _winterUnlock, _fatefulWager, _craftReagent, _cardLimits,
-                    _victory, _chronicle);
+                    _victory, _chronicle, _mainMenuSheet);
+                router.ConfigureMainMenuSheet(_mainMenuSheet);
                 layout.RunWhenReady(ShowTitleScreen);
             }
             else
@@ -359,6 +371,31 @@ namespace Kismeta.Game.Bootstrap
 #endif
 
             _presenter?.ShowNewGameSetup();
+        }
+
+        public void ReturnToMainMenu()
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+            _cts = new CancellationTokenSource();
+
+            _chronicleTracker?.Detach(_session);
+            _chronicleTracker?.Reset();
+            _presenter?.Unbind();
+
+            _session = null;
+            _loop = null;
+            _loopStarted = false;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (_ui != null)
+            {
+                Destroy(_ui);
+                _ui = null;
+            }
+#endif
+
+            _presenter?.ReturnToTitle();
         }
 
         private void BuildSession(int totalPlayers, int humanPlayers, GameMode mode,

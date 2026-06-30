@@ -214,6 +214,7 @@ MonoBehaviour:
   _waitingHud: {fileID: 9197481963319205126, guid: 23c9356e19d8a3343a869197fd22074c, type: 3}
   _playerHud: {fileID: 9197481963319205126, guid: 08f3468a0c4dd6744923c105139055aa, type: 3}
   _setupSheet: {fileID: 9197481963319205126, guid: f349b93fc3fde7647b0c740e772f9ca7, type: 3}
+  _mainMenuSheet: {fileID: 9197481963319205126, guid: a7c3e8914f2b4d6e9a1c0f3b5d8e2a4c, type: 3}
   _joinScreen: {fileID: 9197481963319205126, guid: 519a817f310314b48bb262c3b086169d, type: 3}
   _resumeScreen: {fileID: 9197481963319205126, guid: 26748abde5aa099428c318a8600db94a, type: 3}
   _codexScreen: {fileID: 9197481963319205126, guid: ca63949183879644ca18fdf0e1a01d7b, type: 3}
@@ -263,6 +264,7 @@ MonoBehaviour:
   _cardTable: {fileID: 9197481963319205126, guid: dc045ae4584348141b267b1653788577, type: 3}
   _cardModals: {fileID: 9197481963319205126, guid: ac54c31e214722e4b873b14f637bd5d9, type: 3}
   _activeEffects: {fileID: 9197481963319205126, guid: 58d44350f061a48418834e6e3779734c, type: 3}
+  _crucibleCodexReference: {fileID: 9197481963319205126, guid: 55e4183efc08b044aae401525bf0b655, type: 3}
   _resourceExchange: {fileID: 9197481963319205126, guid: 6301d3b5a3f8bc04da5068f5dd426942, type: 3}
 --- !u!4 &1085875160
 Transform:
@@ -999,6 +1001,7 @@ MonoBehaviour:
   - Id: Chronicle
     Uxml: {fileID: 9197481963319205126, guid: 624d806ec598422479bc052ccc17e80f, type: 3}
   _setupSheet: {fileID: 9197481963319205126, guid: f349b93fc3fde7647b0c740e772f9ca7, type: 3}
+  _mainMenuSheet: {fileID: 9197481963319205126, guid: a7c3e8914f2b4d6e9a1c0f3b5d8e2a4c, type: 3}
 --- !u!114 &1085875215
 MonoBehaviour:
   m_ObjectHideFlags: 0

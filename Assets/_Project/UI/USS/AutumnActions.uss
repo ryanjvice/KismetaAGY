@@ -186,42 +186,27 @@
     color: var(--autumn-accent);
 }
 
-/* ---------- Autumn main / hub: narrative toolbar ---------- */
+/* ---------- Autumn main / hub: narrative toolbar (shared layout in Kismeta.uss) ---------- */
 .autumn-main__toolbar,
 .autumn-hub__toolbar {
-    flex-direction: row;
-    align-items: center;
     flex-shrink: 0;
+    flex-direction: column;
+    align-items: stretch;
     padding: 0 var(--space-md);
     margin: 2px var(--space-md) 0;
     min-height: 28px;
 }
 
+.autumn-main__toolbar .narrative-toolbar,
+.autumn-hub__toolbar .narrative-toolbar {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
 .autumn-main__toolbar--hidden,
 .autumn-hub__toolbar--hidden {
     display: none;
-}
-
-.autumn-main__toolbar .table-fab,
-.autumn-main__toolbar .effects-fab,
-.autumn-hub__toolbar .table-fab,
-.autumn-hub__toolbar .effects-fab {
-    position: relative;
-    top: auto;
-    right: auto;
-    flex-shrink: 0;
-}
-
-.autumn-hub__toolbar {
-    justify-content: space-between;
-}
-
-.autumn-main__toolbar .narrative-beat {
-    flex-grow: 1;
-    flex-shrink: 1;
-    -unity-text-align: middle-center;
-    margin: 0 var(--space-sm);
-    margin-bottom: 0;
 }
 
 .autumn-main__actionbar {
@@ -564,23 +549,6 @@
 .cauldron-mini__reagent--swords {
     right: 14%;
     bottom: 14%;
-}
-
-/* Info button (replaces the always-visible stakes block) */
-.autumn-info-btn {
-    min-width: 28px;
-    min-height: 28px;
-    border-width: 0;
-    border-radius: 0;
-    background-color: rgba(0, 0, 0, 0);
-    color: rgb(184, 154, 110);
-    font-size: 18px;
-    padding: 0 4px;
-    flex-shrink: 0;
-}
-
-.autumn-info-btn:hover {
-    color: rgb(232, 185, 74);
 }
 
 .screen--yielded .forge-panel {

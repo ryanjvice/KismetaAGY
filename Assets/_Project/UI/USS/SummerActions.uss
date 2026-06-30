@@ -478,42 +478,27 @@
 .fslot-fill--green { background-color: rgb(43,106,74); }
 .fslot-fill--yellow { background-color: rgb(184,148,31); }
 
-/* ---------- Summer main / hub: narrative toolbar ---------- */
+/* ---------- Summer main / hub: narrative toolbar (shared layout in Kismeta.uss) ---------- */
 .summer-main__toolbar,
 .summer-hub__toolbar {
-    flex-direction: row;
-    align-items: center;
     flex-shrink: 0;
+    flex-direction: column;
+    align-items: stretch;
     padding: 0 var(--space-md);
     margin: 0 var(--space-md) 0;
     min-height: 26px;
 }
 
+.summer-main__toolbar .narrative-toolbar,
+.summer-hub__toolbar .narrative-toolbar {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
 .summer-main__toolbar--hidden,
 .summer-hub__toolbar--hidden {
     display: none;
-}
-
-.summer-main__toolbar .table-fab,
-.summer-main__toolbar .effects-fab,
-.summer-hub__toolbar .table-fab,
-.summer-hub__toolbar .effects-fab {
-    position: relative;
-    top: auto;
-    right: auto;
-    flex-shrink: 0;
-}
-
-.summer-hub__toolbar {
-    justify-content: space-between;
-}
-
-.summer-main__toolbar .narrative-beat {
-    flex-grow: 1;
-    flex-shrink: 1;
-    -unity-text-align: middle-center;
-    margin: 0 var(--space-sm);
-    margin-bottom: 0;
 }
 
 .summer-main__actionbar {
@@ -537,22 +522,6 @@
     padding-top: 0;
     padding-bottom: 0;
     margin-top: 0;
-}
-
-.summer-info-btn {
-    min-width: 28px;
-    min-height: 28px;
-    border-width: 0;
-    border-radius: 0;
-    background-color: rgba(0, 0, 0, 0);
-    color: rgb(184, 154, 110);
-    font-size: 18px;
-    padding: 0 4px;
-    flex-shrink: 0;
-}
-
-.summer-info-btn:hover {
-    color: rgb(232, 185, 74);
 }
 
 .summer-main__charge {

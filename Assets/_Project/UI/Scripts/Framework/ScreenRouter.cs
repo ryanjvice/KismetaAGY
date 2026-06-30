@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Kismeta.UI.Controllers;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -21,6 +22,7 @@ namespace Kismeta.UI
 
         [SerializeField] private ScreenAsset[] _screens;
         [SerializeField] private VisualTreeAsset _setupSheet;
+        [SerializeField] private VisualTreeAsset _mainMenuSheet;
 
         private ViewportLayout _layout;
         private readonly Dictionary<string, VisualTreeAsset> _assets = new();
@@ -95,7 +97,8 @@ namespace Kismeta.UI
             VisualTreeAsset? craftReagent = null,
             VisualTreeAsset? cardLimits = null,
             VisualTreeAsset? victory = null,
-            VisualTreeAsset? chronicle = null)
+            VisualTreeAsset? chronicle = null,
+            VisualTreeAsset? mainMenuSheet = null)
         {
             var screens = new List<ScreenAsset>
             {
@@ -161,8 +164,16 @@ namespace Kismeta.UI
 
             _screens = screens.ToArray();
             _setupSheet = setupSheet;
+            if (mainMenuSheet != null)
+                _mainMenuSheet = mainMenuSheet;
             RebuildRegistry();
             RefreshControllers();
+        }
+
+        public void ConfigureMainMenuSheet(VisualTreeAsset mainMenuSheet)
+        {
+            if (mainMenuSheet != null)
+                _mainMenuSheet = mainMenuSheet;
         }
 
         private void RebuildRegistry()
@@ -247,6 +258,46 @@ namespace Kismeta.UI
                 if (close != null) close.clicked -= HandleClose;
                 if (begin != null) begin.clicked -= HandleBegin;
             }
+        }
+
+        const string MainMenuSheetPath = "Assets/_Project/UI/UXML/batch1/MainMenuSheet.uxml";
+
+        public void ShowMainMenuSheet(Action<MainMenuSheetController>? onOpened = null)
+        {
+            if (_mainMenuSheet == null)
+                _mainMenuSheet = TryLoadMainMenuSheet();
+
+            if (_mainMenuSheet == null)
+            {
+                Debug.LogWarning("[ScreenRouter] Main menu sheet UXML not assigned.");
+                return;
+            }
+
+            _layout.ShowBottomSheet(_mainMenuSheet, ViewportLayout.SheetVerticalAlign.Center);
+
+            var sheetRoot = _layout.Root?.Q<VisualElement>("main-menu-sheet");
+            if (sheetRoot == null) return;
+
+            var controller = new MainMenuSheetController();
+            controller.Attach(sheetRoot);
+
+            void DismissAndDetach()
+            {
+                controller.Detach();
+                _layout.DismissOverlay();
+            }
+
+            controller.OnClose = DismissAndDetach;
+            onOpened?.Invoke(controller);
+        }
+
+        static VisualTreeAsset? TryLoadMainMenuSheet()
+        {
+#if UNITY_EDITOR
+            return UnityEditor.AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuSheetPath);
+#else
+            return null;
+#endif
         }
 
         public void DismissOverlay() => _layout.DismissOverlay();

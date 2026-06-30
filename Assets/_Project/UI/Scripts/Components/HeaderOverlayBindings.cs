@@ -18,11 +18,16 @@ namespace Kismeta.UI.Components
         static bool s_expanded;
         static Action<int>? s_onRivalSelected;
         static Action<int>? s_globalRivalHandler;
+        static Action? s_globalMainMenuHandler;
         static readonly HashSet<VisualElement> s_geometryWired = new();
         static readonly HashSet<VisualElement> s_rivalClickWired = new();
+        static readonly HashSet<Button> s_mainMenuWired = new();
 
         /// <summary>Game-level rival click handler (e.g. open Card Table). Takes precedence over per-screen Wire callbacks.</summary>
         public static void ConfigureRivalSelection(Action<int>? handler) => s_globalRivalHandler = handler;
+
+        /// <summary>Game-level main menu handler (hamburger sheet).</summary>
+        public static void ConfigureMainMenu(Action? handler) => s_globalMainMenuHandler = handler;
 
         /// <summary>Resolves the rival handler at click time so stale Populate-time delegates cannot no-op.</summary>
         public static void InvokeRivalSelected(int playerId)
@@ -41,6 +46,7 @@ namespace Kismeta.UI.Components
             RivalStripBuilder.ResetCache();
             WireRivalStripClicks(root);
             root.Q<Button>("header-toggle-btn")?.RegisterCallback<ClickEvent>(_ => ToggleExpanded(root));
+            WireMainMenuButton(root);
 
             var overlay = OverlayRoot(root);
             if (overlay != null)
@@ -155,7 +161,6 @@ namespace Kismeta.UI.Components
 
             var contentHost = body.Q(className: "central-panel") ?? body.Q(className: "stage");
             var toolbar = FindNarrativeToolbar(body);
-            var tableFab = root?.Q<Button>("table-fab");
             if (contentHost == null && toolbar == null) return;
 
             if (hidden)
@@ -167,8 +172,6 @@ namespace Kismeta.UI.Components
                 }
                 if (toolbar != null)
                     toolbar.style.marginTop = StyleKeyword.Null;
-                if (tableFab != null)
-                    tableFab.style.top = StyleKeyword.Null;
                 return;
             }
 
@@ -196,9 +199,6 @@ namespace Kismeta.UI.Components
                 }
             }
 
-            if (tableFab != null)
-                tableFab.style.top = StyleKeyword.Null;
-
             if (headerHeight <= 0f)
             {
                 overlay.schedule.Execute(() => ApplyHeaderPad(root)).ExecuteLater(0);
@@ -214,14 +214,28 @@ namespace Kismeta.UI.Components
             ?? body.Q(className: "summer-main__toolbar")
             ?? body.Q(className: "summer-hub__toolbar")
             ?? body.Q(className: "autumn-main__toolbar")
-            ?? body.Q(className: "autumn-hub__toolbar");
+            ?? body.Q(className: "autumn-hub__toolbar")
+            ?? body.Q(className: "winter-hub__toolbar")
+            ?? body.Q(className: "narrative-toolbar");
 
         static bool IsNarrativeToolbarVisible(VisualElement toolbar) =>
-            !toolbar.ClassListContains("spring-hub__toolbar--hidden")
+            !toolbar.ClassListContains("narrative-toolbar--hidden")
+            && !toolbar.ClassListContains("spring-hub__toolbar--hidden")
             && !toolbar.ClassListContains("summer-main__toolbar--hidden")
             && !toolbar.ClassListContains("summer-hub__toolbar--hidden")
             && !toolbar.ClassListContains("autumn-main__toolbar--hidden")
-            && !toolbar.ClassListContains("autumn-hub__toolbar--hidden");
+            && !toolbar.ClassListContains("autumn-hub__toolbar--hidden")
+            && !toolbar.ClassListContains("winter-hub__toolbar--hidden");
+
+        static void WireMainMenuButton(VisualElement root)
+        {
+            var menuBtn = root.Q<Button>("main-menu-btn");
+            if (menuBtn == null || !s_mainMenuWired.Add(menuBtn))
+                return;
+
+            menuBtn.text = SymbolGlyphs.MenuGlyph;
+            menuBtn.RegisterCallback<ClickEvent>(_ => s_globalMainMenuHandler?.Invoke());
+        }
 
         static void WireRivalStripClicks(VisualElement root)
         {

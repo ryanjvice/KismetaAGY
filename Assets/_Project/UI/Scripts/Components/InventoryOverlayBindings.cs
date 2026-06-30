@@ -114,16 +114,18 @@ namespace Kismeta.UI.Components
             var body = root?.Q(className: "screen__body");
             if (body == null) return;
 
-            body.Q(className: "spring-hub__toolbar")
-                ?.EnableInClassList("spring-hub__toolbar--hidden", !visible);
-            body.Q(className: "summer-main__toolbar")
-                ?.EnableInClassList("summer-main__toolbar--hidden", !visible);
-            body.Q(className: "summer-hub__toolbar")
-                ?.EnableInClassList("summer-hub__toolbar--hidden", !visible);
-            body.Q(className: "autumn-main__toolbar")
-                ?.EnableInClassList("autumn-main__toolbar--hidden", !visible);
-            body.Q(className: "autumn-hub__toolbar")
-                ?.EnableInClassList("autumn-hub__toolbar--hidden", !visible);
+            SetToolbarHidden(body, "spring-hub__toolbar", visible);
+            SetToolbarHidden(body, "summer-main__toolbar", visible);
+            SetToolbarHidden(body, "summer-hub__toolbar", visible);
+            SetToolbarHidden(body, "autumn-main__toolbar", visible);
+            SetToolbarHidden(body, "autumn-hub__toolbar", visible);
+            SetToolbarHidden(body, "winter-hub__toolbar", visible);
+        }
+
+        static void SetToolbarHidden(VisualElement body, string className, bool visible)
+        {
+            body.Q(className: className)
+                ?.EnableInClassList($"{className}--hidden", !visible);
         }
 
         static void ApplyInventoryPad(VisualElement? root)

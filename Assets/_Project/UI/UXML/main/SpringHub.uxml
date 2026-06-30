@@ -17,8 +17,11 @@
             <engine:Instance template="GameHeaderOverlay" />
 
             <engine:VisualElement class="spring-hub__toolbar">
-                <engine:Label name="narrative-beat" text="" class="narrative-beat" style="flex-grow: 1;" />
-                <engine:Button name="info-btn" text="ℹ" class="spring-hub-info-btn" />
+                <engine:VisualElement class="narrative-toolbar">
+                    <engine:Button name="info-btn" text="ℹ" class="narrative-toolbar__info-btn" />
+                    <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+                    <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+                </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:VisualElement name="hub-actionbar" class="spring-hub__actionbar spring-hub__actionbar--hidden">

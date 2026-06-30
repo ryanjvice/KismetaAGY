@@ -71,6 +71,9 @@ namespace Kismeta.UI
 
         public event Action<UiSetupConfig>? SetupBeginRequested;
         public event Action? NewGameRequested;
+        public event Action? ReturnToMainMenuRequested;
+
+        private string? _shellReturnScreenId;
 
         /// <summary>Supplied by bootstrap to resolve human vs AI seats before a session exists.</summary>
         public Func<int>? ResolveHumanPlayerCount;
@@ -141,6 +144,7 @@ namespace Kismeta.UI
                 }
                 _endOverlays.ShowCardTable(id);
             });
+            HeaderOverlayBindings.ConfigureMainMenu(OpenMainMenu);
 
             WireTitleScreen();
             WireShellScreens();
@@ -188,6 +192,7 @@ namespace Kismeta.UI
             _wagerResultQueue.Clear();
             _completedWagerResultKeys.Clear();
             HeaderOverlayBindings.ConfigureRivalSelection(null);
+            HeaderOverlayBindings.ConfigureMainMenu(null);
             DismissAllOverlays();
             _playerHud?.Hide();
         }
@@ -558,6 +563,84 @@ namespace Kismeta.UI
 
         private void OpenSettings() => _router.GoTo(ScreenIds.Settings);
 
+        private void OpenMainMenu() => _router.ShowMainMenuSheet(WireMainMenuSheet);
+
+        private void WireMainMenuSheet(MainMenuSheetController sheet)
+        {
+            sheet.OnReturnToMainMenu = () =>
+            {
+                _router.DismissOverlay();
+                ReturnToMainMenuRequested?.Invoke();
+            };
+            sheet.OnSettings = () =>
+            {
+                _router.DismissOverlay();
+                OpenSettingsFromGame();
+            };
+            sheet.OnRules = () =>
+            {
+                _router.DismissOverlay();
+                OpenRulesFromGame();
+            };
+            sheet.OnQuit = () =>
+            {
+                _router.DismissOverlay();
+                QuitGame();
+            };
+        }
+
+        private void OpenSettingsFromGame()
+        {
+            RememberShellReturnScreen();
+            OpenSettings();
+            RewireShellBackForGame();
+        }
+
+        private void OpenRulesFromGame()
+        {
+            RememberShellReturnScreen();
+            OpenCodex();
+            RewireShellBackForGame();
+        }
+
+        void RememberShellReturnScreen()
+        {
+            if (_inGame && !string.IsNullOrEmpty(_router.CurrentScreenId))
+                _shellReturnScreenId = _router.CurrentScreenId;
+        }
+
+        void RewireShellBackForGame()
+        {
+            if (string.IsNullOrEmpty(_shellReturnScreenId))
+                return;
+
+            var returnId = _shellReturnScreenId;
+            var settings = _router.GetController<SettingsScreenController>(ScreenIds.Settings);
+            if (settings != null)
+                settings.OnBack = () => ResumeFromShellScreen(returnId);
+
+            var codex = _router.GetController<CodexScreenController>(ScreenIds.Codex);
+            if (codex != null)
+                codex.OnBack = () => ResumeFromShellScreen(returnId);
+        }
+
+        void ResumeFromShellScreen(string screenId)
+        {
+            _shellReturnScreenId = null;
+            _router.GoTo(screenId);
+            WireShellScreens();
+            RefreshActiveScreen();
+        }
+
+        static void QuitGame()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+
         private void WireAgekeeperContest()
         {
             var contest = _router.GetController<AgekeeperContestController>(ScreenIds.AgekeeperContest);
@@ -600,9 +683,12 @@ namespace Kismeta.UI
         public void ReturnToTitle()
         {
             _inGame = false;
+            _shellReturnScreenId = null;
             _setupSheetState.Detach();
             _playerHud?.Hide();
+            _router.DismissOverlay();
             _router.GoTo(ScreenIds.Title);
+            WireShellScreens();
         }
 
         private void RouteGameplay()
@@ -1025,6 +1111,7 @@ namespace Kismeta.UI
 
         private void TryShowQueuedExchange()
         {
+            ReconcileStaleExchangeAcks();
             if (_session == null || _exchangeOverlays == null || _exchangeQueue.Count == 0)
                 return;
             if (_exchangeOverlays.IsOpen)
@@ -1089,8 +1176,35 @@ namespace Kismeta.UI
             return false;
         }
 
-        bool ShouldHoldGameplayRouting() =>
-            _pendingHumanExchangeAcks > 0 || _exchangeQueue.Count > 0;
+        bool ShouldHoldGameplayRouting()
+        {
+            ReconcileStaleExchangeAcks();
+            if (_exchangeQueue.Count > 0)
+                return true;
+            if (_exchangeOverlays?.IsOpen == true)
+                return true;
+            return _pendingHumanExchangeAcks > 0;
+        }
+
+        /// <summary>
+        /// Exchange events bump <see cref="_pendingHumanExchangeAcks"/> on enqueue; if overlays are
+        /// replaced or dismissed without confirm (e.g. batched FateFool summaries), the counter can
+        /// outlive the queue and block gameplay routing on WaitingHud indefinitely.
+        /// </summary>
+        void ReconcileStaleExchangeAcks()
+        {
+            if (_exchangeQueue.Count > 0 || _exchangeOverlays?.IsOpen == true)
+                return;
+            if (_pendingHumanExchangeAcks <= 0)
+                return;
+
+            // #region agent log
+            DebugSessionLog.Write("B", "GamePresenter.ReconcileStaleExchangeAcks", "cleared stale acks",
+                "{\"cleared\":" + _pendingHumanExchangeAcks + "}");
+            // #endregion
+            _pendingHumanExchangeAcks = 0;
+            _exchangeConfirmRequiresAck = false;
+        }
 
         bool ExchangeInvolvesSeatedHuman(PlayerExchangeEvent exchange)
         {
@@ -1107,6 +1221,7 @@ namespace Kismeta.UI
 
         public Task WaitForPendingExchangesAsync(CancellationToken ct)
         {
+            RunOnMainThread(ReconcileStaleExchangeAcks);
             if (_pendingHumanExchangeAcks <= 0)
             {
                 RunOnMainThread(TryShowQueuedExchange);

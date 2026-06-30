@@ -15,8 +15,11 @@
             <engine:Instance template="GameHeaderOverlay" />
 
             <engine:VisualElement class="summer-main__toolbar">
-                <engine:Label name="narrative-beat" text="" class="narrative-beat" />
-                <engine:Button name="info-btn" text="ℹ" class="summer-info-btn" />
+                <engine:VisualElement class="narrative-toolbar">
+                    <engine:Button name="info-btn" text="ℹ" class="narrative-toolbar__info-btn" />
+                    <engine:Label name="narrative-beat" text="" class="narrative-beat" />
+                    <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+                </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:VisualElement class="summer-main__actionbar">
