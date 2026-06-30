@@ -638,9 +638,8 @@
 .inventory-summary__counts {
     flex-direction: row;
     align-items: center;
-    flex-grow: 1;
-    flex-shrink: 1;
-    min-width: 0;
+    flex-grow: 0;
+    flex-shrink: 0;
     flex-wrap: nowrap;
 }
 
@@ -681,7 +680,17 @@
     margin-left: var(--space-xs);
 }
 
-.inventory-summary-row .codex-fab,
+.inventory-summary-row .codex-fab {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-left: auto;
+    min-width: 56px;
+    min-height: 32px;
+    padding: 4px 10px;
+    font-size: 10px;
+}
+
 .inventory-summary-row .effects-fab {
     position: relative;
     top: auto;

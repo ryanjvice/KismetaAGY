@@ -43,6 +43,12 @@ namespace Kismeta.Core.Entities
         /// </summary>
         public int BesiegedBonusCount { get; set; }
 
+        /// <summary>
+        /// Defender challenged in a Duel this round, or -1 if none.
+        /// Cleared by WinterRules.Transit at round end.
+        /// </summary>
+        public int DuelChallengedRivalId { get; set; } = -1;
+
         // Cauldrons lit by Coal (indexed by Suit — Wands/Cups/Pentacles/Swords)
         private readonly bool[] _cauldronLit = new bool[4];
 

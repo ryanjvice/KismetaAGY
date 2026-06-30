@@ -25,6 +25,8 @@ namespace Kismeta.Core.Rules
             var validation = ValidateDuelSetup(session, attackerId, defenderId, targetCardId, anteCardId);
             if (!validation.IsOk) return validation;
 
+            session.Players[attackerId].DuelChallengedRivalId = defenderId;
+
             session.Board.PendingContest = new PendingContest
             {
                 Kind         = ContestKind.Duel,
@@ -92,6 +94,9 @@ namespace Kismeta.Core.Rules
                 return CommandResult.Invalid("Target card must be in the defender's Spread.");
             if (!attacker.Spread.Contains(anteCardId))
                 return CommandResult.Invalid("Ante card must be in your Spread.");
+
+            if (attacker.DuelChallengedRivalId >= 0)
+                return CommandResult.Invalid("You have already initiated a Duel this round.");
 
             if (db != null)
             {

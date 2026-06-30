@@ -31,6 +31,8 @@ namespace Kismeta.Core.Views
         public int StoneWardCount                       { get; }
         public IReadOnlyDictionary<string, int> AdeptWardCounts { get; }
         public bool ReturnedFromStasisThisRound         { get; }
+        /// <summary>Defender challenged in a Duel this round, or -1 if none.</summary>
+        public int DuelChallengedRivalId                { get; }
 
         public IReadOnlyDictionary<ReagentType, int> Reagents { get; }
         public IReadOnlyCollection<ZodiacSign> AstralHouses { get; }
@@ -62,6 +64,7 @@ namespace Kismeta.Core.Views
             StoneWardCount              = p.StoneWardCount;
             AdeptWardCounts             = new Dictionary<string, int>(p.AdeptWardCounts);
             ReturnedFromStasisThisRound = p.ReturnedFromStasisThisRound;
+            DuelChallengedRivalId       = p.DuelChallengedRivalId;
 
             var reagents = new Dictionary<ReagentType, int>();
             foreach (ReagentType t in System.Enum.GetValues(typeof(ReagentType)))

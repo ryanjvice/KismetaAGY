@@ -63,17 +63,27 @@ namespace Kismeta.UI.Components
 
         static void SetWagerCountLabel(VisualElement root, int count)
         {
+            var counts = root.Q(className: "inventory-summary__counts");
+            var reagent = root.Q<Label>("summary-reagent-total");
+            if (counts == null || reagent == null) return;
+
             var lbl = root.Q<Label>("summary-wager-count");
-            if (lbl == null) return;
             if (count > 0)
             {
-                lbl.text = $"W {count}";
-                lbl.RemoveFromClassList("inventory-summary__count--hidden");
+                if (lbl == null)
+                {
+                    lbl = MakeCountLabel("W", count, "inventory-summary__count--wager");
+                    lbl.name = "summary-wager-count";
+                    counts.Insert(counts.IndexOf(reagent), lbl);
+                }
+                else
+                {
+                    lbl.text = $"W {count}";
+                }
             }
             else
             {
-                lbl.text = "";
-                lbl.AddToClassList("inventory-summary__count--hidden");
+                lbl?.RemoveFromHierarchy();
             }
         }
 

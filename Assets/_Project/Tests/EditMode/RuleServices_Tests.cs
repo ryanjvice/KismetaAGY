@@ -4,7 +4,9 @@ using System.IO;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
+using Kismeta.Core.Views;
 using Kismeta.Data.Loaders;
 using NUnit.Framework;
 using UnityEngine;
@@ -1575,6 +1577,87 @@ namespace Kismeta.Core.Tests
             Assert.IsFalse(session.Players[0].Spread.Contains(anteId));
             Assert.IsTrue(session.Board.CommonDiscard.Contains(anteId));
             Assert.IsTrue(session.Players[1].Spread.Contains(targetId));
+        }
+
+        [Test]
+        public void CombatRules_SecondDuelSameRound_Rejected()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var ante = PopulateSpread(session, 0, 2, "duel-ante");
+            var targets = PopulateSpread(session, 1, 2, "duel-target");
+
+            var combat = new CombatRules(42);
+            var first = combat.TryInitiateDuel(session, 0, 1, targets[0], ante[0]);
+            Assert.IsTrue(first.IsOk, first.Message);
+            Assert.AreEqual(1, session.Players[0].DuelChallengedRivalId);
+
+            var declined = combat.TryRespondDuel(session, 1, accept: false);
+            Assert.IsTrue(declined.IsOk, declined.Message);
+
+            var second = combat.TryInitiateDuel(session, 0, 1, targets[1], ante[1]);
+            Assert.IsFalse(second.IsOk);
+            StringAssert.Contains("already initiated", second.Message);
+        }
+
+        [Test]
+        public void WinterTransit_ClearsDuelChallengedRivalId()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Players[0].DuelChallengedRivalId = 1;
+
+            session.Rules!.Winter.Transit(session);
+
+            Assert.AreEqual(-1, session.Players[0].DuelChallengedRivalId);
+        }
+
+        static GameContext BuildSummerContext(GameSession session, int playerId) =>
+            new GameContext(
+                GamePublicView.From(session),
+                PlayerPrivateView.From(session, playerId),
+                playerId,
+                ActionHint.SummerAction);
+
+        [Test]
+        public void AiDuelPolicy_30PercentGate_BelowThreshold_Initiates()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            PopulateSpread(session, 0, 2, "ai-duel");
+            PopulateSpread(session, 1, 1, "ai-target");
+            var ctx = BuildSummerContext(session, 0);
+
+            Assert.IsTrue(AiDuelPolicy.ShouldInitiate(ctx, 0, 0.29, out var cmd));
+            Assert.IsNotNull(cmd);
+            Assert.AreEqual(1, cmd!.DefenderId);
+        }
+
+        [Test]
+        public void AiDuelPolicy_30PercentGate_AtThreshold_Skips()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            PopulateSpread(session, 0, 2, "ai-duel");
+            PopulateSpread(session, 1, 1, "ai-target");
+            var ctx = BuildSummerContext(session, 0);
+
+            Assert.IsFalse(AiDuelPolicy.ShouldInitiate(ctx, 0, 0.30, out var cmd));
+            Assert.IsNull(cmd);
+        }
+
+        [Test]
+        public void AiDuelPolicy_SkipsWhenAlreadyChallenged()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            PopulateSpread(session, 0, 2, "ai-duel");
+            PopulateSpread(session, 1, 1, "ai-target");
+            session.Players[0].DuelChallengedRivalId = 1;
+            var ctx = BuildSummerContext(session, 0);
+
+            Assert.IsFalse(AiDuelPolicy.ShouldInitiate(ctx, 0, 0.0, out var cmd));
+            Assert.IsNull(cmd);
         }
 
         [Test]

@@ -285,13 +285,25 @@
     color: rgb(168, 176, 216);
 }
 
-/* Age Opening: group the callout + CTA directly under the cosmic effect panel
-   instead of pushing them to the bottom of the screen. */
-#age-open .ceremony-reveal-body {
+/* Age Opening / RoundOpen reveal: group the callout directly under the cosmic
+   effect panel instead of pushing it to the bottom of the screen. */
+#age-open .ceremony-reveal-body,
+#round-open .ceremony-reveal-body {
     flex-grow: 0;
 }
 
-#age-open .ceremony-panel-wrap--callout {
+#age-open .ceremony-reveal-body > .ceremony-panel-wrap:last-child,
+#round-open .ceremony-reveal-body > .ceremony-panel-wrap:last-child {
+    flex-grow: 0;
+}
+
+#age-open .ceremony-panel-wrap--callout,
+#round-open .ceremony-panel-wrap--callout {
     flex-grow: 0;
     justify-content: flex-start;
+}
+
+#age-open .menu-screen__footer,
+#round-open #reveal-phase .menu-screen__footer {
+    margin-top: auto;
 }

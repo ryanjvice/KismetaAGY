@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -25,7 +26,13 @@ namespace Kismeta.Core.Players
         public PlayerSlot Slot { get; }
         public bool IsLocalHuman => false;
 
-        public SimpleAIController(PlayerSlot slot) => Slot = slot;
+        readonly Random _rng;
+
+        public SimpleAIController(PlayerSlot slot, Random? rng = null)
+        {
+            Slot = slot;
+            _rng = rng ?? new Random(slot.Index * 1009 + 42);
+        }
 
         public Task<IGameCommand> RequestActionAsync(GameContext context, CancellationToken ct = default)
         {
@@ -145,17 +152,8 @@ namespace Kismeta.Core.Players
             var player  = ctx.PublicView.Players[pid];
             var spreadIds = new List<string>(player.Spread);
 
-            // Duel an opponent if we have at least 2 Spread cards (ante 1, keep 1)
-            if (spreadIds.Count >= 2)
-            {
-                var target = FindDuelTarget(ctx, pid);
-                if (target >= 0)
-                {
-                    var rivalSpread = ctx.PublicView.Players[target].Spread;
-                    if (rivalSpread.Count > 0)
-                        return new InitiateDuelCommand(pid, target, rivalSpread[0], spreadIds[0]);
-                }
-            }
+            if (AiDuelPolicy.ShouldInitiate(ctx, pid, _rng, out var duel))
+                return duel!;
 
             // Gambit if we have an Active Crucible slot — stakes an arrested outcome
             var gambitTarget = FindGambitTarget(ctx, pid);
@@ -377,21 +375,6 @@ namespace Kismeta.Core.Players
             }
 
             return bestId;
-        }
-
-        /// <summary>
-        /// Returns the ID of a Duel target (first opponent), or -1 if no valid target.
-        /// Only initiates if the opponent has a Spread card to win.
-        /// </summary>
-        private static int FindDuelTarget(GameContext ctx, int ownPid)
-        {
-            foreach (var opp in ctx.PublicView.Players)
-            {
-                if (opp.PlayerId == ownPid) continue;
-                if (opp.Spread.Count > 0)
-                    return opp.PlayerId;
-            }
-            return -1;
         }
 
         /// <summary>
