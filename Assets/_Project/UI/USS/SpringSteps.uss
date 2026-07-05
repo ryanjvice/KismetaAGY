@@ -37,6 +37,15 @@
 }
 .swap-zone__cards > .card-chip { margin-right: 6px; margin-bottom: 6px; }
 
+#card-limits .swap-zone__cards > .card-chip--tappable {
+    min-width: var(--touch-min);
+    min-height: var(--touch-min);
+}
+
+#card-limits .swap-zone__cards > .card-chip--tappable .card-chip__rank {
+    picking-mode: ignore;
+}
+
 /* Card limits — scroll body + pinned footer + craft accordion */
 #card-limits .card-limits-scroll {
     flex-grow: 1;
@@ -50,6 +59,49 @@
 #card-limits .card-limits-footer {
     flex-shrink: 0;
     padding: 2px 14px 16px;
+}
+
+/* Card limits — inline bottom sheet for card actions */
+.card-limits-action-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+    picking-mode: ignore;
+}
+
+.card-limits-action-scrim {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: var(--scrim-dark);
+}
+
+.card-limits-action-sheet {
+    position: relative;
+    flex-shrink: 0;
+    margin: 0 var(--overlay-inset-x) var(--space-lg);
+    max-width: var(--overlay-max-width);
+    align-self: center;
+    width: 100%;
+    z-index: 1;
+}
+
+.card-limits-action-sheet__header {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-limits-action-sheet__chip {
+    flex-direction: row;
+    justify-content: center;
 }
 
 /* a card showing its alignment value tag */

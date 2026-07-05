@@ -5,11 +5,12 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
+    <engine:Style src="../../USS/SummerActions.uss" />
     <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
          CARD LIMITS (#42) — rearrange, discard down to 5/5.
-         Tap chips to move between zones; tap red-edged chips to discard.
+         Tap a card to open the action sheet (move, discard, or go back).
          Craft reagents and fateful wagers live on the Winter hub.
          ============================================================ -->
     <engine:VisualElement name="card-limits" class="screen screen--winter">
@@ -58,7 +59,7 @@
                 <engine:VisualElement style="padding: 4px 14px 0;">
                     <engine:VisualElement class="swap-zone swap-zone--spread" style="background-color: rgb(22,32,46);">
                         <engine:VisualElement class="swap-zone__header">
-                            <engine:Label text="Spread — tap to move · tap red-edged to discard" style="font-size: 12px; color: rgb(244, 211, 94);" />
+                            <engine:Label text="Spread — tap a card" style="font-size: 12px; color: rgb(244, 211, 94);" />
                             <engine:Label name="spread-tally" text="4 / 5" style="font-size: 10px; color: rgb(184, 154, 110);" />
                         </engine:VisualElement>
                         <engine:VisualElement name="spread-cards" class="swap-zone__cards" />
@@ -68,7 +69,7 @@
                 <engine:VisualElement style="padding: 4px 14px 0;">
                     <engine:VisualElement class="swap-zone swap-zone--hand" style="background-color: rgb(22,16,28);">
                         <engine:VisualElement class="swap-zone__header">
-                            <engine:Label text="Hand — tap to move · tap red-edged to discard" style="font-size: 12px; color: rgb(158, 201, 224);" />
+                            <engine:Label text="Hand — tap a card" style="font-size: 12px; color: rgb(158, 201, 224);" />
                             <engine:Label name="hand-tally" text="6 / 5" style="font-size: 10px; color: rgb(224,160,96);" />
                         </engine:VisualElement>
                         <engine:VisualElement name="hand-cards" class="swap-zone__cards" />
@@ -84,6 +85,46 @@
 
         <engine:VisualElement class="card-limits-footer">
             <engine:Button name="transit-btn" text="Discard 1 more to transit" class="btn btn--disabled" />
+        </engine:VisualElement>
+
+        <engine:VisualElement name="card-action-overlay" class="card-limits-action-overlay" style="display: none;">
+            <engine:VisualElement name="card-action-scrim" class="card-limits-action-scrim" />
+            <engine:VisualElement name="card-action-sheet" class="sheet card-limits-action-sheet">
+                <engine:VisualElement class="sheet__header card-limits-action-sheet__header">
+                    <engine:VisualElement name="card-action-chip-host" class="card-limits-action-sheet__chip" />
+                    <engine:Label name="card-action-zone-label" text="In Spread"
+                                  style="font-size: 12px; color: rgb(184, 154, 110); margin-top: 8px;" />
+                </engine:VisualElement>
+                <engine:VisualElement class="sheet__body">
+                    <engine:Button name="card-action-move-btn" class="action-sheet__row">
+                        <engine:VisualElement class="action-sheet__icon" style="background-color: rgb(22,32,46); border-color: rgb(43,74,106);">
+                            <engine:Label text="&#xea6e;" class="ti-icon" style="color: rgb(158, 201, 224);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="flex-grow: 1;">
+                            <engine:Label name="card-action-move-label" text="Move to Hand" style="font-size: 13px; color: rgb(243, 233, 210);" />
+                            <engine:Label text="swap between Spread and Hand" class="action-sheet__sub" />
+                        </engine:VisualElement>
+                    </engine:Button>
+                    <engine:Button name="card-action-discard-btn" class="action-sheet__row">
+                        <engine:VisualElement class="action-sheet__icon" style="background-color: rgb(42,18,18); border-color: rgb(106,48,48);">
+                            <engine:Label text="&#xeb4e;" class="ti-icon" style="color: rgb(240, 144, 138);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="flex-grow: 1;">
+                            <engine:Label name="card-action-discard-label" text="Mark for discard" style="font-size: 13px; color: rgb(243, 233, 210);" />
+                            <engine:Label text="remove when you transit" class="action-sheet__sub" />
+                        </engine:VisualElement>
+                    </engine:Button>
+                    <engine:Button name="card-action-back-btn" class="action-sheet__row">
+                        <engine:VisualElement class="action-sheet__icon" style="background-color: rgb(28,24,20); border-color: rgb(74,64,48);">
+                            <engine:Label text="&#xeb99;" class="ti-icon" style="color: rgb(184, 154, 110);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="flex-grow: 1;">
+                            <engine:Label text="Go back" style="font-size: 13px; color: rgb(243, 233, 210);" />
+                            <engine:Label text="close without changes" class="action-sheet__sub" />
+                        </engine:VisualElement>
+                    </engine:Button>
+                </engine:VisualElement>
+            </engine:VisualElement>
         </engine:VisualElement>
 
     </engine:VisualElement>

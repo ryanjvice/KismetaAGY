@@ -1489,6 +1489,12 @@
 .reagent-dot--aqua { background-color: var(--reagent-aqua); border-color: rgb(111, 168, 212); }
 .reagent-dot--quick { background-color: var(--reagent-quick); border-color: rgb(224, 192, 96); }
 
+.reagent-dot-count {
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: var(--ink);
+}
+
 /* ---------- Buttons ---------- */
 .btn {
     min-height: var(--touch-min);

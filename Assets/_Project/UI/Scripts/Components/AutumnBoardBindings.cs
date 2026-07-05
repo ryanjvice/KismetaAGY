@@ -96,7 +96,9 @@ namespace Kismeta.UI.Components
             dot.AddToClassList(ReagentDotClass(rt));
             dot.style.marginRight = 4;
             row.Add(dot);
-            row.Add(new Label(count.ToString()) { style = { fontSize = 11 } });
+            var countLbl = new Label(count.ToString());
+            countLbl.AddToClassList("reagent-dot-count");
+            row.Add(countLbl);
             return row;
         }
 
