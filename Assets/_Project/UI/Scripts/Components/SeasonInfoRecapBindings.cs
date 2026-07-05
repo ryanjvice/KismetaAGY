@@ -12,6 +12,9 @@ namespace Kismeta.UI.Components
         public const string TabFocus = "focus";
         public const string PrimaryActionBtnName = "primary-action-btn";
         public const string HubRecapNoteName = "hub-recap-note";
+        public const string GreatYearOverviewBtnName = "great-year-overview-btn";
+        public const string SeasonEmojiName = "season-emoji";
+        public const string GreatYearOverviewArtName = "great-year-overview-art";
 
         static readonly string HubRecapNoteText =
             $"Need a refresher later? On any season screen, tap {SymbolGlyphs.SeasonRecapGlyph} on the story toolbar to reopen this guide.";
@@ -54,7 +57,7 @@ namespace Kismeta.UI.Components
                 state.ActiveTab = TabOverview;
 
             CeremonyBindings.ApplySeasonIntroClass(sheet, season);
-            UiArtBindings.ApplyIntroSigil(sheet);
+            ApplyHeroChrome(sheet, season);
 
             if (FocusLadderDefinitions.TryGetHero(season, out var hero))
             {
@@ -146,6 +149,40 @@ namespace Kismeta.UI.Components
                 return entry.Verbs[0];
 
             return "Continue";
+        }
+
+        public static void ApplyHeroChrome(VisualElement root, Season season)
+        {
+            var sheet = ResolveSheetRoot(root);
+            var emoji = sheet.Q<Label>(SeasonEmojiName);
+            if (emoji != null)
+                emoji.text = SymbolGlyphs.SeasonEmoji(season);
+
+            UiArtBindings.ApplyBackground(
+                sheet.Q(GreatYearOverviewArtName),
+                UiArtBindings.Catalog?.CrucibleForge,
+                BackgroundSizeType.Contain);
+        }
+
+        public static void WireGreatYearOverview(VisualElement root, Action? onClick)
+        {
+            var btn = ResolveSheetRoot(root).Q<Button>(GreatYearOverviewBtnName);
+            if (btn == null || onClick == null)
+                return;
+
+            UnwireGreatYearOverview(root);
+            btn.userData = onClick;
+            btn.clicked += onClick;
+        }
+
+        public static void UnwireGreatYearOverview(VisualElement root)
+        {
+            var btn = ResolveSheetRoot(root).Q<Button>(GreatYearOverviewBtnName);
+            if (btn?.userData is not Action onClick)
+                return;
+
+            btn.clicked -= onClick;
+            btn.userData = null;
         }
 
         public static void WireTabs(VisualElement root, Action? onTabChanged = null)

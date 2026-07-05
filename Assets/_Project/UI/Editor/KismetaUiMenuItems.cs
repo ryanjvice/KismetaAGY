@@ -213,6 +213,7 @@ namespace Kismeta.UI.Editor
             EnsureComponent<SummerOverlayHost>(bootstrap.gameObject);
             EnsureComponent<SpringOverlayHost>(bootstrap.gameObject);
             EnsureComponent<SeasonIntroRecapHost>(bootstrap.gameObject);
+            EnsureComponent<GameOverviewRecapHost>(bootstrap.gameObject);
             EnsureComponent<SummerSheetsController>(bootstrap.gameObject);
             EnsureComponent<CraftReagentController>(bootstrap.gameObject);
             EnsureComponent<ActivateCardController>(bootstrap.gameObject);

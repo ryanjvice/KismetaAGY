@@ -6,6 +6,7 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/AgeCeremony.uss" />
     <engine:Style src="../../USS/SeasonIntro.uss" />
+    <engine:Style src="../../USS/Contests.uss" />
     <engine:Style src="../../USS/GameOverviewIntro.uss" />
 
     <engine:VisualElement name="game-overview-intro" class="screen screen--menu intro--overview">
@@ -22,7 +23,7 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="ceremony-reveal-body">
-            <engine:VisualElement class="ceremony-panel-wrap">
+            <engine:VisualElement name="step-great-work" class="ceremony-panel-wrap">
                 <engine:VisualElement class="panel intro-content-panel">
                     <engine:Label text="The Great Work" class="eyebrow intro-content-panel__eyebrow" />
                     <engine:VisualElement name="intro-goals">
@@ -48,7 +49,7 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement class="ceremony-panel-wrap">
+            <engine:VisualElement name="step-seasons" class="ceremony-panel-wrap" style="display: none;">
                 <engine:VisualElement class="panel intro-content-panel">
                     <engine:Label text="One Age - Four Seasons" class="eyebrow intro-content-panel__eyebrow" />
                     <engine:VisualElement name="intro-steps">
@@ -82,7 +83,11 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="menu-screen__footer">
-            <engine:Button name="continue-btn" text="Determine the Agekeeper" class="btn btn--primary menu-screen__cta" />
+            <engine:VisualElement class="overview-wizard-steps">
+                <engine:VisualElement name="overview-dot-1" class="wizard-dot wizard-dot--active" />
+                <engine:VisualElement name="overview-dot-2" class="wizard-dot" />
+            </engine:VisualElement>
+            <engine:Button name="continue-btn" text="Continue" class="btn btn--primary menu-screen__cta" />
         </engine:VisualElement>
 
     </engine:VisualElement>

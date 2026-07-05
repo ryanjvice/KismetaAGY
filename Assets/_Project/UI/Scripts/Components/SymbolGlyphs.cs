@@ -19,6 +19,15 @@ namespace Kismeta.UI.Components
         public const string ChevronDownGlyph = "\uea5f";
         public const string ChevronUpGlyph = "\uea62";
 
+        public static string SeasonEmoji(Season season) => season switch
+        {
+            Season.Spring => "\U0001F338",
+            Season.Summer => "\U0001F324\uFE0F",
+            Season.Autumn => "\U0001F342",
+            Season.Winter => "\U0001F3D4\uFE0F",
+            _ => string.Empty
+        };
+
         public static readonly ZodiacSign[] AllSigns =
         {
             ZodiacSign.Aries, ZodiacSign.Taurus, ZodiacSign.Gemini, ZodiacSign.Cancer,

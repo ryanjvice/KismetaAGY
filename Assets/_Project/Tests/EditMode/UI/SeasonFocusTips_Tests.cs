@@ -58,6 +58,17 @@ namespace Kismeta.UI.Tests
         }
 
         [Test]
+        public void ApplyHeroChrome_SetsSeasonEmoji([Values] Season season)
+        {
+            var root = InstantiateRecapShell();
+            SeasonInfoRecapBindings.ApplyHeroChrome(root, season);
+
+            var emoji = root.Q<Label>(SeasonInfoRecapBindings.SeasonEmojiName);
+            Assert.IsNotNull(emoji);
+            Assert.AreEqual(SymbolGlyphs.SeasonEmoji(season), emoji!.text);
+        }
+
+        [Test]
         public void Populate_RendersFocusTipCountMatchingDefinitions([Values] Season season)
         {
             var root = InstantiateRecapShell();

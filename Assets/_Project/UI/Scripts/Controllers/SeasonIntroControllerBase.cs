@@ -1,3 +1,4 @@
+using System;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
@@ -12,8 +13,10 @@ namespace Kismeta.UI.Controllers
         protected abstract Season IntroSeason { get; }
 
         CeremonyGate? _gate;
+        Action? _overviewClickHandler;
 
         public VisualTreeAsset? OverviewAsset { get; set; }
+        public GameOverviewRecapHost? OverviewRecapHost { get; set; }
 
         protected override void Wire()
         {
@@ -21,6 +24,9 @@ namespace Kismeta.UI.Controllers
             var btn = Btn(SeasonInfoRecapBindings.PrimaryActionBtnName);
             if (btn != null)
                 btn.clicked += OnPrimaryAction;
+
+            _overviewClickHandler ??= OpenGreatYearOverview;
+            SeasonInfoRecapBindings.WireGreatYearOverview(Root, _overviewClickHandler);
         }
 
         protected override void Unwire()
@@ -28,6 +34,9 @@ namespace Kismeta.UI.Controllers
             var btn = Btn(SeasonInfoRecapBindings.PrimaryActionBtnName);
             if (btn != null)
                 btn.clicked -= OnPrimaryAction;
+
+            if (_overviewClickHandler != null)
+                SeasonInfoRecapBindings.UnwireGreatYearOverview(Root);
         }
 
         public void BindState(GameSession session, CeremonyGate gate)
@@ -40,5 +49,7 @@ namespace Kismeta.UI.Controllers
         }
 
         void OnPrimaryAction() => _gate?.Complete();
+
+        void OpenGreatYearOverview() => OverviewRecapHost?.Show();
     }
 }

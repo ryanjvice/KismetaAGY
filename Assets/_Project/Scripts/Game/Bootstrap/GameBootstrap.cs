@@ -219,6 +219,7 @@ namespace Kismeta.Game.Bootstrap
             EnsureController<SummerOverlayHost>();
             EnsureController<SpringOverlayHost>();
             EnsureController<SeasonIntroRecapHost>();
+            EnsureController<GameOverviewRecapHost>();
             EnsureController<SummerSheetsController>();
             EnsureController<CraftReagentController>();
             EnsureController<ActivateCardController>();
@@ -265,6 +266,11 @@ namespace Kismeta.Game.Bootstrap
 
             var introRecap = GetComponent<SeasonIntroRecapHost>();
             introRecap?.Configure(_seasonInfoRecap, _springIntro, _summerIntro, _autumnIntro, _winterIntro);
+
+            var overviewRecap = GetComponent<GameOverviewRecapHost>();
+            overviewRecap?.Configure(_gameOverviewIntro, GetComponent<GameOverviewIntroController>());
+            if (introRecap != null && overviewRecap != null)
+                introRecap.OverviewRecapHost = overviewRecap;
 
             var contestOverlays = GetComponent<ContestOverlayHost>();
             contestOverlays?.Configure(_trade, _duel, _gambit, _opposition, _contestResponse);

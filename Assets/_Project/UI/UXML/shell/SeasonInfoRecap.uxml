@@ -13,12 +13,15 @@
         <engine:VisualElement name="recap-hero" class="season-info-recap__hero panel--gold">
             <engine:VisualElement class="season-info-recap__hero-row">
                 <engine:VisualElement class="intro-sigil season-info-recap__sigil">
-                    <engine:VisualElement name="intro-sigil-art" class="intro-sigil__art" />
+                    <engine:Label name="season-emoji" text="🌸" class="season-info-recap__emoji" />
                 </engine:VisualElement>
                 <engine:VisualElement class="season-info-recap__hero-text">
                     <engine:Label name="intro-name" text="SPRING" class="intro-name season-info-recap__name" />
                     <engine:Label name="intro-tagline" text="" class="intro-tagline season-info-recap__tagline" />
                 </engine:VisualElement>
+                <engine:Button name="great-year-overview-btn" tooltip="Great Year overview" class="season-info-recap__overview-btn">
+                    <engine:VisualElement name="great-year-overview-art" class="season-info-recap__overview-art" picking-mode="Ignore" />
+                </engine:Button>
             </engine:VisualElement>
         </engine:VisualElement>
 

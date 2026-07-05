@@ -39,6 +39,7 @@ namespace Kismeta.UI
         private ExchangeOverlayHost? _exchangeOverlays;
         private WagerOverlayHost? _wagerOverlays;
         private SeasonIntroRecapHost? _introRecapHost;
+        private GameOverviewRecapHost? _overviewRecapHost;
         private PlayerHudController? _playerHud;
         private readonly Queue<PlayerExchangeEvent> _exchangeQueue = new();
         private readonly Queue<FatefulWagerResolvedEvent> _wagerResultQueue = new();
@@ -92,6 +93,7 @@ namespace Kismeta.UI
             _exchangeOverlays = GetComponent<ExchangeOverlayHost>();
             _wagerOverlays = GetComponent<WagerOverlayHost>();
             _introRecapHost = GetComponent<SeasonIntroRecapHost>();
+            _overviewRecapHost = GetComponent<GameOverviewRecapHost>();
             NarrativeToolbarBindings.ConfigureIntroRecapHost(_introRecapHost);
             _playerHud = GetComponent<PlayerHudController>();
         }
@@ -119,6 +121,7 @@ namespace Kismeta.UI
             WireTitleScreen();
             WireShellScreens();
             WireGameOverviewIntro();
+            WireOverviewRecap();
             WireAgekeeperContest();
             if (_router.CurrentScreenId != ScreenIds.Title)
                 _router.GoTo(ScreenIds.Title);
@@ -154,6 +157,7 @@ namespace Kismeta.UI
             WireTitleScreen();
             WireShellScreens();
             WireGameOverviewIntro();
+            WireOverviewRecap();
             WireAgekeeperContest();
             WireStepScreens();
             WireSummerNavigation();
@@ -650,6 +654,14 @@ namespace Kismeta.UI
             if (overview == null) return;
 
             overview.OnContinue = BeginAgekeeperContest;
+        }
+
+        private void WireOverviewRecap()
+        {
+            _overviewRecapHost ??= GetComponent<GameOverviewRecapHost>();
+            _introRecapHost ??= GetComponent<SeasonIntroRecapHost>();
+            if (_introRecapHost != null)
+                _introRecapHost.OverviewRecapHost = _overviewRecapHost;
         }
 
         private void WireAgekeeperContest()
@@ -1512,24 +1524,37 @@ namespace Kismeta.UI
         private void WireSeasonIntroOverviews()
         {
             _introRecapHost ??= GetComponent<SeasonIntroRecapHost>();
+            _overviewRecapHost ??= GetComponent<GameOverviewRecapHost>();
             if (_introRecapHost == null)
                 return;
 
             var springIntro = _router.GetController<SpringIntroController>(ScreenIds.SpringIntro);
             if (springIntro != null)
+            {
                 springIntro.OverviewAsset = _introRecapHost.GetOverviewAsset(Season.Spring);
+                springIntro.OverviewRecapHost = _overviewRecapHost;
+            }
 
             var summerIntro = _router.GetController<SummerIntroController>(ScreenIds.SummerIntro);
             if (summerIntro != null)
+            {
                 summerIntro.OverviewAsset = _introRecapHost.GetOverviewAsset(Season.Summer);
+                summerIntro.OverviewRecapHost = _overviewRecapHost;
+            }
 
             var autumnIntro = _router.GetController<AutumnIntroController>(ScreenIds.AutumnIntro);
             if (autumnIntro != null)
+            {
                 autumnIntro.OverviewAsset = _introRecapHost.GetOverviewAsset(Season.Autumn);
+                autumnIntro.OverviewRecapHost = _overviewRecapHost;
+            }
 
             var winterIntro = _router.GetController<WinterIntroController>(ScreenIds.WinterIntro);
             if (winterIntro != null)
+            {
                 winterIntro.OverviewAsset = _introRecapHost.GetOverviewAsset(Season.Winter);
+                winterIntro.OverviewRecapHost = _overviewRecapHost;
+            }
         }
 
         private static bool IsWinterHubSubScreen(string? screenId) =>

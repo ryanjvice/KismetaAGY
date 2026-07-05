@@ -29,8 +29,16 @@ namespace Kismeta.UI
         ViewportLayout? _layout;
         Action? _closeClickHandler;
         Button? _wiredCloseBtn;
+        Action? _overviewClickHandler;
+        GameOverviewRecapHost? _overviewRecapHost;
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
+
+        public GameOverviewRecapHost? OverviewRecapHost
+        {
+            get => _overviewRecapHost;
+            set => _overviewRecapHost = value;
+        }
 
         void Awake()
         {
@@ -79,6 +87,8 @@ namespace Kismeta.UI
             }
 
             UnwireClose();
+            if (_layout.OverlayContentRoot != null)
+                UnwireOverview(_layout.OverlayContentRoot);
             _layout.ShowModal(_recapShell);
             _layout.ApplyBoundedOverlaySheet();
 
@@ -88,6 +98,7 @@ namespace Kismeta.UI
 
             SeasonInfoRecapBindings.PopulateRecap(root, season, introAsset);
             SeasonInfoRecapBindings.WireTabs(root);
+            WireOverview(root);
 
             var close = root.Q<Button>(SeasonInfoRecapBindings.PrimaryActionBtnName);
             if (close != null)
@@ -101,6 +112,8 @@ namespace Kismeta.UI
         public void Dismiss()
         {
             UnwireClose();
+            if (_layout?.OverlayContentRoot != null)
+                UnwireOverview(_layout.OverlayContentRoot);
             _layout?.DismissOverlay();
         }
 
@@ -120,6 +133,24 @@ namespace Kismeta.UI
             if (_wiredCloseBtn != null && _closeClickHandler != null)
                 _wiredCloseBtn.clicked -= _closeClickHandler;
             _wiredCloseBtn = null;
+        }
+
+        void WireOverview(VisualElement root)
+        {
+            _overviewClickHandler ??= OpenGreatYearOverview;
+            SeasonInfoRecapBindings.WireGreatYearOverview(root, _overviewClickHandler);
+        }
+
+        void UnwireOverview(VisualElement root)
+        {
+            if (_overviewClickHandler != null)
+                SeasonInfoRecapBindings.UnwireGreatYearOverview(root);
+        }
+
+        void OpenGreatYearOverview()
+        {
+            Dismiss();
+            _overviewRecapHost?.Show();
         }
 
         void EnsureAssets()
