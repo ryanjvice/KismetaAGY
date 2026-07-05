@@ -320,7 +320,7 @@ namespace Kismeta.UI.Narrative
                 NarrativeSlotTier.Action,
                 4,
                 "Turn the wheel. Pass the key and begin the next Cosmic Age.",
-                "The Agekeeper shuffles the deck and passes the key clockwise — a new age begins, unless the Great Work is done.",
+                string.Empty,
                 string.Empty,
                 new[] { "Turn The Wheel", "Cast The Next Age" })
         };

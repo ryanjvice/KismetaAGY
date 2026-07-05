@@ -5,13 +5,12 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/AgeCeremony.uss" />
-    <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- AGE CLOSING — close ceremony + standings recap. -->
     <engine:VisualElement name="age-close" class="screen screen--menu">
 
         <engine:VisualElement class="menu-screen__hero panel--gold">
-            <engine:Label text="the constellation sets" class="ceremony-eyebrow" />
+            <engine:Label text="The Age Sets." class="ceremony-eyebrow" />
 
             <engine:VisualElement name="age-sigil" class="ceremony-sigil ceremony-sigil--close">
                 <engine:Label text="?" class="ceremony-sigil__glyph font-zodiac" />
@@ -21,14 +20,11 @@
             <engine:Label name="age-name" text="SCORPIO" class="ceremony-agename ceremony-agename--close" />
             <engine:Label text="has passed" class="ceremony-prelabel ceremony-prelabel--after" />
 
-            <engine:Label text="The waters recede, the stars wheel on. What was forged in this age is forged forever."
+            <engine:Label text="Turn the wheel. Pass the key and begin the next Cosmic Age."
                           class="ceremony-couplet" />
         </engine:VisualElement>
 
         <engine:ScrollView class="menu-screen__scroll menu-screen__scroll--grow">
-            <engine:VisualElement class="ceremony-panel-wrap" style="padding: 0 14px;">
-                <engine:Instance template="NarrativeSlots" />
-            </engine:VisualElement>
             <engine:VisualElement class="ceremony-panel-wrap">
                 <engine:Label text="how the age moved the board" class="eyebrow" />
                 <engine:VisualElement name="standings-list" />

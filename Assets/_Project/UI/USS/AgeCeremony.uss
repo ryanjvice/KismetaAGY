@@ -20,12 +20,16 @@
 .ceremony-sigil {
     align-items: center;
     justify-content: center;
+    align-self: center;
+    flex-shrink: 0;
     border-color: var(--gold-deep);
 }
 
 .ceremony-sigil--open {
     width: 96px;
     height: 96px;
+    min-width: 96px;
+    min-height: 96px;
     border-radius: 48px;
     background-color: rgba(74, 20, 16, 0.75);
     border-width: 3px;
@@ -35,6 +39,8 @@
 .ceremony-sigil--close {
     width: 78px;
     height: 78px;
+    min-width: 78px;
+    min-height: 78px;
     border-radius: 39px;
     background-color: rgba(36, 16, 16, 0.75);
     border-width: 2px;
@@ -44,10 +50,12 @@
 }
 
 .ceremony-sigil__glyph {
+    flex-shrink: 0;
     font-size: 48px;
     color: rgb(240, 192, 176);
     -unity-font-style: normal;
     -unity-font-definition: url("project://database/Assets/_Project/UI/Fonts/Amarante-Regular.asset");
+    -unity-text-align: middle-center;
 }
 
 .ceremony-sigil--close .ceremony-sigil__glyph {
@@ -305,5 +313,20 @@
 
 #age-open .menu-screen__footer,
 #round-open #reveal-phase .menu-screen__footer {
+    margin-top: auto;
+}
+
+/* Age Closing: hero holds the sigil stack — never compress it; scroll absorbs shrink. */
+#age-close .menu-screen__hero {
+    flex-shrink: 0;
+}
+
+#age-close .menu-screen__scroll {
+    flex-shrink: 1;
+    min-height: 0;
+}
+
+#age-close .menu-screen__footer {
+    flex-shrink: 0;
     margin-top: auto;
 }

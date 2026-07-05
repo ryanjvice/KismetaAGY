@@ -433,8 +433,7 @@ MonoBehaviour:
     _tier: 1
     _order: 4
     _beat: Turn the wheel. Pass the key and begin the next Cosmic Age.
-    _charge: "The Agekeeper shuffles the deck and passes the key clockwise \u2014
-      a new age begins, unless the Great Work is done."
+    _charge: 
     _stakes: 
     _verbs:
     - Turn The Wheel
