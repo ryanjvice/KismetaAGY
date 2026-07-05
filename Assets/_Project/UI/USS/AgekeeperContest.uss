@@ -39,6 +39,15 @@
     padding-bottom: 16px;
 }
 
+.agekeeper-contest__player-name {
+    font-size: 14px;
+    color: rgb(243, 233, 210);
+}
+
+.agekeeper-contest__player-role {
+    font-size: 12px;
+}
+
 .panel--dim {
     opacity: 0.42;
     background-color: rgba(19, 16, 15, 0.72);

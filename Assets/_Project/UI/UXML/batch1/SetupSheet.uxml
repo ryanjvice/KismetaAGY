@@ -30,15 +30,15 @@
             <engine:VisualElement name="mode-list" class="setup-section">
                 <engine:Button name="mode-quickplay" class="mode-row">
                     <engine:Label text="Quickplay" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="~30 min" style="font-size: 10px; color: rgb(127, 196, 168);" />
+                    <engine:Label text="~30 min" class="setup-row__meta" style="color: rgb(127, 196, 168);" />
                 </engine:Button>
                 <engine:Button name="mode-standard" class="mode-row mode-row--active">
                     <engine:Label text="Standard" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="~60 min" style="font-size: 10px; color: rgb(201, 150, 47);" />
+                    <engine:Label text="~60 min" class="setup-row__meta" style="color: rgb(201, 150, 47);" />
                 </engine:Button>
                 <engine:Button name="mode-magnus" class="mode-row">
                     <engine:Label text="Magnus Alchemist" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="~90 min" style="font-size: 10px; color: rgb(205, 176, 224);" />
+                    <engine:Label text="~90 min" class="setup-row__meta" style="color: rgb(205, 176, 224);" />
                 </engine:Button>
             </engine:VisualElement>
 
@@ -46,17 +46,17 @@
             <engine:VisualElement name="deck-list" class="setup-section">
                 <engine:Button name="deck-curated" class="mode-row mode-row--active">
                     <engine:Label text="Curated" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="preset for mode" style="font-size: 10px; color: rgb(184, 154, 110);" />
+                    <engine:Label text="preset for mode" class="setup-row__meta" style="color: rgb(184, 154, 110);" />
                 </engine:Button>
                 <engine:Button name="deck-random" class="mode-row">
                     <engine:Label text="Let the Fates Decide" style="flex-grow: 1; font-size: 13px; color: rgb(243, 233, 210);" />
-                    <engine:Label text="random cards" style="font-size: 10px; color: rgb(205, 176, 224);" />
+                    <engine:Label text="random cards" class="setup-row__meta" style="color: rgb(205, 176, 224);" />
                 </engine:Button>
             </engine:VisualElement>
 
             <engine:Button name="begin-btn" text="Start Game" class="btn btn--primary" />
             <engine:Label name="summary" text="3 alchemists · Standard · curated deck"
-                          style="font-size: 9px; color: rgb(106,90,74); -unity-text-align: middle-center; margin-top: 8px;" />
+                          class="setup-sheet__summary" />
         </engine:VisualElement>
 
     </engine:VisualElement>

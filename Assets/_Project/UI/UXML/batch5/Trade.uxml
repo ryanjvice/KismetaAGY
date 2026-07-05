@@ -59,7 +59,7 @@
                 </engine:VisualElement>
                 <engine:Label name="get-empty-msg" text=""
                               style="font-size: 10px; color: rgb(106,122,138); margin-top: 6px; display: none;" />
-                <engine:Label text="hidden Hand cannot be requested" style="font-size: 9px; color: rgb(106,122,138); margin-top: 6px;" />
+                <engine:Label text="hidden Hand cannot be requested" class="contest-fine-print" style="margin-top: 6px;" />
             </engine:VisualElement>
         </engine:VisualElement>
 
@@ -71,7 +71,7 @@
         <engine:VisualElement style="padding: 2px 14px 16px;">
             <engine:Button name="propose-btn" text="Complete Trade" class="btn btn--primary" />
             <engine:Label text="Cards swap immediately in hot-seat play"
-                          style="font-size: 9px; color: rgb(106,122,138); -unity-text-align: middle-center; margin-top: 7px;" />
+                          class="contest-fine-print" style="-unity-text-align: middle-center; margin-top: 7px;" />
         </engine:VisualElement>
 
     </engine:VisualElement>

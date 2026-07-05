@@ -52,7 +52,7 @@
 }
 
 .season-info-recap .season-info-recap__tagline {
-    font-size: 9px;
+    font-size: var(--font-micro);
     letter-spacing: 1px;
     margin-top: 2px;
     -unity-text-align: upper-left;

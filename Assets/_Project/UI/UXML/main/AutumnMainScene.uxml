@@ -21,7 +21,7 @@
                 <engine:VisualElement class="narrative-toolbar">
                     <engine:Button name="info-btn" text="🗓️" class="narrative-toolbar__info-btn btn btn--secondary" />
                     <engine:Label name="narrative-beat" text="" class="narrative-beat" />
-                    <engine:Button name="table-fab" text="Table" class="table-fab btn btn--secondary" />
+                    <engine:Button name="table-fab" text="🧙" class="narrative-toolbar__table-btn table-fab btn btn--secondary" />
                 </engine:VisualElement>
             </engine:VisualElement>
 

@@ -75,7 +75,12 @@
 }
 .readout__metric { align-items: center; }
 .readout__value { font-size: 15px; -unity-font-style: bold; }
-.readout__label { font-size: 8px; color: var(--muted); }
+.readout__label { font-size: 10px; color: var(--muted); }
+
+.zone-hint {
+    font-size: 11px;
+    margin-left: 6px;
+}
 
 /* big roll button / die host */
 .roll-host {

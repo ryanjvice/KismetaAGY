@@ -209,15 +209,14 @@ namespace Kismeta.UI.Controllers
 
                 var name = new Label($"{ColorNames[i]} Alchemist");
                 name.name = $"player-name-{i}";
-                name.style.fontSize = 12;
-                name.style.color = new StyleColor(new Color(0.95f, 0.91f, 0.82f));
+                name.AddToClassList("agekeeper-contest__player-name");
                 nameBlock.Add(name);
 
                 var roleSuffix = PlayerUiNames.RoleSuffix(i, _humanPlayerCount);
                 if (!string.IsNullOrEmpty(roleSuffix))
                 {
                     var role = new Label(roleSuffix);
-                    role.style.fontSize = 10;
+                    role.AddToClassList("agekeeper-contest__player-role");
                     role.style.color = new StyleColor(i == 0 && i < _humanPlayerCount
                         ? new Color(0.91f, 0.73f, 0.29f)
                         : new Color(0.54f, 0.42f, 0.48f));

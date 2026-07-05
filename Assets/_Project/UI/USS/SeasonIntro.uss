@@ -220,7 +220,7 @@
 .intro-row__num--winter .intro-row__num-label { color: rgb(158, 201, 224); }
 
 .intro-row__label {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--ink);
 }
 

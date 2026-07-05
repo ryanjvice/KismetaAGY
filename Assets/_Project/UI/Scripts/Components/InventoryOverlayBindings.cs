@@ -28,7 +28,7 @@ namespace Kismeta.UI.Components
             root.Q<Button>("hand-btn")?.RegisterCallback<ClickEvent>(_ => callbacks.OnHandToggle?.Invoke());
             root.Q<Button>("arcanum-btn")?.RegisterCallback<ClickEvent>(_ => callbacks.OnArcanumToggle?.Invoke());
             root.Q<Button>("inventory-toggle-btn")?.RegisterCallback<ClickEvent>(_ => ToggleExpanded(root));
-            root.Q<Button>("table-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenCardTable?.Invoke());
+            NarrativeToolbarBindings.WireTableFab(root, callbacks.OnOpenCardTable);
             root.Q<Button>("codex-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenCrucibleCodex?.Invoke());
             root.Q<Button>("effects-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenActiveEffects?.Invoke());
             root.Q<Button>("wards-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenProtectiveWards?.Invoke());

@@ -10,7 +10,7 @@
 }
 
 .ceremony-eyebrow {
-    font-size: var(--font-body);
+    font-size: 16px;
     letter-spacing: 4px;
     color: rgb(184, 154, 186);
     margin-bottom: 12px;

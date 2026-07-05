@@ -307,9 +307,7 @@ namespace Kismeta.UI.Components
             {
                 var descLabel = new Label { text = description };
                 descLabel.AddToClassList("text-muted");
-                descLabel.style.whiteSpace = WhiteSpace.Normal;
-                descLabel.style.fontSize = 11;
-                descLabel.style.marginTop = 2;
+                descLabel.AddToClassList("text-muted--detail");
                 descLabel.pickingMode = PickingMode.Ignore;
                 textWrap.Add(descLabel);
             }
