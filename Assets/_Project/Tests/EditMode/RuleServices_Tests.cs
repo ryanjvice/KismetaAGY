@@ -1580,6 +1580,24 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
+        public void CombatRules_AcceptPendingDuel_Resolves()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var ante = PopulateSpread(session, 0, 1, "duel-ante");
+            var targets = PopulateSpread(session, 1, 1, "duel-target");
+
+            var combat = new CombatRules(42);
+            var offered = combat.TryInitiateDuel(session, 0, 1, targets[0], ante[0]);
+            Assert.IsTrue(offered.IsOk, offered.Message);
+            Assert.NotNull(session.Board.PendingContest);
+
+            var accepted = combat.TryRespondDuel(session, 1, accept: true);
+            Assert.IsTrue(accepted.IsOk, accepted.Message);
+            Assert.IsNull(session.Board.PendingContest);
+        }
+
+        [Test]
         public void CombatRules_SecondDuelSameRound_Rejected()
         {
             var db = LoadDb(); var codexDb = LoadCodexDb();
@@ -1598,6 +1616,24 @@ namespace Kismeta.Core.Tests
             var second = combat.TryInitiateDuel(session, 0, 1, targets[1], ante[1]);
             Assert.IsFalse(second.IsOk);
             StringAssert.Contains("already initiated", second.Message);
+        }
+
+        [Test]
+        public void CombatRules_AcceptPendingDuel_KeepsPendingOnValidationFailure()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var ante = PopulateSpread(session, 0, 1, "duel-ante");
+            var targets = PopulateSpread(session, 1, 1, "duel-target");
+
+            var combat = new CombatRules(42);
+            combat.TryInitiateDuel(session, 0, 1, targets[0], ante[0]);
+
+            session.Players[0].Spread.Remove(ante[0]);
+
+            var accepted = combat.TryRespondDuel(session, 1, accept: true);
+            Assert.IsFalse(accepted.IsOk);
+            Assert.NotNull(session.Board.PendingContest);
         }
 
         [Test]

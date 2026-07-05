@@ -217,6 +217,7 @@ namespace Kismeta.UI
         {
             if (_layout == null || asset == null || controller == null) return false;
             _layout.ShowModal(asset);
+            _layout.ApplyBoundedOverlaySheet();
             var root = _layout.OverlayContentRoot;
             if (root == null) return false;
             controller.AttachTo(root);

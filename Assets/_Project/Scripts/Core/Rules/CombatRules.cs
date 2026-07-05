@@ -22,7 +22,7 @@ namespace Kismeta.Core.Rules
         public CommandResult TryInitiateDuel(GameSession session, int attackerId, int defenderId,
             string targetCardId, string anteCardId)
         {
-            var validation = ValidateDuelSetup(session, attackerId, defenderId, targetCardId, anteCardId);
+            var validation = ValidateDuelForInitiation(session, attackerId, defenderId, targetCardId, anteCardId);
             if (!validation.IsOk) return validation;
 
             session.Players[attackerId].DuelChallengedRivalId = defenderId;
@@ -53,17 +53,18 @@ namespace Kismeta.Core.Rules
             var attackerId   = pending.AttackerId;
             var targetCardId = pending.TargetCardId;
             var anteCardId   = pending.AnteCardId;
-            session.Board.PendingContest = null;
 
             if (!accept)
             {
+                session.Board.PendingContest = null;
                 session.EmitEvent(new DuelDeclinedEvent(attackerId, defenderId));
                 return CommandResult.Ok("Duel declined.");
             }
 
-            var validation = ValidateDuelSetup(session, attackerId, defenderId, targetCardId, anteCardId);
+            var validation = ValidateDuelCards(session, attackerId, defenderId, targetCardId, anteCardId);
             if (!validation.IsOk) return validation;
 
+            session.Board.PendingContest = null;
             return ResolveDuel(session, attackerId, defenderId, targetCardId, anteCardId);
         }
 
@@ -75,7 +76,19 @@ namespace Kismeta.Core.Rules
             return TryRespondDuel(session, defenderId, accept: true);
         }
 
-        static CommandResult ValidateDuelSetup(GameSession session, int attackerId, int defenderId,
+        static CommandResult ValidateDuelForInitiation(GameSession session, int attackerId, int defenderId,
+            string targetCardId, string anteCardId)
+        {
+            var cards = ValidateDuelCards(session, attackerId, defenderId, targetCardId, anteCardId);
+            if (!cards.IsOk) return cards;
+
+            if (session.Players[attackerId].DuelChallengedRivalId >= 0)
+                return CommandResult.Invalid("You have already initiated a Duel this round.");
+
+            return CommandResult.Ok();
+        }
+
+        static CommandResult ValidateDuelCards(GameSession session, int attackerId, int defenderId,
             string targetCardId, string anteCardId)
         {
             if (attackerId == defenderId)
@@ -94,9 +107,6 @@ namespace Kismeta.Core.Rules
                 return CommandResult.Invalid("Target card must be in the defender's Spread.");
             if (!attacker.Spread.Contains(anteCardId))
                 return CommandResult.Invalid("Ante card must be in your Spread.");
-
-            if (attacker.DuelChallengedRivalId >= 0)
-                return CommandResult.Invalid("You have already initiated a Duel this round.");
 
             if (db != null)
             {

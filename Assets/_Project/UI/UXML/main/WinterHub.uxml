@@ -85,10 +85,10 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="stage-cta stage-cta--multi stage-cta--winter">
-                <engine:Button name="craft-btn" text="Craft Reagents" class="actionbtn btn btn--primary" style="display: none;" />
-                <engine:Button name="wager-btn" text="Fateful Wager" class="actionbtn btn btn--primary" style="display: none;" />
-                <engine:Button name="limits-btn" text="Enforce Limits" class="actionbtn btn btn--primary" style="display: none;" />
-                <engine:Button name="transit-btn" text="Transit The Age" class="actionbtn btn btn--primary" style="display: none;" />
+                <engine:Button name="craft-btn" text="Craft Reagents" class="actionbtn btn btn--action btn--action-hue-blue" style="display: none;" />
+                <engine:Button name="wager-btn" text="Fateful Wager" class="actionbtn btn btn--action btn--action-hue-red" style="display: none;" />
+                <engine:Button name="limits-btn" text="Enforce Limits" class="actionbtn btn btn--action btn--action-hue-green" style="display: none;" />
+                <engine:Button name="transit-btn" text="Transit The Age" class="actionbtn btn btn--action btn--action-hue-purple" style="display: none;" />
                 <engine:Button name="pass-btn" text="Finish Turn" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 

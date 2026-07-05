@@ -132,17 +132,35 @@
     flex-shrink: 0;
 }
 
+/* Craft reagent — scroll body + pinned footer (matches Activate / Card Limits) */
+.overlay-clone-host > #craft-reagent {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+}
+
 .craft-pick {
-    flex-grow: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    flex-direction: column;
+}
+
+.craft-scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+}
+
+.craft-scroll__content {
     flex-shrink: 0;
     flex-direction: column;
 }
 
-.craft-body {
-    flex-grow: 0;
+.craft-footer {
     flex-shrink: 0;
-    flex-direction: column;
-    padding-bottom: var(--space-xs);
 }
 
 /* Craft reagent — compact layout so pick + forge fit in modal without clipping */
@@ -171,10 +189,10 @@
     margin-bottom: 5px;
 }
 
-#craft-reagent .tip {
+#craft-reagent .craft-footer .tip {
     padding: 6px 9px;
     margin-top: 4px;
-    margin-bottom: 4px;
+    margin-bottom: 0;
 }
 
 .reagent-pick {

@@ -27,9 +27,9 @@
 
             <engine:VisualElement class="autumn-main__actionbar">
                 <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                    <engine:Button name="craft-btn" text="Craft&#10;Reagents" class="actionbtn btn btn--action" />
-                    <engine:Button name="activate-btn" text="Light&#10;Cauldrons" class="actionbtn btn btn--action" />
-                    <engine:Button name="forge-btn" text="Forge&#10;Stone" class="actionbtn btn btn--action" />
+                    <engine:Button name="craft-btn" text="Craft&#10;Reagents" class="actionbtn btn btn--action btn--action-hue-blue" />
+                    <engine:Button name="activate-btn" text="Light&#10;Cauldrons" class="actionbtn btn btn--action btn--action-hue-red" />
+                    <engine:Button name="forge-btn" text="Forge&#10;Stone" class="actionbtn btn btn--action btn--action-hue-green" />
                 </engine:VisualElement>
             </engine:VisualElement>
 
