@@ -177,14 +177,14 @@
 .spring-board {
     position: relative;
     width: 272px;
-    height: 272px;
+    height: 308px;
     max-width: 84%;
     min-width: 220px;
-    min-height: 220px;
+    min-height: 248px;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    margin: var(--space-sm) 0 var(--space-xs);
+    margin: var(--space-md) 0 var(--space-xs);
     align-self: center;
     overflow: visible;
 }
@@ -193,7 +193,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 0;
+    top: 28px;
     bottom: 0;
     background-image: url("project://database/Assets/_Project/Art/zodiacWheel_springHub.png");
     -unity-background-scale-mode: scale-to-fit;
@@ -203,7 +203,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 0;
+    top: 28px;
     bottom: 0;
 }
 
@@ -234,6 +234,26 @@
     background-image: url("project://database/Assets/_Project/Art/meeple/meeple_White.png");
 }
 
+.spring-board__token--house-red {
+    z-index: 0;
+    background-image: url("project://database/Assets/_Project/Art/astralHouses/astralHouse_red.png");
+}
+
+.spring-board__token--house-green {
+    z-index: 0;
+    background-image: url("project://database/Assets/_Project/Art/astralHouses/astralHouse_green.png");
+}
+
+.spring-board__token--house-blue {
+    z-index: 0;
+    background-image: url("project://database/Assets/_Project/Art/astralHouses/astralHouse_blue.png");
+}
+
+.spring-board__token--house-white {
+    z-index: 0;
+    background-image: url("project://database/Assets/_Project/Art/astralHouses/astralHouse_white.png");
+}
+
 .spring-hub__hub-cta--hidden,
 .spring-hub__commune-cta--hidden { display: none; }
 
@@ -243,7 +263,7 @@
     flex-shrink: 0;
     -unity-text-align: middle-center;
     align-self: stretch;
-    margin-top: 0;
+    margin-top: var(--space-xs);
     margin-bottom: 0;
     padding: 0 var(--space-xs) var(--space-xs);
 }
@@ -422,21 +442,23 @@
 
 /* Spring harvest compare row */
 .harvest-heading-row {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: baseline;
+    flex-direction: column;
+    align-items: flex-start;
     flex-shrink: 0;
-    margin-top: 4px;
-    margin-bottom: 8px;
+    margin-top: 0;
+    margin-bottom: 10px;
     margin-left: 14px;
     margin-right: 14px;
 }
 .harvest-heading-row__beat {
-    flex-shrink: 1;
+    flex-shrink: 0;
+    width: 100%;
     min-width: 0;
-    margin-left: 8px;
+    margin-left: 0;
+    margin-top: 4px;
     margin-bottom: 0;
     font-size: var(--font-label);
+    white-space: normal;
 }
 .harvest-compare__heading {
     flex-shrink: 0;

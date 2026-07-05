@@ -57,6 +57,26 @@ namespace Kismeta.UI.Tests
             AssertTokenCenter(board, "meeple-2", ZodiacSign.Taurus, 43f);
         }
 
+        [Test]
+        public void BindBoard_PlacesAstralHousesAtOuterRing()
+        {
+            var board = new VisualElement { name = "spring-board" };
+            board.Add(new VisualElement { name = "spring-board-tokens" });
+
+            var session = new GameSession("spring-board-test", GameMode.Quickplay, new List<PlayerState>
+            {
+                new(0, PlayerColor.Green),
+                new(1, PlayerColor.Red),
+            });
+            session.Players[0].AstralHouses.Add(ZodiacSign.Virgo);
+            session.Players[1].AstralHouses.Add(ZodiacSign.Libra);
+
+            SpringBoardBindings.BindBoard(board, session);
+
+            AssertTokenCenter(board, "house-p0-Virgo", ZodiacSign.Virgo, 52f);
+            AssertTokenCenter(board, "house-p1-Libra", ZodiacSign.Libra, 52f);
+        }
+
         static void AssertTokenCenter(VisualElement board, string tokenName, ZodiacSign sign, float radiusPct)
         {
             var token = board.Q(tokenName);

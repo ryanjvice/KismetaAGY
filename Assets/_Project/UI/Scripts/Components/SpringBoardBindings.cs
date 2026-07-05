@@ -8,15 +8,18 @@ using static Kismeta.UI.Components.ZodiacWheelLayout;
 namespace Kismeta.UI.Components
 {
     /// <summary>
-    /// Renders the Spring hub zodiac wheel with cosmic-age pawn (middle ring) and player meeples (outer ring).
+    /// Renders the Spring hub zodiac wheel with cosmic-age pawn (middle ring), player meeples (outer ring),
+    /// and astral house tokens (outermost ring).
     /// Wheel art is set in USS (see spring-board__wheel); tokens use USS sprites + runtime placement.
     /// </summary>
     public static class SpringBoardBindings
     {
         const float OuterRingRadiusPct = 43f;
         const float MiddleRingRadiusPct = 26f;
+        const float HouseRingRadiusPct = 52f;
         const float MeepleSizePx = 40f;
         const float PawnSizePx = 34f;
+        const float HouseSizePx = 32f;
         const float SameSignOffsetDeg = 4f;
 
         public static void BindBoard(VisualElement? boardRoot, GameSession session)
@@ -58,6 +61,21 @@ namespace Kismeta.UI.Components
                     offsetDeg,
                     player.Color);
             }
+
+            foreach (var player in session.Players)
+            {
+                foreach (var sign in player.AstralHouses)
+                {
+                    PlaceToken(
+                        tokensHost,
+                        $"house-p{player.PlayerId}-{sign}",
+                        sign,
+                        HouseRingRadiusPct,
+                        HouseSizePx,
+                        color: player.Color,
+                        isHouse: true);
+                }
+            }
         }
 
         static void PlaceToken(
@@ -68,12 +86,15 @@ namespace Kismeta.UI.Components
             float sizePx,
             float angleOffsetDeg = 0f,
             PlayerColor color = PlayerColor.Red,
-            bool isPawn = false)
+            bool isPawn = false,
+            bool isHouse = false)
         {
             var token = new VisualElement { name = name };
             token.AddToClassList("spring-board__token");
             if (isPawn)
                 token.AddToClassList("spring-board__token--pawn");
+            else if (isHouse)
+                token.AddToClassList(HouseClassFor(color));
             else
                 token.AddToClassList(MeepleClassFor(color));
             host.Add(token);
@@ -100,6 +121,15 @@ namespace Kismeta.UI.Components
             PlayerColor.Blue => "spring-board__token--meeple-blue",
             PlayerColor.White => "spring-board__token--meeple-white",
             _ => "spring-board__token--meeple-red"
+        };
+
+        static string HouseClassFor(PlayerColor color) => color switch
+        {
+            PlayerColor.Red => "spring-board__token--house-red",
+            PlayerColor.Green => "spring-board__token--house-green",
+            PlayerColor.Blue => "spring-board__token--house-blue",
+            PlayerColor.White => "spring-board__token--house-white",
+            _ => "spring-board__token--house-red"
         };
 
     }
