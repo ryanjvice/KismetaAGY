@@ -77,7 +77,6 @@ namespace Kismeta.UI
         public event Action? ReturnToMainMenuRequested;
 
         private string? _shellReturnScreenId;
-        private int _lastRevealedNavigationGeneration;
 
         /// <summary>Supplied by bootstrap to resolve human vs AI seats before a session exists.</summary>
         public Func<int>? ResolveHumanPlayerCount;
@@ -97,7 +96,6 @@ namespace Kismeta.UI
             _overviewRecapHost = GetComponent<GameOverviewRecapHost>();
             NarrativeToolbarBindings.ConfigureIntroRecapHost(_introRecapHost);
             _playerHud = GetComponent<PlayerHudController>();
-            _router.DeferredRevealRequested += TryRevealNavigation;
         }
 
         private void Start()
@@ -1697,20 +1695,6 @@ namespace Kismeta.UI
                 controller?.Refresh();
 
             RefreshPlayerHud();
-            TryRevealNavigation();
-        }
-
-        void TryRevealNavigation()
-        {
-            if (_router.NavigationGeneration == _lastRevealedNavigationGeneration)
-                return;
-
-            var root = _layout.ContentScreenRoot;
-            if (root == null)
-                return;
-
-            ScreenRevealMotion.Reveal(_router.CurrentScreenId, root);
-            _lastRevealedNavigationGeneration = _router.NavigationGeneration;
         }
 
         void RefreshPlayerHud()

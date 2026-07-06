@@ -34,6 +34,7 @@ namespace Kismeta.UI.Controllers
             if (!IsAttached) return;
             ResetUi();
             BuildPlayerRows();
+            CeremonyRevealMotion.RevealAgekeeperContest(Root);
         }
 
         protected override void Wire()

@@ -112,6 +112,7 @@ namespace Kismeta.UI.Components
             state.ShowHubRecapNote = false;
             Populate(sheet, season, overviewAsset, onTabChanged, resetTabToOverview: true);
             ApplyPrimaryAction(sheet, "Close");
+            CeremonyRevealMotion.RevealSeasonInfoRecap(root);
         }
 
         static void RefreshHubRecapNote(VisualElement sheet)

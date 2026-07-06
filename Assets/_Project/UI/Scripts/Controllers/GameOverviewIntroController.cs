@@ -79,8 +79,7 @@ namespace Kismeta.UI.Controllers
                 ? "Continue"
                 : ReviewMode ? "Close" : _finalVerb;
 
-            if (index > 0)
-                ScreenRevealMotion.RevealGameOverviewIntroStep(Root, index);
+            CeremonyRevealMotion.RevealGameOverviewIntro(Root, index);
         }
 
         void SetWizard(string prefix, int total, int activeIndex)

@@ -32,6 +32,7 @@ namespace Kismeta.UI.Controllers
                 Lbl("winner-name")!.text = $"{PlayerUiNames.ForPlayer(winnerId.Value)} has completed the Great Work";
 
             RebuildStandings(session, winnerId);
+            CeremonyRevealMotion.RevealVictory(Root);
         }
 
         void RebuildStandings(GameSession session, int? winnerId)

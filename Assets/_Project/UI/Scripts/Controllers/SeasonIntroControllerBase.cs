@@ -46,6 +46,7 @@ namespace Kismeta.UI.Controllers
                 return;
 
             SeasonInfoRecapBindings.PopulateCeremony(Root, IntroSeason, OverviewAsset);
+            CeremonyRevealMotion.RevealSeasonInfoRecap(Root);
         }
 
         void OnPrimaryAction() => _gate?.Complete();

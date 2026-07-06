@@ -81,6 +81,19 @@ namespace Kismeta.UI.Controllers
                 CeremonyBindings.BindAgeOpening(Root, session);
                 BindRevealCharge();
             }
+
+            RevealCurrentPhase();
+        }
+
+        void RevealCurrentPhase()
+        {
+            if (_phase == Phase.Rolling || Root == null)
+                return;
+
+            if (_phase == Phase.Reveal)
+                CeremonyRevealMotion.RevealRoundOpenReveal(Root);
+            else
+                CeremonyRevealMotion.RevealRoundOpenCast(Root);
         }
 
         IEnumerator ShowWagerResultsThenReveal(GameSession session)
@@ -93,7 +106,6 @@ namespace Kismeta.UI.Controllers
 
             _phase = Phase.Reveal;
             ApplyPhaseBinding(session);
-            RevealCurrentPhase();
         }
 
         void BindRevealCharge()
@@ -166,17 +178,6 @@ namespace Kismeta.UI.Controllers
             CeremonyBindings.BindAgeOpening(Root, _session);
             BindRevealCharge();
             RevealCurrentPhase();
-        }
-
-        void RevealCurrentPhase()
-        {
-            if (_phase == Phase.Rolling || Root == null)
-                return;
-
-            if (_phase == Phase.Reveal)
-                ScreenRevealMotion.RevealRoundOpenReveal(Root);
-            else
-                ScreenRevealMotion.RevealRoundOpenCast(Root);
         }
     }
 }

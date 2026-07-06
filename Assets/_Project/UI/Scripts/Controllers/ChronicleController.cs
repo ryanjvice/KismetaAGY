@@ -44,6 +44,7 @@ namespace Kismeta.UI.Controllers
             EnsureChart(chronicle, session.Players.Count);
             RebuildLegend(session.Players.Count);
             RebuildContestRows(session, chronicle);
+            CeremonyRevealMotion.RevealChronicle(Root);
         }
 
         void SetStatValue(int index, string value)
