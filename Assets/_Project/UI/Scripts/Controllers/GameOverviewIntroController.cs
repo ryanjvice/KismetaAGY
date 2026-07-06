@@ -78,6 +78,9 @@ namespace Kismeta.UI.Controllers
             Btn("continue-btn")!.text = index == 0
                 ? "Continue"
                 : ReviewMode ? "Close" : _finalVerb;
+
+            if (index > 0)
+                ScreenRevealMotion.RevealGameOverviewIntroStep(Root, index);
         }
 
         void SetWizard(string prefix, int total, int activeIndex)

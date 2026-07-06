@@ -32,7 +32,7 @@
         </engine:VisualElement>
 
         <!-- stat row -->
-        <engine:VisualElement style="padding: 11px 14px 6px; flex-direction: row;">
+        <engine:VisualElement name="chronicle-stats" style="padding: 11px 14px 6px; flex-direction: row;">
             <engine:VisualElement class="stat-cell">
                 <engine:Label text="4" class="stat-cell__value" style="color: rgb(232, 185, 74);" />
                 <engine:Label text="ages played" style="font-size: 8px; color: rgb(184, 154, 110);" />
@@ -48,7 +48,7 @@
         </engine:VisualElement>
 
         <!-- race chart -->
-        <engine:VisualElement style="padding: 6px 14px 4px;">
+        <engine:VisualElement name="chronicle-chart" style="padding: 6px 14px 4px;">
             <engine:Label text="the race to the altar" class="eyebrow" />
             <engine:VisualElement name="chart-host" class="chart-host">
                 <engine:Label text="[ race line chart — render in C# (Painter2D / VectorGraphics) ]"
@@ -62,7 +62,7 @@
         </engine:VisualElement>
 
         <!-- contest record -->
-        <engine:VisualElement style="padding: 10px 14px 16px;">
+        <engine:VisualElement name="chronicle-record" style="padding: 10px 14px 16px;">
             <engine:Label text="contest record" class="eyebrow" />
             <engine:VisualElement style="flex-direction: row; padding: 0 4px 4px;">
                 <engine:Label text="alchemist" style="flex-grow: 1.4; font-size: 8px; color: rgb(138, 106, 122);" />
@@ -92,7 +92,7 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <engine:VisualElement style="padding: 0 14px 16px; flex-direction: row;">
+        <engine:VisualElement name="chronicle-actions" style="padding: 0 14px 16px; flex-direction: row;">
             <engine:Button name="back-btn" text="Back" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
             <engine:Button name="newgame-btn" text="New Game" class="btn btn--primary" style="flex-grow: 1;" />
         </engine:VisualElement>

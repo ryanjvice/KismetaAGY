@@ -100,7 +100,10 @@ namespace Kismeta.UI.Controllers
             if (Btn("roll-btn") != null)
                 Btn("roll-btn").style.display = DisplayStyle.None;
             if (Btn("continue-btn") != null)
+            {
                 Btn("continue-btn").style.display = DisplayStyle.Flex;
+                UiMotion.FadeIn(Btn("continue-btn"));
+            }
         }
 
         private string FormatTieRerollMessage(IReadOnlyList<AgekeeperContestService.RollResult> round)

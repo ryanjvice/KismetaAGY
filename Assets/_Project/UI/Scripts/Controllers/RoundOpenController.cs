@@ -93,6 +93,7 @@ namespace Kismeta.UI.Controllers
 
             _phase = Phase.Reveal;
             ApplyPhaseBinding(session);
+            RevealCurrentPhase();
         }
 
         void BindRevealCharge()
@@ -164,6 +165,18 @@ namespace Kismeta.UI.Controllers
             SetPhaseVisibility(Phase.Reveal);
             CeremonyBindings.BindAgeOpening(Root, _session);
             BindRevealCharge();
+            RevealCurrentPhase();
+        }
+
+        void RevealCurrentPhase()
+        {
+            if (_phase == Phase.Rolling || Root == null)
+                return;
+
+            if (_phase == Phase.Reveal)
+                ScreenRevealMotion.RevealRoundOpenReveal(Root);
+            else
+                ScreenRevealMotion.RevealRoundOpenCast(Root);
         }
     }
 }

@@ -2,7 +2,6 @@ using Kismeta.Core.Commands;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI;
-using Kismeta.UI.Components;
 
 namespace Kismeta.UI.Controllers
 {

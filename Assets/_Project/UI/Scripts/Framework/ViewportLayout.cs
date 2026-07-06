@@ -130,6 +130,7 @@ namespace Kismeta.UI
             overlay.style.display = DisplayStyle.Flex;
             InstantiateOverlay(overlay, asset, _tokenStylesheet);
             SetOverlayBackdropBlur(true);
+            ScheduleOverlayReveal();
         }
 
         /// <summary>Cap overlay host height so an inner ScrollView can scroll tall sheet content.</summary>
@@ -198,14 +199,13 @@ namespace Kismeta.UI
             }
             overlay.style.display = DisplayStyle.Flex;
             InstantiateOverlay(overlay, asset, _tokenStylesheet);
-            if (_overlayContentRoot != null)
-                UiMotion.AnimateSheetRise(_overlayContentRoot);
             if (verticalAlign == SheetVerticalAlign.Center)
             {
                 BindCenteredOverlayFit();
                 ScheduleFitCenteredOverlay();
             }
             SetOverlayBackdropBlur(true);
+            ScheduleOverlayReveal();
         }
 
         /// <summary>Show a programmatic overlay (no UXML asset).</summary>
@@ -227,8 +227,18 @@ namespace Kismeta.UI
             overlay.Add(host);
             _overlayContentRoot = content;
             if (asSheet)
-                UiMotion.AnimateSheetRise(content);
+                ScheduleOverlayReveal();
             SetOverlayBackdropBlur(true);
+        }
+
+        void ScheduleOverlayReveal()
+        {
+            if (_overlayContentRoot == null)
+                return;
+
+            var root = _overlayContentRoot;
+            var key = root.name;
+            root.schedule.Execute(() => ScreenRevealMotion.RevealOverlay(root, key)).StartingIn(0);
         }
 
         /// <summary>

@@ -31,8 +31,10 @@ namespace Kismeta.UI
         private string? _currentId;
 
         public string? CurrentScreenId => _currentId;
+        public int NavigationGeneration { get; private set; }
         public ScreenController? ActiveController => _active;
         public event Action<string>? ScreenChanged;
+        public event Action? DeferredRevealRequested;
 
         public void RefreshControllers()
         {
@@ -209,8 +211,10 @@ namespace Kismeta.UI
             if (_active != null && screenRoot != null)
                 _active.AttachTo(screenRoot);
 
+            NavigationGeneration++;
             _currentId = screenId;
             ScreenChanged?.Invoke(screenId);
+            screenRoot?.schedule.Execute(() => DeferredRevealRequested?.Invoke()).StartingIn(0);
             return true;
         }
 
