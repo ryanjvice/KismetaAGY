@@ -46,8 +46,8 @@ namespace Kismeta.UI.Components
         static string[] LabelsFor(Season season) => season switch
         {
             Season.Spring => new[] { "age", "sign", "harvest", "hub", "lock" },
-            Season.Summer => new[] { "trade", "duel", "gambit", "opposition" },
-            Season.Autumn => new[] { "craft", "activate", "forge" },
+            Season.Summer => new[] { "trade", "duel", "gambit", "build" },
+            Season.Autumn => new[] { "craft", "activate", "forge", "opposition" },
             Season.Winter => new[] { "unlock", "wager", "limits", "transit" },
             _ => new[] { "step" }
         };

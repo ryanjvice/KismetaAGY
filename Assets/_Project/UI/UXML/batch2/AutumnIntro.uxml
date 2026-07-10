@@ -49,6 +49,15 @@
                             <engine:Label text="&#xec3a;" class="ti-icon" />
                         </engine:VisualElement>
                         <engine:VisualElement class="intro-action-row__text">
+                            <engine:Label text="Opposition" class="intro-action-row__title" />
+                            <engine:Label text="pay the ward fee, roll, tally alignment to send their stone to stasis" class="intro-action-row__subtitle" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                    <engine:VisualElement class="intro-action-row">
+                        <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--forge">
+                            <engine:Label text="&#xec3a;" class="ti-icon" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="intro-action-row__text">
                             <engine:Label text="Forge" class="intro-action-row__title" />
                             <engine:Label text="fire your stone into the forge, or temper when the round is done" class="intro-action-row__subtitle" />
                         </engine:VisualElement>

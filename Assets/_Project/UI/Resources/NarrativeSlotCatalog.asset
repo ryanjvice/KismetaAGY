@@ -43,8 +43,8 @@ MonoBehaviour:
     _tier: 0
     _order: 0
     _beat: 
-    _charge: "Before cards lock, use your tools \u2014 read effects, commune, and
-      check whether an Astral House is worth building."
+    _charge: "Before cards lock, use your tools \u2014 read effects and commune with
+      your tableau."
     _stakes: 
     _verbs:
     - Focus
@@ -89,14 +89,12 @@ MonoBehaviour:
     _season: 0
     _tier: 1
     _order: 4
-    _beat: Study the wheel. Commune, build a House, and prepare for Summer.
-    _charge: Commune with your cards, build an Astral House on your sign, and review
-      the table before Summer.
+    _beat: Study the wheel. Commune and prepare for Summer.
+    _charge: Commune with your cards and review the table before Summer.
     _stakes: Spread cards score alignment and activate Crucibles but can be stolen
       in a Duel. Hand cards are safe but idle.
     _verbs:
     - Commune With Cards
-    - Build A House
     - Proceed To Summer
     _breadcrumb: 
   - _id: spring.passed
@@ -150,8 +148,7 @@ MonoBehaviour:
     _season: 1
     _tier: 0
     _order: 0
-    _beat: The sun rides high. Craft, activate, trade, duel, gambit, and oppose as
-      you will.
+    _beat: The sun rides high. Trade, duel, gambit, and build as you will.
     _charge: "Take any actions, in any order, as many as you can fuel \u2014 no fixed
       order, no turn limit."
     _stakes: 
@@ -163,8 +160,8 @@ MonoBehaviour:
     _tier: 0
     _order: 0
     _beat: 
-    _charge: "This round is for consorting and contesting \u2014 review Codex and
-      the Table, then Trade, Duel, Gambit, and Opposition as opportunities arise."
+    _charge: "This round is for consorting and building \u2014 review Codex and the
+      Table, then Trade, Duel, Gambit, and Build Astral Houses as opportunities arise."
     _stakes: 
     _verbs:
     - Focus
@@ -173,13 +170,14 @@ MonoBehaviour:
     _season: 1
     _tier: 1
     _order: 1
-    _beat: Take your turn beneath the high sun. Craft, consort, or activate.
+    _beat: Take your turn beneath the high sun. Consort with rivals or build a House.
     _charge: Take any actions, in any order, as many as you can fuel.
     _stakes: 
     _verbs:
-    - Craft
-    - Consort
-    - Activate
+    - Trade
+    - Duel
+    - Gambit
+    - Build A House
     - Finish Turn
     _breadcrumb: 
   - _id: summer.passed
@@ -282,10 +280,10 @@ MonoBehaviour:
     _season: 2
     _tier: 0
     _order: 0
-    _beat: The crucible runs hot. Craft, activate, fire your stone, and drive it
+    _beat: The crucible runs hot. Craft, activate, oppose, and drive your stone
       toward gold.
     _charge: "Take any actions, in any order, as many as you can fuel \u2014 craft,
-      activate, and advance at the forge."
+      activate, oppose, and advance at the forge."
     _stakes: 
     _verbs:
     - Begin Autumn
@@ -295,8 +293,8 @@ MonoBehaviour:
     _tier: 0
     _order: 0
     _beat: 
-    _charge: "The forge is live \u2014 cross-check Codex costs before you Fire, Temper,
-      or break Stasis."
+    _charge: "The forge is live \u2014 cross-check Codex costs before you Oppose,
+      Fire, Temper, or break Stasis."
     _stakes: 
     _verbs:
     - Focus
@@ -322,8 +320,8 @@ MonoBehaviour:
     _verbs:
     - Waiting
     _breadcrumb: Waiting
-  - _id: summer.opposition
-    _season: 1
+  - _id: autumn.opposition
+    _season: 2
     _tier: 1
     _order: 9
     _beat: Align against a rival and break their forging.

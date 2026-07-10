@@ -27,7 +27,7 @@ namespace Kismeta.Core.Phases
             new PhaseStepDefinition(3, "Harvest",
                 "Base Harvest + Bonus Cards + Agekeeper's Boon."),
             new PhaseStepDefinition(4, "SpringHub",
-                "Commune with cards, build an Astral House, and review the table before Summer."),
+                "Commune with cards and review the table before Summer."),
             new PhaseStepDefinition(5, "CardLock",
                 "Cards are locked between Hand and Spread until Phase 4: Winter.")
         };
@@ -44,8 +44,8 @@ namespace Kismeta.Core.Phases
             new PhaseStepDefinition(3, "Gambit",
                 "Pay any Ward cost and roll dice to seize a rival's Active Crucible Card or Adept.",
                 isOrdered: false),
-            new PhaseStepDefinition(4, "Opposition",
-                "Attempt to send an opponent's Forging Stone into Stasis via an Alignment contest.",
+            new PhaseStepDefinition(4, "BuildAstralHouse",
+                "Pay planet-matching cards to permanently claim a Zodiac Sign.",
                 isOrdered: false)
         };
 
@@ -55,11 +55,14 @@ namespace Kismeta.Core.Phases
                 "Discard 3 matching-Suit cards into a lit Cauldron to craft 1 Reagent."),
             new PhaseStepDefinition(2, "ActivateCrucible",
                 "Collect card sets listed on the Codex & discard to activate a Crucible Card."),
-            new PhaseStepDefinition(3, "FireStone",
+            new PhaseStepDefinition(3, "Opposition",
+                "Attempt to send an opponent's Forging Stone into Stasis via an Alignment contest.",
+                isOrdered: false),
+            new PhaseStepDefinition(4, "FireStone",
                 "Complete an active Crucible card and move your Stone into the Forge."),
-            new PhaseStepDefinition(4, "Temper",
+            new PhaseStepDefinition(5, "Temper",
                 "After a full round in the Forge, move your Stone to the next Mantle Ring space."),
-            new PhaseStepDefinition(5, "LeaveStasis",
+            new PhaseStepDefinition(6, "LeaveStasis",
                 "Move your Stone out of Stasis back to its previous Forge spot.")
         };
 

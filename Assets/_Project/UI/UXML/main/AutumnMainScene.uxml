@@ -30,6 +30,7 @@
                     <engine:Button name="craft-btn" text="Craft&#10;Reagents" class="actionbtn btn btn--action btn--action-hue-blue" />
                     <engine:Button name="activate-btn" text="Light&#10;Cauldrons" class="actionbtn btn btn--action btn--action-hue-red" />
                     <engine:Button name="forge-btn" text="Forge&#10;Stone" class="actionbtn btn btn--action btn--action-hue-green" />
+                    <engine:Button name="opposition-btn" text="Opposition" class="actionbtn btn btn--action btn--action-hue-purple" />
                 </engine:VisualElement>
             </engine:VisualElement>
 

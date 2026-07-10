@@ -51,12 +51,6 @@ namespace Kismeta.UI.Components
                     "Open Effects",
                     "See how the cosmic age and your sign interact with astral houses and adepts."),
                 new SeasonFocusTip(
-                    "Check Build Astral House",
-                    "Build when you hold a minor matching your sign's planet, the sign is unclaimed, and you have tokens left."),
-                new SeasonFocusTip(
-                    "Inspect the board",
-                    "Use the magnifier to see rival sign claims before building on a sign."),
-                new SeasonFocusTip(
                     "Compare harvest and alignment",
                     "Sign match bonuses affect how many cards you keep from harvest.")
             },
@@ -76,10 +70,13 @@ namespace Kismeta.UI.Components
                     "Look for mutually beneficial trades — swap cards or reagents when both sides gain from the deal."),
                 new SeasonFocusTip(
                     "Capitalize on Weaknesses",
-                    "When a rival is exposed, press with Duels, Gambits, and Opposition while you still have fuel."),
+                    "When a rival is exposed, press with Duels and Gambits while you still have fuel."),
+                new SeasonFocusTip(
+                    "Build Astral Houses",
+                    "Pay planet-matching cards on your current sign when the sign is unclaimed and you have tokens left."),
                 new SeasonFocusTip(
                     "Protect Your Assets",
-                    "Place protective wards to make it harder for rivals to challenge you in Gambits or Opposition.")
+                    "Place protective wards to make it harder for rivals to challenge you in Gambits.")
             },
             [Season.Autumn] = new[]
             {

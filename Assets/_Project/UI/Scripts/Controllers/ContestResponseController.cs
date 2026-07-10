@@ -408,7 +408,7 @@ namespace Kismeta.UI.Controllers
                 ContestKind.Trade => "summer.trade",
                 ContestKind.Duel => "summer.duel",
                 ContestKind.Gambit => "summer.gambit",
-                ContestKind.Opposition => "summer.opposition",
+                ContestKind.Opposition => "autumn.opposition",
                 _ => "summer.duel"
             };
 

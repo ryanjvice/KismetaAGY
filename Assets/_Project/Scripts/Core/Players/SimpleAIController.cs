@@ -79,10 +79,6 @@ namespace Kismeta.Core.Players
 
         private IGameCommand DecideSpringAction(GameContext ctx)
         {
-            var build = TryBuildAstralHouse(ctx);
-            if (build != null)
-                return build;
-
             var pid = Slot.Index;
             foreach (var id in ctx.PrivateView.Hand)
             {
@@ -108,6 +104,7 @@ namespace Kismeta.Core.Players
         {
             var pid = ctx.ActivePlayerId;
             var player = ctx.PublicView.Players[pid];
+            int required = AstralHouseService.RequiredPaymentCount(ctx.PublicView.Mode);
 
             if (player.UnplacedAstralHouses <= 0
                 || player.CurrentSign == ZodiacSign.None
@@ -124,61 +121,66 @@ namespace Kismeta.Core.Players
 
             var planet = Correspondence.PlanetFor(sign);
             var cardMap = ctx.PublicView.CardInstanceToDefinition;
-            var spreadIds = new List<string>(player.Spread);
-            foreach (var id in spreadIds)
+            var payment = new List<string>();
+
+            foreach (var id in player.Spread)
             {
+                if (payment.Count >= required) break;
                 if (!cardMap.TryGetValue(id, out var defId)) continue;
                 var def = ctx.CardDatabase.GetById(defId);
                 if (def != null && def.Planet == planet)
-                    return new BuildAstralHouseCommand(pid, sign, new List<string> { id });
+                    payment.Add(id);
             }
 
             foreach (var id in ctx.PrivateView.Hand)
             {
+                if (payment.Count >= required) break;
                 if (!cardMap.TryGetValue(id, out var defId)) continue;
                 var def = ctx.CardDatabase.GetById(defId);
                 if (def != null && def.Planet == planet)
-                    return new BuildAstralHouseCommand(pid, sign, new List<string> { id });
+                    payment.Add(id);
             }
 
-            return null;
+            return payment.Count == required
+                ? new BuildAstralHouseCommand(pid, sign, payment)
+                : null;
         }
 
-        // ─── Summer: Duel, Gambit, Opposition, or Pass ────────────────────────────
+        // ─── Summer: Duel, Gambit, Build House, or Pass ───────────────────────────
 
         private IGameCommand DecideSummer(GameContext ctx)
         {
             var pid     = Slot.Index;
             var player  = ctx.PublicView.Players[pid];
-            var spreadIds = new List<string>(player.Spread);
 
             if (AiDuelPolicy.ShouldInitiate(ctx, pid, _rng, out var duel))
                 return duel!;
 
-            // Gambit if we have an Active Crucible slot — stakes an arrested outcome
             var gambitTarget = FindGambitTarget(ctx, pid);
             if (gambitTarget.TargetId >= 0 && gambitTarget.OfferedCardId != null)
                 return new InitiateGambitCommand(pid, gambitTarget.TargetId, gambitTarget.OfferedCardId);
 
-            // Opposition: target the opponent who is Forging and furthest ahead,
-            // but only if our stone is not in Stasis and not fresh out of Stasis.
-            if (player.StoneState != StoneState.Stasis && !player.ReturnedFromStasisThisRound)
-            {
-                var oppTarget = FindOppositionTarget(ctx, pid);
-                if (oppTarget >= 0)
-                    return new InitiateOppositionCommand(pid, oppTarget);
-            }
+            var build = TryBuildAstralHouse(ctx);
+            if (build != null)
+                return build;
 
             return new PassCrucibleActionCommand(pid);
         }
 
-        // ─── Autumn: Leave Stasis, Temper, Activate, Fire, Craft, or Pass ─────────
+        // ─── Autumn: Opposition, Leave Stasis, Temper, Activate, Fire, Craft, or Pass
 
         private IGameCommand DecideAutumn(GameContext ctx)
         {
             var pid       = Slot.Index;
             var player    = ctx.PublicView.Players[pid];
             var spreadIds = new List<string>(player.Spread);
+
+            if (player.StoneState != StoneState.Stasis && !player.ReturnedFromStasisThisRound)
+            {
+                var oppTarget = FindOppositionTarget(ctx, pid);
+                if (oppTarget >= 0)
+                    return new InitiateOppositionCommand(pid, oppTarget);
+            }
 
             // Leave Stasis
             if (player.StoneState == StoneState.Stasis

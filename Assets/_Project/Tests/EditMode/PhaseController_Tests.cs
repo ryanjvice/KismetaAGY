@@ -76,10 +76,17 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
+        public void Summer_Step4_Is_BuildAstralHouse()
+        {
+            var step = PhaseDefinitions.SummerSteps[3];
+            Assert.AreEqual("BuildAstralHouse", step.Name);
+        }
+
+        [Test]
         public void Full_Round_Cycle_Completes_Without_Error()
         {
             var pc = new PhaseController();
-            int totalSteps = 5 + 4 + 5 + 4; // Spring + Summer + Autumn + Winter
+            int totalSteps = 5 + 4 + 6 + 4; // Spring + Summer + Autumn + Winter
             for (int i = 0; i < totalSteps; i++)
                 pc.Advance();
 

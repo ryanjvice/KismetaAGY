@@ -17,7 +17,7 @@ namespace Kismeta.UI.Controllers
         public Action? OnTrade;
         public Action? OnDuel;
         public Action? OnGambit;
-        public Action? OnOpposition;
+        public Action? OnBuildHouse;
         public Action? OnPass;
 
         public Action? OnOpenCardTable;
@@ -53,7 +53,7 @@ namespace Kismeta.UI.Controllers
             WireBtn("trade-btn", () => OnTrade?.Invoke());
             WireBtn("duel-btn", () => OnDuel?.Invoke());
             WireBtn("gambit-btn", () => OnGambit?.Invoke());
-            WireBtn("opposition-btn", () => OnOpposition?.Invoke());
+            WireBtn("build-house-btn", () => OnBuildHouse?.Invoke());
             WireBtn("pass-btn", () => OnPass?.Invoke());
             NarrativeToolbarBindings.WireIntroRecap(Root, Season.Summer, () => IntroRecapHost);
 
@@ -117,8 +117,7 @@ namespace Kismeta.UI.Controllers
             Btn("trade-btn")?.SetEnabled(summerAction);
             Btn("duel-btn")?.SetEnabled(summerAction);
             Btn("gambit-btn")?.SetEnabled(summerAction);
-            Btn("opposition-btn")?.SetEnabled(
-                summerAction && AutumnActionBindings.HasOpposeTargets(session, _localPlayerId));
+            Btn("build-house-btn")?.SetEnabled(summerAction);
 
             RefreshRoster();
 

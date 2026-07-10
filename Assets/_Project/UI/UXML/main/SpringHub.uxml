@@ -11,7 +11,7 @@
     <engine:Template src="../shell/CentralPanelInspectFab.uxml" name="CentralPanelInspectFab" />
 
     <engine:VisualElement name="spring-hub" class="screen screen--spring">
-        <engine:Label text="Spring hub — zodiac board, commune, build a house, and advance to Summer." class="sr-only" />
+        <engine:Label text="Spring hub — zodiac board, commune, and advance to Summer." class="sr-only" />
 
         <engine:VisualElement class="screen__body">
             <engine:Instance template="GameHeaderOverlay" />
@@ -27,7 +27,6 @@
             <engine:VisualElement name="hub-actionbar" class="spring-hub__actionbar spring-hub__actionbar--hidden">
                 <engine:VisualElement class="actionbar__row actionbar__row--primary">
                     <engine:Button name="commune-btn" text="Commune With Cards" class="actionbtn btn btn--action btn--action-hue-blue" />
-                    <engine:Button name="build-house-btn" text="Build A House" class="actionbtn btn btn--action btn--action-hue-red" />
                 </engine:VisualElement>
             </engine:VisualElement>
 

@@ -850,11 +850,11 @@ namespace Kismeta.UI
 
             summer.OnPass = () => _summerOverlays?.ShowEndSummer();
 
-            // Summer is now a contest hub: Trade / Duel / Gambit / Opposition.
+            // Summer is a contest hub: Trade / Duel / Gambit / Build A House.
             summer.OnTrade = () => _contestOverlays?.ShowTrade();
             summer.OnDuel = () => _contestOverlays?.ShowDuel();
             summer.OnGambit = () => _contestOverlays?.ShowGambit();
-            summer.OnOpposition = () => _contestOverlays?.ShowOpposition();
+            summer.OnBuildHouse = () => _summerOverlays?.ShowBuildHouse();
         }
 
         private void WireSeasonHubNavigation()
@@ -985,6 +985,7 @@ namespace Kismeta.UI
             autumn.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
             autumn.OnOpenProtectiveWards = () => _endOverlays?.ShowProtectiveWards();
             autumn.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+            autumn.OnOpposition = () => _contestOverlays?.ShowOpposition();
         }
 
         private void WireActionGroupRailRefresh()
@@ -1325,7 +1326,6 @@ namespace Kismeta.UI
                     spring.OnOpenCrucibleCodex = () => _endOverlays.ShowCrucibleCodex();
                     spring.OnOpenProtectiveWards = () => _endOverlays.ShowProtectiveWards();
                     spring.OnInspectCard = id => _endOverlays.ShowInspect(id);
-                    spring.OnBuildHouse = () => _springOverlays?.ShowBuildHouse();
                     spring.OnOpenBoardInspect = () => _springOverlays?.ShowBoardInspect();
                     spring.OnDismissBoardInspect = () => _springOverlays?.DismissBoardInspect();
                 }
