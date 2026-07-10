@@ -53,6 +53,11 @@ namespace Kismeta.Core.Rules
                 ? $"Duel — challenger wins ({attackerRoundWins}-{defenderRoundWins})"
                 : $"Duel — defender wins ({defenderRoundWins}-{attackerRoundWins})";
 
+            string modifierNote = ContestModifierService.DescribeExchangeContext(
+                session, ContestKind.Duel, attackerId, defenderId);
+            if (!string.IsNullOrWhiteSpace(modifierNote))
+                context += $" · {modifierNote}";
+
             session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.Duel, legs, context));
         }
 
@@ -84,6 +89,11 @@ namespace Kismeta.Core.Rules
             string context = winnerId == attackerId
                 ? $"Gambit — challenger wins ({attackerRoundWins}-{defenderRoundWins})"
                 : $"Gambit — defender wins ({defenderRoundWins}-{attackerRoundWins})";
+
+            string modifierNote = ContestModifierService.DescribeExchangeContext(
+                session, ContestKind.Gambit, attackerId, defenderId);
+            if (!string.IsNullOrWhiteSpace(modifierNote))
+                context += $" · {modifierNote}";
 
             session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.Gambit, legs, context));
         }

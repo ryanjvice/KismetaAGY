@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
@@ -46,7 +47,9 @@ namespace Kismeta.Core.Tests
                 crucible:      new CrucibleRules(db, codexDb, seed: seed),
                 crafting:      new CraftingRules(db),
                 winter:        new WinterRules(db),
-                validator:     new ActionValidator());
+                validator:     new ActionValidator(),
+                combat:        new CombatRules(seed),
+                trade:         new TradeService(db));
 
         private static GameSession BuildSession(CardDatabase db, CrucibleCodexDatabase codexDb,
             int playerCount = 2, int seed = 42, GameMode mode = GameMode.Quickplay,
@@ -220,8 +223,17 @@ namespace Kismeta.Core.Tests
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
-            Assert.AreEqual(db.Count, session.Cards.Count,
-                "Session should contain one instance per card definition.");
+
+            int kismetaCount = 0;
+            foreach (var def in db.GetAll())
+                if (def.Deck == Deck.Kismeta) kismetaCount++;
+
+            int inPlayCrucible = 0;
+            foreach (var player in session.Players)
+                inPlayCrucible += player.CrucibleSlots.Count;
+
+            Assert.AreEqual(kismetaCount + inPlayCrucible, session.Cards.Count,
+                "Session should register all Kismeta cards plus in-play Crucible cards only.");
         }
 
         // ─── SpringRules tests ─────────────────────────────────────────────────────
@@ -492,7 +504,7 @@ namespace Kismeta.Core.Tests
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
             session.Players[1].StoneState = StoneState.Forging;
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Autumn);
             session.CurrentTurnPlayerId = 0;
             var initiate = session.Apply(new InitiateOppositionCommand(0, 1));
             Assert.IsTrue(initiate.IsOk, initiate.Message);
@@ -1992,6 +2004,150 @@ namespace Kismeta.Core.Tests
             Assert.LessOrEqual(resolved.DefendRoll, 12);
         }
 
+        // ─── Phase 1 contest modifier tests ─────────────────────────────────────
+
+        static void AddSpreadCard(GameSession session, int playerId, string instanceId, string definitionId)
+        {
+            var inst = new CardInstance(instanceId, definitionId, CardZone.Spread, playerId);
+            session.RegisterCard(inst);
+            session.Players[playerId].Spread.Add(instanceId);
+        }
+
+        static int FindDuelEqualRollSeed(int rollValue)
+        {
+            for (int seed = 0; seed < 20000; seed++)
+            {
+                var rng = new System.Random(seed);
+                if (rng.Next(1, 13) == rollValue && rng.Next(1, 13) == rollValue)
+                    return seed;
+            }
+            Assert.Fail($"No duel equal-roll seed for value {rollValue}.");
+            return 0;
+        }
+
+        static int FindSixSwordsMultiRoundSeed()
+        {
+            for (int seed = 0; seed < 20000; seed++)
+            {
+                var options = ContestResolveOptions.Simple(ContestKind.Duel, bestOfThree: true);
+                var series = ContestDiceSeriesResolver.Resolve(new System.Random(seed), 0, 1, options);
+                if (series.Rounds.Count >= 2)
+                    return seed;
+            }
+            Assert.Fail("No six-swords multi-round seed.");
+            return 0;
+        }
+
+        [Test]
+        public void Duel_KnightOfSwords_FlipsTieToAttackerWin()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            int seed = FindDuelEqualRollSeed(5);
+
+            var baselineSession = SetupSession(db, codexDb);
+            var baselineAnte = PopulateSpread(baselineSession, 0, 1, "knight-duel-ante");
+            var baselineTargets = PopulateSpread(baselineSession, 1, 1, "knight-duel-target");
+
+            DuelResolvedEvent? baseline = null;
+            baselineSession.OnEvent += e => { if (e is DuelResolvedEvent d) baseline = d; };
+            var combatBaseline = new CombatRules(seed);
+            Assert.IsTrue(combatBaseline.TryDuel(baselineSession, 0, 1, baselineTargets[0], baselineAnte[0]).IsOk);
+            Assert.AreEqual(1, baseline!.WinnerId, "Tie should favor defender without modifiers.");
+
+            var boostedSession = SetupSession(db, codexDb);
+            var ante = PopulateSpread(boostedSession, 0, 1, "knight-duel-ante-b");
+            var targets = PopulateSpread(boostedSession, 1, 1, "knight-duel-target-b");
+            AddSpreadCard(boostedSession, 0, "knight-swords", "minor.swords.knight.1");
+
+            DuelResolvedEvent? boosted = null;
+            boostedSession.OnEvent += e => { if (e is DuelResolvedEvent d) boosted = d; };
+            var combatBoosted = new CombatRules(seed);
+            Assert.IsTrue(combatBoosted.TryDuel(boostedSession, 0, 1, targets[0], ante[0]).IsOk);
+            Assert.AreEqual(0, boosted!.WinnerId, "Knight of Swords should flip tied duel to attacker.");
+        }
+
+        [Test]
+        public void SixOfSwords_AttackerOnlyBestOfThree()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            Assert.IsFalse(session.Board.ContestEffects.DuelBestOfThree);
+
+            var ante = PopulateSpread(session, 0, 1, "six-swords-ante");
+            var targets = PopulateSpread(session, 1, 1, "six-swords-target");
+            AddSpreadCard(session, 0, "six-swords", "minor.swords.six.1");
+
+            DuelResolvedEvent? resolved = null;
+            session.OnEvent += e => { if (e is DuelResolvedEvent d) resolved = d; };
+
+            var combat = new CombatRules(FindSixSwordsMultiRoundSeed());
+            Assert.IsTrue(combat.TryDuel(session, 0, 1, targets[0], ante[0]).IsOk);
+            Assert.GreaterOrEqual(resolved!.Rounds.Count, 2);
+        }
+
+        [Test]
+        public void Justice_And_SixOfSwords_StillBestOfThree()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ApplyJusticeContestEffects(session);
+
+            var ante = PopulateSpread(session, 0, 1, "justice-six-ante");
+            var targets = PopulateSpread(session, 1, 1, "justice-six-target");
+            AddSpreadCard(session, 0, "six-swords", "minor.swords.six.1");
+
+            DuelResolvedEvent? resolved = null;
+            session.OnEvent += e => { if (e is DuelResolvedEvent d) resolved = d; };
+
+            var combat = new CombatRules(FindJusticeMultiRoundSeed());
+            Assert.IsTrue(combat.TryDuel(session, 0, 1, targets[0], ante[0]).IsOk);
+            Assert.GreaterOrEqual(resolved!.Rounds.Count, 2);
+            Assert.AreEqual(resolved.Rounds.Count,
+                resolved.AttackerRoundWins + resolved.DefenderRoundWins);
+        }
+
+        [Test]
+        public void FiveOfCups_Defender_GrantsAttackerReroll()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+
+            var ante = PopulateSpread(session, 0, 1, "cups5-ante");
+            var targets = PopulateSpread(session, 1, 1, "cups5-target");
+            AddSpreadCard(session, 1, "cups-five", "minor.cups.five.1");
+
+            int seed = FindCups5RerollWinSeed();
+
+            DuelResolvedEvent? resolved = null;
+            session.OnEvent += e => { if (e is DuelResolvedEvent d) resolved = d; };
+
+            var combat = new CombatRules(seed);
+            Assert.IsTrue(combat.TryDuel(session, 0, 1, targets[0], ante[0]).IsOk);
+            Assert.NotNull(resolved);
+            Assert.AreEqual(8, resolved!.Rounds[0].RawAttackRoll);
+            Assert.AreEqual(5, resolved.Rounds[0].RawDefendRoll);
+            Assert.AreEqual(0, resolved.WinnerId);
+        }
+
+        static int FindCups5RerollWinSeed()
+        {
+            var options = new ContestResolveOptions(
+                ContestKind.Duel,
+                false,
+                new ContestRollModifiers { MayRerollAttack = true },
+                ContestRollModifiers.Default);
+            for (int seed = 0; seed < 50000; seed++)
+            {
+                var series = ContestDiceSeriesResolver.Resolve(new System.Random(seed), 0, 1, options);
+                if (series.Rounds[0].RawAttackRoll == 8
+                    && series.Rounds[0].RawDefendRoll == 5
+                    && series.WinnerId == 0)
+                    return seed;
+            }
+            Assert.Fail("Could not find seed demonstrating Cups 5 reroll win.");
+            return 0;
+        }
+
         [Test]
         public void Trade_Quickplay_InventoryConsistent()
         {
@@ -2013,6 +2169,18 @@ namespace Kismeta.Core.Tests
             var db = LoadDb(); var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
             var player = session.Players[0];
+            foreach (var id in player.Spread.ToList())
+            {
+                if (!session.Board.CommonDiscard.Contains(id))
+                    session.Board.CommonDiscard.Add(id);
+                session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
+            }
+            foreach (var id in player.Hand.ToList())
+            {
+                if (!session.Board.CommonDiscard.Contains(id))
+                    session.Board.CommonDiscard.Add(id);
+                session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
+            }
             player.Hand.Clear();
             player.Spread.Clear();
             var spreadIds = new List<string>();
@@ -2081,6 +2249,202 @@ namespace Kismeta.Core.Tests
                 Assert.IsTrue(_values.Count > 0, "SeededContestRng exhausted.");
                 return _values.Dequeue();
             }
+        }
+
+        // ─── Phase 2 craft & harvest modifier tests ───────────────────────────────
+
+        static void AddArcanumCard(GameSession session, int playerId, string instanceId, string definitionId)
+        {
+            var inst = new CardInstance(instanceId, definitionId, CardZone.Arcanum, playerId);
+            session.RegisterCard(inst);
+            session.Players[playerId].Arcanum.Add(instanceId);
+        }
+
+        static List<string> GivePlayerSuitCards(GameSession session, CardDatabase db,
+            int playerId, Suit suit, int count)
+        {
+            var added = new List<string>(count);
+            int idx = 0;
+            foreach (var def in db.GetBySuit(suit))
+            {
+                if (idx >= count) break;
+                var id = $"test-{suit}-{playerId}-{idx}";
+                var inst = new CardInstance(id, def.Id, CardZone.Spread, playerId);
+                session.RegisterCard(inst);
+                session.Players[playerId].Spread.Add(id);
+                added.Add(id);
+                idx++;
+            }
+            return added;
+        }
+
+        [Test]
+        public void AceV2_WaterCosmic_AddsTwoHarvest()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Cancer;
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+
+            int before = session.Rules!.Harvest.CalculateHarvestCount(session, 0);
+            AddSpreadCard(session, 0, "ace-cups", "minor.cups.ace.2");
+            int after = session.Rules.Harvest.CalculateHarvestCount(session, 0);
+
+            // Ace V2 +2 plus existing spread element match (+1) for Water cosmic + Cups suit.
+            Assert.AreEqual(before + 3, after);
+            Assert.AreEqual(2, HarvestModifierService.SpreadPassiveBonus(session, 0));
+        }
+
+        [Test]
+        public void Rank2_WaterHouse_DoublesHouseBonus()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Cancer;
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[0].AstralHouses.Add(ZodiacSign.Pisces);
+
+            int before = session.Rules!.Harvest.CalculateHarvestCount(session, 0);
+            AddSpreadCard(session, 0, "two-cups", "minor.cups.two.1");
+            int after = session.Rules.Harvest.CalculateHarvestCount(session, 0);
+
+            int housePts = HarvestBreakdownService.AlignmentBonus(ZodiacSign.Pisces, ZodiacSign.Cancer);
+            // House doubling +housePts plus existing spread element match (+1) for Water cosmic + Cups suit.
+            Assert.AreEqual(before + housePts + 1, after);
+            Assert.AreEqual(housePts, HarvestModifierService.HouseDoublingBonus(session, 0));
+        }
+
+        [Test]
+        public void Rank8_ReducesElementalCost()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddSpreadCard(session, 0, "eight-wands", "minor.wands.eight.1");
+            var cards = GivePlayerSuitCards(session, db, 0, Suit.Wands, 2);
+            session.Players[0].LightCauldron(Suit.Wands);
+
+            var result = session.Apply(new CraftReagentCommand(0, ReagentType.Sulphur, cards));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(1, session.Players[0].GetReagent(ReagentType.Sulphur));
+        }
+
+        [Test]
+        public void BuildV1_SaltWithTwoSuitCards()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddSpreadCard(session, 0, "three-swords", "minor.swords.three.1");
+            var cards = GivePlayerSuitCards(session, db, 0, Suit.Swords, 2);
+
+            var result = session.Apply(new CraftReagentCommand(0, ReagentType.Salt, cards));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(1, session.Players[0].GetReagent(ReagentType.Salt));
+        }
+
+        [Test]
+        public void KingOfCups_DiscardSelfCraftsAquaRegia()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddSpreadCard(session, 0, "king-cups", "minor.cups.king.1");
+            session.Players[0].LightCauldron(Suit.Cups);
+
+            var result = session.Apply(new CraftKingReagentCommand(0, "king-cups"));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(1, session.Players[0].GetReagent(ReagentType.AquaRegia));
+            Assert.IsFalse(session.Players[0].Spread.Contains("king-cups"));
+        }
+
+        [Test]
+        public void EmpressMark_SaltThenTwoCardVitriol()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "empress", "major.adept.3");
+            session.Players[0].AddReagent(ReagentType.Salt);
+
+            var mark = session.Apply(new MarkEmpressReagentCommand(0, ReagentType.Vitriol));
+            Assert.IsTrue(mark.IsOk, mark.Message);
+
+            var cards = GivePlayerSuitCards(session, db, 0, Suit.Pentacles, 2);
+            session.Players[0].LightCauldron(Suit.Pentacles);
+            var craft = session.Apply(new CraftReagentCommand(0, ReagentType.Vitriol, cards));
+            Assert.IsTrue(craft.IsOk, craft.Message);
+            Assert.AreEqual(1, session.Players[0].GetReagent(ReagentType.Vitriol));
+        }
+
+        [Test]
+        public void TemperanceBase_SaltTwoAnyCards()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "temperance", "major.adept.14");
+            GivePlayerCards(session, 0, 2);
+
+            var cards = session.Players[0].Spread.GetRange(0, 2);
+            var result = session.Apply(new CraftReagentCommand(0, ReagentType.Salt, cards));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(1, session.Players[0].GetReagent(ReagentType.Salt));
+        }
+
+        [Test]
+        public void EmpressResonant_AllowsTwoMarks_WithOneSalt()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "empress", "major.adept.3");
+            session.Players[0].CurrentSign = ZodiacSign.Taurus;
+            session.Players[0].AddReagent(ReagentType.Salt);
+
+            Assert.IsTrue(session.Apply(new MarkEmpressReagentCommand(0, ReagentType.Vitriol)).IsOk);
+            Assert.IsTrue(session.Apply(new MarkEmpressReagentCommand(0, ReagentType.Sulphur)).IsOk);
+            Assert.AreEqual(2, session.Players[0].EmpressMarkedReagents.Count);
+            Assert.IsFalse(session.Apply(new MarkEmpressReagentCommand(0, ReagentType.AquaRegia)).IsOk);
+        }
+
+        [Test]
+        public void TemperanceResonant_WildPayment_ForMarkedReagent()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "temperance", "major.adept.14");
+            session.Players[0].CurrentSign = ZodiacSign.Libra;
+            session.Players[0].AddReagent(ReagentType.Salt);
+
+            Assert.IsTrue(session.Apply(new MarkTemperanceWildReagentCommand(0, ReagentType.Vitriol)).IsOk);
+
+            var pentacles = GivePlayerSuitCards(session, db, 0, Suit.Pentacles, 2);
+            var wands = GivePlayerSuitCards(session, db, 0, Suit.Wands, 1);
+            var payment = new List<string> { pentacles[0], pentacles[1], wands[0] };
+            session.Players[0].LightCauldron(Suit.Pentacles);
+
+            var result = session.Apply(new CraftReagentCommand(0, ReagentType.Vitriol, payment));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(1, session.Players[0].GetReagent(ReagentType.Vitriol));
+        }
+
+        [Test]
+        public void Transit_Clears_EmpressAndTemperanceCraftMarks()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Players[0].EmpressMarkedReagents.Add(ReagentType.Sulphur);
+            session.Players[0].TemperanceSaltWildReagent = ReagentType.Vitriol;
+
+            session.Rules!.Winter.Transit(session);
+
+            Assert.AreEqual(0, session.Players[0].EmpressMarkedReagents.Count);
+            Assert.IsNull(session.Players[0].TemperanceSaltWildReagent);
         }
     }
 }

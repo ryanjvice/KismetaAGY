@@ -130,8 +130,11 @@ namespace Kismeta.Core.Rules
             var attacker = session.Players[attackerId];
             var defender = session.Players[defenderId];
 
-            bool bestOfThree = session.Board.ContestEffects.IsBestOfThree(ContestKind.Duel);
-            var series = ContestDiceSeriesResolver.Resolve(_rng, attackerId, defenderId, bestOfThree);
+            var modifiers = ContestModifierService.Build(session, ContestKind.Duel, attackerId, defenderId);
+            bool bestOfThree = ContestModifierService.ResolveBestOfThree(session, ContestKind.Duel, modifiers);
+            var options = new ContestResolveOptions(
+                ContestKind.Duel, bestOfThree, modifiers.Attacker, modifiers.Defender);
+            var series = ContestDiceSeriesResolver.Resolve(_rng, attackerId, defenderId, options);
             bool attackerWins = series.WinnerId == attackerId;
 
             if (attackerWins)
@@ -249,8 +252,11 @@ namespace Kismeta.Core.Rules
             bool offeredInCrucible = attacker.CrucibleSlots.Exists(
                 s => s.CardInstanceId == offeredCardId && s.State == CrucibleCardState.Active);
 
-            bool bestOfThree = session.Board.ContestEffects.IsBestOfThree(ContestKind.Gambit);
-            var series = ContestDiceSeriesResolver.Resolve(_rng, attackerId, defenderId, bestOfThree);
+            var modifiers = ContestModifierService.Build(session, ContestKind.Gambit, attackerId, defenderId);
+            bool bestOfThree = ContestModifierService.ResolveBestOfThree(session, ContestKind.Gambit, modifiers);
+            var options = new ContestResolveOptions(
+                ContestKind.Gambit, bestOfThree, modifiers.Attacker, modifiers.Defender);
+            var series = ContestDiceSeriesResolver.Resolve(_rng, attackerId, defenderId, options);
             bool attackerWins = series.WinnerId == attackerId;
 
             string? arrestedDefenderCardId = null;

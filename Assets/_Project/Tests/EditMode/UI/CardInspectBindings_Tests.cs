@@ -101,7 +101,7 @@ namespace Kismeta.UI.Tests
 
             var section = modal.Q<VisualElement>("inspect-effect-section");
             Assert.IsNotNull(section);
-            Assert.AreEqual(DisplayStyle.Flex, section!.style.display);
+            Assert.AreEqual(DisplayStyle.Flex, section!.style.display.value);
 
             Assert.AreEqual("Harvest", modal.Q<Label>("inspect-effect-eyebrow")?.text);
             Assert.AreEqual(
@@ -171,8 +171,8 @@ namespace Kismeta.UI.Tests
             Assert.IsTrue(hero!.ClassListContains("card-chip--fate"));
             Assert.AreEqual("XIX", modal.Q<Label>("inspect-hero-icon")?.text);
 
-            Assert.AreEqual(DisplayStyle.None, modal.Q<VisualElement>("inspect-minor-detail")!.style.display);
-            Assert.AreEqual(DisplayStyle.Flex, modal.Q<VisualElement>("inspect-major-detail")!.style.display);
+            Assert.AreEqual(DisplayStyle.None, modal.Q<VisualElement>("inspect-minor-detail")!.style.display.value);
+            Assert.AreEqual(DisplayStyle.Flex, modal.Q<VisualElement>("inspect-major-detail")!.style.display.value);
             Assert.AreEqual(
                 "All players receive one of each Reagent.",
                 modal.Q<Label>("inspect-major-effect")?.text);
@@ -195,7 +195,7 @@ namespace Kismeta.UI.Tests
             Assert.IsTrue(hero!.ClassListContains("card-chip--adept"));
             Assert.AreEqual("IV", modal.Q<Label>("inspect-hero-icon")?.text);
 
-            Assert.AreEqual(DisplayStyle.Flex, modal.Q<VisualElement>("inspect-major-detail")!.style.display);
+            Assert.AreEqual(DisplayStyle.Flex, modal.Q<VisualElement>("inspect-major-detail")!.style.display.value);
             Assert.IsFalse(string.IsNullOrWhiteSpace(modal.Q<Label>("inspect-major-effect")?.text));
         }
 
@@ -210,7 +210,7 @@ namespace Kismeta.UI.Tests
             Assert.IsTrue(modal.ClassListContains("card-modal--inspect"));
             Assert.IsFalse(modal.ClassListContains("card-modal--fate"));
             Assert.IsFalse(modal.ClassListContains("card-modal--adept"));
-            Assert.AreEqual(DisplayStyle.None, modal.Q<VisualElement>("inspect-major-detail")!.style.display);
+            Assert.AreEqual(DisplayStyle.None, modal.Q<VisualElement>("inspect-major-detail")!.style.display.value);
         }
 
         [Test]
@@ -222,7 +222,7 @@ namespace Kismeta.UI.Tests
             CardInspectBindings.BindInspectModal(modal, session, "inspect-card");
 
             Assert.AreNotEqual("The Fool", modal.Q<Label>("inspect-name")?.text);
-            Assert.AreNotEqual(DisplayStyle.Flex, modal.Q<VisualElement>("inspect-major-detail")!.style.display);
+            Assert.AreNotEqual(DisplayStyle.Flex, modal.Q<VisualElement>("inspect-major-detail")!.style.display.value);
         }
 
         static VisualElement InstantiateInspectModal()

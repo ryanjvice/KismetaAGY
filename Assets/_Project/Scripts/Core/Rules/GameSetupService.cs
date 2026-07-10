@@ -39,8 +39,8 @@ namespace Kismeta.Core.Rules
                 if (def.Deck == Deck.Crucible) crucibleDefs.Add(def);
             }
 
-            var kismetaInsts  = CreateAndRegister(kismetaDefs,  session);
-            var crucibleInsts = CreateAndRegister(crucibleDefs, session);
+            var kismetaInsts = CreateAndRegister(kismetaDefs, session);
+            var cruciblePool = CreateInstances(crucibleDefs);
 
             Shuffle(kismetaInsts);
             foreach (var inst in kismetaInsts)
@@ -50,11 +50,12 @@ namespace Kismeta.Core.Rules
             }
 
             var crucibleDeckInsts = session.CrucibleBuild == CrucibleBuildMode.LetTheFatesDecide
-                ? BuildFatesCrucibleDeck(crucibleInsts, playerCount)
-                : BuildCuratedCrucibleDeck(crucibleInsts, session.Mode, playerCount);
+                ? BuildFatesCrucibleDeck(cruciblePool, playerCount)
+                : BuildCuratedCrucibleDeck(cruciblePool, session.Mode, playerCount);
 
             foreach (var inst in crucibleDeckInsts)
             {
+                session.RegisterCard(inst);
                 session.Board.CrucibleDeck.Push(inst.InstanceId);
                 inst.MoveTo(CardZone.Deck, -1);
             }
@@ -79,6 +80,14 @@ namespace Kismeta.Core.Rules
 
             session.Players[id].IsAgekeeper = true;
             session.EmitEvent(new FirstAgekeeperDeterminedEvent(id));
+        }
+
+        private static List<CardInstance> CreateInstances(List<CardDefinition> defs)
+        {
+            var list = new List<CardInstance>(defs.Count);
+            foreach (var def in defs)
+                list.Add(new CardInstance($"inst-{def.Id}", def.Id, CardZone.Deck, -1));
+            return list;
         }
 
         private static List<CardInstance> CreateAndRegister(List<CardDefinition> defs, GameSession session)

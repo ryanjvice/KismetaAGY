@@ -58,6 +58,37 @@ namespace Kismeta.Core.Tests
             Assert.AreEqual(1, result.WinnerId);
         }
 
+        [Test]
+        public void Bonus_ClampedAt12()
+        {
+            var rng = new SeededRollRng(12, 5);
+            var options = new ContestResolveOptions(
+                ContestKind.Duel,
+                false,
+                new ContestRollModifiers { AttackBonus = 1 },
+                ContestRollModifiers.Default);
+            var result = ContestDiceSeriesResolver.Resolve(rng, 0, 1, options);
+
+            Assert.AreEqual(12, result.FinalAttackRoll);
+            Assert.AreEqual(5, result.FinalDefendRoll);
+            Assert.AreEqual(0, result.WinnerId);
+        }
+
+        [Test]
+        public void Reroll_KeepsHigherAttackRoll()
+        {
+            var rng = new SeededRollRng(3, 8, 5);
+            var options = new ContestResolveOptions(
+                ContestKind.Duel,
+                false,
+                new ContestRollModifiers { MayRerollAttack = true },
+                ContestRollModifiers.Default);
+            var result = ContestDiceSeriesResolver.Resolve(rng, 0, 1, options);
+
+            Assert.AreEqual(8, result.Rounds[0].RawAttackRoll);
+            Assert.AreEqual(0, result.WinnerId);
+        }
+
         sealed class SeededRollRng : Random
         {
             readonly Queue<int> _values = new();

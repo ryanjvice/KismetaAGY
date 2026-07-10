@@ -94,7 +94,9 @@ namespace Kismeta.UI.Tests
             var btn = root.Q<Button>(SeasonInfoRecapBindings.PrimaryActionBtnName);
             Assert.IsNotNull(btn);
             Assert.AreEqual("Begin Spring", btn!.text);
-            Assert.IsTrue(root.ClassListContains("season-info-recap--ceremony"));
+            Assert.IsTrue(
+                SeasonInfoRecapBindings.ResolveSheetRoot(root)
+                    .ClassListContains("season-info-recap--ceremony"));
         }
 
         [Test]
@@ -177,7 +179,7 @@ namespace Kismeta.UI.Tests
 
             var note = root.Q<Label>(SeasonInfoRecapBindings.HubRecapNoteName);
             Assert.IsNotNull(note);
-            Assert.AreEqual(DisplayStyle.Flex, note!.style.display);
+            Assert.AreEqual(DisplayStyle.Flex, note!.style.display.value);
             StringAssert.Contains(SymbolGlyphs.SeasonRecapGlyph, note.text);
         }
 
@@ -190,7 +192,7 @@ namespace Kismeta.UI.Tests
 
             var note = root.Q<Label>(SeasonInfoRecapBindings.HubRecapNoteName);
             Assert.IsNotNull(note);
-            Assert.AreEqual(DisplayStyle.None, note!.style.display);
+            Assert.AreEqual(DisplayStyle.None, note!.style.display.value);
         }
 
         [Test]
@@ -203,7 +205,7 @@ namespace Kismeta.UI.Tests
 
             var note = root.Q<Label>(SeasonInfoRecapBindings.HubRecapNoteName);
             Assert.IsNotNull(note);
-            Assert.AreEqual(DisplayStyle.None, note!.style.display);
+            Assert.AreEqual(DisplayStyle.None, note!.style.display.value);
         }
 
         static VisualElement InstantiateRecapShell()

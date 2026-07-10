@@ -99,6 +99,9 @@ namespace Kismeta.Core.Rules
             foreach (var houseSign in player.AstralHouses)
                 bonus += AlignmentBonus(houseSign, cosmicSign);
 
+            bonus += HarvestModifierService.SpreadPassiveBonus(session, playerId);
+            bonus += HarvestModifierService.HouseDoublingBonus(session, playerId);
+
             // Board-wide Cosmic Age effect + player's personal effect (own sign + houses)
             int cosmicBonus = session.Board.CosmicEffect.HarvestBaseBonus
                             + player.PersonalCosmicEffects.HarvestBaseBonus;

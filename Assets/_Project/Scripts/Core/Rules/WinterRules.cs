@@ -272,6 +272,8 @@ namespace Kismeta.Core.Rules
                 player.DuelChallengedRivalId       = -1;
                 player.ArrestedAdepts.Clear();
                 player.UsedAdeptInstanceIdsThisAge.Clear();
+                player.EmpressMarkedReagents.Clear();
+                player.TemperanceSaltWildReagent = null;
             }
 
             int newAgekeeper = RotateAgekeeper(session);

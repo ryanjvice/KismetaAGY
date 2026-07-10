@@ -1,0 +1,354 @@
+# Effect Implementation Tracker
+
+**Last updated:** 2026-07-10 (Phase 1 combat modifiers)
+
+Single source of truth for **which card/cosmic modifiers are enforced in gameplay** vs **display-only / not started**. Grouped by effect family (not by individual card file). Update status when wiring a new effect slice.
+
+## Design sources
+
+| Document | Path |
+|----------|------|
+| Card Reference (design) | [`Docs/_source/Kismeta_CardReference.md`](../_source/Kismeta_CardReference.md) |
+| Game Guide (design) | [`Docs/_source/Kismeta_GameGuide.md`](../_source/Kismeta_GameGuide.md) |
+| Player card index | [`Docs/Cards/README.md`](../Cards/README.md) |
+
+## Maintenance rules
+
+1. Change a row's **Status** when rule services begin mutating game state or gating actions for that modifier.
+2. Name the concrete **Rule hook** file/symbol for every **Enforced** or **Pipeline** row.
+3. Set **Tests** to `Yes` only when EditMode tests assert the behavior (not just UI copy).
+4. Add a **Notes** entry when status is **Blocked** — cite the specific design conflict.
+5. Check off phase subtasks as slices land; open GitHub issues for new slices as needed.
+
+---
+
+## Status legend
+
+| Status | Meaning |
+|--------|---------|
+| **Enforced** | Rule service mutates game state / gates actions |
+| **Pipeline** | Commands + async UI exist; core mechanic works end-to-end |
+| **Partial** | Some aspects enforced; others UI-only or missing |
+| **UIOnly** | Listed in Active Effects / Codex copy only |
+| **NotStarted** | No rule hook |
+| **Blocked** | Awaiting explicit design decision (cite conflict) |
+
+**Tests column:** `Yes` / `Partial` / `No` — points to EditMode test files when applicable.
+
+---
+
+## Architecture overview
+
+How modifiers flow through the codebase today:
+
+```mermaid
+flowchart LR
+    subgraph sources [EffectSources]
+        CosmicAge[CosmicAgeSign]
+        PersonalSign[PersonalCosmicEffects]
+        AstralHouse[AstralHouses]
+        SpreadCards[SpreadMinorArcana]
+        Adepts[AdeptArcanum]
+        Fates[FateArcanum]
+    end
+
+    subgraph flags [BoardPlayerFlags]
+        CosmicFlags[CosmicEffectFlags]
+        ContestFlags[ContestEffectFlags]
+    end
+
+    subgraph hooks [RuleHooks]
+        Spring[SpringRules_Harvest]
+        Craft[CraftingRules]
+        Combat[CombatRules]
+        Crucible[CrucibleRules]
+        Trade[TradeService]
+        Winter[WinterRules]
+    end
+
+    subgraph ui [UIReadModels]
+        ActiveFX[ActiveEffectsService]
+        Exchanges[ExchangeOverlayHost]
+    end
+
+    CosmicAge --> CosmicFlags
+    PersonalSign --> CosmicFlags
+    AstralHouse --> CosmicFlags
+    Fates --> ContestFlags
+    SpreadCards --> ActiveFX
+    Adepts --> ActiveFX
+    Fates --> ActiveFX
+
+    CosmicFlags --> Spring
+    CosmicFlags --> Craft
+    ContestFlags --> Combat
+    SpreadCards -.->|not yet| Combat
+    SpreadCards -.->|not yet| Craft
+    hooks --> Exchanges
+    ActiveFX --> ui
+```
+
+### Key code anchors
+
+| Area | File / symbol |
+|------|---------------|
+| Board flags | [`BoardState.cs`](../../Assets/_Project/Scripts/Core/Entities/BoardState.cs) — `CosmicEffectFlags`, `ContestEffectFlags` |
+| Cosmic age → flags | [`CosmicEffectService.cs`](../../Assets/_Project/Scripts/Core/Rules/CosmicEffectService.cs) |
+| Contest dice series | [`ContestDiceSeriesResolver.cs`](../../Assets/_Project/Scripts/Core/Rules/ContestDiceSeriesResolver.cs), [`CombatRules.cs`](../../Assets/_Project/Scripts/Core/Rules/CombatRules.cs) |
+| Contest modifiers | [`ContestModifierService.cs`](../../Assets/_Project/Scripts/Core/Rules/ContestModifierService.cs), [`ContestCardEffectCatalog.cs`](../../Assets/_Project/Scripts/Core/Rules/ContestCardEffectCatalog.cs) |
+| Adept attunement (Phase 1 combat) | [`AdeptAttunement.cs`](../../Assets/_Project/Scripts/Core/Rules/AdeptAttunement.cs) |
+| Fate resolution | [`FateCardResolver.cs`](../../Assets/_Project/Scripts/Core/Rules/FateCardResolver.cs) |
+| Spread display | [`SpreadCardEffectEvaluator.cs`](../../Assets/_Project/Scripts/Core/Rules/SpreadCardEffectEvaluator.cs) |
+| Active Effects UI | [`ActiveEffectsService.cs`](../../Assets/_Project/Scripts/Core/Rules/ActiveEffectsService.cs) |
+| Adept badges | [`AdeptEffectCatalog.cs`](../../Assets/_Project/Scripts/Core/Rules/AdeptEffectCatalog.cs) |
+| Personal cosmic merge | [`AstralHouseService.cs`](../../Assets/_Project/Scripts/Core/Rules/AstralHouseService.cs) → `CosmicEffectService.ComputePersonalEffects` |
+
+---
+
+## Section A — Cosmic & sign modifiers
+
+Twelve zodiac signs map to four effect categories. Board-wide age effect plus per-player personal copies (own sign + Astral Houses, no double-apply when sign matches Cosmic Age).
+
+| Sub-group | Signs | Status | Rule hook(s) | UI | Tests | Notes |
+|-----------|-------|--------|--------------|-----|-------|-------|
+| +1 base Harvest | Aries, Libra | **Enforced** | `CosmicEffectService` → `SpringRules.CalculateHarvestCount` (`CosmicEffect.HarvestBaseBonus`, `PersonalCosmicEffects.HarvestBaseBonus`) | Active Effects cosmic section | Partial | `RuleServices_Tests.Harvest_Count_Bonus_For_Matching_Sign` |
+| Wild court suit | Taurus (Pentacles), Leo (Wands), Scorpio (Cups), Aquarius (Swords) | **Enforced** | `CosmicEffectService` → `CraftingRules` wild court check | Active Effects | No | |
+| Cheap Salt 2-for-3 | Cancer, Capricorn | **Enforced** | `CraftModifierService` → `CraftingRules` (`SaltCostsTwo`) | Active Effects | Yes | `CraftModifierService_Tests`, `RuleServices_Tests.TemperanceBase_SaltTwoAnyCards` |
+| Cheap elemental 2-for-3 | Gemini (Swords/Quicksilver), Virgo (Pentacles/Vitriol), Sagittarius (Wands/Sulphur), Pisces (Cups/Aqua Regia) | **Enforced** | `CraftModifierService` + lit cauldron gate (`CheapCraftSuit` / `CheapCraftReagent`) | Active Effects | Yes | `RuleServices_Tests.Rank8_ReducesElementalCost` |
+| Personal sign copy (no double-apply) | Any player sign ≠ Cosmic Age | **Enforced** | `CosmicEffectService.ComputePersonalEffects` via `AstralHouseService` | Active Effects personal section | No | |
+| Astral House permanent cosmic copy | Built house signs | **Enforced** | `AstralHouseService` merges house signs into `PersonalCosmicEffects` | Active Effects | No | |
+| Ace V2 passive +2 harvest when cosmic element matches | All suits, rank Ace variant 2 | **Enforced** | `HarvestModifierService` → `SpringRules.CalculateHarvestCount` | Active Effects spread + harvest breakdown | Yes | `RuleServices_Tests.AceV2_WaterCosmic_AddsTwoHarvest` |
+| Spread element match +1 per aligned spread card | All spread cards | **Enforced** | `SpringRules.CalculateHarvestCount` (suit element vs cosmic element) | Harvest breakdown UI | Partial | |
+
+**Transit reset:** `CosmicEffectService.Reset` + `WinterRules.Transit` clear `CosmicEffectFlags` and `ContestEffectFlags` each round.
+
+---
+
+## Section B — Contest round modifiers
+
+| Modifier | Source | Status | Rule hook(s) | UI | Tests | Notes |
+|----------|--------|--------|--------------|-----|-------|-------|
+| Justice — Duel + Gambit best-of-3 | Fate ★11 | **Enforced** | `FateCardResolver.ResolveJustice` → `ContestEffectFlags`; `CombatRules` + `ContestDiceSeriesResolver` | Contest series animation; Active Effects age copy | Yes | `ContestDiceSeriesResolver_Tests`, `RuleServices_Tests` Justice block |
+| 6 of Swords — Duels you start are best-of-3 | Minor spread (`minor.swords.six.1`) | **Enforced** | `ContestModifierService` + `ContestCardEffectCatalog`; scoped at resolve (not board flag) | `ActiveEffectsService.BuildDuelRelevant` | Yes | `RuleServices_Tests.SixOfSwords_AttackerOnlyBestOfThree` |
+| Cups 5 — opponent reroll vs you in Duels | Minor spread curse | **Enforced** | `ContestCardEffectCatalog` → `ContestDiceSeriesResolver` keep-higher reroll | Contest response subtitle | Yes | `RuleServices_Tests.FiveOfCups_Defender_GrantsAttackerReroll` |
+| Chariot resonant — reroll in any Duel | Adept ★7 resonant | **Enforced** | `AdeptAttunement` + `ContestModifierService` | Contest response subtitle | Yes | `ContestModifierService_Tests.ChariotResonant_RerollOnlyWhenAttuned` |
+| Knight V1 ±1 duel dice (all suits) | Minor spread | **Enforced** | `ContestCardEffectCatalog` → `CombatRules` | Active Effects + contest preview | Yes | `ContestModifierService_Tests`, `RuleServices_Tests.Duel_KnightOfSwords_FlipsTieToAttackerWin` |
+| Princess V1 ±1 gambit dice (all suits) | Minor spread | **Enforced** | `ContestCardEffectCatalog` → `CombatRules` | `BuildGambitRelevant` | Yes | `ContestModifierService_Tests.PrincessOfCups_GrantsDefenderGambitBonus` |
+| Wands 5/6 reversed duel dice | Minor spread curses | **Enforced** | `ContestCardEffectCatalog` (interim: always active) | Active Effects | Partial | Negation deferred to Phase 5 |
+
+---
+
+## Section C — Fate cards (10)
+
+| Card | Arcana | Status | Rule hook(s) | UI | Tests | Notes |
+|------|--------|--------|--------------|-----|-------|-------|
+| Tower | 16 | **Pipeline** | `FateCardResolver.ResolveTower` (arrest all Adepts) | Exchange overlay | Partial | Arrest state in `ActiveEffectsService` |
+| Death | 13 | **Pipeline** | `FateCardResolver.ResolveDeath` | Exchange overlay | No | |
+| Sun | 19 | **Pipeline** | `FateCardResolver.ResolveSun` (reveal top 3, keep 1) | Exchange overlay | No | |
+| Judgement | 20 | **Pipeline** | `FateCardResolver.ResolveJudgement` (draw from lit cauldrons) | Exchange overlay | No | |
+| Wheel of Fortune | 10 | **Pipeline** | `FateCardResolver.ResolveWheelOfFortune` | Exchange overlay | No | |
+| Hanged Man | 12 | **Pipeline** | `FateCardResolver.ResolveHangedMan` (pass hands left) | Exchange overlay | No | Pass direction: see Section G |
+| Justice | 11 | **Enforced** | `FateCardResolver.ResolveJustice` → `ContestEffectFlags` | Contest UI + Active Effects | Yes | |
+| Moon | 18 | **Pipeline** | `FateCardResolver` queues; `GameLoop` / `CardModalsController` | Modal keep-2 UI | No | Returns `false` from `Resolve` |
+| Fool | 0 | **Pipeline** | `FateCardResolver` queues; opponent gift UI | Modal UI | No | |
+| Lovers | 6 | **Pipeline** | `FateCardResolver` queues; choice UI | Modal UI | No | |
+
+**Adept purchase flow (all Adepts):** buy / decline / swap / arrest / refresh — **Pipeline** via `SpringRules` + `GameSession`; powers themselves mostly **UIOnly** (Section D).
+
+---
+
+## Section D — Adept effects (12 × Base + Resonant)
+
+`effectTextResonant` exists in [`CardJsonDto.cs`](../../Assets/_Project/Scripts/Data/Loaders/CardJsonDto.cs) but is **not** consumed by any rule service. Resonant enforcement requires an attuned predicate (sign matches zodiac or house) — **Blocked** pending terminology (Section G).
+
+| Adept | ★ | Base status | Resonant status | Rule hook(s) | UI | Tests | Notes |
+|-------|---|-------------|-----------------|--------------|-----|-------|-------|
+| Hermit | 9 | **Partial** | **NotStarted** | `SpringRules.ArcanaLimitFor` → limit 3 | `AdeptEffectCatalog` badge | No | Resonant double elements not hooked |
+| Magician | 1 | **UIOnly** | **UIOnly** | — | Active Effects | Partial | Card Lock bypass not enforced |
+| High Priestess | 2 | **UIOnly** | **UIOnly** | — | Active Effects | No | Resonant hand limit 7 conflicts with base 5 — **Blocked** |
+| Empress | 3 | **Enforced** | **Partial** | `CraftingRules.TryMarkEmpressReagent` + `CraftModifierService` 2-for-1; resonant 2 marks via `AdeptAttunement` | Active Effects marked types | Yes | `RuleServices_Tests.EmpressMark_*`, `EmpressResonant_*` |
+| Emperor | 4 | **UIOnly** | **UIOnly** | — | Active Effects | No | Protection not in `CombatRules.ValidateDuelCards` |
+| Hierophant | 5 | **UIOnly** | **UIOnly** | — | Active Effects | No | Zodiac shift not in harvest/opposition |
+| Devil | 15 | **UIOnly** | **UIOnly** | — | Active Effects | No | |
+| Chariot | 7 | **UIOnly** | **Partial** | Resonant reroll via `ContestModifierService` + `AdeptAttunement`; base no-ante Phase 3 | Active Effects | Yes | Base no-ante still Phase 3 |
+| Strength | 8 | **Partial** | **Partial** | `ContestModifierService` base +1 duel attack; resonant +2 duel/gambit via `AdeptAttunement` | Active Effects | Yes | Resonant uses minimal attunement only (Phase 4 full layer pending) |
+| Temperance | 14 | **Enforced** | **Partial** | `CraftModifierService` salt at 2 any; resonant wild via `MarkTemperanceWildReagentCommand` | Active Effects wild mark | Yes | `RuleServices_Tests.TemperanceBase_*`, `TemperanceResonant_*` |
+| Star | 17 | **UIOnly** | **UIOnly** | — | Active Effects | No | Post-loss draw not hooked |
+| World | 21 | **UIOnly** | **UIOnly** | — | Active Effects | No | Ward retention / crucible wildcard not hooked |
+
+| System | Status | Rule hook(s) | UI | Tests | Notes |
+|--------|--------|--------------|-----|-------|-------|
+| Adept buy / decline / swap / arrest / refresh | **Pipeline** | `SpringRules`, `GameSession` | Summer roster, inspect UI | Partial | `MarkAdeptUsed` called from Empress/Temperance mark paths |
+
+---
+
+## Section E — Minor Arcana by EffectType
+
+One row per **effect family** (not per card). Card data uses `effectType` from [`cards.json`](../../Assets/_Project/Scripts/Data/Generated/cards.json). V2 Queen/King limit/protection effects are stored as `Passive` in data.
+
+| EffectType | Cards (ranks × suits) | Status | Target hook | UI | Tests | Notes |
+|------------|----------------------|--------|-------------|-----|-------|-------|
+| Entry Fee | Ace V1 (all suits) | **NotStarted** | `AstralHouseService` / ace discard build | Action badge | No | |
+| Harvest | 2 V1 | **Enforced** | `HarvestModifierService.HouseDoublingBonus` → `SpringRules` | Spread passive badge + breakdown | Yes | `RuleServices_Tests.Rank2_WaterHouse_DoublesHouseBonus` |
+| Build | 3 V1 | **Enforced** | `CraftModifierService` Build-salt path → `CraftingRules` | Action badge | Yes | `RuleServices_Tests.BuildV1_SaltWithTwoSuitCards` |
+| Reversed | 4–6 V1 (curses) | **Partial** | Wands/Cups/Swords duel dice via `ContestCardEffectCatalog`; negation **Blocked** | Debuff badge | Partial | Phase 5 for full negation; interim always-active |
+| Forge | 7 V1, Queen V1 | **NotStarted** | `CrucibleRules.TryFire` | Forge badge | No | |
+| Craft | 8 V1, King V1 | **Enforced** | `CraftModifierService` rank-8 discount; `CraftingRules.TryKingDiscardCraft` | Action badge + craft cost preview | Yes | `RuleServices_Tests.Rank8_*`, `KingOfCups_*` |
+| Social | 9 V1 | **NotStarted** | Post-contest draw triggers | Spread passive badge | No | |
+| Opposition | 10 V1 | **NotStarted** | `AlignmentService` wild suit | Spread passive badge | No | |
+| Gambit | Princess V1 | **Enforced** | `ContestCardEffectCatalog` + `CombatRules` | Combat badge | Yes | `ContestModifierService_Tests` |
+| Duel | Knight V1 | **Enforced** | `ContestCardEffectCatalog` + `CombatRules` | Combat badge | Yes | `RuleServices_Tests.Duel_KnightOfSwords_FlipsTieToAttackerWin` |
+| Passive | Ace V2 (+2 harvest if cosmic element); Queen V2 (+1 hand/spread limit); King V2 (suit protection) | **Partial** | Ace V2 **Enforced** via `HarvestModifierService`; Queen/King V2 still UIOnly | Buff badges | Yes (Ace V2) | Queen/King V2 → Phase 7 |
+| WildcardLink | V2 ranks (all) | **NotStarted** | `CodexFormulaValidator`, `AlchemicalAlignmentValidator` | Wildcard badge | No | `wildcardArcanaNumber` in card data unused in validators |
+
+---
+
+## Section F — Non-card systemic modifiers
+
+| System | Status | Rule hook(s) | UI | Tests | Notes |
+|--------|--------|--------------|-----|-------|-------|
+| Card Lock (Spring → Winter unlock) | **Enforced** | `GameSession.CardLockActive`, `SetCardLockCommand`, `GameLoop` | Phase UI | Partial | |
+| Besieged Bonus | **Enforced** | `CrucibleRules.ResolveOpposition` (+1 defend, winner increments `BesiegedBonusCount`) | — | No | Cleared on Transit |
+| Magnus misaligned trade 2:1 | **Enforced** | `TradeService` + `PlayerAspectAlignment.IsMagnusTradeRatioValid` | Trade UI | Yes | `RuleServices_Tests` Magnus trade block |
+| Magnus contest +1 dice | **NotStarted** | Duels / Gambits / Opposition | — | No | No hook in `CombatRules` |
+| Hand / Spread limits (5 / 5) | **Enforced** | `WinterRules.SpreadLimit`, `WinterRules.HandLimit` | Winter discard UI | Partial | Queen V2 / Priestess resonant modifiers not applied |
+| Crucible lifecycle (activate / fire / temper / stasis) | **Pipeline** | `CrucibleRules` | Autumn forge UI | Partial | `RuleServices_Tests` crucible block; separate from card wildcards |
+| Agekeeper's Boon (+2 harvest when Agekeeper sign matches cosmic) | **Enforced** | `SpringRules.CalculateHarvestCount` | Harvest breakdown | Partial | |
+| Spread element alignment +1 harvest | **Enforced** | `SpringRules.CalculateHarvestCount` | Harvest breakdown | Partial | |
+| Adept aspect alignment harvest bonus | **Enforced** | `SpringRules.CalculateHarvestCount` | Harvest breakdown | No | Arrested adepts excluded from scoring TBD |
+| Fateful Wager | **Enforced** | `WinterRules.ResolveWagers` | Winter UI | Yes | `RuleServices_Tests` wager block |
+
+---
+
+## Section G — Known doc conflicts
+
+Defer resolution until the slice that needs them:
+
+| Conflict | Sources | Impact | Tracker action |
+|----------|---------|--------|----------------|
+| Reversed curse negation procedure undefined | Card Reference alignment vs curse text | Ranks 4–6 V1 cannot be **Enforced** | **Blocked** — Phase 5 |
+| Hand limit 5 vs 7 (Priestess resonant) | Game Guide vs Adept resonant text | `WinterRules.HandLimit` hard-coded 5 | **Blocked** — Phase 4 |
+| Arcanum limit 2 vs Hermit 3 vs doc "Hierophant" typo | Card Reference overview table | Hermit 3 enforced; doc says Hierophant | Document only; code uses Hermit ★9 |
+| Justice scope | Card Reference vs implementation | Duel + Gambit only (not Opposition) | **Resolved** in code |
+| Hanged Man pass direction | Game Guide wording | `ResolveHangedMan` passes to higher player id (wrap) | Confirm vs "left" convention |
+| Coal / cauldron choice vs codex table | Game Guide vs Crucible reference | Crafting UI | Defer to craft slice |
+| Knight attack/defend suit mapping | Card Reference vs `cards.json` | Cups/Pentacles vs Swords/Wands inverted | **Resolved** — implement from `cards.json` |
+| Resonant vs Attuned terminology | Card Reference / UI copy | Resonant layer predicate | **Blocked** — Phase 4 (minimal `AdeptAttunement` used for Strength/Chariot combat only) |
+| `effectTextResonant` not in enforcement | Data loader vs rules | Most resonant adepts UIOnly | Load in Phase 4 |
+
+---
+
+## Recommended implementation order
+
+Phases are ordered by dependency. Check subtasks as slices ship.
+
+### Phase 0 — Foundation ✅ (complete)
+
+Contest effect flags, dice series resolver, Justice vertical slice.
+
+- [x] `ContestEffectFlags` on `BoardState`
+- [x] `ContestDiceSeriesResolver` (ties favor defender; best-of-3 stops at 2 round wins)
+- [x] `FateCardResolver.ResolveJustice` sets Duel + Gambit flags
+- [x] `CombatRules` series integration; stake applied once from final winner
+- [x] Transit reset via `WinterRules` + `CosmicEffectService.Reset`
+- [x] Contest UI series animation + Active Effects copy
+- [x] EditMode tests: `ContestDiceSeriesResolver_Tests`, Justice block in `RuleServices_Tests`
+
+### Phase 1 — Combat dice & series scope ✅ (complete)
+
+Extend `ContestEffectFlags` + `CombatRules` queries. Depends on Phase 0.
+
+- [x] Knight V1 ±1 duel dice (all suits)
+- [x] Princess V1 ±1 gambit dice (all suits)
+- [x] Strength base +1 / resonant +2 duel & gambit dice
+- [x] Chariot resonant duel reroll
+- [x] Wands 5/6 reversed combat dice (interim always-active)
+- [x] 6 of Swords scoped best-of-3 (initiator-only, separate from Justice board flag)
+- [x] Cups 5 opponent reroll vs you in duels
+- [x] Contest effect preview in duel/gambit UI (`BuildGambitRelevant`, `ContestResponseController`)
+- [x] Tests: `ContestModifierService_Tests`, `ContestDiceSeriesResolver_Tests`, `RuleServices_Tests` Phase 1 block
+
+### Phase 2 — Craft & harvest modifiers
+
+- [x] Ace V2 passive +2 harvest when cosmic element matches (`SpringRules` + `HarvestModifierService`)
+- [x] Minor rank 2 Harvest V1 (Astral House element doubling)
+- [x] Minor rank 3 Build V1 (suit-specific salt craft)
+- [x] Minor rank 8 Craft V1 + King V1 discard craft
+- [x] Empress base/resonant 2-for-1 overlap with cosmic cheap craft
+- [x] Temperance base/resonant salt wild overlap
+- [x] Tests: `HarvestModifierService_Tests`, `CraftModifierService_Tests`, `RuleServices_Tests` Phase 2 block
+
+### Phase 3 — Adept Base passives
+
+Follow `FateCardResolver` switch / service pattern per adept.
+
+- [ ] Magician — ignore Card Lock; hand/spread swap
+- [ ] Emperor — protect 2 spread cards in duels/gambits
+- [ ] Chariot — initiate duels without ante
+- [ ] Star — draw 2 after contest loss
+- [x] Strength — +1 duel dice (done in Phase 1; base only when attacking)
+- [ ] Hierophant — zodiac shift ±1 for harvest/opposition
+- [ ] Devil — sacrifice to steal spread card
+- [ ] Priestess — deck harvest + return 2 (base only)
+- [ ] World — ward reagents persist after transmutation
+- [ ] Wire `MarkAdeptUsed` from rule paths for once-per-age adepts
+
+### Phase 4 — Adept Resonant layer
+
+**Blocked** until attuned predicate and hand-limit conflict resolved.
+
+- [ ] Load `effectTextResonant` into enforcement layer
+- [ ] Attuned predicate (sign matches zodiac or built house)
+- [ ] Priestess resonant hand limit 7
+- [ ] Magician resonant reversed nullification
+- [ ] Emperor resonant broad protection
+- [ ] Remaining resonant effects per adepts.md
+
+### Phase 5 — Reversed curse system
+
+**Blocked** — needs negation rule design decision.
+
+- [ ] Define alignment-negates-curse procedure
+- [ ] Enforce in spread validation / combat / craft layers
+- [ ] Update `SpreadCardEffectEvaluator` inactive state when negated
+
+### Phase 6 — Wildcard substitution
+
+- [ ] `WildcardArcanaNumber` in `CodexFormulaValidator`
+- [ ] Wildcard in `AlchemicalAlignmentValidator` / fire validators
+- [ ] World resonant crucible wildcard + salt refresh
+
+### Phase 7 — Limits & protection
+
+- [ ] Queen V2 hand/spread +1 at round end (`WinterRules` dynamic limits)
+- [ ] King V2 suit protection in `CombatRules.ValidateDuelCards`
+- [ ] Cups 4 and related protection cards
+- [ ] Emperor protection overlap
+- [ ] Winter discard UI respects dynamic limits
+
+### Phase 8 — Social & forge triggers
+
+- [ ] Rank 9 Social — draw on contest win
+- [ ] Rank 7 / Queen V1 Forge — reagent on fire
+- [ ] Entry Fee ace V1 — astral house build discount
+
+### Phase 9 — UI polish per slice
+
+- [ ] Exchange modals for remaining fate edge cases
+- [ ] Contest effect previews (both players)
+- [ ] AI awareness of active combat/craft modifiers
+- [ ] Magnus contest +1 dice (game mode)
+
+---
+
+## Spot-check log (2026-07-10)
+
+Verified against live code:
+
+| Row | Expected | Verified |
+|-----|----------|----------|
+| Justice | `ContestEffectFlags` + series resolver | ✅ `FateCardResolver.ResolveJustice`, `CombatRules` lines 133/252 |
+| Cosmic +1 harvest | `HarvestBaseBonus` in harvest count | ✅ `CosmicEffectService` + `SpringRules.CalculateHarvestCount` |
+| Fate Tower | Arrest adepts on draw | ✅ `FateCardResolver.ResolveTower` |
+| Knight V1 duel | UIOnly | ✅ `SpreadCardEffectEvaluator` only; no `CombatRules` dice hook |
+| Magnus trade 2:1 | Reject 1:1 misaligned | ✅ `TradeService` + `RuleServices_Tests` |

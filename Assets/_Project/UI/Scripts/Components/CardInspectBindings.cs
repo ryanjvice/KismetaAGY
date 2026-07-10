@@ -37,7 +37,12 @@ namespace Kismeta.UI.Components
             if (def == null) return;
 
             if (def.IsCrucible)
+            {
+                ResetModalTheme(root);
+                ShowMinorDetail(root, false);
+                ShowMajorDetail(root, false);
                 return;
+            }
 
             var cosmic = session.Board.CosmicAgeSign;
             int pts = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);

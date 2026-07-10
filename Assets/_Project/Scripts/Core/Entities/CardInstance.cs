@@ -33,8 +33,7 @@ namespace Kismeta.Core.Entities
         public void MoveTo(CardZone zone, int newOwnerId = -1)
         {
             Zone = zone;
-            if (newOwnerId >= 0)
-                OwnerId = newOwnerId;
+            OwnerId = newOwnerId;
         }
 
         public void SetOwnerId(int ownerId) => OwnerId = ownerId;

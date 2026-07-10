@@ -58,6 +58,7 @@ All 156 cards across the Kismeta deck (134 cards) and the Crucible deck (22 card
 
 ## Related reference
 
+- [Effect Implementation Tracker](../Development/effect-implementation-tracker.md) — Implementation status (dev): which modifiers are enforced in gameplay vs display-only
 - [Correspondence table](../Reference/correspondence.md) — Element ↔ Suit ↔ Reagent ↔ Cauldron
 - [Cosmic Ages & Effects](../Reference/cosmic-ages.md) — Sign alignments that affect card value each round
 - [Card Zones](../Reference/card-zones.md) — Where cards live (Spread, Hand, Arcanum) and what they can do

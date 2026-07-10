@@ -45,7 +45,29 @@ namespace Kismeta.Core.Rules
             int defenderId,
             int attackerId,
             string? targetCardId,
-            string? anteCardId)
+            string? anteCardId) =>
+            BuildContestRelevant(
+                session, ContestKind.Duel, defenderId, attackerId,
+                targetCardId, anteCardId, null);
+
+        /// <summary>Effects that may influence an in-flight gambit (both players, offered card, Justice age).</summary>
+        public static ActiveEffectsSnapshot BuildGambitRelevant(
+            GameSession session,
+            int defenderId,
+            int attackerId,
+            string? offeredCardId) =>
+            BuildContestRelevant(
+                session, ContestKind.Gambit, defenderId, attackerId,
+                null, null, offeredCardId);
+
+        static ActiveEffectsSnapshot BuildContestRelevant(
+            GameSession session,
+            ContestKind kind,
+            int defenderId,
+            int attackerId,
+            string? targetCardId,
+            string? anteCardId,
+            string? offeredCardId)
         {
             var cosmic = session.Board.CosmicAgeSign;
             var planet = Correspondence.PlanetFor(cosmic);
@@ -55,9 +77,16 @@ namespace Kismeta.Core.Rules
                 ? "Cosmic age not yet cast"
                 : $"Age of {cosmic} · {planet} · {element}";
 
-            var cosmicAge = session.Board.ContestEffects.DuelBestOfThree
-                || session.Board.ContestEffects.GambitBestOfThree
-                ? BuildCosmicAgeFeatured(session, cosmic, planet, element)
+            string modifierSummary = ContestModifierService.DescribeForPlayer(
+                session, kind, defenderId, attackerId, defenderId);
+            if (!string.IsNullOrWhiteSpace(modifierSummary))
+                subtitle += $" · {modifierSummary}";
+
+            var modifiers = ContestModifierService.Build(session, kind, attackerId, defenderId);
+            bool boardBestOfThree = session.Board.ContestEffects.IsBestOfThree(kind);
+            bool scopedBestOfThree = kind == ContestKind.Duel && modifiers.AttackerForcesBestOfThree;
+            var cosmicAge = boardBestOfThree || scopedBestOfThree
+                ? BuildCosmicAgeFeatured(session, cosmic, planet, element, scopedBestOfThree)
                 : EmptyCosmicAgeItem();
 
             var sections = new List<ActiveEffectSection>();
@@ -65,29 +94,29 @@ namespace Kismeta.Core.Rules
             if (defenderId >= 0 && defenderId < session.Players.Count)
             {
                 var defender = session.Players[defenderId];
-                AddFilteredSection(sections, FilterDuelSection(
+                AddFilteredSection(sections, FilterContestSection(kind,
                     BuildAstralHousesSection(session, defender, cosmic)));
-                AddFilteredSection(sections, FilterDuelSection(
+                AddFilteredSection(sections, FilterContestSection(kind,
                     BuildAdeptsSection(session, defender)));
-                AddFilteredSection(sections, FilterDuelSection(
+                AddFilteredSection(sections, FilterContestSection(kind,
                     BuildFatesSection(session, defender)));
-                AddFilteredSection(sections, BuildDuelSpreadSection(
-                    session, defender, cosmic, targetCardId, anteCardId,
-                    "Your spread", targetCardId));
+                AddFilteredSection(sections, BuildContestSpreadSection(
+                    session, kind, defender, cosmic, targetCardId, anteCardId, offeredCardId,
+                    "Your spread", targetCardId ?? offeredCardId));
             }
 
             if (attackerId >= 0 && attackerId < session.Players.Count && attackerId != defenderId)
             {
                 var attacker = session.Players[attackerId];
-                AddFilteredSection(sections, FilterDuelSection(
+                AddFilteredSection(sections, FilterContestSection(kind,
                     BuildAstralHousesSection(session, attacker, cosmic)));
-                AddFilteredSection(sections, FilterDuelSection(
+                AddFilteredSection(sections, FilterContestSection(kind,
                     BuildAdeptsSection(session, attacker)));
-                AddFilteredSection(sections, FilterDuelSection(
+                AddFilteredSection(sections, FilterContestSection(kind,
                     BuildFatesSection(session, attacker)));
-                AddFilteredSection(sections, BuildDuelSpreadSection(
-                    session, attacker, cosmic, targetCardId, anteCardId,
-                    $"{PlayerLabel(session, attackerId)} spread", anteCardId));
+                AddFilteredSection(sections, BuildContestSpreadSection(
+                    session, kind, attacker, cosmic, targetCardId, anteCardId, offeredCardId,
+                    $"{PlayerLabel(session, attackerId)} spread", offeredCardId));
             }
 
             return new ActiveEffectsSnapshot(subtitle, cosmicAge, sections);
@@ -106,10 +135,10 @@ namespace Kismeta.Core.Rules
             sections.Add(section.Value);
         }
 
-        static ActiveEffectSection? FilterDuelSection(ActiveEffectSection section)
+        static ActiveEffectSection? FilterContestSection(ContestKind kind, ActiveEffectSection section)
         {
             var items = section.Items.Where(item =>
-                PertainsToDuel(item.Description) || PertainsToDuel(item.Title)).ToList();
+                PertainsToContest(kind, item.Description) || PertainsToContest(kind, item.Title)).ToList();
             if (items.Count == 0)
                 return null;
 
@@ -121,12 +150,17 @@ namespace Kismeta.Core.Rules
                 section.FooterNote);
         }
 
-        static ActiveEffectSection? BuildDuelSpreadSection(
+        static ActiveEffectSection? FilterDuelSection(ActiveEffectSection section) =>
+            FilterContestSection(ContestKind.Duel, section);
+
+        static ActiveEffectSection? BuildContestSpreadSection(
             GameSession session,
+            ContestKind kind,
             PlayerState player,
             ZodiacSign cosmic,
             string? targetCardId,
             string? anteCardId,
+            string? offeredCardId,
             string title,
             string? highlightCardId)
         {
@@ -149,7 +183,7 @@ namespace Kismeta.Core.Rules
 
             foreach (var (id, def) in spreadCards)
             {
-                if (!IsDuelRelevantSpreadCard(id, def, targetCardId, anteCardId, highlightCardId))
+                if (!IsContestRelevantSpreadCard(kind, id, def, targetCardId, anteCardId, offeredCardId, highlightCardId))
                     continue;
 
                 int alignPts = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);
@@ -191,35 +225,66 @@ namespace Kismeta.Core.Rules
                 items);
         }
 
+        static bool IsContestRelevantSpreadCard(
+            ContestKind kind,
+            string id,
+            CardDefinition def,
+            string? targetCardId,
+            string? anteCardId,
+            string? offeredCardId,
+            string? highlightCardId)
+        {
+            if (id == targetCardId || id == anteCardId || id == offeredCardId || id == highlightCardId)
+                return true;
+
+            if (def.EffectType.Equals("Reversed", StringComparison.OrdinalIgnoreCase))
+                return kind == ContestKind.Duel || kind == ContestKind.Gambit;
+
+            if (kind == ContestKind.Duel
+                && def.EffectType.Equals("Duel", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (kind == ContestKind.Gambit
+                && def.EffectType.Equals("Gambit", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return false;
+        }
+
         static bool IsDuelRelevantSpreadCard(
             string id,
             CardDefinition def,
             string? targetCardId,
             string? anteCardId,
-            string? highlightCardId)
-        {
-            if (id == targetCardId || id == anteCardId || id == highlightCardId)
-                return true;
+            string? highlightCardId) =>
+            IsContestRelevantSpreadCard(
+                ContestKind.Duel, id, def, targetCardId, anteCardId, null, highlightCardId);
 
-            return def.EffectType.Equals("Duel", StringComparison.OrdinalIgnoreCase)
-                || def.EffectType.Equals("Gambit", StringComparison.OrdinalIgnoreCase);
-        }
-
-        static bool PertainsToDuel(string text)
+        static bool PertainsToContest(ContestKind kind, string text)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return false;
 
-            return text.Contains("duel", StringComparison.OrdinalIgnoreCase)
+            if (text.Contains("duel", StringComparison.OrdinalIgnoreCase)
                 || text.Contains("gambit", StringComparison.OrdinalIgnoreCase)
-                || text.Contains("combat", StringComparison.OrdinalIgnoreCase);
+                || text.Contains("combat", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("dice", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("reroll", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("best-of", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return kind == ContestKind.Gambit
+                && text.Contains("opposition", StringComparison.OrdinalIgnoreCase);
         }
+
+        static bool PertainsToDuel(string text) => PertainsToContest(ContestKind.Duel, text);
 
         static ActiveEffectItem BuildCosmicAgeFeatured(
             GameSession session,
             ZodiacSign cosmic,
             Planet planet,
-            Element element)
+            Element element,
+            bool scopedDuelBestOfThree = false)
         {
             var (name, desc) = CosmicEffectDescriber.DescribeCosmicAge(cosmic);
             int keeperId = FindAgekeeperId(session);
@@ -232,6 +297,8 @@ namespace Kismeta.Core.Rules
             if (session.Board.ContestEffects.DuelBestOfThree
                 || session.Board.ContestEffects.GambitBestOfThree)
                 body += " Duels and Gambits resolve as best-of-three this age (Justice).";
+            else if (scopedDuelBestOfThree)
+                body += " This duel resolves as best-of-three (6 of Swords).";
 
             string footer = cosmic == ZodiacSign.None
                 ? string.Empty
@@ -294,6 +361,17 @@ namespace Kismeta.Core.Rules
                         continue;
 
                     string description = FirstLine(def.EffectText);
+                    if (def.ArcanaNumber == 3 && player.EmpressMarkedReagents.Count > 0)
+                    {
+                        var marked = string.Join(", ", player.EmpressMarkedReagents);
+                        description += $" Marked this age: {marked}.";
+                    }
+
+                    if (def.ArcanaNumber == 14 && player.TemperanceSaltWildReagent.HasValue)
+                    {
+                        description += $" Salt wild for {player.TemperanceSaltWildReagent.Value}.";
+                    }
+
                     bool arrested = player.ArrestedAdepts.Contains(id);
                     bool used = player.UsedAdeptInstanceIdsThisAge.Contains(id);
                     var badge = AdeptEffectCatalog.BadgeFor(def.ArcanaNumber, arrested, used);
@@ -404,10 +482,19 @@ namespace Kismeta.Core.Rules
                     ? $"{def.Rank} of {def.Suit}"
                     : def.Name;
 
+                string description = state.Description;
+                if (def.EffectType.Equals("Craft", StringComparison.OrdinalIgnoreCase)
+                    && SpreadCraftEffectCatalog.IsRank8CraftDiscount(def, Correspondence.ReagentFor(def.Suit)))
+                {
+                    int minCost = CraftModifierService.GetMinimumCost(session, player.PlayerId,
+                        Correspondence.ReagentFor(def.Suit));
+                    description += $" Crafts {Correspondence.ReagentFor(def.Suit)} at {minCost} cards.";
+                }
+
                 activeItems.Add(new ActiveEffectItem(
                     id,
                     title,
-                    state.Description,
+                    description,
                     state.Badge,
                     iconKey: SuitIconKey(def.Suit),
                     polarity: state.Polarity));

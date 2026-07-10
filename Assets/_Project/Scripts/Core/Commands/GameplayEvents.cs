@@ -208,7 +208,7 @@ namespace Kismeta.Core.Commands
             WinnerId   = winnerId;
             TargetCardId = targetCardId;
             AnteCardId = anteCardId;
-            Rounds = rounds ?? new[] { new ContestDiceRound(attackRoll, defendRoll, winnerId) };
+            Rounds = rounds ?? new[] { new ContestDiceRound(attackRoll, defendRoll, attackRoll, defendRoll, winnerId) };
             AttackerRoundWins = attackerRoundWins > 0 ? attackerRoundWins
                 : (winnerId == attackerId ? 1 : 0);
             DefenderRoundWins = defenderRoundWins > 0 ? defenderRoundWins
@@ -236,7 +236,7 @@ namespace Kismeta.Core.Commands
             AttackerId    = attackerId; DefenderId  = defenderId;
             AttackRoll    = attackRoll; DefendRoll  = defendRoll;
             WinnerId      = winnerId;   OfferedCardId = offeredCardId;
-            Rounds = rounds ?? new[] { new ContestDiceRound(attackRoll, defendRoll, winnerId) };
+            Rounds = rounds ?? new[] { new ContestDiceRound(attackRoll, defendRoll, attackRoll, defendRoll, winnerId) };
             AttackerRoundWins = attackerRoundWins > 0 ? attackerRoundWins
                 : (winnerId == attackerId ? 1 : 0);
             DefenderRoundWins = defenderRoundWins > 0 ? defenderRoundWins

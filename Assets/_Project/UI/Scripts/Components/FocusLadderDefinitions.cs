@@ -52,7 +52,10 @@ namespace Kismeta.UI.Components
                     "See how the cosmic age and your sign interact with astral houses and adepts."),
                 new SeasonFocusTip(
                     "Compare harvest and alignment",
-                    "Sign match bonuses affect how many cards you keep from harvest.")
+                    "Sign match bonuses affect how many cards you keep from harvest."),
+                new SeasonFocusTip(
+                    "Know your sign",
+                    "Your zodiac sign is set at the start of Spring — it drives harvest bonuses and cosmic alignment all year.")
             },
             [Season.Summer] = new[]
             {

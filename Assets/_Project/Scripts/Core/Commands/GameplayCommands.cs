@@ -36,6 +36,45 @@ namespace Kismeta.Core.Commands
         }
     }
 
+    /// <summary>Discard a King V1 from Spread to craft one matching elemental reagent.</summary>
+    public sealed class CraftKingReagentCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public string KingCardId { get; }
+
+        public CraftKingReagentCommand(int playerId, string kingCardId)
+        {
+            PlayerId = playerId;
+            KingCardId = kingCardId;
+        }
+    }
+
+    /// <summary>Spend Salt to mark a reagent type for Empress 2-for-1 crafting this age.</summary>
+    public sealed class MarkEmpressReagentCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public ReagentType ReagentType { get; }
+
+        public MarkEmpressReagentCommand(int playerId, ReagentType reagentType)
+        {
+            PlayerId = playerId;
+            ReagentType = reagentType;
+        }
+    }
+
+    /// <summary>Resonant Temperance: mark one elemental reagent Salt may substitute for when crafting.</summary>
+    public sealed class MarkTemperanceWildReagentCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public ReagentType ReagentType { get; }
+
+        public MarkTemperanceWildReagentCommand(int playerId, ReagentType reagentType)
+        {
+            PlayerId = playerId;
+            ReagentType = reagentType;
+        }
+    }
+
     /// <summary>
     /// Player fires the stone: satisfies alchemical alignment (discards cards from Spread),
     /// pays reagent cost, and moves stone from Mantle to the next Forge position.

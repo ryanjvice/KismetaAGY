@@ -148,6 +148,18 @@ namespace Kismeta.Core.Entities
                     ? ApplyWithAudit(_rules.Crafting.TryCraft(this, cmd.PlayerId, cmd.ReagentType, cmd.CardInstanceIds), command)
                     : CommandResult.NotImplemented(nameof(CraftReagentCommand)),
 
+                CraftKingReagentCommand cmd => _rules is not null
+                    ? ApplyWithAudit(_rules.Crafting.TryKingDiscardCraft(this, cmd.PlayerId, cmd.KingCardId), command)
+                    : CommandResult.NotImplemented(nameof(CraftKingReagentCommand)),
+
+                MarkEmpressReagentCommand cmd => _rules is not null
+                    ? ApplyWithAudit(_rules.Crafting.TryMarkEmpressReagent(this, cmd.PlayerId, cmd.ReagentType), command)
+                    : CommandResult.NotImplemented(nameof(MarkEmpressReagentCommand)),
+
+                MarkTemperanceWildReagentCommand cmd => _rules is not null
+                    ? ApplyWithAudit(_rules.Crafting.TryMarkTemperanceWildReagent(this, cmd.PlayerId, cmd.ReagentType), command)
+                    : CommandResult.NotImplemented(nameof(MarkTemperanceWildReagentCommand)),
+
                 // ── Autumn ────────────────────────────────────────────────────────
                 FireStoneCommand     cmd => _rules is not null
                     ? ApplyWithAudit(_rules.Crucible.TryFire(this, cmd.PlayerId, cmd.SlotIndex, cmd.AlignmentCardIds), command)

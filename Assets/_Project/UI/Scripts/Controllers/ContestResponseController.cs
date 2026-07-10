@@ -187,7 +187,7 @@ namespace Kismeta.UI.Controllers
                 SetText(FindLabel("response-desc"), DescribePending(_pending, attackerName));
 
             BuildPartyRow(_pending.AttackerId, _playerId);
-            ConfigureDuelEffects(_pending);
+            ConfigureContestEffects(_pending);
             ConfigureTip(_pending);
             ConfigureFeeRow(_pending);
             ResetDuelRollUi(_pending, attackerName);
@@ -219,26 +219,30 @@ namespace Kismeta.UI.Controllers
             }
         }
 
-        void ConfigureDuelEffects(PendingContest pending)
+        void ConfigureContestEffects(PendingContest pending)
         {
             var host = FindElement("response-effects");
             if (host == null || _session == null) return;
 
-            if (pending.Kind != ContestKind.Duel)
+            if (pending.Kind is not (ContestKind.Duel or ContestKind.Gambit))
             {
                 SetHidden(host, true);
                 return;
             }
 
-            var snapshot = ActiveEffectsService.BuildDuelRelevant(
-                _session,
-                _playerId,
-                pending.AttackerId,
-                pending.TargetCardId,
-                pending.AnteCardId);
+            ActiveEffectsSnapshot snapshot = pending.Kind == ContestKind.Duel
+                ? ActiveEffectsService.BuildDuelRelevant(
+                    _session, _playerId, pending.AttackerId,
+                    pending.TargetCardId, pending.AnteCardId)
+                : ActiveEffectsService.BuildGambitRelevant(
+                    _session, _playerId, pending.AttackerId, pending.OfferedCardId);
 
-            bool showFeatured = (_session.Board.ContestEffects.DuelBestOfThree
-                    || _session.Board.ContestEffects.GambitBestOfThree)
+            var modifiers = ContestModifierService.Build(
+                _session, pending.Kind, pending.AttackerId, _playerId);
+            bool boardBestOfThree = _session.Board.ContestEffects.IsBestOfThree(pending.Kind);
+            bool scopedBestOfThree = pending.Kind == ContestKind.Duel && modifiers.AttackerForcesBestOfThree;
+
+            bool showFeatured = (boardBestOfThree || scopedBestOfThree)
                 && !string.IsNullOrWhiteSpace(snapshot.CosmicAge.Description);
             var featured = FindElement("response-effects-featured");
             if (featured != null)
@@ -254,7 +258,12 @@ namespace Kismeta.UI.Controllers
             if (list != null && snapshot.Sections.Count > 0)
                 ActiveEffectsAccordion.Populate(list, snapshot.Sections);
 
-            SetHidden(host, !showFeatured && snapshot.Sections.Count == 0);
+            SetHidden(host, !showFeatured && snapshot.Sections.Count == 0
+                && string.IsNullOrWhiteSpace(snapshot.Subtitle));
+
+            var sub = FindLabel("response-sub");
+            if (sub != null && !string.IsNullOrWhiteSpace(snapshot.Subtitle))
+                sub.text = snapshot.Subtitle;
         }
 
         void ConfigureDuelStakes(PendingContest pending)

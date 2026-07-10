@@ -1268,15 +1268,23 @@ namespace Kismeta.Game.Bootstrap
             GUILayout.Space(2f);
 
             // Craft Salt
-            GUI.enabled = selCount >= 3;
-            if (GUILayout.Button($"Craft Salt  ({selCount}/3 sel)"))
+            int minSaltCost = _session != null
+                ? CraftModifierService.GetMinimumCost(_session, pid, ReagentType.Salt)
+                : 3;
+            GUI.enabled = selCount >= minSaltCost;
+            if (GUILayout.Button($"Craft Salt  ({selCount}/{minSaltCost} sel)"))
                 SubmitAction(hs, new CraftReagentCommand(pid, ReagentType.Salt, selList));
             GUI.enabled = true;
+
+            DrawCraftExtensionActions(hs, pid, player, selList, selCount);
 
             // Craft Elemental
             Suit? uSuit = GetUniformSuit(selList);
             bool cauldronLit = uSuit.HasValue && player.IsCauldronLit(uSuit.Value);
-            GUI.enabled = selCount >= 3 && uSuit.HasValue && cauldronLit;
+            int minElemCost = uSuit.HasValue && _session != null
+                ? CraftModifierService.GetMinimumCost(_session, pid, SuitToReagent(uSuit.Value))
+                : 3;
+            GUI.enabled = selCount >= minElemCost && uSuit.HasValue && cauldronLit;
             string craftLabel = uSuit.HasValue
                 ? $"Craft {uSuit.Value} Reagent  (cauldron {(cauldronLit ? "lit" : "UNLIT")})"
                 : "Craft Elemental  (select 3+ same-suit)";
@@ -1571,6 +1579,38 @@ namespace Kismeta.Game.Bootstrap
             Suit.Swords    => "🗡️",
             _              => "·"
         };
+
+        private void DrawCraftExtensionActions(HotSeatController hs, int pid, PlayerState player,
+            IReadOnlyList<string> selList, int selCount)
+        {
+            if (_session == null || selCount != 1)
+                return;
+
+            var inst = _session.GetCard(selList[0]);
+            var def = inst != null ? _db?.GetById(inst.DefinitionId) : null;
+            if (def != null && SpreadCraftEffectCatalog.IsKingV1DiscardCraft(def)
+                && player.Spread.Contains(selList[0]))
+            {
+                var reagent = SpreadCraftEffectCatalog.ReagentForKing(def);
+                var suit = Correspondence.SuitFor(reagent);
+                GUI.enabled = player.IsCauldronLit(suit);
+                if (GUILayout.Button($"King discard craft → {reagent}"))
+                    SubmitAction(hs, new CraftKingReagentCommand(pid, selList[0]));
+                GUI.enabled = true;
+            }
+
+            if (CraftModifierService.HasEmpress(_session, player))
+            {
+                GUILayout.BeginHorizontal();
+                foreach (ReagentType rt in new[]
+                         { ReagentType.Sulphur, ReagentType.AquaRegia, ReagentType.Vitriol, ReagentType.Quicksilver })
+                {
+                    if (GUILayout.Button($"Empress mark {rt}"))
+                        SubmitAction(hs, new MarkEmpressReagentCommand(pid, rt));
+                }
+                GUILayout.EndHorizontal();
+            }
+        }
 
         // ── Crafting helpers ─────────────────────────────────────────────────────
 

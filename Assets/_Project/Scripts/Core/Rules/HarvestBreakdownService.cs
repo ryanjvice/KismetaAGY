@@ -165,6 +165,8 @@ namespace Kismeta.Core.Rules
                     HarvestAspectTier.None));
             }
 
+            HarvestModifierService.AppendSpreadBonusRows(session, playerId, rows);
+
             int bonusSubtotal = boardCosmic + personalCosmic;
             foreach (var row in rows)
             {

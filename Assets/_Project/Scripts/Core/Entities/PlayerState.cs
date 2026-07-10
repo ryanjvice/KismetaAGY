@@ -68,6 +68,15 @@ namespace Kismeta.Core.Entities
         /// <summary>Adept instance IDs whose once-per-age power was used this cosmic age.</summary>
         public HashSet<string> UsedAdeptInstanceIdsThisAge { get; } = new();
 
+        /// <summary>Reagent types marked by The Empress this age (2-for-1 craft until Transit).</summary>
+        public HashSet<ReagentType> EmpressMarkedReagents { get; } = new();
+
+        /// <summary>
+        /// Resonant Temperance: one elemental reagent type Salt may substitute for when paying to craft.
+        /// Cleared on Transit.
+        /// </summary>
+        public ReagentType? TemperanceSaltWildReagent { get; set; }
+
         // Astral Houses placed (ZodiacSign values the player has claimed)
         public HashSet<ZodiacSign> AstralHouses { get; } = new();
         public int UnplacedAstralHouses { get; set; } = 4;

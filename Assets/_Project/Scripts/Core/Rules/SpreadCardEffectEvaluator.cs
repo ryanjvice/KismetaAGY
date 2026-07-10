@@ -116,29 +116,12 @@ namespace Kismeta.Core.Rules
         }
 
         static bool IsPassiveActive(PlayerState player, CardDefinition def, ZodiacSign cosmic)
-        {
-            if (TryParseCosmicElementCondition(def.EffectText, out var requiredElement))
-                return requiredElement == Correspondence.ElementFor(cosmic);
-
-            return true;
-        }
+            => SpreadEffectPredicates.IsPassiveCosmicElementActive(def, cosmic)
+               || (!SpreadEffectPredicates.TryParseCosmicElementCondition(def.EffectText, out _)
+                   && def.EffectType.Equals("Passive", StringComparison.OrdinalIgnoreCase));
 
         static bool IsSpreadPassiveActive(PlayerState player, CardDefinition def)
-        {
-            if (def.EffectType != "Harvest")
-                return true;
-
-            if (!TryParseHarvestElementCondition(def.EffectText, out var requiredElement))
-                return true;
-
-            foreach (var houseSign in player.AstralHouses)
-            {
-                if (Correspondence.ElementFor(houseSign) == requiredElement)
-                    return true;
-            }
-
-            return false;
-        }
+            => SpreadEffectPredicates.IsHarvestHouseElementActive(player, def);
 
         static ActiveEffectPolarity ResolvePolarity(
             CardDefinition def,
@@ -281,32 +264,10 @@ namespace Kismeta.Core.Rules
         }
 
         static bool TryParseCosmicElementCondition(string text, out Element element)
-        {
-            element = Element.None;
-            const string marker = "Cosmic Age's Element is ";
-            int idx = text.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
-            if (idx < 0)
-                return false;
-
-            string tail = text[(idx + marker.Length)..].Trim().TrimEnd('.');
-            return Enum.TryParse(tail, ignoreCase: true, out element);
-        }
+            => SpreadEffectPredicates.TryParseCosmicElementCondition(text, out element);
 
         static bool TryParseHarvestElementCondition(string text, out Element element)
-        {
-            element = Element.None;
-            const string marker = "Astral Houses on ";
-            int idx = text.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
-            if (idx < 0)
-                return false;
-
-            string tail = text[(idx + marker.Length)..];
-            int end = tail.IndexOf(' ');
-            if (end < 0)
-                return false;
-
-            return Enum.TryParse(tail[..end], ignoreCase: true, out element);
-        }
+            => SpreadEffectPredicates.TryParseHarvestElementCondition(text, out element);
 
         static string DescribeSpreadAlignment(int points, CardDefinition def, ZodiacSign cosmic)
         {
