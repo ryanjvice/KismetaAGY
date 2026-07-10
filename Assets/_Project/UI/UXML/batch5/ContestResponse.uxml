@@ -84,6 +84,8 @@
                         <engine:Label name="die-foe-name" text="rival" class="contest-response__die-label" />
                     </engine:VisualElement>
                 </engine:VisualElement>
+                <engine:Label name="roll-series-round" text="" class="contest-response__roll-series is-hidden" />
+                <engine:Label name="roll-series-score" text="" class="contest-response__roll-series is-hidden" />
                 <engine:Button name="roll-btn" text="Roll Die" class="btn btn--primary" />
                 <engine:Label name="roll-outcome" text="" class="contest-response__roll-outcome is-hidden" />
             </engine:VisualElement>

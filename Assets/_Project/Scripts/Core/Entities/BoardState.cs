@@ -39,8 +39,8 @@ namespace Kismeta.Core.Entities
         // Per-round Cosmic Effect flags set by CosmicEffectService; cleared each Transit
         public CosmicEffectFlags CosmicEffect { get; set; }
 
-        // Whether duels this round resolve as best-of-3 (set by Justice Fate card)
-        public bool BestOfThreeDuels { get; set; }
+        // Per-age contest modifiers (Justice, future card effects); cleared each Transit
+        public ContestEffectFlags ContestEffects { get; set; }
 
         /// <summary>Contest awaiting defender response, or null when none is in flight.</summary>
         public PendingContest? PendingContest { get; set; }

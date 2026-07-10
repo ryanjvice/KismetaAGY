@@ -280,11 +280,16 @@ namespace Kismeta.Core.Tests
             var codexDb = LoadCodexDb();
             var session = BuildSession(db, codexDb);
             session.Board.CosmicAgeSign = ZodiacSign.Libra;
-            session.Board.BestOfThreeDuels = true;
+            session.Board.ContestEffects = new ContestEffectFlags
+            {
+                DuelBestOfThree = true,
+                GambitBestOfThree = true
+            };
 
             var snapshot = ActiveEffectsService.BuildDuelRelevant(session, 0, 1, null, null);
 
             StringAssert.Contains("best-of-three", snapshot.CosmicAge.Description);
+            StringAssert.Contains("Gambits", snapshot.CosmicAge.Description);
         }
 
         [Test]

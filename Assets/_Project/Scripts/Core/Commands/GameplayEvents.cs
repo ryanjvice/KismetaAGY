@@ -187,20 +187,32 @@ namespace Kismeta.Core.Commands
     {
         public int AttackerId    { get; }
         public int DefenderId    { get; }
+        /// <summary>Final round attack roll (convenience for single-roll consumers).</summary>
         public int AttackRoll    { get; }
+        /// <summary>Final round defend roll (convenience for single-roll consumers).</summary>
         public int DefendRoll    { get; }
         public int WinnerId      { get; }
         public string TargetCardId { get; }
         public string AnteCardId { get; }
+        public IReadOnlyList<ContestDiceRound> Rounds { get; }
+        public int AttackerRoundWins { get; }
+        public int DefenderRoundWins { get; }
 
         public DuelResolvedEvent(int attackerId, int defenderId,
-            int attackRoll, int defendRoll, int winnerId, string targetCardId, string anteCardId)
+            int attackRoll, int defendRoll, int winnerId, string targetCardId, string anteCardId,
+            IReadOnlyList<ContestDiceRound>? rounds = null,
+            int attackerRoundWins = 0, int defenderRoundWins = 0)
         {
             AttackerId = attackerId; DefenderId = defenderId;
             AttackRoll = attackRoll; DefendRoll = defendRoll;
             WinnerId   = winnerId;
             TargetCardId = targetCardId;
             AnteCardId = anteCardId;
+            Rounds = rounds ?? new[] { new ContestDiceRound(attackRoll, defendRoll, winnerId) };
+            AttackerRoundWins = attackerRoundWins > 0 ? attackerRoundWins
+                : (winnerId == attackerId ? 1 : 0);
+            DefenderRoundWins = defenderRoundWins > 0 ? defenderRoundWins
+                : (winnerId == defenderId ? 1 : 0);
         }
     }
 
@@ -212,13 +224,23 @@ namespace Kismeta.Core.Commands
         public int DefendRoll     { get; }
         public int WinnerId       { get; }
         public string OfferedCardId { get; }
+        public IReadOnlyList<ContestDiceRound> Rounds { get; }
+        public int AttackerRoundWins { get; }
+        public int DefenderRoundWins { get; }
 
         public GambitResolvedEvent(int attackerId, int defenderId,
-            int attackRoll, int defendRoll, int winnerId, string offeredCardId)
+            int attackRoll, int defendRoll, int winnerId, string offeredCardId,
+            IReadOnlyList<ContestDiceRound>? rounds = null,
+            int attackerRoundWins = 0, int defenderRoundWins = 0)
         {
             AttackerId    = attackerId; DefenderId  = defenderId;
             AttackRoll    = attackRoll; DefendRoll  = defendRoll;
             WinnerId      = winnerId;   OfferedCardId = offeredCardId;
+            Rounds = rounds ?? new[] { new ContestDiceRound(attackRoll, defendRoll, winnerId) };
+            AttackerRoundWins = attackerRoundWins > 0 ? attackerRoundWins
+                : (winnerId == attackerId ? 1 : 0);
+            DefenderRoundWins = defenderRoundWins > 0 ? defenderRoundWins
+                : (winnerId == defenderId ? 1 : 0);
         }
     }
 

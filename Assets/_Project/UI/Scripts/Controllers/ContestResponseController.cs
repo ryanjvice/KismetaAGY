@@ -209,6 +209,8 @@ namespace Kismeta.UI.Controllers
             SetText(FindLabel("die-foe-pip"), "?");
             SetText(FindLabel("die-foe-name"), attackerName);
             SetHidden(FindLabel("roll-outcome"), true);
+            SetHidden(FindLabel("roll-series-round"), true);
+            SetHidden(FindLabel("roll-series-score"), true);
             var rollBtn = FindButton("roll-btn");
             if (rollBtn != null)
             {
@@ -235,7 +237,8 @@ namespace Kismeta.UI.Controllers
                 pending.TargetCardId,
                 pending.AnteCardId);
 
-            bool showFeatured = _session.Board.BestOfThreeDuels
+            bool showFeatured = (_session.Board.ContestEffects.DuelBestOfThree
+                    || _session.Board.ContestEffects.GambitBestOfThree)
                 && !string.IsNullOrWhiteSpace(snapshot.CosmicAge.Description);
             var featured = FindElement("response-effects-featured");
             if (featured != null)
@@ -330,8 +333,17 @@ namespace Kismeta.UI.Controllers
 
             if (resolved != null)
             {
-                yield return RollDie(FindLabel("die-you-pip"), resolved.DefendRoll);
-                yield return RollDie(FindLabel("die-foe-pip"), resolved.AttackRoll);
+                var roundLbl = FindLabel("roll-series-round");
+                var scoreLbl = FindLabel("roll-series-score");
+                ShowSeriesLabels(roundLbl, scoreLbl, resolved.Rounds.Count > 1);
+                if (roundLbl != null) SetHidden(roundLbl, resolved.Rounds.Count <= 1);
+                if (scoreLbl != null) SetHidden(scoreLbl, resolved.Rounds.Count <= 1);
+
+                yield return AnimateContestSeries(
+                    FindLabel("die-you-pip"), FindLabel("die-foe-pip"),
+                    roundLbl, scoreLbl,
+                    resolved.Rounds, resolved.AttackerId, resolved.DefenderId, _playerId,
+                    localIsAttacker: false);
 
                 var outcome = FindLabel("roll-outcome");
                 if (outcome != null)

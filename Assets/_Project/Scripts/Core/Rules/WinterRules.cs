@@ -258,7 +258,7 @@ namespace Kismeta.Core.Rules
 
             // Clear all per-round effect flags
             session.Board.CosmicEffect    = CosmicEffectFlags.Default;
-            session.Board.BestOfThreeDuels = false;
+            session.Board.ContestEffects = ContestEffectFlags.Default;
             session.Board.PendingContest   = null;
             session.CurrentTurnPlayerId    = null;
 

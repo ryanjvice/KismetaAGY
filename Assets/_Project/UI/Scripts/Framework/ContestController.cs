@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Kismeta.Core.Commands;
+using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.UI.Components;
 using UnityEngine;
@@ -41,6 +43,62 @@ namespace Kismeta.UI
             float step = DieAnimator.DefaultStepSec)
         {
             yield return DieAnimator.RollLabel(pip, result, frames, step);
+        }
+
+        /// <summary>
+        /// Plays each round of a best-of-three (or single-roll) contest series with score updates.
+        /// <paramref name="localIsAttacker"/> determines which pip is "you" vs "foe".
+        /// </summary>
+        protected IEnumerator AnimateContestSeries(
+            Label? youPip, Label? foePip,
+            Label? roundLabel, Label? scoreLabel,
+            IReadOnlyList<ContestDiceRound> rounds,
+            int attackerId, int defenderId, int localPlayerId,
+            bool localIsAttacker)
+        {
+            int localWins = 0, foeWins = 0;
+            int foeId = localIsAttacker ? defenderId : attackerId;
+
+            for (int i = 0; i < rounds.Count; i++)
+            {
+                var round = rounds[i];
+                if (roundLabel != null)
+                    roundLabel.text = rounds.Count > 1 ? $"Round {i + 1}" : string.Empty;
+
+                int youRoll = localIsAttacker ? round.AttackRoll : round.DefendRoll;
+                int foeRoll = localIsAttacker ? round.DefendRoll : round.AttackRoll;
+
+                yield return RollDie(youPip, youRoll);
+                yield return RollDie(foePip, foeRoll);
+
+                if (round.RoundWinnerId == localPlayerId) localWins++;
+                else if (round.RoundWinnerId == foeId) foeWins++;
+
+                if (scoreLabel != null && rounds.Count > 1)
+                    scoreLabel.text = $"Score {localWins}–{foeWins}";
+            }
+        }
+
+        protected void ResetSeriesLabels(string roundName = "roll-series-round",
+            string scoreName = "roll-series-score", string? outcomeName = "roll-outcome")
+        {
+            var roundLbl = Lbl(roundName);
+            var scoreLbl = Lbl(scoreName);
+            if (roundLbl != null) roundLbl.style.display = DisplayStyle.None;
+            if (scoreLbl != null) scoreLbl.style.display = DisplayStyle.None;
+            if (outcomeName != null)
+            {
+                var outcome = Lbl(outcomeName);
+                if (outcome != null) outcome.style.display = DisplayStyle.None;
+            }
+        }
+
+        protected static void ShowSeriesLabels(Label? roundLbl, Label? scoreLbl, bool multiRound)
+        {
+            if (roundLbl != null)
+                roundLbl.style.display = multiRound ? DisplayStyle.Flex : DisplayStyle.None;
+            if (scoreLbl != null)
+                scoreLbl.style.display = multiRound ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         protected IEnumerator WaitForEvent<T>(GameSession session, Action<T> onReceived, float timeout = 3f)

@@ -53,8 +53,9 @@ namespace Kismeta.UI.Components
                 ? "The age has not been cast yet."
                 : $"{name} — {desc} while {cosmic} reigns.";
 
-            if (session.Board.BestOfThreeDuels)
-                body += " Duels resolve as best-of-three this age (Justice).";
+            if (session.Board.ContestEffects.DuelBestOfThree
+                || session.Board.ContestEffects.GambitBestOfThree)
+                body += " Duels and Gambits resolve as best-of-three this age (Justice).";
 
             string footer = cosmic == ZodiacSign.None
                 ? string.Empty

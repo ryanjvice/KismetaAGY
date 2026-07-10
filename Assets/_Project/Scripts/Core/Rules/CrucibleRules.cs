@@ -378,26 +378,11 @@ namespace Kismeta.Core.Rules
 
             int attackRoll, defendRoll;
 
-            if (session.Board.BestOfThreeDuels)
+            do
             {
-                int aWins = 0, dWins = 0;
-                while (aWins < 2 && dWins < 2)
-                {
-                    int a, d;
-                    do { a = _rng.Next(1, 13); d = _rng.Next(1, 13); } while (a == d);
-                    if (a > d) aWins++; else dWins++;
-                }
-                attackRoll = aWins >= 2 ? 12 : 1;
-                defendRoll = dWins >= 2 ? 12 : 1;
-            }
-            else
-            {
-                do
-                {
-                    attackRoll = _rng.Next(1, 13);
-                    defendRoll = _rng.Next(1, 13);
-                } while (attackScore + attackRoll == defendScore + defendRoll);
-            }
+                attackRoll = _rng.Next(1, 13);
+                defendRoll = _rng.Next(1, 13);
+            } while (attackScore + attackRoll == defendScore + defendRoll);
 
             int attackTotal = attackScore + attackRoll;
             int defendTotal = defendScore + defendRoll;

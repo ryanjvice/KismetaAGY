@@ -32,7 +32,8 @@ namespace Kismeta.Core.Rules
         }
 
         public static void EmitDuel(GameSession session, int attackerId, int defenderId,
-            int attackRoll, int defendRoll, int winnerId, string targetCardId, string anteCardId)
+            int attackRoll, int defendRoll, int winnerId, string targetCardId, string anteCardId,
+            int attackerRoundWins = 1, int defenderRoundWins = 0)
         {
             var legs = new List<ExchangeLeg>();
             if (winnerId == attackerId)
@@ -49,15 +50,16 @@ namespace Kismeta.Core.Rules
             }
 
             string context = winnerId == attackerId
-                ? $"Duel — challenger wins ({attackRoll} vs {defendRoll})"
-                : $"Duel — defender wins ({defendRoll} vs {attackRoll})";
+                ? $"Duel — challenger wins ({attackerRoundWins}-{defenderRoundWins})"
+                : $"Duel — defender wins ({defenderRoundWins}-{attackerRoundWins})";
 
             session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.Duel, legs, context));
         }
 
         public static void EmitGambit(GameSession session, int attackerId, int defenderId,
             int attackRoll, int defendRoll, int winnerId, string offeredCardId,
-            bool offeredInCrucible, string? arrestedDefenderCardId)
+            bool offeredInCrucible, string? arrestedDefenderCardId,
+            int attackerRoundWins = 1, int defenderRoundWins = 0)
         {
             var legs = new List<ExchangeLeg>();
             if (winnerId == attackerId && arrestedDefenderCardId != null)
@@ -80,8 +82,8 @@ namespace Kismeta.Core.Rules
             }
 
             string context = winnerId == attackerId
-                ? $"Gambit — challenger wins ({attackRoll} vs {defendRoll})"
-                : $"Gambit — defender wins ({defendRoll} vs {attackRoll})";
+                ? $"Gambit — challenger wins ({attackerRoundWins}-{defenderRoundWins})"
+                : $"Gambit — defender wins ({defenderRoundWins}-{attackerRoundWins})";
 
             session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.Gambit, legs, context));
         }

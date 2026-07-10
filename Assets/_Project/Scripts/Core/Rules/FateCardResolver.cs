@@ -168,12 +168,15 @@ namespace Kismeta.Core.Rules
                 $"Already resolved: drew {drawn} card{(drawn == 1 ? "" : "s")} from lit cauldrons. Now face-up in Arcanum.");
         }
 
-        /// <summary>Justice (11): Duels this round resolve as best-of-3.</summary>
+        /// <summary>Justice (11): Duels and Gambits this round resolve as best-of-3.</summary>
         private static void ResolveJustice(GameSession session, string fateCardId)
         {
-            session.Board.BestOfThreeDuels = true;
+            var effects = session.Board.ContestEffects;
+            effects.DuelBestOfThree = true;
+            effects.GambitBestOfThree = true;
+            session.Board.ContestEffects = effects;
             SetFateNote(session, fateCardId,
-                "Already resolved: duels are best-of-three this age. Now face-up in Arcanum.");
+                "Already resolved: duels and gambits are best-of-three this age. Now face-up in Arcanum.");
         }
 
         /// <summary>Wheel of Fortune (10): All re-roll Zodiac; highest gets 2 Salt, lowest discards 1.</summary>

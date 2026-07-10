@@ -130,10 +130,9 @@ namespace Kismeta.Core.Rules
             var attacker = session.Players[attackerId];
             var defender = session.Players[defenderId];
 
-            int attackRoll = _rng.Next(1, 13);
-            int defendRoll = _rng.Next(1, 13);
-            bool attackerWins = attackRoll > defendRoll;
-            int winnerId = attackerWins ? attackerId : defenderId;
+            bool bestOfThree = session.Board.ContestEffects.IsBestOfThree(ContestKind.Duel);
+            var series = ContestDiceSeriesResolver.Resolve(_rng, attackerId, defenderId, bestOfThree);
+            bool attackerWins = series.WinnerId == attackerId;
 
             if (attackerWins)
             {
@@ -149,11 +148,16 @@ namespace Kismeta.Core.Rules
             }
 
             session.EmitEvent(new DuelResolvedEvent(
-                attackerId, defenderId, attackRoll, defendRoll, winnerId, targetCardId, anteCardId));
+                attackerId, defenderId,
+                series.FinalAttackRoll, series.FinalDefendRoll, series.WinnerId,
+                targetCardId, anteCardId,
+                series.Rounds, series.AttackerRoundWins, series.DefenderRoundWins));
             ExchangeEventEmitter.EmitDuel(session, attackerId, defenderId,
-                attackRoll, defendRoll, winnerId, targetCardId, anteCardId);
+                series.FinalAttackRoll, series.FinalDefendRoll, series.WinnerId,
+                targetCardId, anteCardId,
+                series.AttackerRoundWins, series.DefenderRoundWins);
             return CommandResult.Ok(
-                $"Duel: P{attackerId}({attackRoll}) vs P{defenderId}({defendRoll}) → P{winnerId} wins.");
+                $"Duel: P{attackerId}({series.AttackerRoundWins}) vs P{defenderId}({series.DefenderRoundWins}) → P{series.WinnerId} wins.");
         }
 
         // ── Gambit ────────────────────────────────────────────────────────────────
@@ -245,10 +249,9 @@ namespace Kismeta.Core.Rules
             bool offeredInCrucible = attacker.CrucibleSlots.Exists(
                 s => s.CardInstanceId == offeredCardId && s.State == CrucibleCardState.Active);
 
-            int attackRoll = _rng.Next(1, 13);
-            int defendRoll = _rng.Next(1, 13);
-            bool attackerWins = attackRoll > defendRoll;
-            int winnerId = attackerWins ? attackerId : defenderId;
+            bool bestOfThree = session.Board.ContestEffects.IsBestOfThree(ContestKind.Gambit);
+            var series = ContestDiceSeriesResolver.Resolve(_rng, attackerId, defenderId, bestOfThree);
+            bool attackerWins = series.WinnerId == attackerId;
 
             string? arrestedDefenderCardId = null;
             if (attackerWins)
@@ -277,11 +280,15 @@ namespace Kismeta.Core.Rules
             }
 
             session.EmitEvent(new GambitResolvedEvent(
-                attackerId, defenderId, attackRoll, defendRoll, winnerId, offeredCardId));
+                attackerId, defenderId,
+                series.FinalAttackRoll, series.FinalDefendRoll, series.WinnerId, offeredCardId,
+                series.Rounds, series.AttackerRoundWins, series.DefenderRoundWins));
             ExchangeEventEmitter.EmitGambit(session, attackerId, defenderId,
-                attackRoll, defendRoll, winnerId, offeredCardId, offeredInCrucible, arrestedDefenderCardId);
+                series.FinalAttackRoll, series.FinalDefendRoll, series.WinnerId, offeredCardId,
+                offeredInCrucible, arrestedDefenderCardId,
+                series.AttackerRoundWins, series.DefenderRoundWins);
             return CommandResult.Ok(
-                $"Gambit: P{attackerId}({attackRoll}) vs P{defenderId}({defendRoll}) → P{winnerId} wins.");
+                $"Gambit: P{attackerId}({series.AttackerRoundWins}) vs P{defenderId}({series.DefenderRoundWins}) → P{series.WinnerId} wins.");
         }
 
         // ── Free Arrested ─────────────────────────────────────────────────────────

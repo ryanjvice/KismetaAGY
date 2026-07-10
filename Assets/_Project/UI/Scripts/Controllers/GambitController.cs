@@ -20,6 +20,7 @@ namespace Kismeta.UI.Controllers
         int? _preselectedRival;
         readonly HashSet<string> _stake = new();
         bool _rolling;
+        bool _awaitingContinue;
 
         public System.Action? OnBack;
         public System.Action? OnCompleted;
@@ -30,7 +31,20 @@ namespace Kismeta.UI.Controllers
             Btn("g-target-next")!.clicked += OnTargetNext;
             Btn("g-fee-next")!.clicked += OnFeeNext;
             Btn("g-stake-next")!.clicked += OnStakeNext;
-            Btn("g-roll-btn")!.clicked += () => { if (!_rolling) StartCoroutine(DoRoll()); };
+            Btn("g-roll-btn")!.clicked += OnRollClicked;
+        }
+
+        void OnRollClicked()
+        {
+            if (_awaitingContinue)
+            {
+                _awaitingContinue = false;
+                OnCompleted?.Invoke();
+                return;
+            }
+
+            if (!_rolling)
+                StartCoroutine(DoRoll());
         }
 
         public void SetPreselectedRival(int? rivalId) => _preselectedRival = rivalId;
@@ -44,6 +58,7 @@ namespace Kismeta.UI.Controllers
             _preselectedRival = null;
             _stake.Clear();
             _rolling = false;
+            _awaitingContinue = false;
 
             if (Root == null || _playerId < 0) return;
 
@@ -153,6 +168,7 @@ namespace Kismeta.UI.Controllers
             SetWizard("wg", 4, 4);
             Lbl("die-you-pip")!.text = "?";
             Lbl("die-foe-pip")!.text = "?";
+            ResetSeriesLabels();
         }
 
         IEnumerator DoRoll()
@@ -175,9 +191,31 @@ namespace Kismeta.UI.Controllers
 
             if (resolved != null)
             {
-                yield return RollDie(Lbl("die-you-pip"), resolved.AttackRoll);
-                yield return RollDie(Lbl("die-foe-pip"), resolved.DefendRoll);
-                OnCompleted?.Invoke();
+                var roundLbl = Lbl("roll-series-round");
+                var scoreLbl = Lbl("roll-series-score");
+                ShowSeriesLabels(roundLbl, scoreLbl, resolved.Rounds.Count > 1);
+
+                yield return AnimateContestSeries(
+                    Lbl("die-you-pip"), Lbl("die-foe-pip"),
+                    roundLbl, scoreLbl,
+                    resolved.Rounds, resolved.AttackerId, resolved.DefenderId, _playerId,
+                    localIsAttacker: true);
+
+                bool won = resolved.WinnerId == _playerId;
+                var outcome = Lbl("roll-outcome");
+                if (outcome != null)
+                {
+                    outcome.style.display = DisplayStyle.Flex;
+                    outcome.text = won ? "You won the gambit!" : "You lost the gambit.";
+                }
+
+                var rollBtn = Btn("g-roll-btn");
+                if (rollBtn != null)
+                {
+                    rollBtn.text = "Continue";
+                    rollBtn.SetEnabled(true);
+                }
+                _awaitingContinue = true;
             }
             else if (declined != null)
                 OnCompleted?.Invoke();

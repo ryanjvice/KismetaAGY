@@ -55,7 +55,8 @@ namespace Kismeta.Core.Rules
                 ? "Cosmic age not yet cast"
                 : $"Age of {cosmic} · {planet} · {element}";
 
-            var cosmicAge = session.Board.BestOfThreeDuels
+            var cosmicAge = session.Board.ContestEffects.DuelBestOfThree
+                || session.Board.ContestEffects.GambitBestOfThree
                 ? BuildCosmicAgeFeatured(session, cosmic, planet, element)
                 : EmptyCosmicAgeItem();
 
@@ -228,8 +229,9 @@ namespace Kismeta.Core.Rules
                 ? "The age has not been cast yet."
                 : $"{name} — {desc} while {cosmic} reigns.";
 
-            if (session.Board.BestOfThreeDuels)
-                body += " Duels resolve as best-of-three this age (Justice).";
+            if (session.Board.ContestEffects.DuelBestOfThree
+                || session.Board.ContestEffects.GambitBestOfThree)
+                body += " Duels and Gambits resolve as best-of-three this age (Justice).";
 
             string footer = cosmic == ZodiacSign.None
                 ? string.Empty

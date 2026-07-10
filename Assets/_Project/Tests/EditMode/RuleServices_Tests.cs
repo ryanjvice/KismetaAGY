@@ -1865,6 +1865,133 @@ namespace Kismeta.Core.Tests
             AssertInventoryConsistent(session, "after duel win");
         }
 
+        // ─── Justice / contest effect tests ─────────────────────────────────────
+
+        static void ApplyJusticeContestEffects(GameSession session)
+        {
+            var effects = session.Board.ContestEffects;
+            effects.DuelBestOfThree = true;
+            effects.GambitBestOfThree = true;
+            session.Board.ContestEffects = effects;
+        }
+
+        [Test]
+        public void Justice_Fate_SetsDuelAndGambitBestOfThree()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var resolver = new FateCardResolver(db);
+
+            var fateInst = new CardInstance("fate-justice", "major.fate.11", CardZone.Arcanum, 0);
+            session.RegisterCard(fateInst);
+            session.Players[0].Arcanum.Add(fateInst.InstanceId);
+
+            resolver.Resolve(session, 0, fateInst.InstanceId, 11);
+
+            Assert.IsTrue(session.Board.ContestEffects.DuelBestOfThree);
+            Assert.IsTrue(session.Board.ContestEffects.GambitBestOfThree);
+        }
+
+        [Test]
+        public void WinterTransit_ClearsContestEffects()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ApplyJusticeContestEffects(session);
+
+            session.Rules!.Winter.Transit(session);
+
+            Assert.IsFalse(session.Board.ContestEffects.DuelBestOfThree);
+            Assert.IsFalse(session.Board.ContestEffects.GambitBestOfThree);
+        }
+
+        static int FindJusticeMultiRoundSeed()
+        {
+            for (int seed = 0; seed < 10000; seed++)
+            {
+                var series = ContestDiceSeriesResolver.Resolve(
+                    new System.Random(seed), 0, 1, bestOfThree: true);
+                if (series.Rounds.Count >= 2)
+                    return seed;
+            }
+            Assert.Fail("Could not find justice multi-round seed.");
+            return 0;
+        }
+
+        [Test]
+        public void Duel_WithJustice_EmitsMultiRoundEvent()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ApplyJusticeContestEffects(session);
+
+            var ante = PopulateSpread(session, 0, 1, "justice-duel-ante");
+            var targets = PopulateSpread(session, 1, 1, "justice-duel-target");
+
+            DuelResolvedEvent? resolved = null;
+            session.OnEvent += e => { if (e is DuelResolvedEvent d) resolved = d; };
+
+            var combat = new CombatRules(FindJusticeMultiRoundSeed());
+            var result = combat.TryDuel(session, 0, 1, targets[0], ante[0]);
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.NotNull(resolved);
+            Assert.GreaterOrEqual(resolved!.Rounds.Count, 2);
+            Assert.AreEqual(resolved.Rounds.Count,
+                resolved.AttackerRoundWins + resolved.DefenderRoundWins);
+            Assert.GreaterOrEqual(
+                System.Math.Max(resolved.AttackerRoundWins, resolved.DefenderRoundWins), 2);
+        }
+
+        [Test]
+        public void Gambit_WithJustice_EmitsMultiRoundEvent()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ApplyJusticeContestEffects(session);
+
+            const string offeredId = "justice-gambit-offer";
+            var offeredInst = new CardInstance(offeredId, "minor.cups.seven.1", CardZone.Arcanum, 0);
+            session.RegisterCard(offeredInst);
+            session.Players[0].Arcanum.Add(offeredId);
+            PopulateSpread(session, 1, 1, "justice-gambit-def");
+
+            GambitResolvedEvent? resolved = null;
+            session.OnEvent += e => { if (e is GambitResolvedEvent g) resolved = g; };
+
+            var combat = new CombatRules(FindJusticeMultiRoundSeed());
+            var result = combat.TryGambit(session, 0, 1, offeredId);
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.NotNull(resolved);
+            Assert.GreaterOrEqual(resolved!.Rounds.Count, 2);
+        }
+
+        [Test]
+        public void Opposition_WithJustice_StillSingleRoll()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ApplyJusticeContestEffects(session);
+            session.Players[1].StoneState = StoneState.Forging;
+            SetSeason(session, Season.Autumn);
+            session.CurrentTurnPlayerId = 0;
+
+            OppositionResolvedEvent? resolved = null;
+            session.OnEvent += e => { if (e is OppositionResolvedEvent o) resolved = o; };
+
+            var initiate = session.Apply(new InitiateOppositionCommand(0, 1));
+            Assert.IsTrue(initiate.IsOk, initiate.Message);
+            var respond = session.Apply(new RespondOppositionCommand(1, accept: true));
+            Assert.IsTrue(respond.IsOk, respond.Message);
+
+            Assert.NotNull(resolved);
+            Assert.GreaterOrEqual(resolved!.AttackRoll, 1);
+            Assert.LessOrEqual(resolved.AttackRoll, 12);
+            Assert.GreaterOrEqual(resolved.DefendRoll, 1);
+            Assert.LessOrEqual(resolved.DefendRoll, 12);
+        }
+
         [Test]
         public void Trade_Quickplay_InventoryConsistent()
         {

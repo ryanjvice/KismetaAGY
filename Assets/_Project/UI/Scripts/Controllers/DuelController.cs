@@ -139,6 +139,7 @@ namespace Kismeta.UI.Controllers
             Lbl("die-you-pip")!.text = "?";
             Lbl("die-foe-pip")!.text = "?";
             Lbl("roll-outcome")!.style.display = DisplayStyle.None;
+            ResetSeriesLabels();
             var rollBtn = Btn("roll-btn");
             if (rollBtn != null)
             {
@@ -175,8 +176,15 @@ namespace Kismeta.UI.Controllers
 
             if (resolved != null)
             {
-                yield return RollDie(Lbl("die-you-pip"), resolved.AttackRoll);
-                yield return RollDie(Lbl("die-foe-pip"), resolved.DefendRoll);
+                var roundLbl = Lbl("roll-series-round");
+                var scoreLbl = Lbl("roll-series-score");
+                ShowSeriesLabels(roundLbl, scoreLbl, resolved.Rounds.Count > 1);
+
+                yield return AnimateContestSeries(
+                    Lbl("die-you-pip"), Lbl("die-foe-pip"),
+                    roundLbl, scoreLbl,
+                    resolved.Rounds, resolved.AttackerId, resolved.DefenderId, _playerId,
+                    localIsAttacker: true);
 
                 var outcome = Lbl("roll-outcome");
                 if (outcome != null)

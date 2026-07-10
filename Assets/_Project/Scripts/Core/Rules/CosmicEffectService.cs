@@ -77,7 +77,7 @@ namespace Kismeta.Core.Rules
         public void Reset(GameSession session)
         {
             session.Board.CosmicEffect    = CosmicEffectFlags.Default;
-            session.Board.BestOfThreeDuels = false;
+            session.Board.ContestEffects = ContestEffectFlags.Default;
         }
 
         // ─── Static helpers for per-player personal effect computation ────────────

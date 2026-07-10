@@ -269,6 +269,13 @@
     margin-top: 10px;
 }
 
+.contest-response__roll-series {
+    font-size: var(--font-small);
+    color: var(--muted);
+    -unity-text-align: middle-center;
+    margin-bottom: 4px;
+}
+
 .contest-response__die-label {
     font-size: 9px;
     color: var(--muted);
