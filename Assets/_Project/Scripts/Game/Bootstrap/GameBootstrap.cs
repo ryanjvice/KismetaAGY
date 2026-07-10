@@ -259,10 +259,10 @@ namespace Kismeta.Game.Bootstrap
             var summerOverlays = GetComponent<SummerOverlayHost>();
             summerOverlays?.Configure(
                 _summerSheets, _craftReagent, _activateCard, _crucibleCardDetail,
-                _placeWards, _endSummer);
+                _placeWards, _endSummer, _buildHouse);
 
             var springOverlays = GetComponent<SpringOverlayHost>();
-            springOverlays?.Configure(_buildHouse, _boardInspect);
+            springOverlays?.Configure(_boardInspect);
 
             var introRecap = GetComponent<SeasonIntroRecapHost>();
             introRecap?.Configure(_seasonInfoRecap, _springIntro, _summerIntro, _autumnIntro, _winterIntro);

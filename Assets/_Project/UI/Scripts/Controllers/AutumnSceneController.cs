@@ -30,6 +30,7 @@ namespace Kismeta.UI.Controllers
 
         // Footer
         public Action? OnLeaveStasis;
+        public Action? OnOpposition;
         public Action? OnPass;
 
         // Inventory / table
@@ -72,6 +73,7 @@ namespace Kismeta.UI.Controllers
             WireBtn("craft-btn", OnCraftClicked);
             WireBtn("activate-btn", OnActivateClicked);
             WireBtn("forge-btn", OnForgeClicked);
+            WireBtn("opposition-btn", () => OnOpposition?.Invoke());
             WireBtn("stasis-btn", OnStasisClicked);
             WireBtn("pass-btn", OnPassClicked);
             NarrativeToolbarBindings.WireIntroRecap(Root, Season.Autumn, () => IntroRecapHost);
@@ -215,6 +217,8 @@ namespace Kismeta.UI.Controllers
             Btn("craft-btn")?.SetEnabled(autumnAction && !_inStasis);
             Btn("activate-btn")?.SetEnabled(autumnAction && !_inStasis);
             Btn("forge-btn")?.SetEnabled(true);
+            Btn("opposition-btn")?.SetEnabled(
+                autumnAction && !_inStasis && AutumnActionBindings.HasOpposeTargets(session, _localPlayerId));
             Btn("pass-btn")?.SetEnabled(autumnAction);
 
             var stasisBtn = Btn("stasis-btn");
@@ -271,7 +275,7 @@ namespace Kismeta.UI.Controllers
         public void RefreshActionGroupRail()
         {
             MainSceneBindings.BindActionGroupRail(
-                El("step-rail"), 3,
+                El("step-rail"), 4,
                 ActionGroupRailBindings.ResolveAutumnActiveGroup(_autumnOverlays, _contestOverlays));
         }
     }

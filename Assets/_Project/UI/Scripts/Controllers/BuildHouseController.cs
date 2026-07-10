@@ -47,8 +47,11 @@ namespace Kismeta.UI.Controllers
             if (Root == null || _playerId < 0) return;
 
             RefreshUi();
-            NarrativeSlotBindings.BindById(Root, "spring.buildhouse");
+            NarrativeSlotBindings.BindById(Root, "summer.buildhouse");
         }
+
+        int RequiredPaymentCount =>
+            _session == null ? 2 : AstralHouseService.RequiredPaymentCount(_session.Mode);
 
         void RefreshUi()
         {
@@ -57,10 +60,13 @@ namespace Kismeta.UI.Controllers
             var player = _session.Players[_playerId];
             var sign = player.CurrentSign;
             var planet = Correspondence.PlanetFor(sign);
+            int required = RequiredPaymentCount;
 
             var eyebrow = Root.Q<Label>(className: "eyebrow");
             if (eyebrow != null)
-                eyebrow.text = $"cost — 1 {planet} card";
+                eyebrow.text = required == 1
+                    ? $"cost — 1 {planet} card"
+                    : $"cost — 2 {planet} cards";
 
             bool canBuild = CanBuild(player, sign, out string reason);
             var cards = CollectEligibleCards(player, planet);
@@ -75,14 +81,14 @@ namespace Kismeta.UI.Controllers
             var btn = Btn("build-btn");
             if (btn != null)
             {
-                bool hasRequiredCard = cards.Count > 0;
-                bool readyToBuild = canBuild && hasRequiredCard && _selected.Count == 1;
+                bool hasRequiredCards = cards.Count >= required;
+                bool readyToBuild = canBuild && hasRequiredCards && _selected.Count == required;
                 btn.SetEnabled(readyToBuild);
                 btn.EnableInClassList("btn--disabled", !readyToBuild);
                 btn.text = !canBuild
                     ? reason
-                    : !hasRequiredCard
-                        ? $"Need 1 {planet} card"
+                    : !hasRequiredCards
+                        ? $"Need {required} {planet} card{(required == 1 ? "" : "s")}"
                         : $"Raise the House on {sign}";
             }
         }
@@ -153,18 +159,26 @@ namespace Kismeta.UI.Controllers
         void OnCardToggle(string cardId)
         {
             if (_selected.Contains(cardId))
+            {
                 _selected.Remove(cardId);
-            else
+            }
+            else if (_selected.Count < RequiredPaymentCount)
+            {
+                _selected.Add(cardId);
+            }
+            else if (RequiredPaymentCount == 1)
             {
                 _selected.Clear();
                 _selected.Add(cardId);
             }
+
             RefreshUi();
         }
 
         void OnBuild()
         {
-            if (_bridge == null || _session == null || _playerId < 0 || _selected.Count != 1) return;
+            int required = RequiredPaymentCount;
+            if (_bridge == null || _session == null || _playerId < 0 || _selected.Count != required) return;
             var sign = _session.Players[_playerId].CurrentSign;
             var ids = new List<string>(_selected);
             if (_bridge.TrySubmit(new BuildAstralHouseCommand(_playerId, sign, ids)))

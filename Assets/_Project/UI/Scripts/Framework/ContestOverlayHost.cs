@@ -62,19 +62,21 @@ namespace Kismeta.UI
             ActiveContest.Trade => 0,
             ActiveContest.Duel => 1,
             ActiveContest.Gambit => 2,
-            ActiveContest.Opposition => 3,
             _ => null
         };
 
-        // Opposition moved to Summer; no contest belongs to the Autumn rail.
-        public int? ActiveAutumnGroupIndex => null;
+        public int? ActiveAutumnGroupIndex => _active switch
+        {
+            ActiveContest.Opposition => 3,
+            _ => null
+        };
 
         public string? ActiveNarrativeStepId => _active switch
         {
             ActiveContest.Trade => "summer.trade",
             ActiveContest.Duel => "summer.duel",
             ActiveContest.Gambit => "summer.gambit",
-            ActiveContest.Opposition => "summer.opposition",
+            ActiveContest.Opposition => "autumn.opposition",
             _ => null
         };
 

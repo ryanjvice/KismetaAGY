@@ -13,7 +13,7 @@ Spring ushers in a new Cosmic Age. Set the Cosmic Age, determine your Zodiac sig
 | **1️⃣ Set the Cosmic Age**  | Agekeeper rolls the Cosmic Age Die. Read the Sign & Aspects aloud.   |
 | **2️⃣ Determine Your Sign** | All players roll their Zodiac Die. Move their Meeple to their Sign.  |
 | **3️⃣ Harvest**             | Base Harvest + Bonus Cards + Agekeeper's Boon (when applicable).     |
-| **4️⃣ Commune**             | Build your Spread, Hand, and Arcanum zones. Consider your goals.     |
+| **4️⃣ Commune**             | Build your Tableau: Spread, Hand, and Arcanum zones. Consider your goals.     |
 | **5️⃣ Card Lock**           | Cards are locked between your Hand and Spread until Phase 4: Winter. |
 
 ### 1️⃣ Set the Cosmic Age
@@ -21,6 +21,8 @@ Spring ushers in a new Cosmic Age. Set the Cosmic Age, determine your Zodiac sig
 - **Roll the Cosmic Age Die:** The Agekeeper rolls the 12-sided black die.
 - **Read the Sign and Aspects aloud:** Announce the Sign's name, its ruling Planet, and its Element. All players note these — every Alignment calculation this round is measured against them.
 - **Apply the Cosmic Effect:** The rolled Sign's Cosmic Effect activates immediately and applies for the entire round. See the _Cosmic Ages & Effects_ table in the Reference Appendix.
+
+📌 **Resolve Fateful Wagers:** If any player placed a Fateful Wager during the previous round's Winter, resolve it now against the Sign just rolled. See _Phase 4: Winter — Fateful Wager_.
 
 ### 2️⃣ Determine Your Sign
 
@@ -39,8 +41,8 @@ All players earn a base of 3 Kismeta Cards at the start of every Harvest. You ca
 
 - **Zodiac Die** — Compare your rolled Sign's Aspects (Sign, Planet, Element) against the Cosmic Age. Earn the bonus for the highest match.
 - **Astral Houses** — Each Astral House you've built is checked independently. Multiple Astral Houses each earn their own bonus and stack with all other sources.
-- **Adept Cards** — Each active Adept Card in your Arcanum carries three Aspects. Each one is scored independently as a Harvest Source.
-- **Spread Element Match** — Before the Harvest deal, count the cards already in your Spread whose suit matches the Cosmic Age's Element. Each matching card earns +1 card.
+- **Adept Cards** — Each active Adept Card in your Arcanum carries a Zodiac Sign Aspect. Each one is scored independently as a Harvest Source.
+- **Spread Cards** — Before the Harvest deal, check every card already in your Spread against the Cosmic Age's Aspects (Planet and Suit/Element). Each card is scored independently for its single highest match.
 
 ⚠️ **Important — Highest Aspect Only Per Source:** Each source scores its single highest-matching Aspect. If your Zodiac Die result matches both the Sign and the Planet of the Cosmic Age, the score is **+3**, not +5.
 
@@ -60,10 +62,10 @@ All players earn a base of 3 Kismeta Cards at the start of every Harvest. You ca
 | STEP                      | ACTION                                                                                                                                                                     |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1. Base Harvest           | All players begin with 3 cards. This is always granted regardless of Alignment.                                                                                            |
-| 2. Calculate Bonus Cards  | Each player tallies bonus cards from all applicable Harvest Sources using the Bonus Scoring table above. (Zodiac Die + Astral Houses + Adept Cards + Spread Element Match) |
+| 2. Calculate Bonus Cards  | Each player tallies bonus cards from all applicable Harvest Sources using the Bonus Scoring table above. (Zodiac Die + Astral Houses + Adept Cards + Spread Cards) |
 | 3. Agekeeper's Boon       | If the Agekeeper's rolled Sign exactly matches the Cosmic Age Sign, add +2 cards to every player's tally.                                                                  |
 | 4. Deal the Harvest       | The Agekeeper deals each player their full Harvest total face down, one at a time. (Base + Bonus + Agekeeper's Boon, if triggered)                                         |
-| 5. Commune with the Cards | Each player arranges their full hand across their Spread, Hand, and Arcanum zones. Consider your goals for the round.                                                      |
+| 5. Commune with your Tableau | Each player arranges their full hand across their Spread, Hand, and Arcanum zones. Consider your goals for the round.                                                      |
 
 #### Aspects & Alignment
 
@@ -74,27 +76,37 @@ Each Cosmic Age has three Aspects — **Sign**, **Planet**, and **Element** — 
 | **SOURCE**                                     | **ASPECT MATCHED**                              | **BONUS CARDS** |
 | Zodiac Die: Scorpio                            | Sign match (Scorpio = Scorpio) → highest Aspect | +3              |
 | Spread: 7 of Pentacles                         | Planet match (Mars = Mars)                      | +2              |
-| Spread: Knight of Cups                         | Element match (Water = Water)                   | +1              |
 | Astral House: Pisces                           | Element match (Water = Water)                   | +1              |
 | Adept Card: The Hierophant                     | Sign match (Scorpio = Scorpio)                  | +3              |
 | Base Harvest                                   | 3 cards always dealt regardless of Alignment    | +3              |
-| **TOTAL HARVEST**                              |                                                 | **13 cards**    |
+| **TOTAL HARVEST**                              |                                                 | **12 cards**    |
 
-### 4️⃣ Commune with the Kismeta Cards
+### 4️⃣ Commune With Your Tableau
 
-Now that you have your Kismeta Cards for the Age, it's time to commune with them. Cards you place in your Spread will have active effects that influence gameplay in many ways. Spread cards can be used to complete card sets for your Crucible Codex and Crucible cards' Alchemical Formulas, or to craft Reagents. They are vulnerable to being lost in duels and serve other functions in the game.
+Now that you have your Kismeta Cards for the Age, it's time to commune with them. Your **Tableau** is your full personal inventory of Kismeta Cards, arranged across three zones: the Spread, the Hand, and the Arcanum.
 
-The cards you hold privately are your Hand cards. They can be used to craft Reagents and in Oppositions, but do not have active effects and cannot be used to complete card sets. They cannot be lost in duels.
+#### Spread
 
-Any Major Arcana card (Adept Card or Fate Card) is played into a separate zone, the Arcanum. Fate cards are always placed face-up in the Arcanum immediately when drawn, even if dealt as part of a private face-down Harvest. Adept cards must be purchased and can be added in up to two at a time.
+Cards you place in your Spread are visible to every player and carry active effects. They're the cards you'll draw from to Light Cauldrons, Fire your Stone, Craft Reagents, and meet Forge Alignment requirements — but because they're out in the open, they're also the only cards a rival can target in a Duel.
+
+#### Hand
+
+Cards you hold privately are your Hand cards. They're hidden from other players, and their effects stay inactive. They can be used to Craft Reagents alongside your Spread cards and to contribute to an Opposition, but they cannot be traded, wagered, or targeted in a Duel.
+
+#### Arcanum
+
+Any Major Arcana card (Adept Card or Fate Card) is played into a separate zone, the Arcanum. Fate Cards are always placed face-up in the Arcanum immediately when drawn, even if dealt as part of a private face-down Harvest. Adept Cards must be purchased before they can be added, and you may hold up to two at a time.
+
+- **Fate Cards:** Effects activate instantly and last for the duration of the current round.
+- **Adept Cards:** Must be purchased immediately or returned to the deck; once purchased, they remain with you until swapped or stolen in a Gambit. Each Adept Card has a Base Effect (on purchase) and an Attuned Effect (unlocked when the card's Zodiac Sign is matched via your Zodiac Die or Astral Houses).
 
 📌 **Note:** Your Spread is your engine — cards here count toward Alignment, Crucible activation, and Crafting. Your Hand is your reserve, useful for Oppositions and Crafting but invisible to rivals.
 
 ### 5️⃣ Card Lock 🔒
 
-Once the players have finished arranging their cards for the round, all cards are locked in their current zones until the beginning of **Phase 4: Winter**. Any new cards you gain in Summer or Autumn are automatically added to your Spread zone.
+Once the players have finished arranging their Tableau for the round, all cards are locked in their current zones until the beginning of **Phase 4: Winter**. Any new cards you gain in Summer or Autumn are automatically added to your Spread zone.
 
-📌 **Spring is complete.** The Cosmic Age has been set, resources gathered, and your inventory built. Proceed to **Phase 2: ☀️ Summer**.
+📌 **Spring is complete.** The Cosmic Age has been set, resources gathered, and your Tableau built. Proceed to **Phase 2: ☀️ Summer**.
 
 ---
 

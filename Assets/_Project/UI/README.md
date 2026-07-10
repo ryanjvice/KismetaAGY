@@ -60,7 +60,7 @@ Controllers (`TitleScreenController`, etc.) live on the **same GameObject** as `
 | Craft & build / Consort sheets | `SummerSheetsController` | navigation |
 | Craft reagent | `CraftReagentController` | `CraftReagentCommand` |
 | Activate crucible | `ActivateCardController` | `ActivateCrucibleCommand` |
-| Build astral house | `BuildHouseController` | `BuildAstralHouseCommand` |
+| Build astral house | `BuildHouseController` (Summer) | `BuildAstralHouseCommand` |
 | Place wards | `PlaceWardsController` | `PlaceCardWardCommand` |
 | End Summer | `EndSummerController` | `PassCrucibleActionCommand` |
 

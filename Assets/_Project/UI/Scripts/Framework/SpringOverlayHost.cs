@@ -6,21 +6,19 @@ using UnityEngine.UIElements;
 namespace Kismeta.UI
 {
     /// <summary>
-    /// Manages Spring hub overlays (Build a House, board inspect) without changing ScreenRouter's active screen.
+    /// Manages Spring hub overlays (board inspect) without changing ScreenRouter's active screen.
     /// </summary>
     public sealed class SpringOverlayHost : MonoBehaviour
     {
-        VisualTreeAsset? _buildHouse;
         VisualTreeAsset? _boardInspect;
 
         ViewportLayout? _layout;
         GameSession? _session;
         CommandBridge? _bridge;
 
-        BuildHouseController? _build;
         SpringBoardInspectController? _inspect;
 
-        enum ActiveOverlay { None, BuildHouse, BoardInspect }
+        enum ActiveOverlay { None, BoardInspect }
 
         ActiveOverlay _active = ActiveOverlay.None;
 
@@ -29,9 +27,8 @@ namespace Kismeta.UI
 
         void Awake() => EnsureControllers();
 
-        public void Configure(VisualTreeAsset buildHouse, VisualTreeAsset? boardInspect = null)
+        public void Configure(VisualTreeAsset? boardInspect = null)
         {
-            _buildHouse = buildHouse;
             _boardInspect = boardInspect;
             EnsureControllers();
         }
@@ -39,7 +36,6 @@ namespace Kismeta.UI
         void EnsureControllers()
         {
             _layout ??= GetComponent<ViewportLayout>();
-            _build ??= GetComponent<BuildHouseController>();
             _inspect ??= GetComponent<SpringBoardInspectController>();
         }
 
@@ -58,13 +54,6 @@ namespace Kismeta.UI
             Dismiss();
         }
 
-        public void ShowBuildHouse()
-        {
-            if (!ShowModal(_buildHouse, _build, ActiveOverlay.BuildHouse)) return;
-            WireBuild();
-            RefreshOpenOverlay();
-        }
-
         public void ShowBoardInspect()
         {
             if (!ShowModal(_boardInspect, _inspect, ActiveOverlay.BoardInspect)) return;
@@ -81,7 +70,6 @@ namespace Kismeta.UI
         public void Dismiss()
         {
             _active = ActiveOverlay.None;
-            _build?.Detach();
             _inspect?.Detach();
             _layout?.DismissOverlay();
         }
@@ -104,20 +92,10 @@ namespace Kismeta.UI
 
             switch (_active)
             {
-                case ActiveOverlay.BuildHouse when _bridge != null:
-                    _build?.BindState(_session, _bridge);
-                    break;
                 case ActiveOverlay.BoardInspect:
                     _inspect?.BindState(_session);
                     break;
             }
-        }
-
-        void WireBuild()
-        {
-            if (_build == null) return;
-            _build.OnBack = Dismiss;
-            _build.OnCompleted = Dismiss;
         }
 
         void WireInspect()

@@ -522,29 +522,29 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
-        public void Opposition_Rejected_Outside_Summer()
+        public void Opposition_Rejected_Outside_Autumn()
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
             session.Players[1].StoneState = StoneState.Forging;
-            SetSeason(session, Season.Autumn);
+            SetSeason(session, Season.Summer);
 
             var result = session.Apply(new InitiateOppositionCommand(0, 1));
-            Assert.IsFalse(result.IsOk, "Opposition should be rejected outside Summer.");
-            StringAssert.Contains("Summer", result.Message);
+            Assert.IsFalse(result.IsOk, "Opposition should be rejected outside Autumn.");
+            StringAssert.Contains("Autumn", result.Message);
         }
 
         [Test]
-        public void BuildAstralHouse_Rejected_Outside_Spring()
+        public void BuildAstralHouse_Rejected_Outside_Summer()
         {
             var db      = LoadDb();            var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Spring);
 
             var result = session.Apply(new BuildAstralHouseCommand(
                 0, ZodiacSign.Aries, new List<string>()));
-            Assert.IsFalse(result.IsOk, "Build Astral House should be rejected outside Spring.");
-            StringAssert.Contains("Spring", result.Message);
+            Assert.IsFalse(result.IsOk, "Build Astral House should be rejected outside Summer.");
+            StringAssert.Contains("Summer", result.Message);
         }
 
         // ─── CraftingRules tests ───────────────────────────────────────────────────

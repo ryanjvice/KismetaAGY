@@ -16,7 +16,7 @@ Keep these principles in mind as you find your footing across the first few roun
 
 5. **Astral Houses Are Your Anchor:** Build Astral Houses early. Each House acts as a permanent Alignment source for Harvesting Bonus cards every Spring for the rest of the game. A House built in round one compounds its advantage over every subsequent Age. A House built in the final round is barely worth the cost.
 
-6. **Adept Cards Synergies:** Your Arcanum has two Adept slots that, as a pair, permanently add their Sign, Planet, and Element to all calculations. A strong pair spans multiple Aspect types, preserving bonuses even as the Cosmic Age shifts. When a new Adept appears, consider how it complements your existing one. Overlapping Aspects with your Astral Houses create a strong Alignment advantage that rivals can't disrupt.
+6. **Adept Cards Synergies:** Your Arcanum has two Adept slots that, as a pair, permanently add their Zodiac Sign Aspects to all calculations. A strong pair spans two different Signs, preserving bonuses even as the Cosmic Age shifts. When a new Adept appears, consider how it complements your existing one. Overlapping Signs with your Astral Houses create a strong Alignment advantage that rivals can't disrupt.
 
 7. **Protect Your Progress with Wards:** Setting even 1–2 Reagents as Ward Reagents when you Fire makes opponents pay to challenge you. An unprotected Stone is a free target. Remember: Ward Reagents placed on a Crucible Card can also count toward satisfying that card's requirements.
 

@@ -82,12 +82,6 @@ namespace Kismeta.UI.Controllers
 
             bool any = false;
 
-            if (AutumnActionBindings.HasOpposeTargets(_session, _playerId))
-            {
-                any = true;
-                tip.Add(MakeHintRow("You can still Oppose a rival forging in the crucible"));
-            }
-
             if (HasUnwardedActive(player))
             {
                 any = true;

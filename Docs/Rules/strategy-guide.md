@@ -18,7 +18,7 @@ Activating a Crucible card rewards you with a Coal token, which you must use to 
 
 ### Adept Card Synergies
 
-Managing your Arcanum slots allows you to curate persistent game-bending rules and permanent triple-aspect alignments (Sign, Planet, Element). Finding pairs that span diverse aspects mitigates the luck of the round-by-round Cosmic Age dice roll, smoothing out your resource generation.
+Managing your Arcanum slots allows you to curate persistent game-bending rules and permanent Zodiac Sign alignments. Finding a pair that spans two different Signs mitigates the luck of the round-by-round Cosmic Age dice roll, smoothing out your resource generation.
 
 ## 2. Resource Management
 
@@ -34,7 +34,7 @@ Cards in your Hand are safe from Duels and keep your long-term strategies secret
 
 ### The Card Lock Constraint
 
-Because cards are frozen between these two zones from Spring until Winter, players must make high-stakes commitments during the Spring "Commune" phase. Over-committing to your Spread leaves you open to theft; under-committing starves your active engine.
+Because cards are frozen between these two zones from Spring until Winter, players must make high-stakes commitments during the Spring "Commune With Your Tableau" phase. Over-committing to your Spread leaves you open to theft; under-committing starves your active engine.
 
 ## 3. The Cosmic Age System
 

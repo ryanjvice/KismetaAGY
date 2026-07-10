@@ -6,18 +6,39 @@
 
 ### Conduct the Great Work
 
-As the Cosmic Age shifts into Autumn, gather around the Crucible of Kismeta to advance your Philosopher's Stone across the game board, weaving between the safety of the Mantle Ring and the fiery Forge. Each successful step brings you closer to the Altar of Kismeta. The actions you take during this phase depend on the location of you and your fellow Alchemists' Stones. Take a moment to survey the Forge before you begin.
+As the Cosmic Age shifts into Autumn, gather around the Crucible of Kismeta to light Cauldrons, contest rivals for Alignment supremacy, and advance your Philosopher's Stone across the game board, weaving between the safety of the Mantle Ring and the fiery Forge. Each successful step brings you closer to the Altar of Kismeta. The actions you take during this phase depend on the location of you and your fellow Alchemists' Stones. Take a moment to survey the Forge before you begin.
 
 | **Step**                   | **Action**                                                                                                                                                         |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **1️⃣ Survey the Crucible** | Take note of everyone's current positions in the Crucible.                                                                                                         |
+| **1️⃣ Light Cauldrons**     | Collect the Card set listed on your Codex & discard it to activate a Crucible Card and light its Cauldron.                                                        |
 | **2️⃣ Opposition ⚔️**       | Attempt to send an opponent's Forging Stone into Stasis in an Alignment contest. If a player loses an Opposition with their Stone in the Forge, move it to Stasis. |
 |                            | _**CRUCIBLE ACTIONS**_                                                                                                                                             |
 | **3️⃣ Fire the Stone**      | (Begin Transmutation; complete next round) Complete an active Crucible card and move your Stone into the Forge.                                                    |
 | **4️⃣ Temper**              | (Complete Transmutation from previous round) After a full round in the Forge, move your Stone to the next Mantle Ring space.                                       |
 | **5️⃣ Leave Stasis ❄️**     | Pay 2 Salt to move your Stone out of Stasis and back to its previous Forge spot. If that spot is occupied, wait or declare Stasis Opposition to reclaim it.        |
 
-### 1️⃣ Survey the Crucible: Your Stone's Current Position
+### 1️⃣ Light Cauldrons
+
+Your Crucible Codex holds four Activation Formulas — one for each of your four Crucible Cards. Each Formula is a card set you collect in your Spread and then discard to Activate the matching Crucible Card (flipping it face-up). Each Formula sits beside a colored Cauldron icon (🔴 Red, 🔵 Blue, 🟢 Green, 🟡 Yellow), telling you which Cauldron you must light when you Activate that card. You may activate any number of Crucible Cards in any order during your Autumn turn.
+
+#### How to Light a Cauldron:
+
+- **Consult your Codex:** Find the Activation Formula for the Crucible Card you want to Activate and note its Cauldron color.
+- **Assemble the card set:** Collect the required cards in your Spread.
+- **Discard the card set:** Remove all cards in the set from your Spread.
+- **Light a Cauldron:** Move the Coal from the Crucible Card into the Cauldron whose color is shown beside that Formula on your Codex. That Cauldron is now lit — its Reagent type can be crafted for the rest of the game.
+- **Activate the Crucible Card:** Flip the card face-up to Activate it. Each Crucible card reveals an Alchemical Formula that is necessary to advance your Philosopher's Stone one step closer to the Altar of Kismeta.
+
+| CAULDRON  | CODEX A                    | CODEX B                | CODEX C                 | CODEX D                    |
+| --------- | --------------------------- | ----------------------- | ----------------------- | -------------------------- |
+| 🔴 Red    | Any Three Mars              | 25 Total Ranks · Wands  | Any Three Mars          | 25 Total Ranks · Wands     |
+| 🔵 Blue   | Any Three Venus             | 25 Total Ranks · Cups   | 25 Total Ranks · Cups   | Any Three Venus            |
+| 🟢 Green  | 25 Total Ranks · Pentacles  | Any Three Jupiter       | Any Three Jupiter       | 25 Total Ranks · Pentacles |
+| 🟡 Yellow | 25 Total Ranks · Swords     | Any Three Saturn        | 25 Total Ranks · Swords | Any Three Saturn           |
+
+⚠️ **Important:** You may only have one Crucible Card Fired at a time. If your Stone is already Forging, you must Temper it before Firing again.
+
+### Crucible Positions Reference: Your Stone's Current Position
 
 - When your Stone is on the **Mantle Ring** (even-numbered positions: 0, 2, 4, 6), it is **Tempering**. It is safe from attack but does not advance. While there, focus on activating and firing your Crucible Cards.
 - When you **Fire** a Crucible Card, you may move your Stone into the **Forge**. While in the Forge, your Stone is **Forging**, working on one step of the Transmutation process from Lead into Gold. If you complete a full round in the Forge, you may advance to the next Mantle Ring position or the Altar of Kismeta.
@@ -56,21 +77,22 @@ As the Cosmic Age shifts into Autumn, gather around the Crucible of Kismeta to a
 
 ### 2️⃣ Opposition ⚔️
 
-An Opposition is an Alignment contest against a rival whose Stone is currently Forging. If the Challenger wins, the Defender's Stone is sent to Stasis and must wait a round before retrying.
+An Opposition is an Alignment contest against a rival whose Stone is currently in a Forge position (1, 3, 5, or 7). If the Challenger wins, the Defender's Stone is sent to Stasis and must wait a round before retrying.
 
 #### How to Declare an Opposition:
 
 - **Pay the Entry Fee:** Pay Reagents from your supply equal in number to the Defender's Ward Reagents beside their Stone. You may pay with any Reagent types in any combination — type-matching is not required. No Ward = no fee.
-- **Cards in play:** All Spread cards participate automatically. You may also contribute Hand cards (discarded after use). All active Arcanum effects apply.
-- **Roll:** Both players roll their Zodiac Dice and place them on their Sign.
-- **Calculate Alignment Points:** Total all Aspect matches from every source in play. Highest score wins. On a tie, both players reroll; repeat until resolved.
+- **Play Your Cards:** Play a set of up to 5 cards — Arcanum, Hand, and Spread cards are all eligible — and score them against the Aspects of the current Cosmic Age, along with your current Zodiac Die position and any Astral Houses you've built. This is calculated the same way Bonus Cards are calculated during the Spring Harvest.
+- **Defender Responds:** The Defending player must beat this score using a set of cards from their own inventory, calculated the same way.
+- **Repeat if Needed:** This process continues in rounds until a winner is determined or a player concedes. Hand and/or Spread cards are turned over after each round and cannot be used again in later rounds of the same Opposition. Adept Cards, Zodiac Signs, and Astral Houses may be used again in each round.
+- **Determine a Winner:** See outcomes below.
 
 #### Outcomes
 
-| RESULT          | OUTCOME                                                                                                     |
-| --------------- | ----------------------------------------------------------------------------------------------------------- |
-| Challenger Wins | Defender's Stone moves to the nearest ❄️ Stasis zone. Ward Reagents discarded. Crucible Card remains Fired. |
-| Defender Wins   | Stone stays in the Forge. Challenger cannot challenge the same Defender again this round.                   |
+| RESULT          | OUTCOME                                                                                                                                          |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Challenger Wins | Defender's Stone moves to the nearest ❄️ Stasis zone; they wait 1 full round and pay 2 Salt to return it to its previous position. Ward Reagents discarded. Crucible Card remains Fired. |
+| Defender Wins   | Defender keeps the Challenger's Entry Fee. Stone stays in the Forge. Challenger cannot challenge the same Defender again this round.                |
 
 #### Multiple Oppositions Against the Same Stone
 

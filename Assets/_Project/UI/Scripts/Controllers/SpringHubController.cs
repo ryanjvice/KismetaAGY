@@ -25,7 +25,6 @@ namespace Kismeta.UI.Controllers
         public System.Action? OnOpenProtectiveWards;
         public System.Action<string>? OnInspectCard;
         public System.Action<int>? OnRivalSelected;
-        public System.Action? OnBuildHouse;
         public System.Action? OnOpenBoardInspect;
         public System.Action? OnDismissBoardInspect;
 
@@ -52,7 +51,6 @@ namespace Kismeta.UI.Controllers
         {
             UnwireClick(Btn("wheel-action-btn"), OnWheelAction);
             UnwireClick(Btn("commune-btn"), OnOpenCommuneSubview);
-            UnwireClick(Btn("build-house-btn"), OnBuildHouseClicked);
             UnwireClick(Btn("proceed-btn"), OnProceedToSummer);
             UnwireClick(Btn("commune-lock-btn"), OnCommuneLock);
             CentralPanelInspectBindings.Unwire();
@@ -70,7 +68,6 @@ namespace Kismeta.UI.Controllers
         {
             WireClick(Btn("wheel-action-btn"), OnWheelAction);
             WireClick(Btn("commune-btn"), OnOpenCommuneSubview);
-            WireClick(Btn("build-house-btn"), OnBuildHouseClicked);
             WireClick(Btn("proceed-btn"), OnProceedToSummer);
             WireClick(Btn("commune-lock-btn"), OnCommuneLock);
             NarrativeToolbarBindings.WireIntroRecap(Root, Season.Spring, () => IntroRecapHost);
@@ -355,8 +352,6 @@ namespace Kismeta.UI.Controllers
             BindState(_session, _loop!, _bridge);
         }
 
-        void OnBuildHouseClicked() => OnBuildHouse?.Invoke();
-
         void OnProceedToSummer()
         {
             if (_bridge == null || _loop == null || !_bridge.CanSubmit)
@@ -480,13 +475,10 @@ namespace Kismeta.UI.Controllers
             bool canAct = bridge.CanSubmit && loop.PendingHumanController != null;
 
             var communeBtn = Btn("commune-btn");
-            var buildBtn = Btn("build-house-btn");
             var proceedBtn = Btn("proceed-btn");
 
             communeBtn?.SetEnabled(canAct);
             communeBtn?.EnableInClassList("btn--disabled", !canAct);
-            buildBtn?.SetEnabled(canAct);
-            buildBtn?.EnableInClassList("btn--disabled", !canAct);
             proceedBtn?.SetEnabled(canAct);
             proceedBtn?.EnableInClassList("btn--disabled", !canAct);
         }

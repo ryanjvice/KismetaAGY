@@ -27,7 +27,7 @@
                     <engine:Button name="trade-btn" text="Trade" class="actionbtn btn btn--action btn--action-hue-blue" />
                     <engine:Button name="duel-btn" text="Duel" class="actionbtn btn btn--action btn--action-hue-red" />
                     <engine:Button name="gambit-btn" text="Gambit" class="actionbtn btn btn--action btn--action-hue-green" />
-                    <engine:Button name="opposition-btn" text="Opposition" class="actionbtn btn btn--action btn--action-hue-purple" />
+                    <engine:Button name="build-house-btn" text="Build A House" class="actionbtn btn btn--action btn--action-hue-red" />
                 </engine:VisualElement>
             </engine:VisualElement>
 

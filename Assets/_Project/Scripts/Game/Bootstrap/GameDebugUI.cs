@@ -913,15 +913,9 @@ namespace Kismeta.Game.Bootstrap
             }
         }
 
-        // Build Astral House is a Spring Hub free action (Spring-only).
+        // Spring Hub: commune or pass.
         private void DrawSpringActions(HotSeatController hs, int pid, PlayerState player)
         {
-            var selList = _selectedCards.ToList();
-
-            GUILayout.Label("── Build Astral House (current Sign · 1 planet-matching card) ──");
-            DrawBuildHouseButton(hs, pid, player, selList);
-
-            GUILayout.Space(4f);
             if (GUILayout.Button("Pass / End Spring Action"))
                 SubmitAction(hs, new PassActionCommand(pid));
         }
@@ -932,7 +926,6 @@ namespace Kismeta.Game.Bootstrap
             var selList  = _selectedCards.ToList();
 
             // NOTE: Activate Crucible and Craft Reagent moved to Autumn (see DrawAutumnActions).
-            // NOTE: Build Astral House moved to Spring (see DrawSpringActions).
 
             // Place Card Ward — for Active slots (no selection needed; choose reagent per slot)
             bool hasActiveSlots = player.CrucibleSlots.Exists(s =>
@@ -1011,22 +1004,8 @@ namespace Kismeta.Game.Bootstrap
             GUI.enabled = true;
             GUILayout.EndHorizontal();
 
-            // ── Opposition — one button per opponent who is Forging ────────────────
-            GUILayout.Space(2f);
-            GUILayout.Label("── Opposition (send a Forging rival's Stone to Stasis) ──");
-            GUILayout.BeginHorizontal();
-            if (_session != null)
-            {
-                foreach (var opp in _session.Players)
-                {
-                    if (opp.PlayerId == pid) continue;
-                    GUI.enabled = opp.StoneState == StoneState.Forging;
-                    if (GUILayout.Button($"Oppose P{opp.PlayerId}"))
-                        SubmitAction(hs, new InitiateOppositionCommand(pid, opp.PlayerId));
-                }
-            }
-            GUI.enabled = true;
-            GUILayout.EndHorizontal();
+            GUILayout.Space(4f);
+            DrawBuildHouseButton(hs, pid, player, selList);
 
             // ── Free Arrested ─────────────────────────────────────────────────────
             bool hasArrested = player.CrucibleSlots.Exists(s => s.State == CrucibleCardState.Arrested);
@@ -1158,7 +1137,8 @@ namespace Kismeta.Game.Bootstrap
                     { signFree = false; break; }
 
             bool alreadyBuilt = player.AstralHouses.Contains(sign);
-            bool canBuild     = hasHouses && signFree && !alreadyBuilt && selList.Count == 1;
+            int required = _session == null ? 2 : AstralHouseService.RequiredPaymentCount(_session.Mode);
+            bool canBuild     = hasHouses && signFree && !alreadyBuilt && selList.Count == required;
 
             string houseLabel = !hasHouses
                 ? "Build House  (no tokens left)"
@@ -1166,12 +1146,11 @@ namespace Kismeta.Game.Bootstrap
                     ? $"Build House on {sign}  (sign taken)"
                     : alreadyBuilt
                         ? $"Build House on {sign}  (already built)"
-                        : $"Build House on {sign}  (select 1 planet-matching card)";
+                        : $"Build House on {sign}  (select {required} planet-matching card{(required == 1 ? "" : "s")})";
 
             GUI.enabled = canBuild;
             if (GUILayout.Button(houseLabel))
-                SubmitAction(hs, new BuildAstralHouseCommand(pid, sign,
-                    selList.Count >= 1 ? new List<string> { selList[0] } : selList));
+                SubmitAction(hs, new BuildAstralHouseCommand(pid, sign, selList));
             GUI.enabled = true;
         }
 
@@ -1269,7 +1248,22 @@ namespace Kismeta.Game.Bootstrap
             GUI.enabled = true;
             GUILayout.EndHorizontal();
 
-            // NOTE: Opposition moved to Summer (see DrawSummerActions).
+            // ── Opposition — one button per opponent who is Forging ────────────────
+            GUILayout.Space(2f);
+            GUILayout.Label("── Opposition (send a Forging rival's Stone to Stasis) ──");
+            GUILayout.BeginHorizontal();
+            if (_session != null)
+            {
+                foreach (var opp in _session.Players)
+                {
+                    if (opp.PlayerId == pid) continue;
+                    GUI.enabled = opp.StoneState == StoneState.Forging;
+                    if (GUILayout.Button($"Oppose P{opp.PlayerId}"))
+                        SubmitAction(hs, new InitiateOppositionCommand(pid, opp.PlayerId));
+                }
+            }
+            GUI.enabled = true;
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(2f);
 

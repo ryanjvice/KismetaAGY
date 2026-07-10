@@ -54,12 +54,12 @@
                         </engine:VisualElement>
                     </engine:VisualElement>
                     <engine:VisualElement class="intro-action-row">
-                        <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--forge">
+                        <engine:VisualElement class="intro-action-row__icon intro-action-row__icon--red">
                             <engine:Label text="&#xeb4c;" class="ti-icon" />
                         </engine:VisualElement>
                         <engine:VisualElement class="intro-action-row__text">
-                            <engine:Label text="Opposition" class="intro-action-row__title" />
-                            <engine:Label text="pay the ward fee, roll, tally alignment to send their stone to stasis" class="intro-action-row__subtitle" />
+                            <engine:Label text="Build Astral House" class="intro-action-row__title" />
+                            <engine:Label text="pay planet-matching cards to permanently claim a sign" class="intro-action-row__subtitle" />
                         </engine:VisualElement>
                     </engine:VisualElement>
                 </engine:VisualElement>
