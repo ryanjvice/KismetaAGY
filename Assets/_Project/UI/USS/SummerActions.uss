@@ -543,6 +543,74 @@
     margin-top: 0;
 }
 
+.summer-consult-stage--hidden,
+.summer-consult-crucible-section--hidden {
+    display: none;
+}
+
+.summer-main__pass-block .btn--primary.consult-btn--active {
+    background-color: rgba(90, 82, 58, 0.85);
+    color: rgb(28, 22, 12);
+}
+
+.viewport--compact .screen--summer .forge-stage,
+.viewport--regular .screen--summer .forge-stage {
+    width: 252px;
+    height: 252px;
+}
+
+/* Consult stages stack inside a symmetrically inset frame */
+.summer-consult-frame {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    align-self: stretch;
+    margin-left: var(--space-md);
+    margin-right: var(--space-md);
+    position: relative;
+}
+
+.summer-consult-frame > .summer-consult-stage {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    flex-grow: 0;
+    flex-shrink: 0;
+    min-height: 0;
+}
+
+.summer-consult-panel {
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: var(--space-md) var(--space-md) var(--space-lg);
+    border-radius: var(--radius-lg);
+    border-width: 2px;
+    border-color: var(--border-gold);
+    background-color: rgba(28, 18, 38, 0.92);
+}
+
+.summer-consult-panel--table {
+    align-items: stretch;
+}
+
+.summer-consult-panel .autumn-main__forge-heading {
+    margin-left: 0;
+    margin-right: 0;
+    align-self: stretch;
+}
+
+.screen--summer .summer-consult-crucible-section {
+    align-self: stretch;
+    margin-left: var(--space-md);
+    margin-right: var(--space-md);
+}
+
 .summer-main__charge {
     flex-shrink: 0;
     width: 100%;

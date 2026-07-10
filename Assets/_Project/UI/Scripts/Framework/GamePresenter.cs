@@ -849,6 +849,10 @@ namespace Kismeta.UI
             summer.OnInspectCard = id => _endOverlays?.ShowInspect(id);
 
             summer.OnPass = () => _summerOverlays?.ShowEndSummer();
+            summer.OnOpenBoardInspect = () => _springOverlays?.ShowBoardInspect();
+            summer.OnDismissBoardInspect = () => _springOverlays?.DismissBoardInspect();
+            summer.OnOpenForgeInspect = () => _autumnOverlays?.ShowForgeInspect();
+            summer.OnDismissForgeInspect = () => _autumnOverlays?.DismissForgeInspect();
 
             // Summer is a contest hub: Trade / Duel / Gambit / Build A House.
             summer.OnTrade = () => _contestOverlays?.ShowTrade();

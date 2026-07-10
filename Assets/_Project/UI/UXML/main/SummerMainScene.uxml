@@ -5,9 +5,13 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
+    <engine:Style src="../../USS/SpringSteps.uss" />
+    <engine:Style src="../../USS/AutumnActions.uss" />
+    <engine:Style src="../../USS/CentralPanelInspect.uss" />
     <engine:Style src="../../USS/EndAndOverlays.uss" />
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
+    <engine:Template src="../shell/CentralPanelInspectFab.uxml" name="CentralPanelInspectFab" />
 
     <engine:VisualElement name="summer-main" class="screen screen--summer">
 
@@ -27,23 +31,125 @@
                     <engine:Button name="trade-btn" text="Trade" class="actionbtn btn btn--action btn--action-hue-blue" />
                     <engine:Button name="duel-btn" text="Duel" class="actionbtn btn btn--action btn--action-hue-red" />
                     <engine:Button name="gambit-btn" text="Gambit" class="actionbtn btn btn--action btn--action-hue-green" />
-                    <engine:Button name="build-house-btn" text="Build A House" class="actionbtn btn btn--action btn--action-hue-red" />
+                    <engine:Button name="build-house-btn" text="🏰" class="actionbtn btn btn--action btn--action-hue-red" />
                 </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:VisualElement class="central-panel">
-                <engine:VisualElement name="summer-roster" class="summer-roster" style="flex-grow: 1;">
-                    <engine:VisualElement class="summer-roster__header">
-                        <engine:VisualElement class="summer-roster__header-line" />
-                        <engine:Label text="Rivals" class="summer-roster__heading" />
-                        <engine:VisualElement class="summer-roster__header-line" />
+                <engine:VisualElement class="summer-consult-frame">
+                <engine:VisualElement name="summer-consult-table" class="stage summer-consult-stage summer-consult-panel summer-consult-panel--table">
+                    <engine:VisualElement name="summer-roster" class="summer-roster" style="flex-grow: 1;">
+                        <engine:VisualElement class="summer-roster__header">
+                            <engine:VisualElement class="summer-roster__header-line" />
+                            <engine:Label text="Rivals" class="summer-roster__heading" />
+                            <engine:VisualElement class="summer-roster__header-line" />
+                        </engine:VisualElement>
+                        <engine:ScrollView name="players" class="card-table__players" style="flex-grow: 1;" />
                     </engine:VisualElement>
-                    <engine:ScrollView name="players" class="card-table__players" style="flex-grow: 1;" />
+                </engine:VisualElement>
+
+                <engine:VisualElement name="summer-consult-zodiac" class="stage summer-consult-stage summer-consult-panel summer-consult-stage--hidden">
+                    <engine:VisualElement class="spring-board-panel">
+                        <engine:VisualElement name="spring-board" class="spring-board">
+                            <engine:VisualElement name="spring-board-wheel" class="spring-board__wheel" />
+                            <engine:VisualElement name="spring-board-tokens" class="spring-board__tokens" picking-mode="Ignore" />
+                        </engine:VisualElement>
+                        <engine:Label name="summer-consult-zodiac-hint" text="Commune with your cards and review the table before Summer." class="forge-panel__hint spring-board-panel__charge" />
+                    </engine:VisualElement>
+                </engine:VisualElement>
+
+                <engine:VisualElement name="summer-consult-crucible" class="stage summer-consult-stage summer-consult-panel summer-consult-stage--hidden">
+                    <engine:VisualElement class="autumn-main__forge-heading" style="align-self: stretch;">
+                        <engine:VisualElement class="summer-roster__header">
+                            <engine:VisualElement class="summer-roster__header-line" />
+                            <engine:Label text="The Forge" class="summer-roster__heading" />
+                            <engine:VisualElement class="summer-roster__header-line" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                    <engine:VisualElement class="forge-panel">
+                        <engine:VisualElement name="board-stage" class="forge-stage">
+                            <engine:VisualElement name="forge-mandala" class="forge-mandala" />
+                            <engine:VisualElement class="stone-marker forge-pos forge-pos--0" />
+                            <engine:VisualElement class="stone-marker forge-pos forge-pos--1 stone-marker--inner" />
+                            <engine:VisualElement class="stone-marker forge-pos forge-pos--2" />
+                            <engine:VisualElement class="stone-marker forge-pos forge-pos--3 stone-marker--inner" />
+                            <engine:VisualElement class="stone-marker forge-pos forge-pos--4" />
+                            <engine:VisualElement class="stone-marker forge-pos forge-pos--5 stone-marker--inner" />
+                            <engine:VisualElement class="stone-marker forge-pos forge-pos--6" />
+                            <engine:VisualElement class="stone-marker forge-pos forge-pos--7 stone-marker--inner" />
+                            <engine:VisualElement name="stone-marker-altar" class="stone-marker forge-pos forge-pos--altar" />
+                            <engine:VisualElement name="player-stones" class="player-stones" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="stasis-row" class="forge-bottom-row">
+                            <engine:VisualElement name="stasis-slot-0" class="stasis-slot">
+                                <engine:VisualElement class="stasis-slot__stone" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="stasis-slot-1" class="stasis-slot">
+                                <engine:VisualElement class="stasis-slot__stone" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="cauldron-mini" class="cauldron-mini">
+                                <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--wands" />
+                                <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--cups" />
+                                <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--pentacles" />
+                                <engine:VisualElement class="cauldron-mini__reagent cauldron-mini__reagent--swords" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="stasis-slot-2" class="stasis-slot">
+                                <engine:VisualElement class="stasis-slot__stone" />
+                            </engine:VisualElement>
+                            <engine:VisualElement name="stasis-slot-3" class="stasis-slot">
+                                <engine:VisualElement class="stasis-slot__stone" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+
+                </engine:VisualElement>
+                <engine:Instance template="CentralPanelInspectFab" />
+            </engine:VisualElement>
+
+            <engine:VisualElement name="summer-consult-crucible-section" class="autumn-main__crucible-section summer-consult-crucible-section--hidden">
+                <engine:VisualElement class="summer-roster__header">
+                    <engine:VisualElement class="summer-roster__header-line" />
+                    <engine:Label text="Crucible Cards" class="summer-roster__heading" />
+                    <engine:VisualElement class="summer-roster__header-line" />
+                </engine:VisualElement>
+                <engine:VisualElement class="autumn-main__crucible-row">
+                    <engine:VisualElement class="crucible-cards">
+                        <engine:VisualElement name="crucible-card-0" class="crucible-card">
+                            <engine:VisualElement name="crucible-token-0" class="crucible-card__token" />
+                            <engine:VisualElement name="crucible-face-0" class="crucible-card__face" style="display: none;">
+                                <engine:Label name="crucible-numeral-0" text="" class="crucible-card__numeral" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement name="crucible-card-1" class="crucible-card">
+                            <engine:VisualElement name="crucible-token-1" class="crucible-card__token" />
+                            <engine:VisualElement name="crucible-face-1" class="crucible-card__face" style="display: none;">
+                                <engine:Label name="crucible-numeral-1" text="" class="crucible-card__numeral" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement name="crucible-card-2" class="crucible-card">
+                            <engine:VisualElement name="crucible-token-2" class="crucible-card__token" />
+                            <engine:VisualElement name="crucible-face-2" class="crucible-card__face" style="display: none;">
+                                <engine:Label name="crucible-numeral-2" text="" class="crucible-card__numeral" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement name="crucible-card-3" class="crucible-card">
+                            <engine:VisualElement name="crucible-token-3" class="crucible-card__token" />
+                            <engine:VisualElement name="crucible-face-3" class="crucible-card__face" style="display: none;">
+                                <engine:Label name="crucible-numeral-3" text="" class="crucible-card__numeral" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                    </engine:VisualElement>
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement class="stage-cta stage-cta--single summer-main__pass-block">
-                <engine:Button name="pass-btn" text="Finish Turn" class="actionbtn btn btn--primary" />
+            <engine:VisualElement class="stage-cta stage-cta--multi summer-main__pass-block">
+                <engine:VisualElement class="actionbar__row actionbar__row--primary">
+                    <engine:Button name="consult-table-btn" text="Table" class="actionbtn btn btn--primary consult-btn--active" />
+                    <engine:Button name="consult-zodiac-btn" text="Zodiac" class="actionbtn btn btn--primary" />
+                    <engine:Button name="consult-crucible-btn" text="Crucible" class="actionbtn btn btn--primary" />
+                    <engine:Button name="pass-btn" text="Finish Turn" class="actionbtn btn btn--primary" />
+                </engine:VisualElement>
             </engine:VisualElement>
 
             <engine:Instance template="PlayerInventoryOverlay" />

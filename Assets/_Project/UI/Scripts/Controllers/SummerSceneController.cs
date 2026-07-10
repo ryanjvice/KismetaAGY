@@ -2,6 +2,7 @@ using System;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
+using Kismeta.Core.Views;
 using Kismeta.UI;
 using Kismeta.UI.Components;
 using Kismeta.UI.Narrative;
@@ -27,6 +28,10 @@ namespace Kismeta.UI.Controllers
         public Action<int>? OnOpenPlayerEffects;
         public Action<string>? OnInspectCard;
         public Action<int>? OnRivalSelected;
+        public Action? OnOpenBoardInspect;
+        public Action? OnDismissBoardInspect;
+        public Action? OnOpenForgeInspect;
+        public Action? OnDismissForgeInspect;
 
         public SeasonIntroRecapHost? IntroRecapHost { get; set; }
 
@@ -34,6 +39,7 @@ namespace Kismeta.UI.Controllers
         GameSession? _session;
         int _localPlayerId;
         DockZone _dockZone = DockZone.Spread;
+        SummerConsultView _consultView = SummerConsultView.Table;
         SummerOverlayHost? _summerOverlays;
         ContestOverlayHost? _contestOverlays;
 
@@ -46,6 +52,10 @@ namespace Kismeta.UI.Controllers
         protected override void Unwire()
         {
             _dockZone = DockZone.Spread;
+            _consultView = SummerConsultView.Table;
+            CentralPanelInspectBindings.Unwire();
+            if (Root != null)
+                SummerCrucibleRowBindings.Unwire(Root);
         }
 
         protected override void Wire()
@@ -55,6 +65,10 @@ namespace Kismeta.UI.Controllers
             WireBtn("gambit-btn", () => OnGambit?.Invoke());
             WireBtn("build-house-btn", () => OnBuildHouse?.Invoke());
             WireBtn("pass-btn", () => OnPass?.Invoke());
+            WireBtn("consult-table-btn", () => SetConsultView(SummerConsultView.Table));
+            WireBtn("consult-zodiac-btn", () => SetConsultView(SummerConsultView.Zodiac));
+            WireBtn("consult-crucible-btn", () => SetConsultView(SummerConsultView.Crucible));
+            CentralPanelInspectBindings.Wire(Root, OnInspectFabClicked);
             NarrativeToolbarBindings.WireIntroRecap(Root, Season.Summer, () => IntroRecapHost);
 
             InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
@@ -98,6 +112,50 @@ namespace Kismeta.UI.Controllers
                 InventoryOverlayBindings.RefreshInventory(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
         }
 
+        void SetConsultView(SummerConsultView view)
+        {
+            if (_consultView == view) return;
+
+            DismissInspectForView(_consultView);
+            _consultView = view;
+            ApplyConsultView();
+            RefreshConsultView();
+        }
+
+        void ApplyConsultView()
+        {
+            SummerConsultBindings.ApplyView(Root, _consultView, DismissActiveInspect);
+            SummerConsultBindings.BindButtonStates(Root, _consultView);
+        }
+
+        void DismissActiveInspect() => DismissInspectForView(_consultView);
+
+        void DismissInspectForView(SummerConsultView view)
+        {
+            switch (view)
+            {
+                case SummerConsultView.Zodiac:
+                    OnDismissBoardInspect?.Invoke();
+                    break;
+                case SummerConsultView.Crucible:
+                    OnDismissForgeInspect?.Invoke();
+                    break;
+            }
+        }
+
+        void OnInspectFabClicked()
+        {
+            switch (_consultView)
+            {
+                case SummerConsultView.Zodiac:
+                    OnOpenBoardInspect?.Invoke();
+                    break;
+                case SummerConsultView.Crucible:
+                    OnOpenForgeInspect?.Invoke();
+                    break;
+            }
+        }
+
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
         {
             _session = session;
@@ -119,12 +177,50 @@ namespace Kismeta.UI.Controllers
             Btn("gambit-btn")?.SetEnabled(summerAction);
             Btn("build-house-btn")?.SetEnabled(summerAction);
 
-            RefreshRoster();
+            ApplyConsultView();
+            RefreshConsultView();
 
             var stepId = NarrativeStepResolver.ResolveSummerAction(_summerOverlays, _contestOverlays);
             NarrativeSlotBindings.BindById(Root, stepId, mask: NarrativeSlotMask.Beat);
 
             HeaderOverlayBindings.ApplyHeaderPad(Root);
+        }
+
+        void RefreshConsultView()
+        {
+            if (Root == null || _session == null) return;
+
+            switch (_consultView)
+            {
+                case SummerConsultView.Table:
+                    RefreshRoster();
+                    break;
+                case SummerConsultView.Zodiac:
+                    SpringBoardBindings.BindBoard(El("spring-board"), _session);
+                    break;
+                case SummerConsultView.Crucible:
+                    RefreshCrucibleConsult();
+                    break;
+            }
+        }
+
+        void RefreshCrucibleConsult()
+        {
+            if (Root == null || _session == null) return;
+
+            var view = GamePublicView.From(_session);
+            var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
+            var player = _session.Players[_localPlayerId];
+
+            CrucibleForgeBindings.ApplyForge(
+                El("board-stage"),
+                null,
+                player,
+                AutumnActionBindings.StoneStatusLabel(player));
+            CrucibleForgeBindings.ApplyAllPlayerStones(
+                El("board-stage"), El("stasis-row"), _session, _localPlayerId);
+            CrucibleForgeBindings.ApplyCauldronReagents(El("cauldron-mini"), player);
+            SummerCrucibleRowBindings.Bind(Root, local, _session, onCardTap: null);
         }
 
         void RefreshRoster()
