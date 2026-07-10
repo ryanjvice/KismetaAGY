@@ -32,7 +32,7 @@ namespace Kismeta.Core.Rules
         }
 
         public static void EmitDuel(GameSession session, int attackerId, int defenderId,
-            int attackRoll, int defendRoll, int winnerId, string targetCardId, string anteCardId,
+            int attackRoll, int defendRoll, int winnerId, string targetCardId, string? anteCardId,
             int attackerRoundWins = 1, int defenderRoundWins = 0)
         {
             var legs = new List<ExchangeLeg>();
@@ -41,7 +41,7 @@ namespace Kismeta.Core.Rules
                 legs.Add(new ExchangeLeg(defenderId, attackerId,
                     new[] { ExchangeItem.Spread(targetCardId) }));
             }
-            else
+            else if (!string.IsNullOrEmpty(anteCardId))
             {
                 legs.Add(new ExchangeLeg(attackerId, PlayerExchangeEvent.SinkDiscard,
                     new[] { ExchangeItem.Discard(anteCardId) }));

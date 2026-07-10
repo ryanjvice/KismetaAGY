@@ -290,6 +290,10 @@ namespace Kismeta.UI.Controllers
                 FindElement("response-ante-card"),
                 FindLabel("response-ante-name"),
                 pending.AnteCardId);
+
+            var anteHost = FindElement("response-ante-card")?.parent;
+            if (anteHost != null)
+                SetHidden(anteHost, string.IsNullOrEmpty(pending.AnteCardId));
         }
 
         void PopulateStakeCard(VisualElement? chipHost, Label? nameLabel, string? cardId)

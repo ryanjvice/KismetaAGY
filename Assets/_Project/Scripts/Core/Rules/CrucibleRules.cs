@@ -212,8 +212,9 @@ namespace Kismeta.Core.Rules
             if (eligibleSlot == null)
                 return CommandResult.Invalid("No Fired slot eligible for Temper (must have been Fired a previous round).");
 
-            // Burn any remaining Forge Ward Reagents
-            player.StoneWardCount = 0;
+            // Burn any remaining Forge Ward Reagents unless World adept retains them
+            if (!AdeptEffectService.HasAdept(session, player, AdeptEffectService.WorldArcana))
+                player.StoneWardCount = 0;
 
             // Advance stone from Forge to next Mantle (or Altar)
             var newPos = player.StonePosition.Advance();
@@ -365,8 +366,16 @@ namespace Kismeta.Core.Rules
             if (_alignmentService != null)
             {
                 var cosmicSign = session.Board.CosmicAgeSign;
+                var attackerPlayer = session.Players[attackerId];
+                ZodiacSign originalSign = attackerPlayer.CurrentSign;
+                if (attackerPlayer.HierophantOppositionShift != 0 && originalSign != ZodiacSign.None)
+                    attackerPlayer.CurrentSign = AdeptEffectService.ShiftSign(
+                        originalSign, attackerPlayer.HierophantOppositionShift);
+
                 attackScore = _alignmentService.CalculateAlignmentPoints(session, attackerId, cosmicSign);
                 defendScore = _alignmentService.CalculateAlignmentPoints(session, defenderId, cosmicSign);
+
+                attackerPlayer.CurrentSign = originalSign;
             }
             else
             {
@@ -400,6 +409,8 @@ namespace Kismeta.Core.Rules
 
             if (winnerId == defenderId)
                 winner.BesiegedBonusCount++;
+
+            AdeptEffectService.TryApplyStarPostLossDraw(session, loserId);
 
             session.EmitEvent(new OppositionResolvedEvent(
                 attackerId, defenderId, attackRoll, defendRoll, loserId,

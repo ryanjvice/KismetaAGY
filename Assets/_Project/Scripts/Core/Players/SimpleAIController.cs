@@ -50,6 +50,7 @@ namespace Kismeta.Core.Players
                 ActionHint.FateLoversChoice     => new FateLoversChoiceCommand(Slot.Index, false),
                 ActionHint.FateLoversTargetPick => DecideFateLoversTarget(context),
                 ActionHint.FateMoonDecision  => DecideFateMoon(context),
+                ActionHint.PriestessHarvestReturn => DecidePriestessReturn(context),
                 ActionHint.WinterAction      => DecideWinter(context),
                 ActionHint.DiscardToLimit    => DecideDiscardToLimit(context),
                 ActionHint.TradeResponse     => DecideTradeResponse(context),
@@ -313,6 +314,15 @@ namespace Kismeta.Core.Players
                 ? new List<string> { source[0], source[1] }
                 : new List<string>(source);
             return new FateMoonDecisionCommand(Slot.Index, keep);
+        }
+
+        private IGameCommand DecidePriestessReturn(GameContext ctx)
+        {
+            var hand = ctx.PrivateView.Hand;
+            var returns = hand.Count >= 2
+                ? new List<string> { hand[0], hand[1] }
+                : new List<string>(hand);
+            return new CompletePriestessHarvestCommand(Slot.Index, returns);
         }
 
         private IGameCommand DecideTradeResponse(GameContext ctx) =>

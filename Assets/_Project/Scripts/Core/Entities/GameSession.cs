@@ -264,6 +264,32 @@ namespace Kismeta.Core.Entities
                     ? ApplyWithAudit(_rules.Combat.TryFreeArrested(this, cmd.PlayerId, cmd.SlotIndex), command)
                     : CommandResult.NotImplemented(nameof(FreeArrestedCommand)),
 
+                // ── Adept passives ────────────────────────────────────────────────
+                MagicianSwapCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryMagicianSwap(this, cmd.PlayerId, cmd.CardId, cmd.ToSpread), command)
+                    : CommandResult.NotImplemented(nameof(MagicianSwapCommand)),
+
+                ProtectSpreadCardsCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryProtectSpreadCards(this, cmd.PlayerId, cmd.CardIds), command)
+                    : CommandResult.NotImplemented(nameof(ProtectSpreadCardsCommand)),
+
+                ShiftZodiacCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryShiftZodiac(this, cmd.PlayerId, cmd.Delta), command)
+                    : CommandResult.NotImplemented(nameof(ShiftZodiacCommand)),
+
+                ShiftOppositionZodiacCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryShiftOppositionZodiac(this, cmd.PlayerId, cmd.Delta), command)
+                    : CommandResult.NotImplemented(nameof(ShiftOppositionZodiacCommand)),
+
+                DevilStealCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryDevilSteal(this, cmd.PlayerId, cmd.SacrificeCardId,
+                        cmd.TargetPlayerId, cmd.StolenCardId), command)
+                    : CommandResult.NotImplemented(nameof(DevilStealCommand)),
+
+                CompletePriestessHarvestCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryCompletePriestessHarvest(this, cmd.PlayerId, cmd.ReturnCardIds), command)
+                    : CommandResult.NotImplemented(nameof(CompletePriestessHarvestCommand)),
+
                 // ── Pass actions ──────────────────────────────────────────────────
                 PassActionCommand        _ => ApplyWithAudit(CommandResult.Ok("Action passed."), command),
                 PassCrucibleActionCommand _ => ApplyWithAudit(CommandResult.Ok("Crucible action passed."), command),

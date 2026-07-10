@@ -21,6 +21,7 @@ namespace Kismeta.Core.Rules
         public IAlignmentService?            Alignment           { get; }
         public CombatRules?                  Combat              { get; }
         public TradeService?                 Trade               { get; }
+        public IAdeptService?                Adept               { get; }
 
         public GameRuleSet(
             ICardDatabase                cardDatabase,
@@ -37,7 +38,8 @@ namespace Kismeta.Core.Rules
             AlchemicalAlignmentValidator? alchemicalValidator = null,
             IAlignmentService?           alignment           = null,
             CombatRules?                 combat              = null,
-            TradeService?                trade               = null)
+            TradeService?                trade               = null,
+            IAdeptService?               adept               = null)
         {
             CardDatabase        = cardDatabase;
             CodexDatabase       = codexDatabase;
@@ -54,6 +56,7 @@ namespace Kismeta.Core.Rules
             Alignment           = alignment;
             Combat              = combat;
             Trade               = trade;
+            Adept               = adept;
         }
     }
 }

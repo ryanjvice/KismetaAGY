@@ -12,10 +12,10 @@ namespace Kismeta.Core.Commands
         public int DefenderId     { get; }
         /// <summary>Instance ID of the defender Spread card the attacker is targeting.</summary>
         public string TargetCardId { get; }
-        /// <summary>Instance ID of the card the attacker antes from their Spread.</summary>
-        public string AnteCardId  { get; }
+        /// <summary>Instance ID of the card the attacker antes from their Spread; null/empty for Chariot no-ante.</summary>
+        public string? AnteCardId  { get; }
 
-        public InitiateDuelCommand(int attackerId, int defenderId, string targetCardId, string anteCardId)
+        public InitiateDuelCommand(int attackerId, int defenderId, string targetCardId, string? anteCardId = null)
         {
             AttackerId     = attackerId;
             DefenderId     = defenderId;

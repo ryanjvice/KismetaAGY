@@ -459,7 +459,8 @@ namespace Kismeta.Game.Bootstrap
                 alchemicalValidator: alchemicalValidator,
                 alignment: alignmentService,
                 combat: new CombatRules(),
-                trade: new TradeService(_db!));
+                trade: new TradeService(_db!),
+                adept: new AdeptRules(_db!));
 
             _session = new GameSession(
                 sessionId: Guid.NewGuid().ToString(),

@@ -49,7 +49,8 @@ namespace Kismeta.Core.Tests
                 winter:        new WinterRules(db),
                 validator:     new ActionValidator(),
                 combat:        new CombatRules(seed),
-                trade:         new TradeService(db));
+                trade:         new TradeService(db),
+                adept:         new AdeptRules(db));
 
         private static GameSession BuildSession(CardDatabase db, CrucibleCodexDatabase codexDb,
             int playerCount = 2, int seed = 42, GameMode mode = GameMode.Quickplay,
@@ -2445,6 +2446,232 @@ namespace Kismeta.Core.Tests
 
             Assert.AreEqual(0, session.Players[0].EmpressMarkedReagents.Count);
             Assert.IsNull(session.Players[0].TemperanceSaltWildReagent);
+        }
+
+        // ─── Phase 3 adept base passive tests ─────────────────────────────────────
+
+        static void GiveHandCard(GameSession session, int playerId, string instanceId, string definitionId)
+        {
+            var inst = new CardInstance(instanceId, definitionId, CardZone.Hand, playerId);
+            session.RegisterCard(inst);
+            session.Players[playerId].Hand.Add(instanceId);
+        }
+
+        static void SeedDeck(GameSession session, params string[] definitionIds)
+        {
+            int i = 0;
+            foreach (var defId in definitionIds)
+            {
+                string id = $"deck-seed-{i++}";
+                var inst = new CardInstance(id, defId, CardZone.Deck, -1);
+                session.RegisterCard(inst);
+                session.Board.CommonDeck.Push(id);
+            }
+        }
+
+        [Test]
+        public void MagicianSwap_IgnoresCardLock()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "magician", "major.adept.1");
+            GiveHandCard(session, 0, "hand-card", "minor.cups.seven.1");
+            session.Apply(new SetCardLockCommand(true));
+
+            var result = session.Apply(new MagicianSwapCommand(0, "hand-card", toSpread: true));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(session.Players[0].Spread.Contains("hand-card"));
+        }
+
+        [Test]
+        public void World_Temper_RetainsForgeWards()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ActivateSlot(session, db, 0, 0);
+            var player = session.Players[0];
+            player.CrucibleSlots[0].Fire(session.Board.RoundNumber);
+            player.StonePosition = StonePosition.Start.Advance();
+            player.StoneState = StoneState.Forging;
+            player.StoneWardCount = 2;
+            session.Board.RoundNumber++;
+            SetSeason(session, Season.Autumn);
+
+            var withoutWorld = session.Apply(new TemperCommand(0));
+            Assert.IsTrue(withoutWorld.IsOk, withoutWorld.Message);
+            Assert.AreEqual(0, session.Players[0].StoneWardCount);
+
+            var session2 = SetupSession(db, codexDb);
+            ActivateSlot(session2, db, 0, 0);
+            var player2 = session2.Players[0];
+            player2.CrucibleSlots[0].Fire(session2.Board.RoundNumber);
+            player2.StonePosition = StonePosition.Start.Advance();
+            player2.StoneState = StoneState.Forging;
+            player2.StoneWardCount = 2;
+            session2.Board.RoundNumber++;
+            AddArcanumCard(session2, 0, "world", "major.adept.21");
+            SetSeason(session2, Season.Autumn);
+
+            var withWorld = session2.Apply(new TemperCommand(0));
+            Assert.IsTrue(withWorld.IsOk, withWorld.Message);
+            Assert.AreEqual(2, session2.Players[0].StoneWardCount);
+        }
+
+        [Test]
+        public void Chariot_NoAnteDuel_Succeeds()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "chariot", "major.adept.7");
+            var targets = PopulateSpread(session, 1, 1, "chariot-target");
+
+            var combat = new CombatRules(FindDuelSeed(attackerWins: false));
+            var result = combat.TryDuel(session, 0, 1, targets[0], anteCardId: null);
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(session.Players[0].UsedAdeptInstanceIdsThisAge.Contains("chariot"));
+        }
+
+        [Test]
+        public void Star_DrawsTwo_OnDuelLoss()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "star", "major.adept.17");
+            var ante = PopulateSpread(session, 0, 1, "star-ante");
+            var targets = PopulateSpread(session, 1, 1, "star-target");
+            SeedDeck(session, "minor.wands.two.1", "minor.wands.three.1", "minor.wands.four.1");
+
+            int handBefore = session.Players[0].Hand.Count;
+            var combat = new CombatRules(FindDuelSeed(attackerWins: false));
+            var result = combat.TryDuel(session, 0, 1, targets[0], ante[0]);
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(handBefore + 2, session.Players[0].Hand.Count);
+        }
+
+        [Test]
+        public void Emperor_ProtectedTarget_Rejected()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 1, "emperor", "major.adept.4");
+            var protectedCards = PopulateSpread(session, 1, 2, "emperor-prot");
+            PopulateSpread(session, 0, 1, "emperor-ante");
+
+            Assert.IsTrue(session.Apply(new ProtectSpreadCardsCommand(1, protectedCards)).IsOk);
+            var combat = new CombatRules(42);
+            var result = combat.TryDuel(session, 0, 1, protectedCards[0], session.Players[0].Spread[0]);
+            Assert.IsFalse(result.IsOk);
+        }
+
+        [Test]
+        public void Emperor_ProtectedAnte_SurvivesLoss()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 0, "emperor", "major.adept.4");
+            var ante = PopulateSpread(session, 0, 2, "emperor-ante");
+            var targets = PopulateSpread(session, 1, 1, "emperor-target");
+
+            Assert.IsTrue(session.Apply(new ProtectSpreadCardsCommand(0, ante)).IsOk);
+            var combat = new CombatRules(FindDuelSeed(attackerWins: false));
+            var result = combat.TryDuel(session, 0, 1, targets[0], ante[0]);
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(session.Players[0].Spread.Contains(ante[0]));
+            Assert.IsFalse(session.Board.CommonDiscard.Contains(ante[0]));
+        }
+
+        [Test]
+        public void Hierophant_ShiftChangesHarvest()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "hierophant", "major.adept.5");
+            session.Board.CosmicAgeSign = ZodiacSign.Leo;
+            session.Players[0].CurrentSign = ZodiacSign.Cancer;
+            session.Players[0].PersonalCosmicEffects = CosmicEffectService.ComputePersonalEffects(
+                session.Players[0].CurrentSign, session.Players[0].AstralHouses, session.Board.CosmicAgeSign);
+
+            int before = session.Rules!.Harvest.CalculateHarvestCount(session, 0);
+            Assert.IsTrue(session.Apply(new ShiftZodiacCommand(0, 1)).IsOk);
+            int after = session.Rules.Harvest.CalculateHarvestCount(session, 0);
+            Assert.Greater(after, before);
+        }
+
+        [Test]
+        public void Devil_Steal_TransfersSpreadCard()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 0, "devil", "major.adept.15");
+            GiveHandCard(session, 0, "sacrifice", "minor.cups.two.1");
+            var stolen = PopulateSpread(session, 1, 1, "devil-steal");
+
+            var result = session.Apply(new DevilStealCommand(0, "sacrifice", 1, stolen[0]));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(session.Players[0].Spread.Contains(stolen[0]));
+            Assert.IsFalse(session.Players[1].Spread.Contains(stolen[0]));
+            Assert.IsTrue(session.Board.CommonDiscard.Contains("sacrifice"));
+            Assert.IsTrue(session.Players[0].UsedAdeptInstanceIdsThisAge.Contains("devil"));
+
+            var again = session.Apply(new DevilStealCommand(0, "sacrifice", 1, stolen[0]));
+            Assert.IsFalse(again.IsOk);
+        }
+
+        [Test]
+        public void Priestess_DeckHarvest_ReturnTwo()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "priestess", "major.adept.2");
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[0].PersonalCosmicEffects = CosmicEffectService.ComputePersonalEffects(
+                session.Players[0].CurrentSign, session.Players[0].AstralHouses, session.Board.CosmicAgeSign);
+            session.Board.CommonDeck.Clear();
+            SeedDeck(session,
+                "minor.wands.ace.1", "minor.wands.two.1", "minor.wands.three.1",
+                "minor.wands.four.1", "minor.wands.five.1", "minor.wands.six.1",
+                "minor.wands.seven.1", "minor.wands.eight.1", "minor.wands.nine.1",
+                "minor.wands.ten.1");
+
+            int baseHarvest = session.Rules!.Harvest.CalculateHarvestCount(session, 0);
+            session.Rules.Harvest.ExecuteHarvest(session, 0);
+            Assert.IsTrue(session.Board.PendingPriestessReturns.Contains(0));
+            Assert.GreaterOrEqual(session.Players[0].Hand.Count, baseHarvest + 2);
+
+            var returns = session.Players[0].Hand.Take(2).ToList();
+            var complete = session.Apply(new CompletePriestessHarvestCommand(0, returns));
+            Assert.IsTrue(complete.IsOk, complete.Message);
+            Assert.IsFalse(session.Board.PendingPriestessReturns.Contains(0));
+            Assert.IsTrue(session.Players[0].UsedAdeptInstanceIdsThisAge.Contains("priestess"));
+        }
+
+        [Test]
+        public void Transit_ClearsEmperorProtection()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Players[0].EmperorProtectedSpreadIds.Add("card-a");
+            session.Players[0].EmperorProtectedSpreadIds.Add("card-b");
+            session.Board.PendingPriestessReturns.Add(0);
+
+            session.Rules!.Winter.Transit(session);
+
+            Assert.AreEqual(0, session.Players[0].EmperorProtectedSpreadIds.Count);
+            Assert.IsFalse(session.Board.PendingPriestessReturns.Contains(0));
         }
     }
 }

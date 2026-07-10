@@ -372,6 +372,21 @@ namespace Kismeta.Core.Rules
                         description += $" Salt wild for {player.TemperanceSaltWildReagent.Value}.";
                     }
 
+                    if (def.ArcanaNumber == 4 && player.EmperorProtectedSpreadIds.Count > 0)
+                    {
+                        description += $" Protected: {string.Join(", ", player.EmperorProtectedSpreadIds)}.";
+                    }
+
+                    if (def.ArcanaNumber == 2 && session.Board.PendingPriestessReturns.Contains(player.PlayerId))
+                    {
+                        description += " Priestess harvest: return 2 cards.";
+                    }
+
+                    if (def.ArcanaNumber == 5 && player.HierophantOppositionShift != 0)
+                    {
+                        description += $" Opposition shift: {player.HierophantOppositionShift:+0;-0}.";
+                    }
+
                     bool arrested = player.ArrestedAdepts.Contains(id);
                     bool used = player.UsedAdeptInstanceIdsThisAge.Contains(id);
                     var badge = AdeptEffectCatalog.BadgeFor(def.ArcanaNumber, arrested, used);

@@ -164,21 +164,21 @@ Twelve zodiac signs map to four effect categories. Board-wide age effect plus pe
 | Adept | ★ | Base status | Resonant status | Rule hook(s) | UI | Tests | Notes |
 |-------|---|-------------|-----------------|--------------|-----|-------|-------|
 | Hermit | 9 | **Partial** | **NotStarted** | `SpringRules.ArcanaLimitFor` → limit 3 | `AdeptEffectCatalog` badge | No | Resonant double elements not hooked |
-| Magician | 1 | **UIOnly** | **UIOnly** | — | Active Effects | Partial | Card Lock bypass not enforced |
-| High Priestess | 2 | **UIOnly** | **UIOnly** | — | Active Effects | No | Resonant hand limit 7 conflicts with base 5 — **Blocked** |
+| Magician | 1 | **Enforced** | **UIOnly** | `AdeptRules.TryMagicianSwap` | Active Effects + GameDebugUI | Yes | `RuleServices_Tests.MagicianSwap_*` |
+| High Priestess | 2 | **Enforced** | **UIOnly** | `SpringRules.ExecuteHarvest` + `CompletePriestessHarvestCommand` | Active Effects pending badge | Yes | Resonant hand limit 7 conflicts with base 5 — **Blocked** |
 | Empress | 3 | **Enforced** | **Partial** | `CraftingRules.TryMarkEmpressReagent` + `CraftModifierService` 2-for-1; resonant 2 marks via `AdeptAttunement` | Active Effects marked types | Yes | `RuleServices_Tests.EmpressMark_*`, `EmpressResonant_*` |
-| Emperor | 4 | **UIOnly** | **UIOnly** | — | Active Effects | No | Protection not in `CombatRules.ValidateDuelCards` |
-| Hierophant | 5 | **UIOnly** | **UIOnly** | — | Active Effects | No | Zodiac shift not in harvest/opposition |
-| Devil | 15 | **UIOnly** | **UIOnly** | — | Active Effects | No | |
-| Chariot | 7 | **UIOnly** | **Partial** | Resonant reroll via `ContestModifierService` + `AdeptAttunement`; base no-ante Phase 3 | Active Effects | Yes | Base no-ante still Phase 3 |
+| Emperor | 4 | **Enforced** | **UIOnly** | `AdeptRules.TryProtectSpreadCards` + `CombatRules.ValidateDuelCards` | Active Effects protected ids | Yes | `RuleServices_Tests.Emperor_*` |
+| Hierophant | 5 | **Enforced** | **UIOnly** | `AdeptRules.TryShiftZodiac` / `TryShiftOppositionZodiac` + `CrucibleRules.ResolveOpposition` | Active Effects shift state | Yes | `RuleServices_Tests.Hierophant_*` |
+| Devil | 15 | **Enforced** | **UIOnly** | `AdeptRules.TryDevilSteal` | GameDebugUI | Yes | `RuleServices_Tests.Devil_*` |
+| Chariot | 7 | **Enforced** | **Partial** | `CombatRules` no-ante initiation; resonant reroll via `ContestModifierService` + `AdeptAttunement` | Active Effects + GameDebugUI | Yes | `RuleServices_Tests.Chariot_*` |
 | Strength | 8 | **Partial** | **Partial** | `ContestModifierService` base +1 duel attack; resonant +2 duel/gambit via `AdeptAttunement` | Active Effects | Yes | Resonant uses minimal attunement only (Phase 4 full layer pending) |
 | Temperance | 14 | **Enforced** | **Partial** | `CraftModifierService` salt at 2 any; resonant wild via `MarkTemperanceWildReagentCommand` | Active Effects wild mark | Yes | `RuleServices_Tests.TemperanceBase_*`, `TemperanceResonant_*` |
-| Star | 17 | **UIOnly** | **UIOnly** | — | Active Effects | No | Post-loss draw not hooked |
-| World | 21 | **UIOnly** | **UIOnly** | — | Active Effects | No | Ward retention / crucible wildcard not hooked |
+| Star | 17 | **Enforced** | **UIOnly** | `AdeptEffectService.TryApplyStarPostLossDraw` in duel/gambit/opposition | Active Effects | Yes | Passive repeatable; `RuleServices_Tests.Star_*` |
+| World | 21 | **Enforced** | **UIOnly** | `CrucibleRules.TryTemper` ward retention | Active Effects | Yes | `RuleServices_Tests.World_Temper_*` |
 
 | System | Status | Rule hook(s) | UI | Tests | Notes |
 |--------|--------|--------------|-----|-------|-------|
-| Adept buy / decline / swap / arrest / refresh | **Pipeline** | `SpringRules`, `GameSession` | Summer roster, inspect UI | Partial | `MarkAdeptUsed` called from Empress/Temperance mark paths |
+| Adept buy / decline / swap / arrest / refresh | **Pipeline** | `SpringRules`, `GameSession`, `AdeptRules` | Summer roster, inspect UI, GameDebugUI | Partial | `MarkAdeptUsed` wired for once-per-age adepts |
 
 ---
 
@@ -282,16 +282,17 @@ Extend `ContestEffectFlags` + `CombatRules` queries. Depends on Phase 0.
 
 Follow `FateCardResolver` switch / service pattern per adept.
 
-- [ ] Magician — ignore Card Lock; hand/spread swap
-- [ ] Emperor — protect 2 spread cards in duels/gambits
-- [ ] Chariot — initiate duels without ante
-- [ ] Star — draw 2 after contest loss
+- [x] Magician — ignore Card Lock; hand/spread swap
+- [x] Emperor — protect 2 spread cards in duels/gambits
+- [x] Chariot — initiate duels without ante
+- [x] Star — draw 2 after contest loss
 - [x] Strength — +1 duel dice (done in Phase 1; base only when attacking)
-- [ ] Hierophant — zodiac shift ±1 for harvest/opposition
-- [ ] Devil — sacrifice to steal spread card
-- [ ] Priestess — deck harvest + return 2 (base only)
-- [ ] World — ward reagents persist after transmutation
-- [ ] Wire `MarkAdeptUsed` from rule paths for once-per-age adepts
+- [x] Hierophant — zodiac shift ±1 for harvest/opposition
+- [x] Devil — sacrifice to steal spread card
+- [x] Priestess — deck harvest + return 2 (base only)
+- [x] World — ward reagents persist after transmutation
+- [x] Wire `MarkAdeptUsed` from rule paths for once-per-age adepts
+- [x] Tests: `AdeptEffectService_Tests`, `RuleServices_Tests` Phase 3 block
 
 ### Phase 4 — Adept Resonant layer
 

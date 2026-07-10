@@ -36,6 +36,9 @@ namespace Kismeta.Core.Entities
         /// </summary>
         public List<string> FateMoonDrawnCardIds { get; } = new();
 
+        /// <summary>Players who must return 2 Priestess harvest cards before Spring continues.</summary>
+        public HashSet<int> PendingPriestessReturns { get; } = new();
+
         // Per-round Cosmic Effect flags set by CosmicEffectService; cleared each Transit
         public CosmicEffectFlags CosmicEffect { get; set; }
 

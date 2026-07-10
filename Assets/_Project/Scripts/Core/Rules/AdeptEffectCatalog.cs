@@ -11,7 +11,7 @@ namespace Kismeta.Core.Rules
     {
         public static AdeptUsageKind UsageFor(int arcanaNumber) => arcanaNumber switch
         {
-            1 or 8 or 9 or 21 => AdeptUsageKind.Passive,
+            1 or 8 or 9 or 17 or 21 => AdeptUsageKind.Passive,
             _ => AdeptUsageKind.OncePerAge
         };
 

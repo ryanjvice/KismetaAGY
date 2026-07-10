@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Kismeta.Core.Domain;
 
 namespace Kismeta.Core.Commands
 {
@@ -36,6 +37,90 @@ namespace Kismeta.Core.Commands
         {
             PlayerId    = playerId;
             AdeptCardId = adeptCardId;
+        }
+    }
+
+    /// <summary>Magician: swap one card between Hand and Spread while Card Lock is active.</summary>
+    public sealed class MagicianSwapCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public string CardId { get; }
+        public bool ToSpread { get; }
+
+        public MagicianSwapCommand(int playerId, string cardId, bool toSpread)
+        {
+            PlayerId = playerId;
+            CardId = cardId;
+            ToSpread = toSpread;
+        }
+    }
+
+    /// <summary>Emperor: mark 2 Spread cards as protected from duel loss this age.</summary>
+    public sealed class ProtectSpreadCardsCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public IReadOnlyList<string> CardIds { get; }
+
+        public ProtectSpreadCardsCommand(int playerId, IReadOnlyList<string> cardIds)
+        {
+            PlayerId = playerId;
+            CardIds = cardIds;
+        }
+    }
+
+    /// <summary>Hierophant: shift personal Zodiac sign ±1 for Harvest alignment.</summary>
+    public sealed class ShiftZodiacCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public int Delta { get; }
+
+        public ShiftZodiacCommand(int playerId, int delta)
+        {
+            PlayerId = playerId;
+            Delta = delta;
+        }
+    }
+
+    /// <summary>Hierophant: apply ±1 shift to attacker's Opposition alignment this age.</summary>
+    public sealed class ShiftOppositionZodiacCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public int Delta { get; }
+
+        public ShiftOppositionZodiacCommand(int playerId, int delta)
+        {
+            PlayerId = playerId;
+            Delta = delta;
+        }
+    }
+
+    /// <summary>Devil: sacrifice one card to steal an opponent's Spread card.</summary>
+    public sealed class DevilStealCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public string SacrificeCardId { get; }
+        public int TargetPlayerId { get; }
+        public string StolenCardId { get; }
+
+        public DevilStealCommand(int playerId, string sacrificeCardId, int targetPlayerId, string stolenCardId)
+        {
+            PlayerId = playerId;
+            SacrificeCardId = sacrificeCardId;
+            TargetPlayerId = targetPlayerId;
+            StolenCardId = stolenCardId;
+        }
+    }
+
+    /// <summary>Priestess: return 2 reviewed harvest cards to the deck.</summary>
+    public sealed class CompletePriestessHarvestCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public IReadOnlyList<string> ReturnCardIds { get; }
+
+        public CompletePriestessHarvestCommand(int playerId, IReadOnlyList<string> returnCardIds)
+        {
+            PlayerId = playerId;
+            ReturnCardIds = returnCardIds;
         }
     }
 }

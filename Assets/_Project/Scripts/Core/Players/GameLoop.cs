@@ -146,6 +146,10 @@ namespace Kismeta.Core.Players
                 Apply(cmd);
             }
 
+            await ResolvePendingPriestessReturnsAsync(ct);
+            AuditInventory("after ResolvePendingPriestessReturns");
+            if (_session.IsOver || ct.IsCancellationRequested) return;
+
             await ResolvePendingFatesAsync(ct);
             AuditInventory("after ResolvePendingFates");
             if (_session.IsOver || ct.IsCancellationRequested) return;
@@ -164,6 +168,23 @@ namespace Kismeta.Core.Players
         }
 
         // ─── Fate card resolution ─────────────────────────────────────────────────
+
+        private async Task ResolvePendingPriestessReturnsAsync(CancellationToken ct)
+        {
+            var pending = _session.Board.PendingPriestessReturns;
+            if (pending.Count == 0) return;
+
+            var snapshot = new List<int>(pending);
+            foreach (var playerId in snapshot)
+            {
+                if (ct.IsCancellationRequested) break;
+                if (!pending.Contains(playerId)) continue;
+
+                Log($"Spring — Priestess: P{playerId} returns 2 cards to deck");
+                var cmd = await RequestAsync(playerId, ActionHint.PriestessHarvestReturn, ct);
+                Apply(cmd);
+            }
+        }
 
         private async Task ResolvePendingFatesAsync(CancellationToken ct)
         {
@@ -614,6 +635,7 @@ namespace Kismeta.Core.Players
         FateReagentChoice,
         FateLoversChoice,
         FateLoversTargetPick,
+        PriestessHarvestReturn,
         /// <summary>Winter Activities turn: move cards, craft, wager, or End Turn.</summary>
         WinterAction,
         DiscardToLimit,

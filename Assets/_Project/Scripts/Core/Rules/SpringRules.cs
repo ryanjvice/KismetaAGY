@@ -110,10 +110,13 @@ namespace Kismeta.Core.Rules
 
         public void ExecuteHarvest(GameSession session, int playerId)
         {
-            int target       = CalculateHarvestCount(session, playerId);
+            var player = session.Players[playerId];
+            int target = CalculateHarvestCount(session, playerId);
+            bool usePriestess = AdeptEffectService.CanUseOncePerAge(session, player, AdeptEffectService.PriestessArcana);
+            int totalDraws = target + (usePriestess ? 2 : 0);
             int adeptsBefore = session.Board.PendingAdeptDecisions.Count;
 
-            for (int i = 0; i < target; i++)
+            for (int i = 0; i < totalDraws; i++)
             {
                 if (session.Board.CommonDeck.Count == 0)
                     ReshuffleDiscard(session);
@@ -130,9 +133,12 @@ namespace Kismeta.Core.Rules
                 RouteDrawnCard(session, playerId, id);
             }
 
+            if (usePriestess)
+                session.Board.PendingPriestessReturns.Add(playerId);
+
             // Drawn count = cards dealt minus Adepts held in limbo (Fate + Minor count for the event)
             int adeptsQueued = session.Board.PendingAdeptDecisions.Count - adeptsBefore;
-            session.EmitEvent(new CardsDrawnEvent(playerId, target - adeptsQueued));
+            session.EmitEvent(new CardsDrawnEvent(playerId, totalDraws - adeptsQueued));
         }
 
         /// <inheritdoc/>

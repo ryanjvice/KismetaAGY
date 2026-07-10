@@ -274,7 +274,11 @@ namespace Kismeta.Core.Rules
                 player.UsedAdeptInstanceIdsThisAge.Clear();
                 player.EmpressMarkedReagents.Clear();
                 player.TemperanceSaltWildReagent = null;
+                player.EmperorProtectedSpreadIds.Clear();
+                player.HierophantOppositionShift = 0;
             }
+
+            session.Board.PendingPriestessReturns.Clear();
 
             int newAgekeeper = RotateAgekeeper(session);
             session.EmitEvent(new AgeTransitedEvent(session.Board.RoundNumber, newAgekeeper));

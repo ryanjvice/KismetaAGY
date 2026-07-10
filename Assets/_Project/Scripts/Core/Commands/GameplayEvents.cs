@@ -340,8 +340,8 @@ namespace Kismeta.Core.Commands
         public int AttackerId { get; }
         public int DefenderId { get; }
         public string TargetCardId { get; }
-        public string AnteCardId { get; }
-        public DuelOfferedEvent(int attackerId, int defenderId, string targetCardId, string anteCardId)
+        public string? AnteCardId { get; }
+        public DuelOfferedEvent(int attackerId, int defenderId, string targetCardId, string? anteCardId)
         {
             AttackerId = attackerId; DefenderId = defenderId;
             TargetCardId = targetCardId; AnteCardId = anteCardId;

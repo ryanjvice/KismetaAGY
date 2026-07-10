@@ -77,6 +77,12 @@ namespace Kismeta.Core.Entities
         /// </summary>
         public ReagentType? TemperanceSaltWildReagent { get; set; }
 
+        /// <summary>Spread cards protected by The Emperor this age (max 2).</summary>
+        public HashSet<string> EmperorProtectedSpreadIds { get; } = new();
+
+        /// <summary>Hierophant Opposition shift applied to next alignment roll (-1, 0, or +1).</summary>
+        public int HierophantOppositionShift { get; set; }
+
         // Astral Houses placed (ZodiacSign values the player has claimed)
         public HashSet<ZodiacSign> AstralHouses { get; } = new();
         public int UnplacedAstralHouses { get; set; } = 4;

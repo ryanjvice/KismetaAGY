@@ -276,6 +276,10 @@ namespace Kismeta.Game.Bootstrap
             {
                 DrawFateMoonPanel(hs, pid, player, colH);
             }
+            else if (hint == ActionHint.PriestessHarvestReturn)
+            {
+                DrawPriestessReturnPanel(hs, pid, player, colH);
+            }
             else if (hint == ActionHint.FateReagentChoice)
             {
                 DrawFateReagentChoicePanel(hs, pid);
@@ -829,6 +833,38 @@ namespace Kismeta.Game.Bootstrap
             GUI.enabled = true;
         }
 
+        private void DrawPriestessReturnPanel(HotSeatController hs, int pid, PlayerState player, float colH)
+        {
+            GUILayout.Label("── HIGH PRIESTESS — Return 2 to Deck ──");
+            GUILayout.Space(4f);
+            GUILayout.Label("Select exactly 2 Hand cards to return to the deck.");
+            GUILayout.Space(4f);
+
+            _fateMoonScroll = GUILayout.BeginScrollView(_fateMoonScroll, GUILayout.Height(200f));
+            foreach (var id in player.Hand)
+            {
+                if (!IsMinorArcana(id)) continue;
+                bool sel = _selectedCards.Contains(id);
+                string label = (sel ? "★ " : "  ") + CardLabel(id);
+                if (GUILayout.Button(label))
+                {
+                    if (sel) _selectedCards.Remove(id);
+                    else if (_selectedCards.Count < 2) _selectedCards.Add(id);
+                }
+            }
+            GUILayout.EndScrollView();
+
+            GUILayout.Label($"Selected: {_selectedCards.Count} / 2");
+            GUI.enabled = _selectedCards.Count == 2;
+            if (GUILayout.Button("Return 2 to Deck"))
+            {
+                var returns = _selectedCards.ToList();
+                _selectedCards.Clear();
+                SubmitAction(hs, new CompletePriestessHarvestCommand(pid, returns));
+            }
+            GUI.enabled = true;
+        }
+
         // ── Fate: Reagent choice (Fool / Lovers) ──────────────────────────────────
 
         private void DrawFateReagentChoicePanel(HotSeatController hs, int pid)
@@ -916,6 +952,10 @@ namespace Kismeta.Game.Bootstrap
         // Spring Hub: commune or pass.
         private void DrawSpringActions(HotSeatController hs, int pid, PlayerState player)
         {
+            int selCount = _selectedCards.Count;
+            var selList = _selectedCards.ToList();
+            DrawAdeptExtensionActions(hs, pid, player, selList, selCount);
+
             if (GUILayout.Button("Pass / End Spring Action"))
                 SubmitAction(hs, new PassActionCommand(pid));
         }
@@ -983,6 +1023,8 @@ namespace Kismeta.Game.Bootstrap
             }
             GUI.enabled = true;
             GUILayout.EndHorizontal();
+
+            DrawAdeptExtensionActions(hs, pid, player, selList, selCount);
 
             // ── Gambit ───────────────────────────────────────────────────────────
             GUILayout.Space(2f);
@@ -1608,6 +1650,103 @@ namespace Kismeta.Game.Bootstrap
                     if (GUILayout.Button($"Empress mark {rt}"))
                         SubmitAction(hs, new MarkEmpressReagentCommand(pid, rt));
                 }
+                GUILayout.EndHorizontal();
+            }
+        }
+
+        private void DrawAdeptExtensionActions(HotSeatController hs, int pid, PlayerState player,
+            IReadOnlyList<string> selList, int selCount)
+        {
+            if (_session == null) return;
+
+            bool hasMagician = AdeptEffectService.HasAdept(_session, player, AdeptEffectService.MagicianArcana);
+            bool hasEmperor = AdeptEffectService.CanUseOncePerAge(_session, player, AdeptEffectService.EmperorArcana);
+            bool hasHierophant = AdeptEffectService.CanUseOncePerAge(_session, player, AdeptEffectService.HierophantArcana);
+            bool hasDevil = AdeptEffectService.CanUseOncePerAge(_session, player, AdeptEffectService.DevilArcana);
+            bool hasChariot = AdeptEffectService.CanUseOncePerAge(_session, player, AdeptEffectService.ChariotArcana);
+
+            if (!hasMagician && !hasEmperor && !hasHierophant && !hasDevil && !hasChariot)
+                return;
+
+            GUILayout.Space(4f);
+            GUILayout.Label("── Adept Powers ──");
+
+            if (hasMagician && selCount == 1)
+            {
+                var id = selList[0];
+                bool inHand = player.Hand.Contains(id);
+                bool inSpread = player.Spread.Contains(id);
+                if (inHand && GUILayout.Button($"Magician: {CardLabel(id)} → Spread"))
+                    SubmitAction(hs, new MagicianSwapCommand(pid, id, toSpread: true));
+                if (inSpread && GUILayout.Button($"Magician: {CardLabel(id)} → Hand"))
+                    SubmitAction(hs, new MagicianSwapCommand(pid, id, toSpread: false));
+            }
+
+            if (hasEmperor && selCount == 2
+                && selList.All(id => player.Spread.Contains(id) && IsMinorArcana(id)))
+            {
+                if (GUILayout.Button("Emperor: Protect 2 Spread cards"))
+                    SubmitAction(hs, new ProtectSpreadCardsCommand(pid, selList));
+            }
+
+            if (hasHierophant && player.CurrentSign != ZodiacSign.None)
+            {
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("Hierophant: Shift Zodiac -1"))
+                    SubmitAction(hs, new ShiftZodiacCommand(pid, -1));
+                if (GUILayout.Button("Hierophant: Shift Zodiac +1"))
+                    SubmitAction(hs, new ShiftZodiacCommand(pid, +1));
+                GUILayout.EndHorizontal();
+            }
+
+            if (hasHierophant && _session.Phase.CurrentSeason == Season.Autumn
+                && player.CurrentSign != ZodiacSign.None)
+            {
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("Hierophant: Oppose align -1"))
+                    SubmitAction(hs, new ShiftOppositionZodiacCommand(pid, -1));
+                if (GUILayout.Button("Hierophant: Oppose align +1"))
+                    SubmitAction(hs, new ShiftOppositionZodiacCommand(pid, +1));
+                GUILayout.EndHorizontal();
+            }
+
+            if (hasDevil && selCount == 1 && _session != null)
+            {
+                var sacrificeId = selList[0];
+                bool canSacrifice = (player.Hand.Contains(sacrificeId) || player.Spread.Contains(sacrificeId))
+                    && IsMinorArcana(sacrificeId);
+                if (canSacrifice)
+                {
+                    foreach (var opp in _session.Players)
+                    {
+                        if (opp.PlayerId == pid) continue;
+                        foreach (var stolenId in opp.Spread)
+                        {
+                            if (!IsMinorArcana(stolenId)) continue;
+                            if (GUILayout.Button($"Devil: sacrifice {CardLabel(sacrificeId)} → steal {CardLabel(stolenId)} from P{opp.PlayerId}"))
+                                SubmitAction(hs, new DevilStealCommand(pid, sacrificeId, opp.PlayerId, stolenId));
+                        }
+                    }
+                }
+            }
+
+            if (hasChariot && _session.Phase.CurrentSeason == Season.Summer)
+            {
+                GUILayout.Label("── Chariot No-Ante Duel ──");
+                GUILayout.BeginHorizontal();
+                foreach (var opp in _session.Players)
+                {
+                    if (opp.PlayerId == pid) continue;
+                    string? targetId = null;
+                    foreach (var id in opp.Spread)
+                    {
+                        if (IsMinorArcana(id)) { targetId = id; break; }
+                    }
+                    GUI.enabled = targetId != null;
+                    if (GUILayout.Button($"No-ante Duel P{opp.PlayerId}"))
+                        SubmitAction(hs, new InitiateDuelCommand(pid, opp.PlayerId, targetId!, anteCardId: null));
+                }
+                GUI.enabled = true;
                 GUILayout.EndHorizontal();
             }
         }
