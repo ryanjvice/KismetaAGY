@@ -129,7 +129,7 @@
       "source": "Kismeta_GameGuide.md",
       "output": "Reference/major-arcana-rules.md",
       "start": "## Kismeta Cards",
-      "end": "## Commune:",
+      "end": "## Tableau:",
       "title": "# Kismeta Cards Reference",
       "seeAlso": [
         { "label": "Major Arcana card effects", "path": "../Cards/major-arcana/overview.md" }
@@ -138,9 +138,9 @@
     {
       "source": "Kismeta_GameGuide.md",
       "output": "Reference/card-zones.md",
-      "start": "## Commune:",
+      "start": "## Tableau:",
       "end": "# GLOSSARY OF TERMS",
-      "title": "# Card Zones: Spread, Hand & Arcanum",
+      "title": "# Tableau: Spread, Hand & Arcanum Zones",
       "seeAlso": [
         { "label": "Glossary", "path": "../Glossary.md" }
       ]

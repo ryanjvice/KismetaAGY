@@ -10,17 +10,21 @@ Each game of Kismeta: Alchemists of the Great Year takes you on a journey throug
 
 The Cosmic Age unfolds through four Seasons, each offering distinct opportunities to advance your Great Work: Spring sets the Age and gathers resources; Summer is for crafting, trading, dueling, and preparing; Autumn advances your Stone and offers further crafting; and Winter closes out the Age with crafting, wagers, and reset. As you traverse these Ages, focus on maximizing your Alignments, managing resources, enduring the Crucible's heat, and outlasting your rivals.
 
-## The Great Work
+## Building Your Engine
 
-This is your driving objective: to be the first to transform lead into the legendary Philosopher's Stone. This pursuit guides all your seasonal actions. Cards from the Harvest become Reagents, which you use to complete Crucible Cards, guiding your Stone through each Stage of Transmutation in the Forge.
+Every Alchemist aims to transmute the Philosopher's Stone from Lead to Gold and place it on the Altar of Kismeta. All your actions across the seasons serve this goal. The journey spans many Cosmic Ages — some spent building up your engine, others focused on progressing your Stone through the Crucible.
 
-Keep your Stone protected in the Forge, for opposing Alchemists may challenge you with Opposition tests. If they succeed, your Stone enters Stasis, pausing your progress until you can resume forging.
+In early rounds, focus on building a powerful engine for your Great Work. Review your Tableau of Kismeta Cards, check each card's Aspects and Effects, and craft Reagents. Buy Adept Cards, build Astral Houses, and Light Cauldrons. Salt Reagents can be made from any three cards from the start of the game, but Elemental Reagents require their matching Cauldron to be lit first.
 
-## The Altar of Kismeta
+## Transmutation Process
 
-Ultimately, the first Alchemist to complete all four Crucible Cards and carry their Stone through every Stage of Transformation to the Altar of Kismeta will finish the Great Work and claim victory.
+| STEP  |     | ACTION                                    | WHAT HAPPENS                                                                                                                                                                                                                    |
+| ----- | --- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1** | 🎴  | **Light Cauldrons**                       | Consult your Crucible Codex and assemble the required card sets in your Spread to Activate a Crucible Card. Transfer its Coal to the matching Cauldron to light it, unlocking that Elemental Reagent. The Crucible Card turns face-up, revealing its Alchemical Formula. Multiple cards may be Active at once. |
+| **2** | 🔥  | **Fire the Stone**                        | When you're ready, pay the Alchemical Formula printed on an Active Crucible Card (its Reagents and its card Alignment) and discard the cost. This payment moves your Stone: it leaves the safety of the Mantle Ring and enters the Forge.                                                                     |
+| **3** | ⚔️  | **Defend the Stone**                      | While Forging, your Stone can be challenged by rival Alchemists through Opposition. You must defend it for a full round before its Transmutation can be completed. This is when rivals have their clearest chance to slow your progress.                                                                     |
+| **4** | ⏳  | **Temper the Stone**                      | Having survived a full round in the Forge, advance your Stone to the next position on the Mantle Ring. Discard the spent Crucible Card. The Stage is complete.                                                                                                                                                 |
 
-All Hail! All Hail!
-The Magnus Alchemista Grandis Illuminatus ex Kismeta!
+_Steps 1 through 4 repeat once for each of the four Crucible Cards. Your fourth Tempering advances your Stone to the Altar of Kismeta, completing the Great Work and winning the game._
 
 ---

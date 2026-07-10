@@ -11,7 +11,6 @@ The Sun shines brightly as you busy yourself crafting resources and consorting w
 | **Step**                      | **Action**                                                                                                                   |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 |                               | _**CRAFT RESOURCES — TAKE ANY ACTION**_                                                                                      |
-| **🎴 Activate Crucible Card** | Collect Card sets listed on the Codex & discard to activate.                                                                 |
 | **🏰 Build Astral House**     | Pay Planet-matching cards to permanently claim a Zodiac Sign.                                                                |
 | **⚒️ Craft Reagent**          | Discard 3 matching-Suit cards into a lit Cauldron to craft 1 Reagent. The Cauldron must have a Coal in it first.             |
 |                               | _**CONSORT WITH RIVALS — TAKE ANY ACTION**_                                                                                  |
@@ -19,26 +18,7 @@ The Sun shines brightly as you busy yourself crafting resources and consorting w
 | **🤺 Duel**                   | Wager cards and roll dice against a rival to steal a card from their Spread.                                                 |
 | **🎲 Gambit**                 | Pay any Ward cost and roll dice to seize a rival's Active Crucible Card or Adept card, wagering one of your own in exchange. |
 
-### 🎴 Activate Crucible Card
-
-Your Crucible Codex holds four Activation Formulas — one for each of your four Crucible Cards. Each Formula is a card set you collect in your Spread and then discard to Activate the matching Crucible Card (flipping it face-up). Each Formula sits beside a colored Cauldron icon (🔴 Red, 🔵 Blue, 🟢 Green, 🟡 Yellow), telling you which Cauldron you must light when you Activate that card. You may activate any number in any order, and may do so in Phase 2: Summer or Phase 3: Autumn.
-
-#### How to Activate:
-
-- **Consult your Codex:** Find the Activation Formula for the Crucible Card you want to Activate and note its Cauldron color.
-- **Assemble the card set:** Collect the required cards in your Spread.
-- **Discard the card set:** Remove all cards in the set from your Spread.
-- **Light a Cauldron:** Move the Coal from the Crucible Card into the Cauldron whose color is shown beside that Formula on your Codex. That Cauldron is now lit — its Reagent type can be crafted for the rest of the game.
-- **Activate the Crucible Card:** Flip the card face-up to Activate it. Each Crucible card reveals an Alchemical Formula that is necessary to advance your Philosopher's Stone one step closer to the Altar of Kismeta.
-
-| CAULDRON  | CODEX A                    | CODEX B                | CODEX C                 | CODEX D                    |
-| --------- | -------------------------- | ---------------------- | ----------------------- | -------------------------- |
-| 🔴 Red    | Any Three Mars             | 25 Total Ranks · Wands | Any Three Mars          | 25 Total Ranks · Wands     |
-| 🔵 Blue   | Any Three Venus            | 25 Total Ranks · Cups  | 25 Total Ranks · Cups   | Any Three Venus            |
-| 🟢 Green  | 25 Total Ranks · Pentacles | Any Three Jupiter      | Any Three Jupiter       | 25 Total Ranks · Pentacles |
-| 🟡 Yellow | 25 Total Ranks · Swords    | Any Three Saturn       | 25 Total Ranks · Swords | Any Three Saturn           |
-
-⚠️ **Important:** You may only have one Crucible Card Fired at a time. If your Stone is already Forging, you must Temper it before Firing again.
+📌 **Note:** Activating a Crucible Card (Light Cauldrons) is now an Autumn action — see _Phase 3: Autumn_.
 
 ### 🏰 Build Astral House
 
