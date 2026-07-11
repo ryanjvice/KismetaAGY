@@ -50,7 +50,7 @@ namespace Kismeta.Core.Tests
                 sign: ZodiacSign.None,
                 planet: planet,
                 name: "",
-                effectType: "", effectText: "",
+                effectType: "", effectText: "", effectTextResonant: "",
                 wildcardArcanaNumber: -1,
                 crucibleGroup: CrucibleGroup.None,
                 alchemicalFormula: "",

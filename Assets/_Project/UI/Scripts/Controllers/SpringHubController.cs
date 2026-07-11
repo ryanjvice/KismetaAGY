@@ -369,9 +369,11 @@ namespace Kismeta.UI.Controllers
 
         void OnCommuneLock()
         {
-            if (_bridge == null || _handIds.Count > WinterRules.HandLimit) return;
-            int pid = ResolvePendingPlayerId(_session!, _bridge);
+            if (_bridge == null || _session == null) return;
+            int pid = ResolvePendingPlayerId(_session, _bridge);
             if (pid < 0) return;
+            int handLimit = PlayerLimitService.GetHandLimit(_session, _session.Players[pid]);
+            if (_handIds.Count > handLimit) return;
             if (_bridge.TrySubmit(new CommuneCommand(pid, _spreadIds, _handIds)))
             {
                 _communeSubviewOpen = false;
@@ -486,9 +488,13 @@ namespace Kismeta.UI.Controllers
         void BindCommuneLockCta(CommandBridge bridge)
         {
             var btn = Btn("commune-lock-btn");
-            if (btn == null) return;
+            if (btn == null || _session == null) return;
 
-            bool valid = _handIds.Count <= WinterRules.HandLimit;
+            int pid = ResolvePendingPlayerId(_session, bridge);
+            int handLimit = pid >= 0
+                ? PlayerLimitService.GetHandLimit(_session, _session.Players[pid])
+                : WinterRules.HandLimit;
+            bool valid = _handIds.Count <= handLimit;
             bool canAct = bridge.CanSubmit;
             btn.text = "Lock The Tableau";
             btn.SetEnabled(canAct && valid);

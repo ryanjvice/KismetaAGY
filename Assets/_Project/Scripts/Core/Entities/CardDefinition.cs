@@ -29,6 +29,8 @@ namespace Kismeta.Core.Entities
         public Planet Planet { get; }
         public string EffectType { get; }
         public string EffectText { get; }
+        /// <summary>Resonant-layer copy for UI when the adept is attuned. Not parsed for rules.</summary>
+        public string EffectTextResonant { get; }
 
         // Minor Arcana Variant 2 — link to Major Arcana by arcana number (-1 = none)
         public int WildcardArcanaNumber { get; }
@@ -55,6 +57,7 @@ namespace Kismeta.Core.Entities
             string name,
             string effectType,
             string effectText,
+            string effectTextResonant,
             int wildcardArcanaNumber,
             CrucibleGroup crucibleGroup,
             string alchemicalFormula,
@@ -72,6 +75,7 @@ namespace Kismeta.Core.Entities
             Name = name;
             EffectType = effectType;
             EffectText = effectText;
+            EffectTextResonant = effectTextResonant;
             WildcardArcanaNumber = wildcardArcanaNumber;
             CrucibleGroup = crucibleGroup;
             AlchemicalFormula = alchemicalFormula;

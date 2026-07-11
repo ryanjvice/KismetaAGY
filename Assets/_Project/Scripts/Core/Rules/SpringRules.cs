@@ -336,9 +336,10 @@ namespace Kismeta.Core.Rules
                     return CommandResult.Invalid($"Card {id} does not belong to player {playerId}.");
 
             // Hand is capped during Commune; spread has no round limit until Winter discard.
-            if (handCardIds.Count > WinterRules.HandLimit)
+            int handLimit = PlayerLimitService.GetHandLimit(session, player);
+            if (handCardIds.Count > handLimit)
                 return CommandResult.Invalid(
-                    $"Hand cannot exceed {WinterRules.HandLimit} cards (submitted {handCardIds.Count}).");
+                    $"Hand cannot exceed {handLimit} cards (submitted {handCardIds.Count}).");
 
             // Major Arcana cards must never be assigned to Spread or Hand
             foreach (var id in spreadCardIds)

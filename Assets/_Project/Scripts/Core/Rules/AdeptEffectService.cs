@@ -94,5 +94,14 @@ namespace Kismeta.Core.Rules
                 player.Hand.Add(id);
             }
         }
+
+        public static bool IsEmperorProtected(GameSession session, PlayerState player, string cardId)
+            => player.EmperorProtectedCardIds.Contains(cardId);
+
+        public static void ReturnCardToDeckTop(GameSession session, string cardId)
+        {
+            session.GetCard(cardId)?.MoveTo(CardZone.Deck, -1);
+            session.Board.CommonDeck.Push(cardId);
+        }
     }
 }

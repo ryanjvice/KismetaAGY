@@ -176,9 +176,10 @@ namespace Kismeta.Core.Rules
             if (newSpreadCount > SpreadLimit)
                 return CommandResult.Invalid(
                     $"After discarding, Spread would still be {newSpreadCount} (limit {SpreadLimit}).");
-            if (newHandCount > HandLimit)
+            int handLimit = PlayerLimitService.GetHandLimit(session, player);
+            if (newHandCount > handLimit)
                 return CommandResult.Invalid(
-                    $"After discarding, Hand would still be {newHandCount} (limit {HandLimit}).");
+                    $"After discarding, Hand would still be {newHandCount} (limit {handLimit}).");
 
             int total = discardSpreadIds.Count + discardHandIds.Count;
             foreach (var id in discardSpreadIds)
@@ -217,7 +218,8 @@ namespace Kismeta.Core.Rules
             {
                 int discarded = 0;
                 discarded += TrimZone(player.Spread, SpreadLimit, session.Board.CommonDiscard);
-                discarded += TrimZone(player.Hand,   HandLimit,   session.Board.CommonDiscard);
+                int handLimit = PlayerLimitService.GetHandLimit(session, player);
+                discarded += TrimZone(player.Hand, handLimit, session.Board.CommonDiscard);
                 session.EmitEvent(new CardLimitsEnforcedEvent(player.PlayerId, discarded));
             }
         }
@@ -274,7 +276,7 @@ namespace Kismeta.Core.Rules
                 player.UsedAdeptInstanceIdsThisAge.Clear();
                 player.EmpressMarkedReagents.Clear();
                 player.TemperanceSaltWildReagent = null;
-                player.EmperorProtectedSpreadIds.Clear();
+                player.EmperorProtectedCardIds.Clear();
                 player.HierophantOppositionShift = 0;
             }
 

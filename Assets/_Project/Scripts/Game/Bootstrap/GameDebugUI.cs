@@ -1592,6 +1592,20 @@ namespace Kismeta.Game.Bootstrap
             return def != null && !def.IsMajorArcana;
         }
 
+        private bool IsAdeptArcana(string instanceId)
+        {
+            var inst = _session?.GetCard(instanceId);
+            var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
+            return def?.MajorArcanaType == MajorArcanaType.Adept;
+        }
+
+        private bool IsFateOrAdept(string instanceId)
+        {
+            var inst = _session?.GetCard(instanceId);
+            var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
+            return def?.MajorArcanaType is MajorArcanaType.Adept or MajorArcanaType.Fate;
+        }
+
         // ── Card label resolution ────────────────────────────────────────────────
 
         private string CardLabel(string instanceId)
@@ -1664,8 +1678,13 @@ namespace Kismeta.Game.Bootstrap
             bool hasHierophant = AdeptEffectService.CanUseOncePerAge(_session, player, AdeptEffectService.HierophantArcana);
             bool hasDevil = AdeptEffectService.CanUseOncePerAge(_session, player, AdeptEffectService.DevilArcana);
             bool hasChariot = AdeptEffectService.CanUseOncePerAge(_session, player, AdeptEffectService.ChariotArcana);
+            bool hasStar = AdeptEffectService.CanUseOncePerAge(_session, player, AdeptEffectService.StarArcana);
+            bool emperorResonant = AdeptAttunement.IsEmperorResonant(_session, player);
+            bool hierophantResonant = AdeptAttunement.IsHierophantResonant(_session, player);
+            bool devilResonant = AdeptAttunement.IsDevilResonant(_session, player);
+            bool starResonant = AdeptAttunement.IsStarResonant(_session, player);
 
-            if (!hasMagician && !hasEmperor && !hasHierophant && !hasDevil && !hasChariot)
+            if (!hasMagician && !hasEmperor && !hasHierophant && !hasDevil && !hasChariot && !hasStar)
                 return;
 
             GUILayout.Space(4f);
@@ -1683,34 +1702,57 @@ namespace Kismeta.Game.Bootstrap
             }
 
             if (hasEmperor && selCount == 2
-                && selList.All(id => player.Spread.Contains(id) && IsMinorArcana(id)))
+                && selList.All(id => (player.Spread.Contains(id) || (emperorResonant && player.Hand.Contains(id)))
+                    && IsMinorArcana(id)))
             {
-                if (GUILayout.Button("Emperor: Protect 2 Spread cards"))
+                if (GUILayout.Button(emperorResonant
+                    ? "Emperor: Protect 2 Hand/Spread cards"
+                    : "Emperor: Protect 2 Spread cards"))
                     SubmitAction(hs, new ProtectSpreadCardsCommand(pid, selList));
             }
 
             if (hasHierophant && player.CurrentSign != ZodiacSign.None)
             {
+                int maxShift = AdeptAttunement.HierophantMaxShiftDelta(_session, player);
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Hierophant: Shift Zodiac -1"))
-                    SubmitAction(hs, new ShiftZodiacCommand(pid, -1));
-                if (GUILayout.Button("Hierophant: Shift Zodiac +1"))
-                    SubmitAction(hs, new ShiftZodiacCommand(pid, +1));
+                for (int d = -maxShift; d <= maxShift; d++)
+                {
+                    if (d == 0) continue;
+                    if (GUILayout.Button($"Hierophant: Shift Zodiac {d:+0;-0}"))
+                        SubmitAction(hs, new ShiftZodiacCommand(pid, d));
+                }
                 GUILayout.EndHorizontal();
             }
 
             if (hasHierophant && _session.Phase.CurrentSeason == Season.Autumn
                 && player.CurrentSign != ZodiacSign.None)
             {
+                int maxShift = AdeptAttunement.HierophantMaxShiftDelta(_session, player);
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Hierophant: Oppose align -1"))
-                    SubmitAction(hs, new ShiftOppositionZodiacCommand(pid, -1));
-                if (GUILayout.Button("Hierophant: Oppose align +1"))
-                    SubmitAction(hs, new ShiftOppositionZodiacCommand(pid, +1));
+                for (int d = -maxShift; d <= maxShift; d++)
+                {
+                    if (d == 0) continue;
+                    if (GUILayout.Button($"Hierophant: Oppose align {d:+0;-0}"))
+                        SubmitAction(hs, new ShiftOppositionZodiacCommand(pid, d));
+                }
                 GUILayout.EndHorizontal();
             }
 
-            if (hasDevil && selCount == 1 && _session != null)
+            if (hasDevil && devilResonant && _session != null)
+            {
+                foreach (var opp in _session.Players)
+                {
+                    if (opp.PlayerId == pid) continue;
+                    foreach (var adeptId in opp.Arcanum)
+                    {
+                        if (!IsAdeptArcana(adeptId)) continue;
+                        if (GUILayout.Button($"Devil banish {CardLabel(adeptId)} from P{opp.PlayerId}"))
+                            SubmitAction(hs, new DevilBanishAdeptCommand(pid, opp.PlayerId, adeptId));
+                    }
+                }
+            }
+
+            if (hasDevil && !devilResonant && selCount == 1 && _session != null)
             {
                 var sacrificeId = selList[0];
                 bool canSacrifice = (player.Hand.Contains(sacrificeId) || player.Spread.Contains(sacrificeId))
@@ -1725,6 +1767,28 @@ namespace Kismeta.Game.Bootstrap
                             if (!IsMinorArcana(stolenId)) continue;
                             if (GUILayout.Button($"Devil: sacrifice {CardLabel(sacrificeId)} → steal {CardLabel(stolenId)} from P{opp.PlayerId}"))
                                 SubmitAction(hs, new DevilStealCommand(pid, sacrificeId, opp.PlayerId, stolenId));
+                        }
+                    }
+                }
+            }
+
+            if (starResonant && hasStar && _session != null)
+            {
+                foreach (var opp in _session.Players)
+                {
+                    if (opp.PlayerId == pid) continue;
+                    foreach (var cardId in opp.Arcanum)
+                    {
+                        if (!IsFateOrAdept(cardId)) continue;
+                        var inst = _session.GetCard(cardId);
+                        if (inst?.IsEffectSuppressed == true)
+                        {
+                            if (GUILayout.Button($"Star refresh {CardLabel(cardId)} (1 Salt)"))
+                                SubmitAction(hs, new RefreshStarNullifyCommand(pid, cardId));
+                        }
+                        else if (GUILayout.Button($"Star nullify {CardLabel(cardId)} on P{opp.PlayerId}"))
+                        {
+                            SubmitAction(hs, new StarNullifyCommand(pid, opp.PlayerId, cardId));
                         }
                     }
                 }

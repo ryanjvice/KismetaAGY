@@ -241,6 +241,7 @@ namespace Kismeta.UI.Components
             ActiveEffectBadgeTone.Aligned => "active-effects-badge--aligned",
             ActiveEffectBadgeTone.Pending => "active-effects-badge--pending",
             ActiveEffectBadgeTone.Arrested => "active-effects-badge--arrested",
+            ActiveEffectBadgeTone.Attuned => "active-effects-badge--aligned",
             ActiveEffectBadgeTone.Buff => "active-effects-badge--buff",
             ActiveEffectBadgeTone.Debuff => "active-effects-badge--debuff",
             _ => "active-effects-badge--neutral"

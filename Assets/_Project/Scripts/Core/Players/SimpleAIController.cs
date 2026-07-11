@@ -265,7 +265,10 @@ namespace Kismeta.Core.Players
             var handIds    = new List<string>(ctx.PrivateView.Hand);
 
             int spreadExcess = spreadIds.Count - WinterRules.SpreadLimit;
-            int handExcess   = handIds.Count   - WinterRules.HandLimit;
+            int handLimit = ctx.Session != null
+                ? PlayerLimitService.GetHandLimit(ctx.Session, ctx.Session.Players[pid])
+                : WinterRules.HandLimit;
+            int handExcess   = handIds.Count   - handLimit;
 
             var discardSpread = spreadExcess > 0 ? spreadIds.GetRange(0, spreadExcess) : new List<string>();
             var discardHand   = handExcess   > 0 ? handIds.GetRange(0,   handExcess)   : new List<string>();

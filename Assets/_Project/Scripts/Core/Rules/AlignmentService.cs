@@ -17,6 +17,7 @@ namespace Kismeta.Core.Rules
     /// Adept cards in Arcanum each contribute their Sign as an independent source.
     /// Astral Houses each contribute their ZodiacSign as an independent source.
     /// The player's own personal Zodiac roll is scored once.
+    /// Hermit resonant doubles element-tier alignment only.
     /// </summary>
     public sealed class AlignmentService : IAlignmentService
     {
@@ -29,47 +30,45 @@ namespace Kismeta.Core.Rules
             if (referenceSign == ZodiacSign.None) return 0;
 
             var player = session.Players[playerId];
+            bool hermitResonant = AdeptAttunement.IsHermitResonant(session, player);
             int total  = 0;
 
-            // Personal Zodiac sign
-            total += AspectScore(player.CurrentSign, referenceSign);
+            total += ApplyHermitElementDouble(AspectScore(player.CurrentSign, referenceSign), hermitResonant);
 
-            // Spread cards (each card scored independently)
             foreach (var id in player.Spread)
             {
                 var inst = session.GetCard(id);
                 var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
                 if (def == null) continue;
-                total += CardScore(def.Suit, def.Planet, referenceSign);
+                total += ApplyHermitElementDouble(CardScore(def.Suit, def.Planet, referenceSign), hermitResonant);
             }
 
-            // Hand cards also count toward Opposition (all cards are active for Opposition)
             foreach (var id in player.Hand)
             {
                 var inst = session.GetCard(id);
                 var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
                 if (def == null) continue;
-                total += CardScore(def.Suit, def.Planet, referenceSign);
+                total += ApplyHermitElementDouble(CardScore(def.Suit, def.Planet, referenceSign), hermitResonant);
             }
 
-            // Adept cards in Arcanum (arrested Adepts do not contribute until refreshed)
             foreach (var id in player.Arcanum)
             {
                 if (player.ArrestedAdepts.Contains(id)) continue;
+                if (CardEffectSuppressionService.IsSuppressed(session, id)) continue;
                 var inst = session.GetCard(id);
                 var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
                 if (def?.MajorArcanaType == MajorArcanaType.Adept && def.Sign != ZodiacSign.None)
-                    total += AspectScore(def.Sign, referenceSign);
+                    total += ApplyHermitElementDouble(AspectScore(def.Sign, referenceSign), hermitResonant);
             }
 
-            // Astral Houses
             foreach (var houseSign in player.AstralHouses)
-                total += AspectScore(houseSign, referenceSign);
+                total += ApplyHermitElementDouble(AspectScore(houseSign, referenceSign), hermitResonant);
 
             return total;
         }
 
-        // ── Helpers ───────────────────────────────────────────────────────────────
+        static int ApplyHermitElementDouble(int score, bool hermitResonant)
+            => hermitResonant && score == 1 ? 2 : score;
 
         private static int AspectScore(ZodiacSign source, ZodiacSign reference)
         {
@@ -86,11 +85,9 @@ namespace Kismeta.Core.Rules
 
         private static int CardScore(Suit suit, Planet planet, ZodiacSign reference)
         {
-            // Planet match (+2)
             var refPlanet = Correspondence.PlanetFor(reference);
             if (planet != Planet.None && planet == refPlanet) return 2;
 
-            // Element match (+1) via suit
             if (suit != Suit.None)
             {
                 var cardElement = Correspondence.ElementFor(suit);

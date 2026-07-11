@@ -129,14 +129,22 @@ namespace Kismeta.UI.Controllers
         {
             var lockBtn = Btn("lock-btn");
             if (lockBtn == null) return;
-            bool valid = _handIds.Count <= WinterRules.HandLimit;
+            int handLimit = ResolveHandLimit();
+            bool valid = _handIds.Count <= handLimit;
             lockBtn.SetEnabled(valid);
             lockBtn.EnableInClassList("btn--disabled", !valid);
         }
 
+        int ResolveHandLimit()
+        {
+            if (_session == null || _playerId < 0)
+                return WinterRules.HandLimit;
+            return PlayerLimitService.GetHandLimit(_session, _session.Players[_playerId]);
+        }
+
         void OnLock()
         {
-            if (_bridge == null || _playerId < 0 || _handIds.Count > WinterRules.HandLimit) return;
+            if (_bridge == null || _playerId < 0 || _handIds.Count > ResolveHandLimit()) return;
             _bridge.TrySubmit(new CommuneCommand(_playerId, _spreadIds, _handIds));
         }
     }

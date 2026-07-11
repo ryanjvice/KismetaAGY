@@ -19,6 +19,7 @@ namespace Kismeta.Core.Players
         public ICrucibleCodexDatabase?      CodexDatabase       { get; }
         public ICardDatabase?               CardDatabase        { get; }
         public AlchemicalAlignmentValidator? AlchemicalValidator { get; }
+        public GameSession?                 Session             { get; }
 
         /// <summary>
         /// When Hint == AdeptDecision: the instance ID of the Adept card being offered.
@@ -44,7 +45,8 @@ namespace Kismeta.Core.Players
             IReadOnlyList<string>? arcanumAdeptIds = null,
             ICrucibleCodexDatabase? codexDatabase = null,
             ICardDatabase? cardDatabase = null,
-            AlchemicalAlignmentValidator? alchemicalValidator = null)
+            AlchemicalAlignmentValidator? alchemicalValidator = null,
+            GameSession? session = null)
         {
             PublicView          = publicView;
             PrivateView         = privateView;
@@ -56,6 +58,7 @@ namespace Kismeta.Core.Players
             CodexDatabase       = codexDatabase;
             CardDatabase        = cardDatabase;
             AlchemicalValidator = alchemicalValidator;
+            Session             = session;
         }
     }
 }

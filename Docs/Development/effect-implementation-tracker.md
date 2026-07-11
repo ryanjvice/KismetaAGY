@@ -159,22 +159,22 @@ Twelve zodiac signs map to four effect categories. Board-wide age effect plus pe
 
 ## Section D — Adept effects (12 × Base + Resonant)
 
-`effectTextResonant` exists in [`CardJsonDto.cs`](../../Assets/_Project/Scripts/Data/Loaders/CardJsonDto.cs) but is **not** consumed by any rule service. Resonant enforcement requires an attuned predicate (sign matches zodiac or house) — **Blocked** pending terminology (Section G).
+`effectTextResonant` is loaded into [`CardDefinition.EffectTextResonant`](../../Assets/_Project/Scripts/Core/Entities/CardDefinition.cs) for **UI copy**; enforcement uses [`AdeptResonantCatalog`](../../Assets/_Project/Scripts/Core/Rules/AdeptResonantCatalog.cs) + [`AdeptAttunement`](../../Assets/_Project/Scripts/Core/Rules/AdeptAttunement.cs) (sign matches zodiac or built house).
 
 | Adept | ★ | Base status | Resonant status | Rule hook(s) | UI | Tests | Notes |
 |-------|---|-------------|-----------------|--------------|-----|-------|-------|
-| Hermit | 9 | **Partial** | **NotStarted** | `SpringRules.ArcanaLimitFor` → limit 3 | `AdeptEffectCatalog` badge | No | Resonant double elements not hooked |
-| Magician | 1 | **Enforced** | **UIOnly** | `AdeptRules.TryMagicianSwap` | Active Effects + GameDebugUI | Yes | `RuleServices_Tests.MagicianSwap_*` |
-| High Priestess | 2 | **Enforced** | **UIOnly** | `SpringRules.ExecuteHarvest` + `CompletePriestessHarvestCommand` | Active Effects pending badge | Yes | Resonant hand limit 7 conflicts with base 5 — **Blocked** |
-| Empress | 3 | **Enforced** | **Partial** | `CraftingRules.TryMarkEmpressReagent` + `CraftModifierService` 2-for-1; resonant 2 marks via `AdeptAttunement` | Active Effects marked types | Yes | `RuleServices_Tests.EmpressMark_*`, `EmpressResonant_*` |
-| Emperor | 4 | **Enforced** | **UIOnly** | `AdeptRules.TryProtectSpreadCards` + `CombatRules.ValidateDuelCards` | Active Effects protected ids | Yes | `RuleServices_Tests.Emperor_*` |
-| Hierophant | 5 | **Enforced** | **UIOnly** | `AdeptRules.TryShiftZodiac` / `TryShiftOppositionZodiac` + `CrucibleRules.ResolveOpposition` | Active Effects shift state | Yes | `RuleServices_Tests.Hierophant_*` |
-| Devil | 15 | **Enforced** | **UIOnly** | `AdeptRules.TryDevilSteal` | GameDebugUI | Yes | `RuleServices_Tests.Devil_*` |
-| Chariot | 7 | **Enforced** | **Partial** | `CombatRules` no-ante initiation; resonant reroll via `ContestModifierService` + `AdeptAttunement` | Active Effects + GameDebugUI | Yes | `RuleServices_Tests.Chariot_*` |
-| Strength | 8 | **Partial** | **Partial** | `ContestModifierService` base +1 duel attack; resonant +2 duel/gambit via `AdeptAttunement` | Active Effects | Yes | Resonant uses minimal attunement only (Phase 4 full layer pending) |
-| Temperance | 14 | **Enforced** | **Partial** | `CraftModifierService` salt at 2 any; resonant wild via `MarkTemperanceWildReagentCommand` | Active Effects wild mark | Yes | `RuleServices_Tests.TemperanceBase_*`, `TemperanceResonant_*` |
-| Star | 17 | **Enforced** | **UIOnly** | `AdeptEffectService.TryApplyStarPostLossDraw` in duel/gambit/opposition | Active Effects | Yes | Passive repeatable; `RuleServices_Tests.Star_*` |
-| World | 21 | **Enforced** | **UIOnly** | `CrucibleRules.TryTemper` ward retention | Active Effects | Yes | `RuleServices_Tests.World_Temper_*` |
+| Hermit | 9 | **Partial** | **Enforced** | `SpringRules.ArcanaLimitFor` → limit 3; resonant double element tier in `AlignmentService` | Active Effects attuned line | Yes | `RuleServices_Tests.HermitResonant_*` |
+| Magician | 1 | **Enforced** | **Deferred** | `AdeptRules.TryMagicianSwap` | Active Effects + GameDebugUI | Yes | Resonant reversed nullification → **Phase 5** |
+| High Priestess | 2 | **Enforced** | **Enforced** | `SpringRules.ExecuteHarvest` + `CompletePriestessHarvestCommand`; resonant hand limit 7 via `PlayerLimitService` | Active Effects hand limit line | Yes | `RuleServices_Tests.PriestessResonant_*` |
+| Empress | 3 | **Enforced** | **Enforced** | `CraftingRules.TryMarkEmpressReagent` + `CraftModifierService` 2-for-1; resonant 2 marks via `AdeptAttunement` | Active Effects marked types | Yes | `RuleServices_Tests.EmpressResonant_*` |
+| Emperor | 4 | **Enforced** | **Enforced** | `AdeptRules.TryProtectSpreadCards` (hand+spread when attuned) + `CombatRules` / `AdeptRules.TryDevilSteal` | Active Effects protected ids | Yes | `RuleServices_Tests.EmperorResonant_*` |
+| Hierophant | 5 | **Enforced** | **Enforced** | `AdeptRules.TryShiftZodiac` / `TryShiftOppositionZodiac` ±2 when attuned | Active Effects shift state | Yes | `RuleServices_Tests.HierophantResonant_*` |
+| Devil | 15 | **Enforced** | **Enforced** | `AdeptRules.TryDevilSteal` + `DevilBanishAdeptCommand` when attuned | GameDebugUI | Yes | `RuleServices_Tests.DevilResonant_*` |
+| Chariot | 7 | **Enforced** | **Enforced** | `CombatRules` no-ante initiation; resonant reroll via `ContestModifierService` + `AdeptAttunement` | Active Effects + GameDebugUI | Yes | `ContestModifierService_Tests.ChariotResonant_*` |
+| Strength | 8 | **Enforced** | **Enforced** | `ContestModifierService` base +1 duel attack; resonant +2 duel/gambit via `AdeptAttunement` | Active Effects attuned line | Yes | `ContestModifierService_Tests.StrengthResonant_*` |
+| Temperance | 14 | **Enforced** | **Enforced** | `CraftModifierService` salt at 2 any; resonant wild via `MarkTemperanceWildReagentCommand` | Active Effects wild mark | Yes | `RuleServices_Tests.TemperanceResonant_*` |
+| Star | 17 | **Enforced** | **Enforced** | `AdeptEffectService.TryApplyStarPostLossDraw` + `StarNullifyCommand` / `RefreshStarNullifyCommand` + `CardEffectSuppressionService` | Active Effects suppression | Yes | `RuleServices_Tests.StarResonant_*` |
+| World | 21 | **Enforced** | **Deferred** | `CrucibleRules.TryTemper` ward retention | Active Effects | Yes | Resonant crucible wildcard → **Phase 6** |
 
 | System | Status | Rule hook(s) | UI | Tests | Notes |
 |--------|--------|--------------|-----|-------|-------|
@@ -211,7 +211,7 @@ One row per **effect family** (not per card). Card data uses `effectType` from [
 | Besieged Bonus | **Enforced** | `CrucibleRules.ResolveOpposition` (+1 defend, winner increments `BesiegedBonusCount`) | — | No | Cleared on Transit |
 | Magnus misaligned trade 2:1 | **Enforced** | `TradeService` + `PlayerAspectAlignment.IsMagnusTradeRatioValid` | Trade UI | Yes | `RuleServices_Tests` Magnus trade block |
 | Magnus contest +1 dice | **NotStarted** | Duels / Gambits / Opposition | — | No | No hook in `CombatRules` |
-| Hand / Spread limits (5 / 5) | **Enforced** | `WinterRules.SpreadLimit`, `WinterRules.HandLimit` | Winter discard UI | Partial | Queen V2 / Priestess resonant modifiers not applied |
+| Hand / Spread limits (5 / 5) | **Enforced** | `WinterRules.SpreadLimit`, `PlayerLimitService.GetHandLimit` (Priestess resonant → 7) | Winter discard + Commune UI | Yes | Queen V2 +1 → Phase 7 |
 | Crucible lifecycle (activate / fire / temper / stasis) | **Pipeline** | `CrucibleRules` | Autumn forge UI | Partial | `RuleServices_Tests` crucible block; separate from card wildcards |
 | Agekeeper's Boon (+2 harvest when Agekeeper sign matches cosmic) | **Enforced** | `SpringRules.CalculateHarvestCount` | Harvest breakdown | Partial | |
 | Spread element alignment +1 harvest | **Enforced** | `SpringRules.CalculateHarvestCount` | Harvest breakdown | Partial | |
@@ -227,14 +227,14 @@ Defer resolution until the slice that needs them:
 | Conflict | Sources | Impact | Tracker action |
 |----------|---------|--------|----------------|
 | Reversed curse negation procedure undefined | Card Reference alignment vs curse text | Ranks 4–6 V1 cannot be **Enforced** | **Blocked** — Phase 5 |
-| Hand limit 5 vs 7 (Priestess resonant) | Game Guide vs Adept resonant text | `WinterRules.HandLimit` hard-coded 5 | **Blocked** — Phase 4 |
+| Hand limit 5 vs 7 (Priestess resonant) | Game Guide vs Adept resonant text | `PlayerLimitService` dynamic hand limit | **Resolved** — Phase 4 |
 | Arcanum limit 2 vs Hermit 3 vs doc "Hierophant" typo | Card Reference overview table | Hermit 3 enforced; doc says Hierophant | Document only; code uses Hermit ★9 |
 | Justice scope | Card Reference vs implementation | Duel + Gambit only (not Opposition) | **Resolved** in code |
 | Hanged Man pass direction | Game Guide wording | `ResolveHangedMan` passes to higher player id (wrap) | Confirm vs "left" convention |
 | Coal / cauldron choice vs codex table | Game Guide vs Crucible reference | Crafting UI | Defer to craft slice |
 | Knight attack/defend suit mapping | Card Reference vs `cards.json` | Cups/Pentacles vs Swords/Wands inverted | **Resolved** — implement from `cards.json` |
-| Resonant vs Attuned terminology | Card Reference / UI copy | Resonant layer predicate | **Blocked** — Phase 4 (minimal `AdeptAttunement` used for Strength/Chariot combat only) |
-| `effectTextResonant` not in enforcement | Data loader vs rules | Most resonant adepts UIOnly | Load in Phase 4 |
+| Resonant vs Attuned terminology | Card Reference / UI copy | `AdeptAttunement.IsAttuned` alias + attuned badge | **Resolved** — Phase 4 |
+| `effectTextResonant` not in enforcement | Data loader vs rules | UI copy via `CardDefinition`; rules use catalog | **Resolved** — Phase 4 |
 
 ---
 
@@ -294,16 +294,22 @@ Follow `FateCardResolver` switch / service pattern per adept.
 - [x] Wire `MarkAdeptUsed` from rule paths for once-per-age adepts
 - [x] Tests: `AdeptEffectService_Tests`, `RuleServices_Tests` Phase 3 block
 
-### Phase 4 — Adept Resonant layer
+### Phase 4 — Adept Resonant layer ✅ (complete)
 
-**Blocked** until attuned predicate and hand-limit conflict resolved.
+Deferred per scope: Magician ★1 resonant → Phase 5; World ★21 resonant → Phase 6.
 
-- [ ] Load `effectTextResonant` into enforcement layer
-- [ ] Attuned predicate (sign matches zodiac or built house)
-- [ ] Priestess resonant hand limit 7
-- [ ] Magician resonant reversed nullification
-- [ ] Emperor resonant broad protection
-- [ ] Remaining resonant effects per adepts.md
+- [x] Load `effectTextResonant` into `CardDefinition` (UI); `AdeptResonantCatalog` for enforcement
+- [x] Attuned predicate (`AdeptAttunement` + tests)
+- [x] Priestess resonant hand limit 7 (`PlayerLimitService`)
+- [x] Emperor resonant broad protection (hand+spread, duel+gambit+devil)
+- [x] Hierophant resonant ±2 shift
+- [x] Hermit resonant double elemental alignment
+- [x] Devil resonant banish adept
+- [x] Star resonant nullify + `CardEffectSuppressionService` + Salt refresh
+- [x] Consolidate Strength/Chariot/Empress/Temperance resonant (tracker + tests)
+- [x] Active Effects attuned badges + GameDebugUI resonant hooks
+- [ ] Magician resonant reversed nullification — **deferred Phase 5**
+- [ ] World resonant crucible wildcard — **deferred Phase 6**
 
 ### Phase 5 — Reversed curse system
 

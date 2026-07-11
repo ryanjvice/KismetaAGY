@@ -263,6 +263,8 @@ namespace Kismeta.Core.Rules
             {
                 if (player.ArrestedAdepts.Contains(cardId))
                     continue;
+                if (CardEffectSuppressionService.IsSuppressed(session, cardId))
+                    continue;
                 var inst = session.GetCard(cardId);
                 var def = inst != null ? db.GetById(inst.DefinitionId) : null;
                 if (def?.MajorArcanaType == MajorArcanaType.Adept && def.ArcanaNumber == arcanaNumber)

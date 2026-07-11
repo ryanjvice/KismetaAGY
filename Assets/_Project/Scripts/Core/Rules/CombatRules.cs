@@ -110,7 +110,7 @@ namespace Kismeta.Core.Rules
             if (!defender.Spread.Contains(targetCardId))
                 return CommandResult.Invalid("Target card must be in the defender's Spread.");
 
-            if (defender.EmperorProtectedSpreadIds.Contains(targetCardId))
+            if (AdeptEffectService.IsEmperorProtected(session, defender, targetCardId))
                 return CommandResult.Invalid("Target card is protected by the Emperor.");
 
             if (!IsNoAnte(anteCardId))
@@ -179,7 +179,7 @@ namespace Kismeta.Core.Rules
                 attacker.Spread.Add(targetCardId);
                 session.GetCard(targetCardId)?.MoveTo(CardZone.Spread, attackerId);
             }
-            else if (!IsNoAnte(anteCardId) && !attacker.EmperorProtectedSpreadIds.Contains(anteCardId!))
+            else if (!IsNoAnte(anteCardId) && !AdeptEffectService.IsEmperorProtected(session, attacker, anteCardId!))
             {
                 attacker.Spread.Remove(anteCardId!);
                 session.Board.CommonDiscard.Add(anteCardId!);
@@ -314,9 +314,10 @@ namespace Kismeta.Core.Rules
                 if (offeredInCrucible)
                 {
                     var aSlot = attacker.CrucibleSlots.Find(s => s.CardInstanceId == offeredCardId);
-                    aSlot?.Arrest();
+                    if (!AdeptEffectService.IsEmperorProtected(session, attacker, offeredCardId))
+                        aSlot?.Arrest();
                 }
-                else
+                else if (!AdeptEffectService.IsEmperorProtected(session, attacker, offeredCardId))
                 {
                     WardRefundHelper.RefundAdeptWards(attacker, offeredCardId);
                     attacker.Arcanum.Remove(offeredCardId);

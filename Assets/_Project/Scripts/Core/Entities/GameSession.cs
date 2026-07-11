@@ -286,6 +286,20 @@ namespace Kismeta.Core.Entities
                         cmd.TargetPlayerId, cmd.StolenCardId), command)
                     : CommandResult.NotImplemented(nameof(DevilStealCommand)),
 
+                DevilBanishAdeptCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryDevilBanishAdept(this, cmd.PlayerId,
+                        cmd.TargetPlayerId, cmd.TargetAdeptCardId), command)
+                    : CommandResult.NotImplemented(nameof(DevilBanishAdeptCommand)),
+
+                StarNullifyCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryStarNullify(this, cmd.PlayerId,
+                        cmd.TargetPlayerId, cmd.TargetCardId), command)
+                    : CommandResult.NotImplemented(nameof(StarNullifyCommand)),
+
+                RefreshStarNullifyCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryRefreshStarNullify(this, cmd.PlayerId, cmd.TargetCardId), command)
+                    : CommandResult.NotImplemented(nameof(RefreshStarNullifyCommand)),
+
                 CompletePriestessHarvestCommand cmd => _rules?.Adept is not null
                     ? ApplyWithAudit(_rules.Adept.TryCompletePriestessHarvest(this, cmd.PlayerId, cmd.ReturnCardIds), command)
                     : CommandResult.NotImplemented(nameof(CompletePriestessHarvestCommand)),

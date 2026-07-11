@@ -123,4 +123,47 @@ namespace Kismeta.Core.Commands
             ReturnCardIds = returnCardIds;
         }
     }
+
+    /// <summary>Devil resonant: sacrifice the Devil adept to banish an opponent's adept to the deck.</summary>
+    public sealed class DevilBanishAdeptCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public int TargetPlayerId { get; }
+        public string TargetAdeptCardId { get; }
+
+        public DevilBanishAdeptCommand(int playerId, int targetPlayerId, string targetAdeptCardId)
+        {
+            PlayerId = playerId;
+            TargetPlayerId = targetPlayerId;
+            TargetAdeptCardId = targetAdeptCardId;
+        }
+    }
+
+    /// <summary>Star resonant: nullify an opponent Fate or Adept in Arcanum until refreshed.</summary>
+    public sealed class StarNullifyCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public int TargetPlayerId { get; }
+        public string TargetCardId { get; }
+
+        public StarNullifyCommand(int playerId, int targetPlayerId, string targetCardId)
+        {
+            PlayerId = playerId;
+            TargetPlayerId = targetPlayerId;
+            TargetCardId = targetCardId;
+        }
+    }
+
+    /// <summary>Star resonant: spend 1 Salt to restore a nullified card's effects.</summary>
+    public sealed class RefreshStarNullifyCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public string TargetCardId { get; }
+
+        public RefreshStarNullifyCommand(int playerId, string targetCardId)
+        {
+            PlayerId = playerId;
+            TargetCardId = targetCardId;
+        }
+    }
 }

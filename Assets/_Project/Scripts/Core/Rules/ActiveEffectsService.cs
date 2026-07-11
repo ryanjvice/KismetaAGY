@@ -361,6 +361,15 @@ namespace Kismeta.Core.Rules
                         continue;
 
                     string description = FirstLine(def.EffectText);
+                    bool attuned = AdeptAttunement.IsResonant(player, def);
+                    if (attuned && !string.IsNullOrWhiteSpace(def.EffectTextResonant))
+                        description += " Resonant: " + FirstLine(def.EffectTextResonant);
+
+                    if (def.ArcanaNumber == 2 && attuned)
+                    {
+                        int handLimit = PlayerLimitService.GetHandLimit(session, player);
+                        description += $" Hand limit: {handLimit}.";
+                    }
                     if (def.ArcanaNumber == 3 && player.EmpressMarkedReagents.Count > 0)
                     {
                         var marked = string.Join(", ", player.EmpressMarkedReagents);
@@ -372,9 +381,9 @@ namespace Kismeta.Core.Rules
                         description += $" Salt wild for {player.TemperanceSaltWildReagent.Value}.";
                     }
 
-                    if (def.ArcanaNumber == 4 && player.EmperorProtectedSpreadIds.Count > 0)
+                    if (def.ArcanaNumber == 4 && player.EmperorProtectedCardIds.Count > 0)
                     {
-                        description += $" Protected: {string.Join(", ", player.EmperorProtectedSpreadIds)}.";
+                        description += $" Protected: {string.Join(", ", player.EmperorProtectedCardIds)}.";
                     }
 
                     if (def.ArcanaNumber == 2 && session.Board.PendingPriestessReturns.Contains(player.PlayerId))
@@ -387,9 +396,12 @@ namespace Kismeta.Core.Rules
                         description += $" Opposition shift: {player.HierophantOppositionShift:+0;-0}.";
                     }
 
+                    if (CardEffectSuppressionService.IsSuppressed(session, id))
+                        description += " Effects nullified by Star.";
+
                     bool arrested = player.ArrestedAdepts.Contains(id);
                     bool used = player.UsedAdeptInstanceIdsThisAge.Contains(id);
-                    var badge = AdeptEffectCatalog.BadgeFor(def.ArcanaNumber, arrested, used);
+                    var badge = AdeptEffectCatalog.BadgeFor(def.ArcanaNumber, arrested, used, attuned);
 
                     items.Add(new ActiveEffectItem(
                         id,

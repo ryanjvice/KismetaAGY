@@ -12,6 +12,11 @@ namespace Kismeta.Core.Rules
         CommandResult TryShiftOppositionZodiac(GameSession session, int playerId, int delta);
         CommandResult TryDevilSteal(GameSession session, int playerId, string sacrificeCardId,
             int targetPlayerId, string stolenCardId);
+        CommandResult TryDevilBanishAdept(GameSession session, int playerId,
+            int targetPlayerId, string targetAdeptCardId);
+        CommandResult TryStarNullify(GameSession session, int playerId,
+            int targetPlayerId, string targetCardId);
+        CommandResult TryRefreshStarNullify(GameSession session, int playerId, string targetCardId);
         CommandResult TryCompletePriestessHarvest(GameSession session, int playerId,
             IReadOnlyList<string> returnCardIds);
         bool IsPriestessHarvestPending(GameSession session, int playerId);

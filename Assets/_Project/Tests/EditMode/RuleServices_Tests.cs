@@ -2664,14 +2664,257 @@ namespace Kismeta.Core.Tests
             var db = LoadDb();
             var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
-            session.Players[0].EmperorProtectedSpreadIds.Add("card-a");
-            session.Players[0].EmperorProtectedSpreadIds.Add("card-b");
+            session.Players[0].EmperorProtectedCardIds.Add("card-a");
+            session.Players[0].EmperorProtectedCardIds.Add("card-b");
             session.Board.PendingPriestessReturns.Add(0);
 
             session.Rules!.Winter.Transit(session);
 
-            Assert.AreEqual(0, session.Players[0].EmperorProtectedSpreadIds.Count);
+            Assert.AreEqual(0, session.Players[0].EmperorProtectedCardIds.Count);
             Assert.IsFalse(session.Board.PendingPriestessReturns.Contains(0));
+        }
+
+        // ─── Phase 4 adept resonant tests ─────────────────────────────────────────
+
+        static void AttunePlayer(GameSession session, int playerId, ZodiacSign sign)
+        {
+            var player = session.Players[playerId];
+            player.CurrentSign = sign;
+            player.PersonalCosmicEffects = CosmicEffectService.ComputePersonalEffects(
+                sign, player.AstralHouses, session.Board.CosmicAgeSign);
+        }
+
+        [Test]
+        public void PriestessResonant_HandLimit7_WhenAttuned()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "priestess", "major.adept.2");
+            AttunePlayer(session, 0, ZodiacSign.Pisces);
+
+            Assert.AreEqual(7, PlayerLimitService.GetHandLimit(session, session.Players[0]));
+        }
+
+        [Test]
+        public void PriestessResonant_NoEffect_WhenNotAttuned()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "priestess", "major.adept.2");
+            AttunePlayer(session, 0, ZodiacSign.Aries);
+
+            Assert.AreEqual(WinterRules.HandLimit, PlayerLimitService.GetHandLimit(session, session.Players[0]));
+        }
+
+        [Test]
+        public void PriestessResonant_Commune_AllowsSevenHandCards()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "priestess", "major.adept.2");
+            AttunePlayer(session, 0, ZodiacSign.Pisces);
+
+            session.Players[0].Hand.Clear();
+            session.Players[0].Spread.Clear();
+
+            string[] defs =
+            {
+                "minor.cups.ace.1", "minor.cups.two.1", "minor.cups.three.1",
+                "minor.cups.four.1", "minor.cups.five.1", "minor.cups.six.1", "minor.cups.seven.1"
+            };
+            for (int i = 0; i < defs.Length; i++)
+                GiveHandCard(session, 0, $"hand-{i}", defs[i]);
+
+            var hand = new List<string>(session.Players[0].Hand);
+            var result = session.Apply(new CommuneCommand(0, new List<string>(), hand));
+            Assert.IsTrue(result.IsOk, result.Message);
+        }
+
+        [Test]
+        public void EmperorResonant_ProtectsHandCard()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 0, "emperor", "major.adept.4");
+            AttunePlayer(session, 0, ZodiacSign.Aries);
+            GiveHandCard(session, 0, "hand-prot-a", "minor.cups.two.1");
+            GiveHandCard(session, 0, "hand-prot-b", "minor.cups.three.1");
+
+            Assert.IsTrue(session.Apply(new ProtectSpreadCardsCommand(0,
+                new List<string> { "hand-prot-a", "hand-prot-b" })).IsOk);
+            Assert.IsTrue(session.Players[0].EmperorProtectedCardIds.Contains("hand-prot-a"));
+        }
+
+        [Test]
+        public void EmperorResonant_GambitOfferSurvivesLoss()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, seed: 42);
+            SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 0, "offered-adept", "major.adept.8");
+            session.Players[0].EmperorProtectedCardIds.Add("offered-adept");
+            PopulateSpread(session, 1, 1, "gambit-def");
+
+            var combat = new CombatRules(FindDuelSeed(attackerWins: false));
+            var result = combat.TryGambit(session, 0, 1, "offered-adept");
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(session.Players[0].Arcanum.Contains("offered-adept"));
+            Assert.IsFalse(session.Board.CommonDiscard.Contains("offered-adept"));
+        }
+
+        [Test]
+        public void EmperorResonant_DevilStealBlocked()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 1, "emperor", "major.adept.4");
+            AttunePlayer(session, 1, ZodiacSign.Aries);
+            var protectedCards = PopulateSpread(session, 1, 2, "devil-block");
+            session.Players[1].EmperorProtectedCardIds.Add(protectedCards[0]);
+
+            AddArcanumCard(session, 0, "devil", "major.adept.15");
+            AttunePlayer(session, 0, ZodiacSign.Capricorn);
+            GiveHandCard(session, 0, "sacrifice", "minor.cups.two.1");
+
+            var result = session.Apply(new DevilStealCommand(0, "sacrifice", 1, protectedCards[0]));
+            Assert.IsFalse(result.IsOk);
+        }
+
+        [Test]
+        public void HierophantResonant_ShiftPlus2_ChangesHarvest()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "hierophant", "major.adept.5");
+            session.Board.CosmicAgeSign = ZodiacSign.Leo;
+            AttunePlayer(session, 0, ZodiacSign.Scorpio);
+
+            Assert.IsTrue(session.Apply(new ShiftZodiacCommand(0, 2)).IsOk);
+            Assert.AreEqual(ZodiacSign.Capricorn, session.Players[0].CurrentSign);
+
+            var notAttuned = SetupSession(db, codexDb);
+            AddArcanumCard(notAttuned, 0, "hierophant-na", "major.adept.5");
+            notAttuned.Board.CosmicAgeSign = ZodiacSign.Leo;
+            AttunePlayer(notAttuned, 0, ZodiacSign.Aries);
+            Assert.IsFalse(notAttuned.Apply(new ShiftZodiacCommand(0, 2)).IsOk);
+            Assert.IsTrue(notAttuned.Apply(new ShiftZodiacCommand(0, 1)).IsOk);
+        }
+
+        [Test]
+        public void HermitResonant_DoublesElementAlignment_InOpposition()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Players[0].Spread.Clear();
+            session.Players[0].Hand.Clear();
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+
+            AddArcanumCard(session, 0, "hermit", "major.adept.9");
+            AttunePlayer(session, 0, ZodiacSign.Virgo);
+            session.Board.CosmicAgeSign = ZodiacSign.Cancer;
+            AddSpreadCard(session, 0, "cups-card", "minor.cups.five.1");
+
+            var align = new AlignmentService(db);
+            int withHermit = align.CalculateAlignmentPoints(session, 0, ZodiacSign.Cancer);
+
+            session.Players[0].Arcanum.Remove("hermit");
+            int withoutHermit = align.CalculateAlignmentPoints(session, 0, ZodiacSign.Cancer);
+
+            Assert.AreEqual(2, withHermit);
+            Assert.AreEqual(1, withoutHermit);
+        }
+
+        [Test]
+        public void DevilResonant_Banish_ReturnsBothToDeck()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 0, "devil", "major.adept.15");
+            AddArcanumCard(session, 1, "strength", "major.adept.8");
+            AttunePlayer(session, 0, ZodiacSign.Capricorn);
+
+            int deckBefore = session.Board.CommonDeck.Count;
+            var result = session.Apply(new DevilBanishAdeptCommand(0, 1, "strength"));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsFalse(session.Players[0].Arcanum.Contains("devil"));
+            Assert.IsFalse(session.Players[1].Arcanum.Contains("strength"));
+            Assert.AreEqual(deckBefore + 2, session.Board.CommonDeck.Count);
+        }
+
+        [Test]
+        public void DevilResonant_SecondBanishRejectedSameAge()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 0, "devil", "major.adept.15");
+            AddArcanumCard(session, 1, "strength", "major.adept.8");
+            AddArcanumCard(session, 1, "chariot", "major.adept.7");
+            AttunePlayer(session, 0, ZodiacSign.Capricorn);
+
+            Assert.IsTrue(session.Apply(new DevilBanishAdeptCommand(0, 1, "strength")).IsOk);
+            var again = session.Apply(new DevilBanishAdeptCommand(0, 1, "chariot"));
+            Assert.IsFalse(again.IsOk);
+        }
+
+        [Test]
+        public void StarResonant_SuppressesStrengthBonus()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "star", "major.adept.17");
+            AddArcanumCard(session, 1, "strength", "major.adept.8");
+            AttunePlayer(session, 0, ZodiacSign.Aquarius);
+            AttunePlayer(session, 1, ZodiacSign.Sagittarius);
+
+            var before = ContestModifierService.Build(session, ContestKind.Duel, 1, 0);
+            Assert.AreEqual(2, before.Attacker.AttackBonus);
+
+            Assert.IsTrue(session.Apply(new StarNullifyCommand(0, 1, "strength")).IsOk);
+            var after = ContestModifierService.Build(session, ContestKind.Duel, 1, 0);
+            Assert.AreEqual(0, after.Attacker.AttackBonus);
+        }
+
+        [Test]
+        public void StarResonant_RefreshRestoresEffect()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "star", "major.adept.17");
+            AddArcanumCard(session, 1, "strength", "major.adept.8");
+            AttunePlayer(session, 0, ZodiacSign.Aquarius);
+            AttunePlayer(session, 1, ZodiacSign.Sagittarius);
+            session.Players[0].AddReagent(ReagentType.Salt, 1);
+
+            Assert.IsTrue(session.Apply(new StarNullifyCommand(0, 1, "strength")).IsOk);
+            Assert.IsTrue(session.Apply(new RefreshStarNullifyCommand(0, "strength")).IsOk);
+
+            var mods = ContestModifierService.Build(session, ContestKind.Duel, 1, 0);
+            Assert.AreEqual(2, mods.Attacker.AttackBonus);
+        }
+
+        [Test]
+        public void CardDatabase_LoadsEffectTextResonant()
+        {
+            var db = LoadDb();
+            var def = db.GetById("major.adept.2");
+            Assert.IsNotNull(def);
+            Assert.IsTrue(def!.EffectTextResonant.Contains("Hand limit"));
         }
     }
 }

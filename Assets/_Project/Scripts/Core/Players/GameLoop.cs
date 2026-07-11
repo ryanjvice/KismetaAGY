@@ -397,7 +397,7 @@ namespace Kismeta.Core.Players
             foreach (var player in _session.Players)
             {
                 bool overSpread = player.Spread.Count > WinterRules.SpreadLimit;
-                bool overHand   = player.Hand.Count   > WinterRules.HandLimit;
+                bool overHand   = player.Hand.Count > PlayerLimitService.GetHandLimit(_session, player);
                 if (!overSpread && !overHand) continue;
 
                 var cmd = await RequestAsync(player.PlayerId, ActionHint.DiscardToLimit, ct);
@@ -517,7 +517,8 @@ namespace Kismeta.Core.Players
                 moonDrawnIds, arcanumAdeptIds,
                 _session.Rules?.CodexDatabase,
                 _session.Rules?.CardDatabase,
-                _session.Rules?.AlchemicalValidator);
+                _session.Rules?.AlchemicalValidator,
+                _session);
 
             if (controller is HotSeatController hs)
             {

@@ -18,10 +18,14 @@ namespace Kismeta.Core.Rules
         public static ActiveEffectBadge BadgeFor(
             int arcanaNumber,
             bool isArrested,
-            bool usedThisAge)
+            bool usedThisAge,
+            bool isAttuned = false)
         {
             if (isArrested)
                 return new ActiveEffectBadge("arrested · refresh with Salt", ActiveEffectBadgeTone.Arrested);
+
+            if (isAttuned && AdeptResonantCatalog.HasResonantLayer(arcanaNumber))
+                return new ActiveEffectBadge("attuned · resonant", ActiveEffectBadgeTone.Attuned);
 
             if (UsageFor(arcanaNumber) == AdeptUsageKind.Passive)
                 return new ActiveEffectBadge("active · expires if removed", ActiveEffectBadgeTone.Active);

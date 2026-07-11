@@ -21,6 +21,8 @@ namespace Kismeta.Core.Entities
         public bool IsArrested { get; private set; }
         /// <summary>Human-readable summary set when a Fate resolves; shown in Active Effects.</summary>
         public string? FateResolutionNote { get; private set; }
+        /// <summary>Star resonant nullification suppresses ongoing Fate/Adept contributions.</summary>
+        public bool IsEffectSuppressed { get; private set; }
 
         public CardInstance(string instanceId, string definitionId, CardZone initialZone, int ownerId)
         {
@@ -42,5 +44,6 @@ namespace Kismeta.Core.Entities
         public void SetFired(bool fired) => IsFired = fired;
         public void SetArrested(bool arrested) => IsArrested = arrested;
         public void SetFateResolutionNote(string? note) => FateResolutionNote = note;
+        public void SetEffectSuppressed(bool suppressed) => IsEffectSuppressed = suppressed;
     }
 }

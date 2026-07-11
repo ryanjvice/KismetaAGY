@@ -20,6 +20,7 @@ namespace Kismeta.Core.Rules
         Aligned,
         Pending,
         Arrested,
+        Attuned,
         Buff,
         Debuff
     }
