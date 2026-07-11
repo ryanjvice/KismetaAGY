@@ -65,11 +65,10 @@ For tap-to-swap commune zones, build chips via `TapSwapBindings.BuildChip`, whic
 | Screen / flow | Controller / bindings | Notes |
 | ------------- | --------------------- | ----- |
 | Standalone commune | `CommuneController` | `_initialized`, `_zonesBuilt`, `_builtForRoot` |
-| Spring Hub commune subview | `SpringHubController` | `_communeInitialized`, `_communeZonesBuilt` |
-| Integrated harvest commune | `SpringHarvestController` | Same flags; do not call `EnterCommuneUi()` from `BindState` |
+| Spring Hub commune (Step 4) | `SpringHubController` | `_communeInitialized`, `_communeZonesBuilt`; mandatory `ActionHint.Commune` |
 | Winter unlock tap-swap | `WinterUnlockZoneBindings.ZoneBindState` | Also tracks `LastLayoutKey` to skip redundant rebuilds |
 | Shared swap UI | `TapSwapBindings` | `RebuildZones` / `BuildChip` |
-| Harvest tableau | `TableauBindings` | `RebuildCommuneZones` for commune; dealing uses session state directly |
+| Harvest dealing tableau | `TableauBindings` | `RebuildDealingZones` on `SpringHarvest`; commune uses `RebuildCommuneZones` on `SpringHub` |
 
 ---
 
@@ -90,13 +89,9 @@ int _arrangementPlayerId = -1;
 ### `BindState` pattern
 
 ```csharp
-// 1) Transition phase ONCE (do not re-enter setup helpers every refresh)
-if (hint == ActionHint.HarvestCommune && _phase != HarvestUiPhase.Commune)
-{
-    _phase = HarvestUiPhase.Commune;
-    _initialized = false;
-    _zonesBuilt = false;
-}
+// 1) Transition commune ONCE per player/hint entry
+if (hint == ActionHint.Commune && !_communeInitialized)
+    SeedFromPlayer(session);
 
 // 2) Reset when player changes
 if (_playerId != _arrangementPlayerId)
@@ -163,11 +158,11 @@ Use this in addition to — not instead of — the initialized/built-for-root gu
 
 ```csharp
 // BAD: full commune setup on every BindState refresh
-if (hint == ActionHint.HarvestCommune)
-    EnterCommuneUi(); // re-seeds from session, wipes taps
+if (hint == ActionHint.Commune)
+    ResetAndSeedCommuneEveryRefresh(); // re-seeds from session, wipes taps
 
 // BAD: unconditional zone rebuild during commune
-if (_phase == HarvestUiPhase.Commune)
+if (hint == ActionHint.Commune)
     TableauBindings.RebuildCommuneZones(...); // every RefreshActiveScreen
 
 // BAD: click on chip root with children still pickable
@@ -184,6 +179,18 @@ chip.RegisterCallback<ClickEvent>(_ => onTap());
 4. Wire taps only through `CardChipFactory.WireTap`.
 5. Rebuild zones on user action; skip rebuild on passive `BindState` when layout unchanged.
 6. Manual test: tap several cards in quick succession, then wait 2–3 seconds without tapping — arrangement must not revert.
+
+## Commune on Spring Hub (Step 4)
+
+Post-harvest commune runs on **Spring Hub** (`ActionHint.Commune`), not Spring Harvest. The hub shell provides review affordances during arrangement:
+
+- Header: cosmic age + rival strip
+- Inventory dock: spread/hand/arcanum inspect
+- Toolbar: card table, season intro, Effects/Codex/Wards FABs
+
+Canonical controller: `SpringHubController.BindCommune()` with `TableauBindings.RebuildCommuneZones()`.
+
+During `SpringAction`, **Review the Tableau** (`review-tableau-btn`) reopens the same commune subview for optional last-minute rearrangement; **Lock The Tableau** submits `CommuneCommand` and returns to the hub board without ending the turn.
 
 ---
 

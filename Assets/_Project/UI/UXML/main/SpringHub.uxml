@@ -9,6 +9,7 @@
     <engine:Template src="../shell/GameHeaderOverlay.uxml" name="GameHeaderOverlay" />
     <engine:Template src="../shell/PlayerInventoryOverlay.uxml" name="PlayerInventoryOverlay" />
     <engine:Template src="../shell/CentralPanelInspectFab.uxml" name="CentralPanelInspectFab" />
+    <engine:Template src="../shell/TableauStage.uxml" name="TableauStage" />
 
     <engine:VisualElement name="spring-hub" class="screen screen--spring">
         <engine:Label text="Spring hub — zodiac board, commune, and advance to Summer." class="sr-only" />
@@ -21,12 +22,6 @@
                     <engine:Button name="info-btn" text="🗓️" class="narrative-toolbar__info-btn btn btn--secondary" />
                     <engine:Label name="narrative-beat" text="" class="narrative-beat" />
                     <engine:Button name="table-fab" text="🧙" class="narrative-toolbar__table-btn table-fab btn btn--secondary" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-
-            <engine:VisualElement name="hub-actionbar" class="spring-hub__actionbar spring-hub__actionbar--hidden" style="display: none;">
-                <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                    <engine:Button name="commune-btn" text="Commune With Cards" class="actionbtn btn btn--action btn--action-hue-blue" style="display: none;" />
                 </engine:VisualElement>
             </engine:VisualElement>
 
@@ -57,59 +52,7 @@
             </engine:VisualElement>
 
             <engine:VisualElement name="commune-stage" class="commune-stage commune-stage--hidden">
-                <engine:Label text="Commune with your Tableau" class="commune-stage__heading h3" />
-                <engine:Label name="narrative-charge" text="" class="narrative-charge" />
-
-                <engine:VisualElement class="commune-stage__zone-wrap">
-                    <engine:VisualElement class="swap-zone swap-zone--spread">
-                        <engine:VisualElement class="swap-zone__header">
-                            <engine:VisualElement style="flex-direction: row; align-items: center;">
-                                <engine:VisualElement style="width: 12px; height: 12px; border-radius: 6px; background-color: rgb(244, 211, 94); margin-right: 6px;" />
-                                <engine:Label text="Spread" style="font-size: 12px; color: rgb(244, 211, 94);" />
-                                <engine:Label text="visible · duel-exposed" class="zone-hint" style="color: rgb(154,122,122);" />
-                            </engine:VisualElement>
-                            <engine:Label name="commune-spread-count" text="0" class="text-count" />
-                        </engine:VisualElement>
-                        <engine:VisualElement name="spread-cards" class="swap-zone__cards" />
-                    </engine:VisualElement>
-                </engine:VisualElement>
-
-                <engine:VisualElement class="commune-stage__swap-indicator" picking-mode="Ignore">
-                    <engine:VisualElement class="commune-stage__swap-badge">
-                        <engine:Label text="&#xedb6;" class="ti-icon commune-stage__swap-icon" />
-                    </engine:VisualElement>
-                </engine:VisualElement>
-
-                <engine:VisualElement class="commune-stage__zone-wrap">
-                    <engine:VisualElement class="swap-zone swap-zone--hand">
-                        <engine:VisualElement class="swap-zone__header">
-                            <engine:VisualElement style="flex-direction: row; align-items: center;">
-                                <engine:VisualElement style="width: 12px; height: 12px; border-radius: 6px; background-color: rgb(127, 196, 168); margin-right: 6px;" />
-                                <engine:Label text="Hand" style="font-size: 12px; color: rgb(127, 196, 168);" />
-                                <engine:Label text="hidden · safe" class="zone-hint" style="color: rgb(122,138,122);" />
-                            </engine:VisualElement>
-                            <engine:Label name="commune-hand-count" text="0" class="text-count" />
-                        </engine:VisualElement>
-                        <engine:VisualElement name="hand-cards" class="swap-zone__cards" />
-                    </engine:VisualElement>
-                </engine:VisualElement>
-
-                <engine:VisualElement class="commune-stage__readout-wrap">
-                    <engine:VisualElement class="readout">
-                        <engine:VisualElement class="readout__metric">
-                            <engine:Label name="spread-align" text="+0" class="readout__value" style="color: rgb(244, 211, 94);" />
-                            <engine:Label text="spread alignment" class="readout__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="readout__metric">
-                            <engine:Label name="hand-safe" text="0" class="readout__value" style="color: rgb(127, 196, 168);" />
-                            <engine:Label text="safe in hand" class="readout__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="readout__metric">
-                            <engine:Label name="verdict" text="balanced" class="readout__value" style="color: rgb(243, 233, 210); font-size: 12px;" />
-                            <engine:Label text="verdict" class="readout__label" />
-                        </engine:VisualElement>
-                    </engine:VisualElement>
-                </engine:VisualElement>
+                <engine:Instance template="TableauStage" />
             </engine:VisualElement>
             <engine:Instance template="CentralPanelInspectFab" />
             </engine:VisualElement>
@@ -118,7 +61,8 @@
                 <engine:Button name="wheel-action-btn" text="Roll Your Zodiac Die" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 
-            <engine:VisualElement name="hub-cta" class="stage-cta stage-cta--single spring-hub__hub-cta--hidden">
+            <engine:VisualElement name="hub-cta" class="stage-cta stage-cta--multi spring-hub__hub-cta--hidden">
+                <engine:Button name="review-tableau-btn" text="Review the Tableau" class="actionbtn btn btn--secondary" />
                 <engine:Button name="proceed-btn" text="Proceed To Summer" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 

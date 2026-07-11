@@ -7,14 +7,13 @@ using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
 using Kismeta.UI.Narrative;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
 {
     public sealed class SpringHarvestController : ScreenController
     {
-        public enum HarvestUiPhase { Tally, Dealing, Commune }
+        public enum HarvestUiPhase { Tally, Dealing }
 
         public override string ScreenId => ScreenIds.SpringHarvest;
 
@@ -28,29 +27,17 @@ namespace Kismeta.UI.Controllers
         int _bindKey = int.MinValue;
         HarvestUiPhase _phase = HarvestUiPhase.Tally;
 
-        readonly List<string> _spreadIds = new();
-        readonly List<string> _handIds = new();
-
         bool _dealing;
-        bool _communeInitialized;
-        bool _communeZonesBuilt;
-        VisualElement? _communeBuiltForRoot;
-        int _communePlayerId = -1;
 
         protected override void Wire()
         {
             Btn("deal-btn")!.clicked += OnDeal;
-            Btn("commune-lock-btn")!.clicked += OnCommuneLock;
         }
 
         protected override void Unwire()
         {
             _bindKey = int.MinValue;
             _dealing = false;
-            _communeInitialized = false;
-            _communeZonesBuilt = false;
-            _communeBuiltForRoot = null;
-            _communePlayerId = -1;
         }
 
         public HarvestUiPhase Phase => _phase;
@@ -67,29 +54,10 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindStatusBar(Root, session, loop);
             MainSceneBindings.BindCosmicAgeBanner(Root, session);
 
-            var hint = bridge.PendingHint;
-            if (hint == ActionHint.HarvestCommune)
-            {
-                if (_phase != HarvestUiPhase.Commune)
-                {
-                    _phase = HarvestUiPhase.Commune;
-                    _dealing = false;
-                    _communeInitialized = false;
-                    _communeZonesBuilt = false;
-                }
-            }
-            else if (session.Board.ActiveHarvestDeal?.PlayerId == _playerId)
-            {
+            if (session.Board.ActiveHarvestDeal?.PlayerId == _playerId)
                 _phase = HarvestUiPhase.Dealing;
-                _communeInitialized = false;
-                _communeZonesBuilt = false;
-            }
-            else if (hint != ActionHint.ConfirmHarvest)
-            {
+            else if (bridge.PendingHint == ActionHint.ConfirmHarvest)
                 _phase = HarvestUiPhase.Tally;
-                _communeInitialized = false;
-                _communeZonesBuilt = false;
-            }
 
             BindStepRail(session);
             BindPhaseVisibility();
@@ -104,8 +72,8 @@ namespace Kismeta.UI.Controllers
 
             if (_phase == HarvestUiPhase.Dealing)
                 RefreshDealingTableau(session);
-            else if (_phase == HarvestUiPhase.Commune)
-                BindCommuneTableau(session, bridge);
+
+            BindNarrative();
         }
 
         public void OnHarvestCardRouted(HarvestCardRoutedEvent routed)
@@ -133,7 +101,7 @@ namespace Kismeta.UI.Controllers
         {
             if (_session == null || _playerId < 0 || fate.PlayerId != _playerId) return;
             if (_phase != HarvestUiPhase.Dealing) return;
-            RefreshTableau(_session);
+            RefreshDealingTableau(_session);
         }
 
         void BindTally(GameSession session)
@@ -165,62 +133,27 @@ namespace Kismeta.UI.Controllers
         {
             El("harvest-tally")?.EnableInClassList("harvest-tableau--hidden", _phase != HarvestUiPhase.Tally);
             El("harvest-tableau")?.EnableInClassList("harvest-tableau--hidden", _phase == HarvestUiPhase.Tally);
-
-            var lockBtn = Btn("commune-lock-btn");
-            if (lockBtn != null)
-                lockBtn.style.display = _phase == HarvestUiPhase.Commune ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         void BindTableauHeading()
         {
             var heading = Root?.Q<Label>("tableau-heading");
             if (heading == null) return;
-            heading.text = _phase switch
-            {
-                HarvestUiPhase.Dealing => "Receiving your harvest",
-                HarvestUiPhase.Commune => "Commune with your Tableau",
-                _ => "Commune with your Tableau"
-            };
+            heading.text = _phase == HarvestUiPhase.Dealing
+                ? "Receiving your harvest"
+                : "Receiving your harvest";
         }
 
         void BindStepRail(GameSession session)
         {
-            int step = _phase switch
-            {
-                HarvestUiPhase.Tally => 2,
-                HarvestUiPhase.Dealing => 2,
-                HarvestUiPhase.Commune => 3,
-                _ => 2
-            };
+            int step = _phase == HarvestUiPhase.Dealing ? 2 : 2;
             MainSceneBindings.BindStepRail(El("step-rail"), step, 5, "step__dot--active");
         }
 
         void BindNarrative()
         {
-            var stepId = _phase switch
-            {
-                HarvestUiPhase.Commune => "spring.commune",
-                HarvestUiPhase.Dealing => "spring.harvest.deal",
-                _ => "spring.harvest"
-            };
+            var stepId = _phase == HarvestUiPhase.Dealing ? "spring.harvest.deal" : "spring.harvest";
             NarrativeSlotBindings.BindById(Root, stepId);
-        }
-
-        void BindCommuneTableau(GameSession session, CommandBridge bridge)
-        {
-            if (_playerId != _communePlayerId)
-            {
-                _communePlayerId = _playerId;
-                _communeInitialized = false;
-                _communeZonesBuilt = false;
-            }
-
-            if (!_communeInitialized)
-                SeedCommuneFromPlayer(session);
-
-            RenderCommuneZonesIfNeeded(session);
-            BindCommuneLockCta(bridge);
-            BindNarrative();
         }
 
         void RefreshDealingTableau(GameSession session)
@@ -228,75 +161,6 @@ namespace Kismeta.UI.Controllers
             var tableau = El("harvest-tableau");
             if (tableau == null) return;
             TableauBindings.RebuildDealingZones(tableau, session, _playerId, session.Board.CosmicAgeSign, OnInspectCard);
-        }
-
-        void RenderCommuneZonesIfNeeded(GameSession session)
-        {
-            var tableau = El("harvest-tableau");
-            if (tableau == null) return;
-            if (_communeZonesBuilt && ReferenceEquals(tableau, _communeBuiltForRoot)) return;
-            RefreshCommuneZones(session);
-        }
-
-        void RefreshCommuneZones(GameSession session)
-        {
-            var tableau = El("harvest-tableau");
-            if (tableau == null) return;
-
-            TableauBindings.RebuildCommuneZones(tableau, session, _playerId, _spreadIds, _handIds,
-                session.Board.CosmicAgeSign, OnCommuneTapMove, OnInspectCard);
-            _communeZonesBuilt = true;
-            _communeBuiltForRoot = tableau;
-        }
-
-        void RefreshTableau(GameSession session)
-        {
-            if (_phase == HarvestUiPhase.Commune)
-                RefreshCommuneZones(session);
-            else
-                RefreshDealingTableau(session);
-        }
-
-        void SeedCommuneFromPlayer(GameSession session)
-        {
-            _spreadIds.Clear();
-            _handIds.Clear();
-            var player = session.Players[_playerId];
-            foreach (var id in player.Spread)
-                if (TapSwapBindings.IsMinorArcana(session, id)) _spreadIds.Add(id);
-            foreach (var id in player.Hand)
-                if (TapSwapBindings.IsMinorArcana(session, id)) _handIds.Add(id);
-            _communeInitialized = true;
-            _communeZonesBuilt = false;
-        }
-
-        void OnCommuneTapMove(string cardId, bool fromSpread)
-        {
-            if (_phase != HarvestUiPhase.Commune || _session == null) return;
-
-            if (fromSpread)
-            {
-                if (!_spreadIds.Remove(cardId)) return;
-                _handIds.Add(cardId);
-            }
-            else
-            {
-                if (!_handIds.Remove(cardId)) return;
-                _spreadIds.Add(cardId);
-            }
-
-            RefreshCommuneZones(_session);
-            BindCommuneLockCta(_bridge!);
-        }
-
-        void BindCommuneLockCta(CommandBridge bridge)
-        {
-            var btn = Btn("commune-lock-btn");
-            if (btn == null || _session == null) return;
-
-            int handLimit = PlayerLimitService.GetHandLimit(_session, _session.Players[_playerId]);
-            bool overLimit = _handIds.Count > handLimit;
-            btn.SetEnabled(bridge.CanSubmit && _phase == HarvestUiPhase.Commune && !overLimit);
         }
 
         void OnDeal()
@@ -310,36 +174,11 @@ namespace Kismeta.UI.Controllers
             if (_session == null) return;
             _phase = HarvestUiPhase.Dealing;
             _dealing = true;
-            _communeInitialized = false;
-            _communeZonesBuilt = false;
             BindPhaseVisibility();
             BindTableauHeading();
             BindStepRail(_session);
             BindNarrative();
-            RefreshTableau(_session);
-        }
-
-        public void EnterCommuneUi()
-        {
-            if (_session == null) return;
-            _phase = HarvestUiPhase.Commune;
-            _dealing = false;
-            _communeInitialized = false;
-            _communeZonesBuilt = false;
-            BindPhaseVisibility();
-            BindTableauHeading();
-            BindStepRail(_session);
-            BindCommuneTableau(_session, _bridge!);
-        }
-
-        void OnCommuneLock()
-        {
-            if (_bridge == null || _session == null || _phase != HarvestUiPhase.Commune) return;
-
-            int handLimit = PlayerLimitService.GetHandLimit(_session, _session.Players[_playerId]);
-            if (_handIds.Count > handLimit) return;
-
-            _bridge.TrySubmit(new CommuneCommand(_playerId, _spreadIds, _handIds));
+            RefreshDealingTableau(_session);
         }
 
         static int ResolvePlayerId(GameSession session, CommandBridge bridge)

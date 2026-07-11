@@ -169,7 +169,7 @@ namespace Kismeta.Core.Players
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
             Log("Spring — Step 4: Spring Hub (Commune / Build a House)");
-            await RunSeasonTurnsAsync(ActionHint.SpringAction, ct);
+            await RunSpringHubAsync(ct);
             if (_session.IsOver || ct.IsCancellationRequested) return;
 
             Log("Spring — Step 5: Card Lock");
@@ -228,9 +228,28 @@ namespace Kismeta.Core.Players
                 Apply(priestessCmd);
                 _session.Board.PendingPriestessReturns.Remove(playerId);
             }
+        }
 
-            var communeCmd = await RequestAsync(playerId, ActionHint.HarvestCommune, ct);
-            Apply(communeCmd);
+        /// <summary>
+        /// Step 4: each player communes on Spring Hub, then takes Spring Action turns until pass.
+        /// </summary>
+        private async Task RunSpringHubAsync(CancellationToken ct)
+        {
+            int playerCount = _session.Players.Count;
+            int startIdx    = FindAgekeeperIndex();
+
+            for (int i = 0; i < playerCount; i++)
+            {
+                if (_session.IsOver || ct.IsCancellationRequested) return;
+
+                int playerId = _session.Players[(startIdx + i) % playerCount].PlayerId;
+                Log($"Spring — Commune: P{playerId}");
+                var communeCmd = await RequestAsync(playerId, ActionHint.Commune, ct);
+                Apply(communeCmd);
+                if (_session.IsOver || ct.IsCancellationRequested) return;
+
+                await RunPlayerTurnAsync(playerId, ActionHint.SpringAction, ct);
+            }
         }
 
         private async Task ResolveInlineAdeptsForPlayerAsync(int playerId, CancellationToken ct)
@@ -774,9 +793,7 @@ namespace Kismeta.Core.Players
         RollZodiac,
         AcknowledgeSign,
         ConfirmHarvest,
-        /// <summary>Arrange spread/hand on the harvest tableau before locking.</summary>
-        HarvestCommune,
-        /// <summary>Legacy hint for standalone Commune screen; Spring Hub uses SpringAction.</summary>
+        /// <summary>Mandatory commune on Spring Hub after all players harvest.</summary>
         Commune,
         /// <summary>Spring Hub turn: Commune, Build a House, or End Turn.</summary>
         SpringAction,

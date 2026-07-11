@@ -50,7 +50,7 @@ namespace Kismeta.UI.Controllers
         protected override void Unwire()
         {
             UnwireClick(Btn("wheel-action-btn"), OnWheelAction);
-            UnwireClick(Btn("commune-btn"), OnOpenCommuneSubview);
+            UnwireClick(Btn("review-tableau-btn"), OnOpenCommuneSubview);
             UnwireClick(Btn("proceed-btn"), OnProceedToSummer);
             UnwireClick(Btn("commune-lock-btn"), OnCommuneLock);
             CentralPanelInspectBindings.Unwire();
@@ -67,7 +67,7 @@ namespace Kismeta.UI.Controllers
         protected override void Wire()
         {
             WireClick(Btn("wheel-action-btn"), OnWheelAction);
-            WireClick(Btn("commune-btn"), OnOpenCommuneSubview);
+            WireClick(Btn("review-tableau-btn"), OnOpenCommuneSubview);
             WireClick(Btn("proceed-btn"), OnProceedToSummer);
             WireClick(Btn("commune-lock-btn"), OnCommuneLock);
             NarrativeToolbarBindings.WireIntroRecap(Root, Season.Spring, () => IntroRecapHost);
@@ -133,10 +133,12 @@ namespace Kismeta.UI.Controllers
 
             var player = session.Players[_localPlayerId];
             var hint = bridge.PendingHint;
+            bool isCommune = hint == ActionHint.Commune;
             bool isHub = hint == ActionHint.SpringAction;
             bool isWheel = hint is ActionHint.RollZodiac or ActionHint.AcknowledgeSign;
+            bool showCommune = isCommune || (_communeSubviewOpen && isHub);
 
-            if (!isHub)
+            if (!isHub && !isCommune)
                 _communeSubviewOpen = false;
 
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
@@ -146,24 +148,24 @@ namespace Kismeta.UI.Controllers
             MainSceneBindings.BindStepRail(
                 El("step-rail"), ResolveStepIndex(session, player, hint), 5, "step__dot--active");
 
-            BindPhaseVisibility(isHub, isWheel, _communeSubviewOpen);
+            BindPhaseVisibility(isHub, isWheel, showCommune);
             CentralPanelInspectBindings.SetFabVisible(
                 Root,
-                isHub && !_communeSubviewOpen,
+                isHub && !showCommune,
                 () => OnDismissBoardInspect?.Invoke());
 
-            if (_communeSubviewOpen && isHub)
+            if (showCommune)
                 BindCommune(session, bridge);
             else if (isHub)
                 BindHubBoard(session);
 
-            BindHintLabel(hint, bridge, player, isHub);
-            BindCtas(bridge, loop, hint, isHub);
+            BindHintLabel(hint, bridge, player, isHub, showCommune);
+            BindCtas(bridge, loop, hint, isHub, showCommune);
 
-            var stepId = NarrativeStepResolver.ResolveSpringHub(hint, _communeSubviewOpen);
+            var stepId = NarrativeStepResolver.ResolveSpringHub(hint, showCommune);
             NarrativeSlotBindings.BindById(Root, stepId, mask: NarrativeSlotMask.Beat);
 
-            VisualElement? chargeRoot = _communeSubviewOpen ? El("commune-stage")
+            VisualElement? chargeRoot = showCommune ? El("commune-stage")
                 : isHub ? El("hub-stage")
                 : El("wheel-stage");
             NarrativeSlotBindings.BindById(
@@ -174,22 +176,21 @@ namespace Kismeta.UI.Controllers
             if (isWheel)
                 BindWheelAndHarvest(session, player, hint);
 
-            if (isWheel || isHub || _communeSubviewOpen)
+            if (isWheel || isHub || showCommune)
                 RefreshDock();
 
             HeaderOverlayBindings.ApplyHeaderPad(Root);
         }
 
-        void BindPhaseVisibility(bool isHub, bool isWheel, bool communeSubview)
+        void BindPhaseVisibility(bool isHub, bool isWheel, bool showCommune)
         {
             El("wheel-stage")?.EnableInClassList("spring-hub__stage--hidden", !isWheel);
-            El("hub-stage")?.EnableInClassList("spring-hub__stage--hidden", !isHub || communeSubview);
-            El("commune-stage")?.EnableInClassList("commune-stage--hidden", !communeSubview);
-            El("hub-actionbar")?.EnableInClassList("spring-hub__actionbar--hidden", !isHub || communeSubview);
+            El("hub-stage")?.EnableInClassList("spring-hub__stage--hidden", !isHub || showCommune);
+            El("commune-stage")?.EnableInClassList("commune-stage--hidden", !showCommune);
             El("wheel-cta")?.EnableInClassList("spring-hub__hub-cta--hidden", !isWheel);
-            El("hub-cta")?.EnableInClassList("spring-hub__hub-cta--hidden", !isHub || communeSubview);
-            El("commune-cta")?.EnableInClassList("spring-hub__commune-cta--hidden", !communeSubview);
-            InventoryOverlayBindings.SetVisible(Root, isWheel || isHub || communeSubview);
+            El("hub-cta")?.EnableInClassList("spring-hub__hub-cta--hidden", !isHub || showCommune);
+            El("commune-cta")?.EnableInClassList("spring-hub__commune-cta--hidden", !showCommune);
+            InventoryOverlayBindings.SetVisible(Root, isWheel || isHub || showCommune);
         }
 
         void BindHubBoard(GameSession session)
@@ -255,9 +256,9 @@ namespace Kismeta.UI.Controllers
             var communeStage = El("commune-stage");
             if (communeStage == null) return;
 
-            TapSwapBindings.RebuildZones(communeStage, session, _spreadIds, _handIds,
-                session.Board.CosmicAgeSign, OnCommuneTapMove,
-                "commune-spread-count", "commune-hand-count");
+            int pid = ResolvePendingPlayerId(session, _bridge!);
+            TableauBindings.RebuildCommuneZones(communeStage, session, pid, _spreadIds, _handIds,
+                session.Board.CosmicAgeSign, OnCommuneTapMove, OnInspectCard);
             _communeZonesBuilt = true;
             _communeBuiltForRoot = communeStage;
         }
@@ -300,12 +301,12 @@ namespace Kismeta.UI.Controllers
             return session.Phase.CurrentStepIndex;
         }
 
-        void BindHintLabel(ActionHint hint, CommandBridge bridge, PlayerState player, bool isHub)
+        void BindHintLabel(ActionHint hint, CommandBridge bridge, PlayerState player, bool isHub, bool showCommune)
         {
             var label = Lbl("hint-label");
             if (label == null) return;
 
-            if (_communeSubviewOpen)
+            if (showCommune)
                 label.text = "Arrange spread and hand, then lock";
             else if (isHub && bridge.CanSubmit)
                 label.text = "Review the wheel, then take an action or proceed";
@@ -404,7 +405,7 @@ namespace Kismeta.UI.Controllers
             if (!_bridge.TrySubmit(new RollZodiacCommand(pid)))
             {
                 _rolling = false;
-                BindCtas(_bridge, _loop, hint, isHub: false);
+                BindCtas(_bridge, _loop, hint, isHub: false, showCommune: false);
                 yield break;
             }
 
@@ -416,14 +417,14 @@ namespace Kismeta.UI.Controllers
 
             var player = _session.Players[_localPlayerId];
             BindWheelAndHarvest(_session, player, _bridge.PendingHint);
-            BindHintLabel(_bridge.PendingHint, _bridge, player, isHub: false);
-            BindCtas(_bridge, _loop, _bridge.PendingHint, isHub: false);
+            BindHintLabel(_bridge.PendingHint, _bridge, player, isHub: false, showCommune: false);
+            BindCtas(_bridge, _loop, _bridge.PendingHint, isHub: false, showCommune: false);
             _justFinishedRollSpin = false;
         }
 
-        void BindCtas(CommandBridge bridge, GameLoop loop, ActionHint hint, bool isHub)
+        void BindCtas(CommandBridge bridge, GameLoop loop, ActionHint hint, bool isHub, bool showCommune)
         {
-            if (_communeSubviewOpen)
+            if (showCommune)
             {
                 BindCommuneLockCta(bridge);
                 return;
@@ -476,11 +477,11 @@ namespace Kismeta.UI.Controllers
         {
             bool canAct = bridge.CanSubmit && loop.PendingHumanController != null;
 
-            var communeBtn = Btn("commune-btn");
+            var reviewBtn = Btn("review-tableau-btn");
             var proceedBtn = Btn("proceed-btn");
 
-            communeBtn?.SetEnabled(canAct);
-            communeBtn?.EnableInClassList("btn--disabled", !canAct);
+            reviewBtn?.SetEnabled(canAct);
+            reviewBtn?.EnableInClassList("btn--disabled", !canAct);
             proceedBtn?.SetEnabled(canAct);
             proceedBtn?.EnableInClassList("btn--disabled", !canAct);
         }

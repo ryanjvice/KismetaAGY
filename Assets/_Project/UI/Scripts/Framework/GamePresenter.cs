@@ -810,7 +810,6 @@ namespace Kismeta.UI
             ActionHint.SpringAction => ScreenIds.SpringHub,
             ActionHint.SpringHubResponse => ScreenIds.SpringHub,
             ActionHint.ConfirmHarvest => ScreenIds.SpringHarvest,
-            ActionHint.HarvestCommune => ScreenIds.SpringHarvest,
             ActionHint.DiscardToLimit => ScreenIds.CardLimits,
             ActionHint.TradeResponse => ScreenIds.SummerMain,
             ActionHint.DuelResponse => ScreenIds.SummerMain,
@@ -1511,6 +1510,14 @@ namespace Kismeta.UI
             }
 
             if (_loop != null && _session != null
+                && _loop.PendingHint == ActionHint.Commune
+                && _loop.ActivePlayerId >= 0
+                && _loop.ActivePlayerId != _loop.LocalHumanPlayerId)
+            {
+                return ScreenIds.SpringPassed;
+            }
+
+            if (_loop != null && _session != null
                 && _loop.TurnPlayerId >= 0
                 && _loop.TurnPlayerId != _loop.LocalHumanPlayerId
                 && IsSeasonActionPhase(season))
@@ -1554,7 +1561,7 @@ namespace Kismeta.UI
             if (screenId == ScreenIds.WinterHub && IsWinterHubSubScreen(_router.CurrentScreenId))
                 return;
 
-            if (screenId == ScreenIds.SpringHub && IsSpringHubSubScreen(_router.CurrentScreenId))
+            if (screenId == ScreenIds.SpringHub && ShouldBlockSpringHubFromHarvestSubScreen())
                 return;
 
             if (screenId == ScreenIds.Victory && _router.CurrentScreenId == ScreenIds.Chronicle)
@@ -1670,8 +1677,16 @@ namespace Kismeta.UI
             RefreshActiveScreen();
         }
 
-        private static bool IsSpringHubSubScreen(string? screenId) =>
-            screenId is ScreenIds.SpringHarvest;
+        private bool ShouldBlockSpringHubFromHarvestSubScreen()
+        {
+            if (_router.CurrentScreenId != ScreenIds.SpringHarvest) return false;
+            if (_loop == null || _session == null) return false;
+            if (_loop.PendingHint is ActionHint.Commune or ActionHint.SpringAction)
+                return false;
+            if (_loop.PendingHint == ActionHint.ConfirmHarvest) return true;
+            if (_session.Board.ActiveHarvestDeal != null) return true;
+            return false;
+        }
 
         private void RefreshActiveScreen()
         {

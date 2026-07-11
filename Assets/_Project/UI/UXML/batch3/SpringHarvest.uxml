@@ -89,9 +89,6 @@
 
         <engine:VisualElement name="harvest-tableau" class="harvest-tableau harvest-tableau--hidden">
             <engine:Instance template="TableauStage" />
-            <engine:VisualElement class="harvest-tableau__cta">
-                <engine:Button name="commune-lock-btn" text="Lock The Tableau" class="actionbtn btn btn--primary" />
-            </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>
