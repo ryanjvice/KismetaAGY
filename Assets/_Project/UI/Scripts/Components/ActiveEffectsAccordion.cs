@@ -48,6 +48,8 @@ namespace Kismeta.UI.Components
 
             var badge = new VisualElement();
             badge.AddToClassList("active-effects-section__badge");
+            if (section.Items.Count > 0)
+                badge.AddToClassList("active-effects-section__badge--active");
             var badgeLabel = new Label(section.BadgeText);
             badgeLabel.AddToClassList("active-effects-section__badge-label");
             badge.Add(badgeLabel);

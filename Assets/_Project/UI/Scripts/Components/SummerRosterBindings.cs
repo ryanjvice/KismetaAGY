@@ -14,6 +14,8 @@ namespace Kismeta.UI.Components
     /// <summary>Simplified player roster for the Summer main-scene central panel.</summary>
     public static class SummerRosterBindings
     {
+        const string LayoutSchema = "roster-inline-v1";
+
         public static void Populate(
             VisualElement root,
             GameSession session,
@@ -56,6 +58,7 @@ namespace Kismeta.UI.Components
 
                 block.Add(MakeEyebrow("spread"));
                 var spreadRow = MakeCardZone();
+                spreadRow.AddToClassList("player-block__zone--nowrap");
                 foreach (var cardId in p.Spread)
                 {
                     var inst = session.GetCard(cardId);
@@ -347,6 +350,7 @@ namespace Kismeta.UI.Components
             }
 
             sb.Append(session.Board.CosmicAgeSign);
+            sb.Append('|').Append(LayoutSchema);
             return sb.ToString();
         }
     }

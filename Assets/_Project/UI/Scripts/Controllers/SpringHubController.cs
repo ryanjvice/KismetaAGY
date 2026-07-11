@@ -27,6 +27,8 @@ namespace Kismeta.UI.Controllers
         public System.Action<int>? OnRivalSelected;
         public System.Action? OnOpenBoardInspect;
         public System.Action? OnDismissBoardInspect;
+        public System.Action? OnOpenForgeInspect;
+        public System.Action? OnDismissForgeInspect;
 
         public SeasonIntroRecapHost? IntroRecapHost { get; set; }
 
@@ -46,6 +48,7 @@ namespace Kismeta.UI.Controllers
         int _communePlayerId = -1;
         VisualElement? _communeBuiltForRoot;
         DockZone _dockZone = DockZone.Spread;
+        SummerConsultView _consultView = SummerConsultView.Table;
 
         protected override void Unwire()
         {
@@ -54,7 +57,12 @@ namespace Kismeta.UI.Controllers
             UnwireClick(Btn("proceed-btn"), OnProceedToSummer);
             UnwireClick(Btn("review-effects-btn"), OnReviewEffects);
             UnwireClick(Btn("commune-lock-btn"), OnCommuneLock);
+            UnwireClick(Btn("consult-table-btn"), OnConsultTable);
+            UnwireClick(Btn("consult-zodiac-btn"), OnConsultZodiac);
+            UnwireClick(Btn("consult-crucible-btn"), OnConsultCrucible);
             CentralPanelInspectBindings.Unwire();
+            if (Root != null)
+                SummerCrucibleRowBindings.Unwire(Root);
             _wheelBindKey = int.MinValue;
             _rolling = false;
             _justFinishedRollSpin = false;
@@ -63,6 +71,7 @@ namespace Kismeta.UI.Controllers
             _communeBuiltForRoot = null;
             _communePlayerId = -1;
             _communeSubviewOpen = false;
+            _consultView = SummerConsultView.Table;
         }
 
         protected override void Wire()
@@ -72,6 +81,9 @@ namespace Kismeta.UI.Controllers
             WireClick(Btn("proceed-btn"), OnProceedToSummer);
             WireClick(Btn("review-effects-btn"), OnReviewEffects);
             WireClick(Btn("commune-lock-btn"), OnCommuneLock);
+            WireClick(Btn("consult-table-btn"), OnConsultTable);
+            WireClick(Btn("consult-zodiac-btn"), OnConsultZodiac);
+            WireClick(Btn("consult-crucible-btn"), OnConsultCrucible);
             NarrativeToolbarBindings.WireIntroRecap(Root, Season.Spring, () => IntroRecapHost);
 
             InventoryOverlayBindings.Wire(Root, new InventoryOverlayBindings.Callbacks
@@ -84,8 +96,12 @@ namespace Kismeta.UI.Controllers
                 OnOpenProtectiveWards = () => OnOpenProtectiveWards?.Invoke()
             });
             HeaderOverlayBindings.Wire(Root, id => OnRivalSelected?.Invoke(id));
-            CentralPanelInspectBindings.Wire(Root, () => OnOpenBoardInspect?.Invoke());
+            CentralPanelInspectBindings.Wire(Root, OnInspectFabClicked);
         }
+
+        void OnConsultTable() => SetConsultView(SummerConsultView.Table);
+        void OnConsultZodiac() => SetConsultView(SummerConsultView.Zodiac);
+        void OnConsultCrucible() => SetConsultView(SummerConsultView.Crucible);
 
         static void WireClick(Button? btn, Action handler)
         {
@@ -151,15 +167,16 @@ namespace Kismeta.UI.Controllers
                 El("step-rail"), ResolveStepIndex(session, player, hint), 5, "step__dot--active");
 
             BindPhaseVisibility(isHub, isWheel, showCommune);
-            CentralPanelInspectBindings.SetFabVisible(
-                Root,
-                isHub && !showCommune,
-                () => OnDismissBoardInspect?.Invoke());
 
             if (showCommune)
                 BindCommune(session, bridge);
             else if (isHub)
-                BindHubBoard(session);
+            {
+                ApplyConsultView();
+                RefreshConsultView();
+            }
+            else
+                CentralPanelInspectBindings.SetFabVisible(Root, false, DismissActiveInspect);
 
             BindHintLabel(hint, bridge, player, isHub, showCommune);
             BindCtas(bridge, loop, hint, isHub, showCommune);
@@ -168,7 +185,7 @@ namespace Kismeta.UI.Controllers
             NarrativeSlotBindings.BindById(Root, stepId, mask: NarrativeSlotMask.Beat);
 
             VisualElement? chargeRoot = showCommune ? El("commune-stage")
-                : isHub ? El("hub-stage")
+                : isHub ? El("spring-consult-zodiac")
                 : El("wheel-stage");
             NarrativeSlotBindings.BindById(
                 chargeRoot,
@@ -186,18 +203,104 @@ namespace Kismeta.UI.Controllers
 
         void BindPhaseVisibility(bool isHub, bool isWheel, bool showCommune)
         {
+            bool showConsult = isHub && !showCommune;
             El("wheel-stage")?.EnableInClassList("spring-hub__stage--hidden", !isWheel);
-            El("hub-stage")?.EnableInClassList("spring-hub__stage--hidden", !isHub || showCommune);
+            El("spring-consult-frame")?.EnableInClassList("spring-hub__stage--hidden", !showConsult);
             El("commune-stage")?.EnableInClassList("commune-stage--hidden", !showCommune);
+            El("spring-consult-crucible-section")?.EnableInClassList(
+                "spring-consult-crucible-section--hidden",
+                !showConsult || _consultView != SummerConsultView.Crucible);
             El("wheel-cta")?.EnableInClassList("spring-hub__hub-cta--hidden", !isWheel);
             El("hub-cta")?.EnableInClassList("spring-hub__hub-cta--hidden", !isHub || showCommune);
             El("commune-cta")?.EnableInClassList("spring-hub__commune-cta--hidden", !showCommune);
             InventoryOverlayBindings.SetVisible(Root, isWheel || isHub || showCommune);
         }
 
-        void BindHubBoard(GameSession session)
+        void SetConsultView(SummerConsultView view)
         {
-            SpringBoardBindings.BindBoard(El("spring-board"), session);
+            if (_consultView == view) return;
+
+            DismissInspectForView(_consultView);
+            _consultView = view;
+            ApplyConsultView();
+            RefreshConsultView();
+        }
+
+        void ApplyConsultView()
+        {
+            SpringConsultBindings.ApplyView(Root, _consultView, DismissActiveInspect);
+            SpringConsultBindings.BindButtonStates(Root, _consultView);
+        }
+
+        void DismissActiveInspect() => DismissInspectForView(_consultView);
+
+        void DismissInspectForView(SummerConsultView view)
+        {
+            switch (view)
+            {
+                case SummerConsultView.Zodiac:
+                    OnDismissBoardInspect?.Invoke();
+                    break;
+                case SummerConsultView.Crucible:
+                    OnDismissForgeInspect?.Invoke();
+                    break;
+            }
+        }
+
+        void OnInspectFabClicked()
+        {
+            switch (_consultView)
+            {
+                case SummerConsultView.Zodiac:
+                    OnOpenBoardInspect?.Invoke();
+                    break;
+                case SummerConsultView.Crucible:
+                    OnOpenForgeInspect?.Invoke();
+                    break;
+            }
+        }
+
+        void RefreshConsultView()
+        {
+            if (Root == null || _session == null) return;
+
+            switch (_consultView)
+            {
+                case SummerConsultView.Table:
+                    RefreshRoster();
+                    break;
+                case SummerConsultView.Zodiac:
+                    SpringBoardBindings.BindBoard(El("spring-board"), _session);
+                    break;
+                case SummerConsultView.Crucible:
+                    RefreshCrucibleConsult();
+                    break;
+            }
+        }
+
+        void RefreshCrucibleConsult()
+        {
+            if (Root == null || _session == null) return;
+
+            var view = GamePublicView.From(_session);
+            var local = MainSceneBindings.LocalPlayer(view, _localPlayerId);
+            var player = _session.Players[_localPlayerId];
+
+            CrucibleForgeBindings.ApplyForge(
+                El("board-stage"),
+                null,
+                player,
+                AutumnActionBindings.StoneStatusLabel(player));
+            CrucibleForgeBindings.ApplyAllPlayerStones(
+                El("board-stage"), El("stasis-row"), _session, _localPlayerId);
+            CrucibleForgeBindings.ApplyCauldronReagents(El("cauldron-mini"), player);
+            SummerCrucibleRowBindings.Bind(Root, local, _session, onCardTap: null);
+        }
+
+        void RefreshRoster()
+        {
+            if (Root == null || _session == null) return;
+            SummerRosterBindings.Populate(Root, _session, _localPlayerId, OnInspectCard);
         }
 
         void BindCommune(GameSession session, CommandBridge bridge)
@@ -483,11 +586,20 @@ namespace Kismeta.UI.Controllers
 
             var reviewBtn = Btn("review-tableau-btn");
             var proceedBtn = Btn("proceed-btn");
+            var tableBtn = Btn("consult-table-btn");
+            var zodiacBtn = Btn("consult-zodiac-btn");
+            var crucibleBtn = Btn("consult-crucible-btn");
 
             reviewBtn?.SetEnabled(canAct);
             reviewBtn?.EnableInClassList("btn--disabled", !canAct);
             proceedBtn?.SetEnabled(canAct);
             proceedBtn?.EnableInClassList("btn--disabled", !canAct);
+            tableBtn?.SetEnabled(canAct);
+            tableBtn?.EnableInClassList("btn--disabled", !canAct);
+            zodiacBtn?.SetEnabled(canAct);
+            zodiacBtn?.EnableInClassList("btn--disabled", !canAct);
+            crucibleBtn?.SetEnabled(canAct);
+            crucibleBtn?.EnableInClassList("btn--disabled", !canAct);
         }
 
         void BindCommuneCtas(CommandBridge bridge)

@@ -1409,6 +1409,8 @@ namespace Kismeta.UI
                     spring.OnInspectCard = id => _endOverlays.ShowInspect(id);
                     spring.OnOpenBoardInspect = () => _springOverlays?.ShowBoardInspect();
                     spring.OnDismissBoardInspect = () => _springOverlays?.DismissBoardInspect();
+                    spring.OnOpenForgeInspect = () => _autumnOverlays?.ShowForgeInspect();
+                    spring.OnDismissForgeInspect = () => _autumnOverlays?.DismissForgeInspect();
                 }
 
                 var winter = _router.GetController<WinterHubController>(ScreenIds.WinterHub);

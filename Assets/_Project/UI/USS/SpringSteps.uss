@@ -309,6 +309,50 @@
 .spring-hub__hub-cta--hidden,
 .spring-hub__commune-cta--hidden { display: none; }
 
+.spring-hub__pass-block {
+    flex-shrink: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+}
+
+.spring-consult-stage--hidden,
+.spring-consult-crucible-section--hidden {
+    display: none;
+}
+
+.screen--spring .spring-hub__pass-block .btn--primary.consult-btn--active {
+    background-color: rgba(90, 82, 58, 0.85);
+    color: rgb(28, 22, 12);
+}
+
+.spring-consult-frame {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    align-self: stretch;
+    margin-left: var(--space-md);
+    margin-right: var(--space-md);
+    position: relative;
+}
+
+.spring-consult-frame > .spring-consult-stage {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    flex-grow: 0;
+    flex-shrink: 0;
+    min-height: 0;
+}
+
+.screen--spring .spring-consult-crucible-section {
+    align-self: stretch;
+    margin-left: var(--space-md);
+    margin-right: var(--space-md);
+}
+
 .screen--spring .central-panel {
     flex-grow: 1;
     flex-shrink: 1;
@@ -319,7 +363,8 @@
     padding-bottom: 0;
 }
 
-.screen--spring .screen__body--inventory-pad > .commune-cta {
+.screen--spring .screen__body--inventory-pad > .commune-cta,
+.screen--spring .screen__body--inventory-pad > .hub-cta {
     margin-bottom: var(--inventory-reserved-bottom);
 }
 

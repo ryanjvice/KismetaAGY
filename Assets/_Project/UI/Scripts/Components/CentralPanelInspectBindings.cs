@@ -65,7 +65,8 @@ namespace Kismeta.UI.Components
             if (host.parent != panel)
                 panel.Add(host);
 
-            var frame = screenRoot.Q(className: "summer-consult-frame");
+            var frame = screenRoot.Q(className: "summer-consult-frame")
+                ?? screenRoot.Q(className: "spring-consult-frame");
             var rightInset = frame != null ? InsetPx + 12f : InsetPx;
 
             host.style.position = Position.Absolute;

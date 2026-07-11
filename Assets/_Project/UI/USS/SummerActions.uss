@@ -761,23 +761,27 @@
     margin-bottom: 0;
 }
 
-.screen--summer .card-table__players {
+.screen--summer .card-table__players,
+.summer-consult-panel--table .card-table__players {
     flex-grow: 1;
     flex-shrink: 1;
     min-height: 0;
     padding: 4px 8px 2px;
 }
 
-.screen--summer .card-table__players .unity-scroll-view__content-container {
+.screen--summer .card-table__players .unity-scroll-view__content-container,
+.summer-consult-panel--table .card-table__players .unity-scroll-view__content-container {
     picking-mode: position;
 }
 
-.screen--summer .player-block {
+.screen--summer .player-block,
+.summer-consult-panel--table .player-block {
     padding: 6px 10px;
     margin-bottom: 6px;
 }
 
-.screen--summer .player-block__header {
+.screen--summer .player-block__header,
+.summer-consult-panel--table .player-block__header {
     margin-bottom: 2px;
 }
 
@@ -797,11 +801,15 @@
     margin-left: 6px;
 }
 
-.screen--summer .player-block__eyebrow {
+.screen--summer .player-block__eyebrow,
+.summer-consult-panel--table .player-block__eyebrow {
     margin-bottom: 2px;
 }
 
-.screen--summer .player-block__zone {
+.screen--summer .player-block__zone,
+.summer-consult-panel--table .player-block__zone {
+    flex-direction: row;
+    flex-wrap: wrap;
     margin-bottom: 4px;
 }
 
@@ -819,7 +827,9 @@
 }
 
 .screen--summer .player-block__zone-col--arcanum,
-.screen--summer .player-block__zone-col--crucible {
+.screen--summer .player-block__zone-col--crucible,
+.summer-consult-panel--table .player-block__zone-col--arcanum,
+.summer-consult-panel--table .player-block__zone-col--crucible {
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: 0;
@@ -829,12 +839,14 @@
     margin-right: 0;
 }
 
-.screen--summer .player-block__zone--nowrap {
+.screen--summer .player-block__zone--nowrap,
+.summer-consult-panel--table .player-block__zone--nowrap {
     flex-wrap: nowrap;
     justify-content: flex-start;
 }
 
-.screen--summer .player-block__inline-zones .player-block__zone > .card-chip {
+.screen--summer .player-block__zone > .card-chip,
+.summer-consult-panel--table .player-block__zone > .card-chip {
     width: 40px;
     min-width: 40px;
     max-width: 40px;
@@ -842,7 +854,17 @@
     margin-right: 2px;
 }
 
-.screen--summer .player-block__zone--nowrap > .card-chip:last-child {
+.screen--summer .player-block__inline-zones .player-block__zone > .card-chip,
+.summer-consult-panel--table .player-block__inline-zones .player-block__zone > .card-chip {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    flex-shrink: 0;
+    margin-right: 2px;
+}
+
+.screen--summer .player-block__zone--nowrap > .card-chip:last-child,
+.summer-consult-panel--table .player-block__zone--nowrap > .card-chip:last-child {
     margin-right: 0;
 }
 
