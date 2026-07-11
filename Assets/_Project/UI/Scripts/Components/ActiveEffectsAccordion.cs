@@ -6,28 +6,19 @@ namespace Kismeta.UI.Components
 {
     public static class ActiveEffectsAccordion
     {
-        static string? s_expandedSectionId;
+        static readonly HashSet<string> s_expandedSectionIds = new();
 
         public static void Populate(VisualElement? host, IReadOnlyList<ActiveEffectSection> sections)
         {
             if (host == null) return;
             host.Clear();
 
-            if (s_expandedSectionId == null && sections.Count > 0)
-                s_expandedSectionId = sections[0].SectionId;
-
-            bool anyExpanded = false;
+            s_expandedSectionIds.Clear();
             foreach (var section in sections)
             {
-                if (section.SectionId == s_expandedSectionId)
-                {
-                    anyExpanded = true;
-                    break;
-                }
+                if (section.Items.Count > 0)
+                    s_expandedSectionIds.Add(section.SectionId);
             }
-
-            if (!anyExpanded && sections.Count > 0)
-                s_expandedSectionId = sections[0].SectionId;
 
             foreach (var section in sections)
                 host.Add(BuildSection(section));
@@ -39,7 +30,7 @@ namespace Kismeta.UI.Components
             container.AddToClassList("active-effects-section");
             container.userData = section.SectionId;
 
-            bool expanded = section.SectionId == s_expandedSectionId;
+            bool expanded = s_expandedSectionIds.Contains(section.SectionId);
             container.EnableInClassList("active-effects-section--expanded", expanded);
 
             var header = new VisualElement();
@@ -164,29 +155,18 @@ namespace Kismeta.UI.Components
 
         static void ToggleSection(VisualElement section, string sectionId)
         {
-            if (s_expandedSectionId == sectionId)
+            var chevron = section.Q<Label>(className: "active-effects-section__chevron");
+            if (s_expandedSectionIds.Contains(sectionId))
             {
-                s_expandedSectionId = null;
+                s_expandedSectionIds.Remove(sectionId);
                 section.EnableInClassList("active-effects-section--expanded", false);
-                section.Q<Label>(className: "active-effects-section__chevron")!.text = "\u2304";
+                if (chevron != null) chevron.text = "\u2304";
                 return;
             }
 
-            var parent = section.parent;
-            if (parent != null)
-            {
-                foreach (var child in parent.Children())
-                {
-                    if (!child.ClassListContains("active-effects-section")) continue;
-                    child.EnableInClassList("active-effects-section--expanded", false);
-                    var chev = child.Q<Label>(className: "active-effects-section__chevron");
-                    if (chev != null) chev.text = "\u2304";
-                }
-            }
-
-            s_expandedSectionId = sectionId;
+            s_expandedSectionIds.Add(sectionId);
             section.EnableInClassList("active-effects-section--expanded", true);
-            section.Q<Label>(className: "active-effects-section__chevron")!.text = "\u2303";
+            if (chevron != null) chevron.text = "\u2303";
         }
 
         static string SectionIcon(string sectionId) => sectionId switch
