@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements">
+
+    <engine:VisualElement name="tableau-stage" class="tableau-stage">
+        <engine:Label name="tableau-heading" text="Commune with your Tableau" class="commune-stage__heading h3" />
+        <engine:Label name="tableau-charge" text="" class="narrative-charge" />
+
+        <engine:VisualElement class="commune-stage__zone-wrap">
+            <engine:VisualElement class="swap-zone swap-zone--spread">
+                <engine:VisualElement class="swap-zone__header">
+                    <engine:VisualElement style="flex-direction: row; align-items: center;">
+                        <engine:VisualElement style="width: 12px; height: 12px; border-radius: 6px; background-color: rgb(244, 211, 94); margin-right: 6px;" />
+                        <engine:Label text="Spread" style="font-size: 12px; color: rgb(244, 211, 94);" />
+                        <engine:Label text="visible · duel-exposed" class="zone-hint" style="color: rgb(154,122,122);" />
+                    </engine:VisualElement>
+                    <engine:Label name="commune-spread-count" text="0" class="text-count" />
+                </engine:VisualElement>
+                <engine:VisualElement name="spread-cards" class="swap-zone__cards" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="commune-stage__swap-indicator" picking-mode="Ignore">
+            <engine:VisualElement class="commune-stage__swap-badge">
+                <engine:Label text="&#xedb6;" class="ti-icon commune-stage__swap-icon" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="commune-stage__zone-wrap">
+            <engine:VisualElement class="swap-zone swap-zone--hand">
+                <engine:VisualElement class="swap-zone__header">
+                    <engine:VisualElement style="flex-direction: row; align-items: center;">
+                        <engine:VisualElement style="width: 12px; height: 12px; border-radius: 6px; background-color: rgb(127, 196, 168); margin-right: 6px;" />
+                        <engine:Label text="Hand" style="font-size: 12px; color: rgb(127, 196, 168);" />
+                        <engine:Label text="hidden · safe" class="zone-hint" style="color: rgb(122,138,122);" />
+                    </engine:VisualElement>
+                    <engine:Label name="commune-hand-count" text="0" class="text-count" />
+                </engine:VisualElement>
+                <engine:VisualElement name="hand-cards" class="swap-zone__cards" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="commune-stage__zone-wrap">
+            <engine:VisualElement class="swap-zone swap-zone--arcanum">
+                <engine:VisualElement class="swap-zone__header">
+                    <engine:VisualElement style="flex-direction: row; align-items: center;">
+                        <engine:VisualElement style="width: 12px; height: 12px; border-radius: 6px; background-color: rgb(205, 176, 224); margin-right: 6px;" />
+                        <engine:Label text="Arcanum" style="font-size: 12px; color: rgb(205, 176, 224);" />
+                        <engine:Label text="majors · face-up" class="zone-hint" style="color: rgb(154,138,170);" />
+                    </engine:VisualElement>
+                    <engine:Label name="commune-arcanum-count" text="0" class="text-count" />
+                </engine:VisualElement>
+                <engine:VisualElement name="arcanum-cards" class="swap-zone__cards" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="commune-stage__readout-wrap">
+            <engine:VisualElement class="readout">
+                <engine:VisualElement class="readout__metric">
+                    <engine:Label name="spread-align" text="+0" class="readout__value" style="color: rgb(244, 211, 94);" />
+                    <engine:Label text="spread alignment" class="readout__label" />
+                </engine:VisualElement>
+                <engine:VisualElement class="readout__metric">
+                    <engine:Label name="hand-safe" text="0" class="readout__value" style="color: rgb(127, 196, 168);" />
+                    <engine:Label text="safe in hand" class="readout__label" />
+                </engine:VisualElement>
+                <engine:VisualElement class="readout__metric">
+                    <engine:Label name="verdict" text="balanced" class="readout__value" style="color: rgb(243, 233, 210); font-size: 12px;" />
+                    <engine:Label text="verdict" class="readout__label" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

@@ -110,40 +110,86 @@ namespace Kismeta.Core.Rules
 
         public void ExecuteHarvest(GameSession session, int playerId)
         {
+            var result = BeginHarvest(session, playerId);
+            if (!result.IsOk) return;
+
+            while (DealNextHarvestCard(session, playerId)) { }
+        }
+
+        public CommandResult BeginHarvest(GameSession session, int playerId)
+        {
+            if (session.Board.ActiveHarvestDeal != null)
+                return CommandResult.Invalid("A harvest deal is already in progress.");
+
             var player = session.Players[playerId];
             int target = CalculateHarvestCount(session, playerId);
             bool usePriestess = AdeptEffectService.CanUseOncePerAge(session, player, AdeptEffectService.PriestessArcana);
             int totalDraws = target + (usePriestess ? 2 : 0);
-            int adeptsBefore = session.Board.PendingAdeptDecisions.Count;
 
-            for (int i = 0; i < totalDraws; i++)
+            session.Board.ActiveHarvestDeal = new ActiveHarvestDeal
             {
-                if (session.Board.CommonDeck.Count == 0)
-                    ReshuffleDiscard(session);
+                PlayerId = playerId,
+                TotalDraws = totalDraws,
+                Remaining = totalDraws,
+                CardsDealt = 0,
+                AdeptsBefore = session.Board.PendingAdeptDecisions.Count,
+                PriestessActive = usePriestess
+            };
 
+            return CommandResult.Ok();
+        }
+
+        public bool DealNextHarvestCard(GameSession session, int playerId)
+        {
+            var deal = session.Board.ActiveHarvestDeal;
+            if (deal == null || deal.PlayerId != playerId || deal.Remaining <= 0)
+                return false;
+
+            if (session.Board.CommonDeck.Count == 0)
+                ReshuffleDiscard(session);
+
+            if (session.Board.CommonDeck.Count == 0)
+            {
+                FatesIntervene(session);
                 if (session.Board.CommonDeck.Count == 0)
                 {
-                    // Fates Intervene: all players discard their Hands into the Common Deck and reshuffle
-                    FatesIntervene(session);
-                    if (session.Board.CommonDeck.Count == 0)
-                        break; // truly exhausted — stop harvest
+                    FinishHarvestDeal(session, deal);
+                    return false;
                 }
-
-                var id = session.Board.CommonDeck.Pop();
-                RouteDrawnCard(session, playerId, id);
             }
 
-            if (usePriestess)
-                session.Board.PendingPriestessReturns.Add(playerId);
+            var id = session.Board.CommonDeck.Pop();
+            deal.CardsDealt++;
+            deal.Remaining--;
 
-            // Drawn count = cards dealt minus Adepts held in limbo (Fate + Minor count for the event)
-            int adeptsQueued = session.Board.PendingAdeptDecisions.Count - adeptsBefore;
-            session.EmitEvent(new CardsDrawnEvent(playerId, totalDraws - adeptsQueued));
+            RouteDrawnCard(session, playerId, id, null, deal.CardsDealt, deal.Remaining);
+
+            if (deal.Remaining <= 0)
+            {
+                FinishHarvestDeal(session, deal);
+                return false;
+            }
+
+            return true;
+        }
+
+        void FinishHarvestDeal(GameSession session, ActiveHarvestDeal deal)
+        {
+            if (deal.PriestessActive)
+                session.Board.PendingPriestessReturns.Add(deal.PlayerId);
+
+            int adeptsQueued = session.Board.PendingAdeptDecisions.Count - deal.AdeptsBefore;
+            session.EmitEvent(new CardsDrawnEvent(deal.PlayerId, deal.TotalDraws - adeptsQueued));
+            session.Board.ActiveHarvestDeal = null;
         }
 
         /// <inheritdoc/>
         public bool RouteDrawnCard(GameSession session, int playerId, string cardId,
             ICollection<string>? minorPool = null)
+            => RouteDrawnCard(session, playerId, cardId, minorPool, dealIndex: 0, dealRemaining: 0);
+
+        bool RouteDrawnCard(GameSession session, int playerId, string cardId,
+            ICollection<string>? minorPool, int dealIndex, int dealRemaining)
         {
             var player = session.Players[playerId];
             var inst   = session.GetCard(cardId);
@@ -156,12 +202,13 @@ namespace Kismeta.Core.Rules
                 if (IsMajorAlreadyCommitted(session, cardId))
                 {
                     DiscardDuplicateMajor(session, cardId, inst);
+                    EmitHarvestRouted(session, playerId, cardId, HarvestRouteTarget.DiscardedDuplicate, dealIndex, dealRemaining);
                     return false;
                 }
 
-                // Fate cards go directly to Arcanum, face-up; never enter Hand or Spread
                 inst.MoveTo(CardZone.Arcanum, playerId);
                 player.Arcanum.Add(cardId);
+                EmitHarvestRouted(session, playerId, cardId, HarvestRouteTarget.Arcanum, dealIndex, dealRemaining);
 
                 if (_fateResolver != null)
                 {
@@ -181,20 +228,28 @@ namespace Kismeta.Core.Rules
                 if (IsMajorAlreadyCommitted(session, cardId))
                 {
                     DiscardDuplicateMajor(session, cardId, inst);
+                    EmitHarvestRouted(session, playerId, cardId, HarvestRouteTarget.DiscardedDuplicate, dealIndex, dealRemaining);
                     return false;
                 }
 
-                // Adept sits in limbo until the player buys or declines; never enters Hand or Spread
                 inst.MoveTo(CardZone.Deck, -1);
                 TryQueueAdeptDecision(session, playerId, cardId);
+                EmitHarvestRouted(session, playerId, cardId, HarvestRouteTarget.AdeptLimbo, dealIndex, dealRemaining);
                 return false;
             }
 
-            // Minor Arcana → Hand
             inst.MoveTo(CardZone.Hand, playerId);
             player.Hand.Add(cardId);
             minorPool?.Add(cardId);
+            EmitHarvestRouted(session, playerId, cardId, HarvestRouteTarget.Hand, dealIndex, dealRemaining);
             return true;
+        }
+
+        static void EmitHarvestRouted(GameSession session, int playerId, string cardId,
+            HarvestRouteTarget target, int dealIndex, int dealRemaining)
+        {
+            if (dealIndex <= 0) return;
+            session.EmitEvent(new HarvestCardRoutedEvent(playerId, cardId, target, dealIndex, dealRemaining));
         }
 
         // ─── Step 4 extension: Adept buy / decline ─────────────────────────────────

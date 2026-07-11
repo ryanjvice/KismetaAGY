@@ -65,6 +65,8 @@ namespace Kismeta.UI
         private bool _exchangeRetryPending;
         private int _pendingHumanExchangeAcks;
         private bool _exchangeConfirmRequiresAck;
+        private TaskCompletionSource<bool>? _harvestDealStartTcs;
+        private TaskCompletionSource<bool>? _harvestCardUiTcs;
         private readonly Queue<Action> _mainThreadActions = new();
         private readonly object _mainThreadActionsLock = new();
 
@@ -173,6 +175,9 @@ namespace Kismeta.UI
             WireWagerOverlays();
 
             loop.WaitForPendingExchangesAsync = WaitForPendingExchangesAsync;
+            loop.WaitForHarvestCardUiAsync = WaitForHarvestCardUiAsync;
+            loop.WaitForHarvestDealStartUiAsync = WaitForHarvestDealStartUiAsync;
+            WireHarvestTableau();
         }
 
         public void Unbind()
@@ -183,6 +188,8 @@ namespace Kismeta.UI
             {
                 _loop.OnLog -= OnLoopLog;
                 _loop.WaitForPendingExchangesAsync = null;
+                _loop.WaitForHarvestCardUiAsync = null;
+                _loop.WaitForHarvestDealStartUiAsync = null;
             }
             _bridge.OnSideEffectApplied = null;
             _session = null;
@@ -342,7 +349,24 @@ namespace Kismeta.UI
                 if (localId < 0 && _loop?.PendingHumanController != null)
                     localId = _bridge.PendingController?.Slot.Index ?? -1;
                 if (fate.PlayerId == localId)
+                {
                     _endOverlays.ShowFate(fate.FateCardId, fate.ArcanaNum);
+                    var harvest = _router.GetController<SpringHarvestController>(ScreenIds.SpringHarvest);
+                    harvest?.OnFateResolvedDuringDeal(fate);
+                }
+            }
+
+            if (evt is HarvestCardRoutedEvent routed)
+            {
+                var harvest = _router.GetController<SpringHarvestController>(ScreenIds.SpringHarvest);
+                harvest?.OnHarvestCardRouted(routed);
+                ScheduleHarvestCardAnimationComplete();
+            }
+
+            if (evt is HarvestHandsClearedEvent handsCleared)
+            {
+                var harvest = _router.GetController<SpringHarvestController>(ScreenIds.SpringHarvest);
+                harvest?.OnHarvestHandsCleared(handsCleared);
             }
 
             if (evt is PlayerExchangeEvent exchange)
@@ -375,6 +399,8 @@ namespace Kismeta.UI
             FatefulWagerResolvedEvent => true,
             HarvestCatastropheEvent => true,
             CardsDrawnEvent => true,
+            HarvestCardRoutedEvent => true,
+            HarvestHandsClearedEvent => true,
             AdeptPurchasedEvent => true,
             AdeptDeclinedEvent => true,
             ReagentCraftedEvent => true,
@@ -784,6 +810,7 @@ namespace Kismeta.UI
             ActionHint.SpringAction => ScreenIds.SpringHub,
             ActionHint.SpringHubResponse => ScreenIds.SpringHub,
             ActionHint.ConfirmHarvest => ScreenIds.SpringHarvest,
+            ActionHint.HarvestCommune => ScreenIds.SpringHarvest,
             ActionHint.DiscardToLimit => ScreenIds.CardLimits,
             ActionHint.TradeResponse => ScreenIds.SummerMain,
             ActionHint.DuelResponse => ScreenIds.SummerMain,
@@ -1287,6 +1314,57 @@ namespace Kismeta.UI
             }
 
             tcs.TrySetResult(true);
+        }
+
+        void WireHarvestTableau()
+        {
+            var harvest = _router.GetController<SpringHarvestController>(ScreenIds.SpringHarvest);
+            if (harvest == null) return;
+            harvest.OnInspectCard = id => _endOverlays?.ShowInspect(id);
+            harvest.NotifyCardAnimated = SignalHarvestCardUiComplete;
+        }
+
+        public Task WaitForHarvestDealStartUiAsync(CancellationToken ct)
+        {
+            _harvestDealStartTcs = new TaskCompletionSource<bool>();
+            ct.Register(() => _harvestDealStartTcs?.TrySetCanceled());
+            RunOnMainThread(() =>
+            {
+                var harvest = _router.GetController<SpringHarvestController>(ScreenIds.SpringHarvest);
+                harvest?.BeginDealingUi();
+                _harvestDealStartTcs?.TrySetResult(true);
+            });
+            return _harvestDealStartTcs!.Task;
+        }
+
+        public Task WaitForHarvestCardUiAsync(CancellationToken ct)
+        {
+            _harvestCardUiTcs = new TaskCompletionSource<bool>();
+            ct.Register(() => _harvestCardUiTcs?.TrySetCanceled());
+            RunOnMainThread(() => StartCoroutine(HarvestCardUiFallbackRoutine()));
+            return _harvestCardUiTcs.Task;
+        }
+
+        IEnumerator HarvestCardUiFallbackRoutine()
+        {
+            yield return new WaitForSeconds(0.45f);
+            SignalHarvestCardUiComplete();
+        }
+
+        void ScheduleHarvestCardAnimationComplete()
+        {
+            RunOnMainThread(() => StartCoroutine(HarvestCardAnimationRoutine()));
+        }
+
+        IEnumerator HarvestCardAnimationRoutine()
+        {
+            yield return new WaitForSeconds(0.32f);
+            SignalHarvestCardUiComplete();
+        }
+
+        void SignalHarvestCardUiComplete()
+        {
+            _harvestCardUiTcs?.TrySetResult(true);
         }
 
         private bool IsBlockingOverlayOpen(PlayerExchangeEvent? next = null)

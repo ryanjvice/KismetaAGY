@@ -39,6 +39,9 @@ namespace Kismeta.Core.Entities
         /// <summary>Players who must return 2 Priestess harvest cards before Spring continues.</summary>
         public HashSet<int> PendingPriestessReturns { get; } = new();
 
+        /// <summary>Active stepped harvest deal for UI-driven dealing; null when idle.</summary>
+        public ActiveHarvestDeal? ActiveHarvestDeal { get; set; }
+
         // Per-round Cosmic Effect flags set by CosmicEffectService; cleared each Transit
         public CosmicEffectFlags CosmicEffect { get; set; }
 

@@ -24,9 +24,9 @@
                 </engine:VisualElement>
             </engine:VisualElement>
 
-            <engine:VisualElement name="hub-actionbar" class="spring-hub__actionbar spring-hub__actionbar--hidden">
+            <engine:VisualElement name="hub-actionbar" class="spring-hub__actionbar spring-hub__actionbar--hidden" style="display: none;">
                 <engine:VisualElement class="actionbar__row actionbar__row--primary">
-                    <engine:Button name="commune-btn" text="Commune With Cards" class="actionbtn btn btn--action btn--action-hue-blue" />
+                    <engine:Button name="commune-btn" text="Commune With Cards" class="actionbtn btn btn--action btn--action-hue-blue" style="display: none;" />
                 </engine:VisualElement>
             </engine:VisualElement>
 

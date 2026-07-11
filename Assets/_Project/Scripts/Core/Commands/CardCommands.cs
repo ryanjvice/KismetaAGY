@@ -19,6 +19,20 @@ namespace Kismeta.Core.Commands
         public HarvestCommand(int playerId, int count) { PlayerId = playerId; Count = count; }
     }
 
+    /// <summary>Begins a stepped harvest deal session for UI-driven per-card dealing.</summary>
+    public sealed class BeginHarvestCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public BeginHarvestCommand(int playerId) => PlayerId = playerId;
+    }
+
+    /// <summary>Deals one card in an active stepped harvest session.</summary>
+    public sealed class HarvestDealStepCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public HarvestDealStepCommand(int playerId) => PlayerId = playerId;
+    }
+
     /// <summary>
     /// Player assigns their harvested cards to Spread or Hand zones. Spring Step 4.
     /// SpreadCardIds and HandCardIds must cover all cards currently in the player's Hand

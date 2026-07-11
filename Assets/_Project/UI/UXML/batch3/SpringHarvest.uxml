@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SpringSteps.uss" />
+    <engine:Template src="../shell/TableauStage.uxml" name="TableauStage" />
 
     <engine:VisualElement name="spring-harvest" class="screen screen--spring">
         <engine:Label text="Spring harvest — itemized tally before cards are dealt." class="sr-only" />
@@ -38,6 +39,7 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
+        <engine:VisualElement name="harvest-tally" class="harvest-tally">
         <engine:VisualElement class="harvest-heading-row">
             <engine:Label text="Harvest Results" class="h2 harvest-compare__heading" />
             <engine:Label name="narrative-beat" text="" class="narrative-beat harvest-heading-row__beat" />
@@ -80,8 +82,16 @@
             <engine:Button name="deal-btn" class="harvest-hero harvest-hero--action">
                 <engine:Label name="harvest-summary" text="BASE 3 + BONUS 0 + BOON 0" class="harvest-hero__breakdown" />
                 <engine:Label name="harvest-total-line" text="3 cards this harvest" class="harvest-hero__total" />
-                <engine:Label name="deal-cta" text="→ Deal 3 &amp; commune" class="harvest-hero__cta" />
+                <engine:Label name="deal-cta" text="→ Deal 3 cards" class="harvest-hero__cta" />
             </engine:Button>
+        </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement name="harvest-tableau" class="harvest-tableau harvest-tableau--hidden">
+            <engine:Instance template="TableauStage" />
+            <engine:VisualElement class="harvest-tableau__cta">
+                <engine:Button name="commune-lock-btn" text="Lock The Tableau" class="actionbtn btn btn--primary" />
+            </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

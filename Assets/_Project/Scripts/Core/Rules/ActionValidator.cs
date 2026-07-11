@@ -19,6 +19,8 @@ namespace Kismeta.Core.Rules
                 RollCosmicAgeCommand cmd    => ValidateAgekeeper(session, cmd.PlayerId),
                 RollZodiacCommand    _      => CommandResult.Ok(),
                 HarvestCommand       _      => CommandResult.Ok(),
+                BeginHarvestCommand  _      => CommandResult.Ok(),
+                HarvestDealStepCommand _  => CommandResult.Ok(),
                 CommuneCommand       _      => CommandResult.Ok(),
                 SetCardLockCommand   _      => CommandResult.Ok(),
                 ActivateCrucibleCommand _   => ValidateSeason(session, Season.Autumn),

@@ -129,6 +129,7 @@ namespace Kismeta.Core.Rules
             SetFateNote(session, fateCardId,
                 $"Already resolved: all hands returned to the deck ({discarded} cards). Now face-up in Arcanum.");
             ExchangeEventEmitter.EmitDeath(session, hands);
+            session.EmitEvent(new HarvestHandsClearedEvent(drawerId));
         }
 
         /// <summary>Sun (19): All players receive 1 of each Reagent.</summary>

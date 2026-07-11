@@ -857,3 +857,39 @@
     -unity-text-align: middle-center;
     white-space: normal;
 }
+
+/* Integrated harvest tableau on SpringHarvest screen */
+.harvest-tableau {
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: stretch;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+.harvest-tableau--hidden { display: none; }
+.harvest-tally { flex-grow: 1; flex-direction: column; }
+.harvest-tableau__cta {
+    flex-shrink: 0;
+    padding-top: 8px;
+    padding-bottom: 12px;
+    align-items: stretch;
+}
+.tableau-stage {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-direction: column;
+    overflow: hidden;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-bottom: 4px;
+    align-items: stretch;
+    width: 100%;
+}
+.swap-zone--arcanum {
+    border-color: rgb(120, 96, 150);
+    background-color: rgba(60, 48, 80, 0.45);
+}
+.card-chip--pending-adept {
+    opacity: 0.72;
+    border-style: dashed;
+}

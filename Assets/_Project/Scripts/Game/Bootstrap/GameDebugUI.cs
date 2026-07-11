@@ -525,6 +525,17 @@ namespace Kismeta.Game.Bootstrap
             {
                 try
                 {
+                    hs.SubmitCommand(new BeginHarvestCommand(pid));
+                }
+                catch (System.Exception ex)
+                {
+                    ShowError(ex.Message);
+                }
+            }
+            if (GUILayout.Button("Batch harvest (AI path)", GUILayout.Height(24f)))
+            {
+                try
+                {
                     hs.SubmitCommand(new HarvestCommand(pid, 0));
                 }
                 catch (System.Exception ex)

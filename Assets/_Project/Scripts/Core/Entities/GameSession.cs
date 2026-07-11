@@ -121,6 +121,14 @@ namespace Kismeta.Core.Entities
                     ? ApplyWithAudit(RunVoid(() => _rules.Harvest.ExecuteHarvest(this, cmd.PlayerId)), command)
                     : CommandResult.NotImplemented(nameof(HarvestCommand)),
 
+                BeginHarvestCommand  cmd => _rules is not null
+                    ? ApplyWithAudit(_rules.Harvest.BeginHarvest(this, cmd.PlayerId), command)
+                    : CommandResult.NotImplemented(nameof(BeginHarvestCommand)),
+
+                HarvestDealStepCommand cmd => _rules is not null
+                    ? ApplyWithAudit(RunVoid(() => _rules.Harvest.DealNextHarvestCard(this, cmd.PlayerId)), command)
+                    : CommandResult.NotImplemented(nameof(HarvestDealStepCommand)),
+
                 CommuneCommand       cmd => _rules is not null
                     ? ApplyWithAudit(_rules.Harvest.HandleCommune(this, cmd.PlayerId, cmd.SpreadCardIds, cmd.HandCardIds), command)
                     : CommandResult.NotImplemented(nameof(CommuneCommand)),

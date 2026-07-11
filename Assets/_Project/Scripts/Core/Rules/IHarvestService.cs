@@ -26,6 +26,14 @@ namespace Kismeta.Core.Rules
         /// </summary>
         void ExecuteHarvest(GameSession session, int playerId);
 
+        /// <summary>Starts a stepped harvest deal session for UI-driven per-card dealing.</summary>
+        CommandResult BeginHarvest(GameSession session, int playerId);
+
+        /// <summary>
+        /// Deals one card in the active stepped harvest. Returns true when more cards remain.
+        /// </summary>
+        bool DealNextHarvestCard(GameSession session, int playerId);
+
         /// <summary>Spring Step 4: Player assigns all current Hand+Spread cards to zones.</summary>
         CommandResult HandleCommune(GameSession session, int playerId,
             IReadOnlyList<string> spreadCardIds, IReadOnlyList<string> handCardIds);

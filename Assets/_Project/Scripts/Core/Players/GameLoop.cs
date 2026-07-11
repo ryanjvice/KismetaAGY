@@ -72,6 +72,16 @@ namespace Kismeta.Core.Players
         /// </summary>
         public Func<CancellationToken, Task>? WaitForPendingExchangesAsync { get; set; }
 
+        /// <summary>
+        /// When set, invoked after each harvest card is dealt so the UI can animate before the next step.
+        /// </summary>
+        public Func<CancellationToken, Task>? WaitForHarvestCardUiAsync { get; set; }
+
+        /// <summary>
+        /// When set, invoked after a human begins dealing so the UI can show the tableau.
+        /// </summary>
+        public Func<CancellationToken, Task>? WaitForHarvestDealStartUiAsync { get; set; }
+
         /// <summary>True when the local human is not the active turn player during a season action phase.</summary>
         public bool IsLocalHumanWaitingForTurn =>
             TurnPlayerId >= 0 && TurnPlayerId != LocalHumanPlayerId;
@@ -142,8 +152,8 @@ namespace Kismeta.Core.Players
             Log("Spring — Step 3: Harvest");
             foreach (var player in _session.Players)
             {
-                var cmd = await RequestAsync(player.PlayerId, ActionHint.ConfirmHarvest, ct);
-                Apply(cmd);
+                await RunPlayerHarvestAsync(player.PlayerId, ct);
+                if (_session.IsOver || ct.IsCancellationRequested) return;
             }
 
             await ResolvePendingPriestessReturnsAsync(ct);
@@ -165,6 +175,161 @@ namespace Kismeta.Core.Players
             Log("Spring — Step 5: Card Lock");
             Apply(new SetCardLockCommand(true));
             AuditInventory("end Spring");
+        }
+
+        // ─── Per-player harvest ───────────────────────────────────────────────────
+
+        private async Task RunPlayerHarvestAsync(int playerId, CancellationToken ct)
+        {
+            var cmd = await RequestAsync(playerId, ActionHint.ConfirmHarvest, ct);
+
+            if (cmd is HarvestCommand batch)
+            {
+                Apply(batch);
+                return;
+            }
+
+            if (cmd is not BeginHarvestCommand begin || begin.PlayerId != playerId)
+            {
+                Apply(cmd);
+                return;
+            }
+
+            Apply(begin);
+
+            if (WaitForHarvestDealStartUiAsync != null)
+                await WaitForHarvestDealStartUiAsync(ct);
+
+            while (!ct.IsCancellationRequested)
+            {
+                var deal = _session.Board.ActiveHarvestDeal;
+                if (deal == null || deal.PlayerId != playerId)
+                    break;
+
+                Apply(new HarvestDealStepCommand(playerId));
+
+                if (WaitForHarvestCardUiAsync != null)
+                    await WaitForHarvestCardUiAsync(ct);
+
+                await ResolveInlineAdeptsForPlayerAsync(playerId, ct);
+                await ResolveInlineFatesForPlayerAsync(playerId, ct);
+
+                if (WaitForPendingExchangesAsync != null)
+                    await WaitForPendingExchangesAsync(ct);
+
+                if (_session.Board.ActiveHarvestDeal == null)
+                    break;
+            }
+
+            if (_session.Board.PendingPriestessReturns.Contains(playerId))
+            {
+                Log($"Spring — Priestess: P{playerId} returns 2 cards to deck");
+                var priestessCmd = await RequestAsync(playerId, ActionHint.PriestessHarvestReturn, ct);
+                Apply(priestessCmd);
+                _session.Board.PendingPriestessReturns.Remove(playerId);
+            }
+
+            var communeCmd = await RequestAsync(playerId, ActionHint.HarvestCommune, ct);
+            Apply(communeCmd);
+        }
+
+        private async Task ResolveInlineAdeptsForPlayerAsync(int playerId, CancellationToken ct)
+        {
+            var pending = _session.Board.PendingAdeptDecisions;
+            if (pending.Count == 0) return;
+
+            var decisions = new List<(int PlayerId, string AdeptCardId)>();
+            foreach (var (pid, adeptCardId) in pending)
+            {
+                if (pid != playerId) continue;
+                if (!ShouldOfferAdeptDecision(playerId, adeptCardId)) continue;
+                decisions.Add((pid, adeptCardId));
+            }
+
+            foreach (var (pid, adeptCardId) in decisions)
+            {
+                if (ct.IsCancellationRequested) break;
+                pending.Remove((pid, adeptCardId));
+                Log($"Spring — Adept decision: P{pid} offered {adeptCardId}");
+                var cmd = await RequestAsync(pid, ActionHint.AdeptDecision, ct, adeptCardId);
+                var result = Apply(cmd);
+                if (!result.IsOk)
+                {
+                    pending.Add((pid, adeptCardId));
+                    Log($"[WARN] Adept decision rejected, re-queued: {result.Message}");
+                }
+            }
+        }
+
+        private async Task ResolveInlineFatesForPlayerAsync(int playerId, CancellationToken ct)
+        {
+            var pending = _session.Board.PendingFateDecisions;
+            if (pending.Count == 0) return;
+
+            var snapshot = new List<(int PlayerId, string FateCardId, int ArcanaNumber)>();
+            foreach (var entry in pending)
+            {
+                if (entry.PlayerId == playerId)
+                    snapshot.Add(entry);
+            }
+
+            foreach (var (pid, fateCardId, arcanaNum) in snapshot)
+            {
+                if (ct.IsCancellationRequested) break;
+                pending.Remove((pid, fateCardId, arcanaNum));
+
+                if (_session.Rules?.FateResolver?.Resolve(_session, pid, fateCardId, arcanaNum) ?? false)
+                    continue;
+
+                switch (arcanaNum)
+                {
+                    case 18:
+                        Log($"Spring — Fate: The Moon — P{pid} draws 4, keeps 2");
+                        _session.Board.FateMoonDrawnCardIds.Clear();
+                        DrawCards(pid, 4, _session.Board.FateMoonDrawnCardIds);
+                        var moonCmd = await RequestAsync(pid, ActionHint.FateMoonDecision, ct, fateCardId);
+                        var moonResult = Apply(moonCmd);
+                        if (moonResult.IsOk)
+                            _session.Board.FateMoonDrawnCardIds.Clear();
+                        else
+                        {
+                            pending.Add((pid, fateCardId, arcanaNum));
+                            Log($"[WARN] Moon decision rejected: {moonResult.Message}");
+                        }
+                        break;
+
+                    case 0:
+                        Log($"Spring — Fate: The Fool — P{pid} draws 2");
+                        DrawCards(pid, 2);
+                        foreach (var opp in _session.Players)
+                        {
+                            if (opp.PlayerId == pid || ct.IsCancellationRequested) continue;
+                            Log($"Spring — Fate: The Fool — P{opp.PlayerId} picks a Reagent");
+                            var reagentCmd = await RequestAsync(opp.PlayerId, ActionHint.FateReagentChoice, ct, fateCardId);
+                            Apply(reagentCmd);
+                        }
+                        break;
+
+                    case 6:
+                        Log($"Spring — Fate: The Lovers — P{pid} picks a target to choose their reward");
+                        var loversTargetCmd = await RequestAsync(pid, ActionHint.FateLoversTargetPick, ct, fateCardId);
+                        int targetId = (pid + 1) % _session.Players.Count;
+                        if (loversTargetCmd is FateLoversTargetCommand lt && lt.ChosenTargetId != pid)
+                            targetId = lt.ChosenTargetId;
+                        Log($"Spring — Fate: The Lovers — P{targetId} now chooses the reward for P{pid}");
+                        var loversRewardCmd = await RequestAsync(targetId, ActionHint.FateLoversChoice, ct, fateCardId);
+                        if (loversRewardCmd is FateLoversChoiceCommand lc)
+                            Apply(new FateLoversChoiceCommand(pid, lc.DrawCards, lc.ChosenReagent, targetId));
+                        break;
+
+                    default:
+                        pending.Add((pid, fateCardId, arcanaNum));
+                        break;
+                }
+
+                if (WaitForPendingExchangesAsync != null)
+                    await WaitForPendingExchangesAsync(ct);
+            }
         }
 
         // ─── Fate card resolution ─────────────────────────────────────────────────
@@ -609,6 +774,8 @@ namespace Kismeta.Core.Players
         RollZodiac,
         AcknowledgeSign,
         ConfirmHarvest,
+        /// <summary>Arrange spread/hand on the harvest tableau before locking.</summary>
+        HarvestCommune,
         /// <summary>Legacy hint for standalone Commune screen; Spring Hub uses SpringAction.</summary>
         Commune,
         /// <summary>Spring Hub turn: Commune, Build a House, or End Turn.</summary>

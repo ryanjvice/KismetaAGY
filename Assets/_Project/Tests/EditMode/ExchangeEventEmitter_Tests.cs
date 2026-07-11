@@ -71,7 +71,7 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
-        public void ResolveDeath_EmitsFateDeathExchange()
+        public void ResolveDeath_EmitsFateDeathExchange_AndClearsHands()
         {
             var db = LoadDb();
             var session = BuildSession(db);
@@ -87,6 +87,8 @@ namespace Kismeta.Core.Tests
             Assert.NotNull(exchange);
             Assert.AreEqual(ExchangeKind.FateDeath, exchange!.Kind);
             Assert.AreEqual(2, exchange.Legs.Count);
+            Assert.AreEqual(0, session.Players[0].Hand.Count);
+            Assert.AreEqual(0, session.Players[1].Hand.Count);
         }
 
         [Test]
