@@ -119,6 +119,12 @@ namespace Kismeta.Core.Rules
         /// identified by <paramref name="formula"/>. Returns (false, reason) otherwise.
         /// </summary>
         public (bool ok, string reason) Validate(string formula, IReadOnlyList<CardDefinition> cards)
+            => Validate(formula, cards, db: null);
+
+        public (bool ok, string reason) Validate(
+            string formula,
+            IReadOnlyList<CardDefinition> cards,
+            ICardDatabase? db)
         {
             if (string.IsNullOrWhiteSpace(formula))
                 return (true, ""); // no formula on this card — nothing to validate
@@ -135,11 +141,10 @@ namespace Kismeta.Core.Rules
 
             // Greedily assign cards to segments, consuming used indices
             var used   = new bool[cards.Count];
-            var reason = "";
 
             foreach (var seg in segments)
             {
-                var segResult = ValidateSegment(seg, cards, used);
+                var segResult = ValidateSegment(seg, cards, used, db);
                 if (!segResult.ok)
                     return (false, segResult.reason);
             }
@@ -150,16 +155,16 @@ namespace Kismeta.Core.Rules
         // ── Segment dispatch ──────────────────────────────────────────────────────
 
         private static (bool ok, string reason) ValidateSegment(
-            FormulaSegment seg, IReadOnlyList<CardDefinition> cards, bool[] used)
+            FormulaSegment seg, IReadOnlyList<CardDefinition> cards, bool[] used, ICardDatabase? db)
         {
             switch (seg.Kind)
             {
                 case SegmentKind.SuitGroup:    return PickSuitGroup(seg.Count, seg.Suit, cards, used);
-                case SegmentKind.PlanetGroup:  return PickPlanetGroup(seg.Count, seg.Planet, cards, used);
+                case SegmentKind.PlanetGroup:  return PickPlanetGroup(seg.Count, seg.Planet, cards, used, db);
                 case SegmentKind.StraightSuit: return PickStraight(seg.Count, seg.Suit, cards, used);
                 case SegmentKind.SuitPair:     return PickSuitPair(seg.Suit, cards, used);
-                case SegmentKind.PlanetPair:   return PickPlanetPair(seg.Planet, cards, used);
-                case SegmentKind.TwoPairs:     return PickTwoPairs(seg.Suit, seg.Suit2, cards, used);
+                case SegmentKind.PlanetPair:   return PickPlanetPair(seg.Planet, cards, used, db);
+                case SegmentKind.TwoPairs:     return PickTwoPairs(seg.Suit, seg.Suit2, cards, used, db);
                 default:                       return (false, $"Unknown segment kind {seg.Kind}");
             }
         }
@@ -179,11 +184,21 @@ namespace Kismeta.Core.Rules
         }
 
         private static (bool, string) PickPlanetGroup(int n, Planet planet,
-            IReadOnlyList<CardDefinition> cards, bool[] used)
+            IReadOnlyList<CardDefinition> cards, bool[] used, ICardDatabase? db)
         {
             int found = 0;
             for (int i = 0; i < cards.Count && found < n; i++)
-                if (!used[i] && cards[i].Planet == planet) { used[i] = true; found++; }
+            {
+                if (used[i])
+                    continue;
+                if (db != null
+                    ? WildcardLinkService.MatchesPlanet(cards[i], planet, db)
+                    : cards[i].Planet == planet)
+                {
+                    used[i] = true;
+                    found++;
+                }
+            }
 
             return found >= n
                 ? (true, "")
@@ -244,15 +259,19 @@ namespace Kismeta.Core.Rules
         }
 
         private static (bool, string) PickPlanetPair(Planet planet,
-            IReadOnlyList<CardDefinition> cards, bool[] used)
+            IReadOnlyList<CardDefinition> cards, bool[] used, ICardDatabase? db)
         {
-            // Find two unused cards with the same Planet AND same Rank
+            bool Matches(CardDefinition def) =>
+                db != null
+                    ? WildcardLinkService.MatchesPlanet(def, planet, db)
+                    : def.Planet == planet;
+
             for (int i = 0; i < cards.Count; i++)
             {
-                if (used[i] || cards[i].Planet != planet) continue;
+                if (used[i] || !Matches(cards[i])) continue;
                 for (int j = i + 1; j < cards.Count; j++)
                 {
-                    if (used[j] || cards[j].Planet != planet) continue;
+                    if (used[j] || !Matches(cards[j])) continue;
                     if (cards[i].Rank == cards[j].Rank)
                     {
                         used[i] = used[j] = true;
@@ -264,7 +283,7 @@ namespace Kismeta.Core.Rules
         }
 
         private static (bool ok, string reason) PickTwoPairs(Suit suit1, Suit suit2,
-            IReadOnlyList<CardDefinition> cards, bool[] used)
+            IReadOnlyList<CardDefinition> cards, bool[] used, ICardDatabase? db)
         {
             var r1 = PickSuitPair(suit1, cards, used);
             if (!r1.Item1) return (false, $"Two-Pairs: first pair ({suit1}) — {r1.Item2}");

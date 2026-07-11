@@ -52,7 +52,7 @@ namespace Kismeta.Core.Tests
                 name: "",
                 effectType: "", effectText: "", effectTextResonant: "",
                 isCurse: false, nullifiesCard: "",
-                wildcardArcanaNumber: -1,
+                wildcardArcanaNumber: -1, wildcardArcanaMajorName: "",
                 crucibleGroup: CrucibleGroup.None,
                 alchemicalFormula: "",
                 alchemicalCost: ReagentCost.Zero);
@@ -70,7 +70,7 @@ namespace Kismeta.Core.Tests
                 ("c", FakeDef("c", Planet.None, Suit.Cups, Rank.Princess)),
                 ("d", FakeDef("d", Planet.None, Suit.Cups, Rank.Ace)));
 
-            Assert.IsTrue(ActivationCardSuggester.CanSpreadSatisfyFormula(spread, formula));
+            Assert.IsTrue(ActivationCardSuggester.CanSpreadSatisfyFormula(spread, formula, _db));
             Assert.GreaterOrEqual(
                 ActivationCardSuggester.BestRankSumFromSpread(spread, Suit.Cups), 25);
         }
@@ -110,7 +110,7 @@ namespace Kismeta.Core.Tests
                 ("c", FakeDef("c", Planet.Jupiter)),
                 ("d", FakeDef("d", Planet.Mars)));
 
-            Assert.IsTrue(ActivationCardSuggester.CanSpreadSatisfyFormula(spread, formula));
+            Assert.IsTrue(ActivationCardSuggester.CanSpreadSatisfyFormula(spread, formula, _db));
         }
 
         [Test]
@@ -129,6 +129,24 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
+        public void SuggestActivationCards_WildcardWhenClosingPlanetFormula()
+        {
+            var formula = MakePlanetFormula(Planet.Sun);
+            var wild = _db.GetById("minor.cups.five.2");
+            Assert.IsNotNull(wild);
+            var spread = Spread(
+                ("a", FakeDef("a", Planet.Sun)),
+                ("b", FakeDef("b", Planet.Sun)),
+                ("c", wild!),
+                ("d", FakeDef("d", Planet.Mars)));
+
+            var suggested = ActivationCardSuggester.SuggestActivationCards(spread, formula, _db);
+            Assert.IsNotNull(suggested);
+            Assert.AreEqual(3, suggested!.Count);
+            Assert.IsTrue(suggested.Contains("c"));
+        }
+
+        [Test]
         public void CanSpreadSatisfy_InsufficientSpread_ReturnsFalse()
         {
             var formula = MakeRankSumFormula(Suit.Wands);
@@ -136,7 +154,7 @@ namespace Kismeta.Core.Tests
                 ("a", FakeDef("a", Planet.None, Suit.Wands, Rank.Two)),
                 ("b", FakeDef("b", Planet.None, Suit.Wands, Rank.Three)));
 
-            Assert.IsFalse(ActivationCardSuggester.CanSpreadSatisfyFormula(spread, formula));
+            Assert.IsFalse(ActivationCardSuggester.CanSpreadSatisfyFormula(spread, formula, _db));
             Assert.IsNull(ActivationCardSuggester.SuggestActivationCards(spread, formula, _db));
         }
 

@@ -38,6 +38,8 @@ namespace Kismeta.Core.Entities
 
         // Minor Arcana Variant 2 — link to Major Arcana by arcana number (-1 = none)
         public int WildcardArcanaNumber { get; }
+        /// <summary>Display label for linked major (e.g. "The Sun"). UI/catalog only.</summary>
+        public string WildcardArcanaMajorName { get; }
 
         // Crucible-specific
         public CrucibleGroup CrucibleGroup { get; }
@@ -65,6 +67,7 @@ namespace Kismeta.Core.Entities
             bool isCurse,
             string nullifiesCard,
             int wildcardArcanaNumber,
+            string wildcardArcanaMajorName,
             CrucibleGroup crucibleGroup,
             string alchemicalFormula,
             ReagentCost alchemicalCost)
@@ -85,6 +88,7 @@ namespace Kismeta.Core.Entities
             IsCurse = isCurse;
             NullifiesCard = nullifiesCard;
             WildcardArcanaNumber = wildcardArcanaNumber;
+            WildcardArcanaMajorName = wildcardArcanaMajorName;
             CrucibleGroup = crucibleGroup;
             AlchemicalFormula = alchemicalFormula;
             AlchemicalCost = alchemicalCost;

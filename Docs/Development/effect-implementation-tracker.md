@@ -1,6 +1,6 @@
 # Effect Implementation Tracker
 
-**Last updated:** 2026-07-10 (Phase 1 combat modifiers)
+**Last updated:** 2026-07-10 (Phase 7 limits & protection)
 
 Single source of truth for **which card/cosmic modifiers are enforced in gameplay** vs **display-only / not started**. Grouped by effect family (not by individual card file). Update status when wiring a new effect slice.
 
@@ -174,7 +174,7 @@ Twelve zodiac signs map to four effect categories. Board-wide age effect plus pe
 | Strength | 8 | **Enforced** | **Enforced** | `ContestModifierService` base +1 duel attack; resonant +2 duel/gambit via `AdeptAttunement` | Active Effects attuned line | Yes | `ContestModifierService_Tests.StrengthResonant_*` |
 | Temperance | 14 | **Enforced** | **Enforced** | `CraftModifierService` salt at 2 any; resonant wild via `MarkTemperanceWildReagentCommand` | Active Effects wild mark | Yes | `RuleServices_Tests.TemperanceResonant_*` |
 | Star | 17 | **Enforced** | **Enforced** | `AdeptEffectService.TryApplyStarPostLossDraw` + `StarNullifyCommand` / `RefreshStarNullifyCommand` + `CardEffectSuppressionService` | Active Effects suppression | Yes | `RuleServices_Tests.StarResonant_*` |
-| World | 21 | **Enforced** | **Deferred** | `CrucibleRules.TryTemper` ward retention | Active Effects | Yes | Resonant crucible wildcard → **Phase 6** |
+| World | 21 | **Enforced** | **Enforced** | `CrucibleRules.TryTemper` ward retention; resonant flip via `ActivateWorldWildcardCommand` + virtual wildcard in `TryFire` | Active Effects flip/refresh hints + GameDebugUI | Yes | `RuleServices_Tests.WorldResonant_*` |
 
 | System | Status | Rule hook(s) | UI | Tests | Notes |
 |--------|--------|--------------|-----|-------|-------|
@@ -198,8 +198,8 @@ One row per **effect family** (not per card). Card data uses `effectType` from [
 | Opposition | 10 V1 | **NotStarted** | `AlignmentService` wild suit | Spread passive badge | No | |
 | Gambit | Princess V1 | **Enforced** | `ContestCardEffectCatalog` + `CombatRules` | Combat badge | Yes | `ContestModifierService_Tests` |
 | Duel | Knight V1 | **Enforced** | `ContestCardEffectCatalog` + `CombatRules` | Combat badge | Yes | `RuleServices_Tests.Duel_KnightOfSwords_FlipsTieToAttackerWin` |
-| Passive | Ace V2 (+2 harvest if cosmic element); Queen V2 (+1 hand/spread limit); King V2 (suit protection) | **Partial** | Ace V2 **Enforced** via `HarvestModifierService`; Queen/King V2 still UIOnly | Buff badges | Yes (Ace V2) | Queen/King V2 → Phase 7 |
-| WildcardLink | V2 ranks (all) | **NotStarted** | `CodexFormulaValidator`, `AlchemicalAlignmentValidator` | Wildcard badge | No | `wildcardArcanaNumber` in card data unused in validators |
+| Passive | Ace V2 (+2 harvest if cosmic element); Queen V2 (+1 hand/spread limit); King V2 (suit protection) | **Enforced** | `PlayerLimitService` + `SpreadLimitEffectCatalog`; `DuelProtectionService` in `CombatRules.ValidateDuelCards` | Buff badges + limit footnotes | Yes | Queen hand/spread split by suit |
+| WildcardLink | V2 ranks (all) | **Enforced** | `WildcardLinkService` → `CodexFormulaValidator`, `AlchemicalAlignmentValidator`, `ActivationCardSuggester` | Wildcard badge + linked-major footnote | Yes | Spread-only; `RankSum` unchanged |
 
 ---
 
@@ -211,7 +211,7 @@ One row per **effect family** (not per card). Card data uses `effectType` from [
 | Besieged Bonus | **Enforced** | `CrucibleRules.ResolveOpposition` (+1 defend, winner increments `BesiegedBonusCount`) | — | No | Cleared on Transit |
 | Magnus misaligned trade 2:1 | **Enforced** | `TradeService` + `PlayerAspectAlignment.IsMagnusTradeRatioValid` | Trade UI | Yes | `RuleServices_Tests` Magnus trade block |
 | Magnus contest +1 dice | **NotStarted** | Duels / Gambits / Opposition | — | No | No hook in `CombatRules` |
-| Hand / Spread limits (5 / 5) | **Enforced** | `WinterRules.SpreadLimit`, `PlayerLimitService.GetHandLimit` (Priestess resonant → 7) | Winter discard + Commune UI | Yes | Queen V2 +1 → Phase 7 |
+| Hand / Spread limits (5 / 5) | **Enforced** | `WinterRules`, `PlayerLimitService.GetHandLimit` / `GetSpreadLimit` (Priestess resonant → 7; Queen V2 +1) | Winter discard + Commune UI | Yes | `RuleServices_Tests` Phase 7 block |
 | Crucible lifecycle (activate / fire / temper / stasis) | **Pipeline** | `CrucibleRules` | Autumn forge UI | Partial | `RuleServices_Tests` crucible block; separate from card wildcards |
 | Agekeeper's Boon (+2 harvest when Agekeeper sign matches cosmic) | **Enforced** | `SpringRules.CalculateHarvestCount` | Harvest breakdown | Partial | |
 | Spread element alignment +1 harvest | **Enforced** | `SpringRules.CalculateHarvestCount` | Harvest breakdown | Partial | |
@@ -235,6 +235,7 @@ Defer resolution until the slice that needs them:
 | Knight attack/defend suit mapping | Card Reference vs `cards.json` | Cups/Pentacles vs Swords/Wands inverted | **Resolved** — implement from `cards.json` |
 | Resonant vs Attuned terminology | Card Reference / UI copy | `AdeptAttunement.IsAttuned` alias + attuned badge | **Resolved** — Phase 4 |
 | `effectTextResonant` not in enforcement | Data loader vs rules | UI copy via `CardDefinition`; rules use catalog | **Resolved** — Phase 4 |
+| Emperor vs King V2 duel protection | Emperor instance IDs vs King suit-wide | Both may block same target; King V2 self remains duelable unless Emperor-marked | **Resolved** — Phase 7; Emperor checked first |
 
 ---
 
@@ -309,7 +310,7 @@ Deferred per scope: Magician ★1 resonant → Phase 5; World ★21 resonant →
 - [x] Consolidate Strength/Chariot/Empress/Temperance resonant (tracker + tests)
 - [x] Active Effects attuned badges + GameDebugUI resonant hooks
 - [x] Magician resonant reversed nullification (`ReversedCurseService`)
-- [ ] World resonant crucible wildcard — **deferred Phase 6**
+- [x] World resonant crucible wildcard + Salt refresh (`ActivateWorldWildcardCommand`, `RefreshWorldWildcardCommand`)
 
 ### Phase 5 — Reversed curse system
 
@@ -321,19 +322,23 @@ Deferred per scope: Magician ★1 resonant → Phase 5; World ★21 resonant →
 - [x] Update `SpreadCardEffectEvaluator` negated state (`reversed · negated`)
 - [x] GameDebugUI cosmic age cycle + active curse count
 
-### Phase 6 — Wildcard substitution
+### Phase 6 — Wildcard substitution ✅ (complete)
 
-- [ ] `WildcardArcanaNumber` in `CodexFormulaValidator`
-- [ ] Wildcard in `AlchemicalAlignmentValidator` / fire validators
-- [ ] World resonant crucible wildcard + salt refresh
+- [x] `WildcardLinkService` + `ICardDatabase.GetByArcanaNumber`
+- [x] `WildcardArcanaNumber` in `CodexFormulaValidator` + `ActivationCardSuggester`
+- [x] Wildcard in `AlchemicalAlignmentValidator` / `CrucibleRules.TryFire` + `FireStoneController` preview
+- [x] World resonant crucible wildcard + salt refresh
+- [x] `SpreadCardEffectEvaluator` linked-major footnote
+- [x] Tests: `WildcardLinkService_Tests`, `AlchemicalAlignmentValidator_Tests`, `RuleServices_Tests` Phase 6 block
 
-### Phase 7 — Limits & protection
+### Phase 7 — Limits & protection ✅ (complete)
 
-- [ ] Queen V2 hand/spread +1 at round end (`WinterRules` dynamic limits)
-- [ ] King V2 suit protection in `CombatRules.ValidateDuelCards`
-- [ ] Cups 4 and related protection cards
-- [ ] Emperor protection overlap
-- [ ] Winter discard UI respects dynamic limits
+- [x] `SpreadLimitEffectCatalog` + `PlayerLimitService` Queen V2 hand/spread bonuses
+- [x] Wire `GetSpreadLimit` through `WinterRules`, `GameLoop`, `SimpleAIController`, `CardLimitsController`, `GameDebugUI`
+- [x] `DuelProtectionService` + King V2 suit protection in `CombatRules.ValidateDuelCards`
+- [x] Duel target filter in `ContestBindings` / `AiDuelPolicy`; Active Effects + `SpreadCardEffectEvaluator` footnotes
+- [x] Cups 4 / Priestess / Queen limit composition regression tests
+- [x] Tests: `SpreadLimitEffectCatalog_Tests`, `DuelProtectionService_Tests`, `RuleServices_Tests` Phase 7 block
 
 ### Phase 8 — Social & forge triggers
 

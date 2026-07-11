@@ -300,6 +300,14 @@ namespace Kismeta.Core.Entities
                     ? ApplyWithAudit(_rules.Adept.TryRefreshStarNullify(this, cmd.PlayerId, cmd.TargetCardId), command)
                     : CommandResult.NotImplemented(nameof(RefreshStarNullifyCommand)),
 
+                ActivateWorldWildcardCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryActivateWorldWildcard(this, cmd.PlayerId), command)
+                    : CommandResult.NotImplemented(nameof(ActivateWorldWildcardCommand)),
+
+                RefreshWorldWildcardCommand cmd => _rules?.Adept is not null
+                    ? ApplyWithAudit(_rules.Adept.TryRefreshWorldWildcard(this, cmd.PlayerId), command)
+                    : CommandResult.NotImplemented(nameof(RefreshWorldWildcardCommand)),
+
                 CompletePriestessHarvestCommand cmd => _rules?.Adept is not null
                     ? ApplyWithAudit(_rules.Adept.TryCompletePriestessHarvest(this, cmd.PlayerId, cmd.ReturnCardIds), command)
                     : CommandResult.NotImplemented(nameof(CompletePriestessHarvestCommand)),

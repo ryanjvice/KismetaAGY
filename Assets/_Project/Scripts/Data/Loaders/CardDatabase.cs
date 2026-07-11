@@ -20,6 +20,7 @@ namespace Kismeta.Data.Loaders
         public const string ResourcePath   = "cards";
 
         private readonly Dictionary<string, CardDefinition> _byId = new();
+        private readonly Dictionary<int, CardDefinition> _byArcana = new();
 
         public IReadOnlyDictionary<string, CardDefinition> All => _byId;
         public int Count => _byId.Count;
@@ -50,7 +51,11 @@ namespace Kismeta.Data.Loaders
                 if (db._byId.ContainsKey(def.Id))
                     Debug.LogWarning($"[CardDatabase] Duplicate card id: {def.Id}");
                 else
+                {
                     db._byId[def.Id] = def;
+                    if (def.ArcanaNumber >= 0 && !db._byArcana.ContainsKey(def.ArcanaNumber))
+                        db._byArcana[def.ArcanaNumber] = def;
+                }
             }
 
             if (db.Count != ExpectedCardCount)
@@ -65,6 +70,9 @@ namespace Kismeta.Data.Loaders
 
         public CardDefinition? GetById(string id) =>
             _byId.TryGetValue(id, out var def) ? def : null;
+
+        public CardDefinition? GetByArcanaNumber(int arcanaNumber) =>
+            arcanaNumber >= 0 && _byArcana.TryGetValue(arcanaNumber, out var def) ? def : null;
 
         public IEnumerable<CardDefinition> GetAll() => _byId.Values;
 
@@ -119,6 +127,7 @@ namespace Kismeta.Data.Loaders
                 isCurse:             d.isCurse,
                 nullifiesCard:       d.nullifiesCard ?? "",
                 wildcardArcanaNumber:d.wildcardArcanaNumber,
+                wildcardArcanaMajorName: d.wildcardArcanaMajorName ?? "",
                 crucibleGroup:       crucibleGroup,
                 alchemicalFormula:   d.alchemicalFormula ?? "",
                 alchemicalCost:      cost);

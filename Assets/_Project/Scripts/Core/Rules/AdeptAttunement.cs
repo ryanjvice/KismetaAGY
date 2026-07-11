@@ -51,6 +51,9 @@ namespace Kismeta.Core.Rules
         public static bool IsStarResonant(GameSession session, PlayerState player)
             => IsResonant(session, player.PlayerId, AdeptEffectService.StarArcana);
 
+        public static bool IsWorldResonant(GameSession session, PlayerState player)
+            => IsResonant(session, player.PlayerId, AdeptEffectService.WorldArcana);
+
         public static bool IsDevilResonant(GameSession session, PlayerState player)
             => IsResonant(session, player.PlayerId, AdeptEffectService.DevilArcana);
 

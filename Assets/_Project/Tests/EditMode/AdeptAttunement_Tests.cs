@@ -12,7 +12,7 @@ namespace Kismeta.Core.Tests
             new CardDefinition(
                 "test", Deck.Kismeta, Suit.None, Rank.None, CardVariant.One,
                 MajorArcanaType.Adept, 8, sign, Planet.Jupiter,
-                "Strength", "", "", "", false, "", -1, CrucibleGroup.None, "", ReagentCost.Zero);
+                "Strength", "", "", "", false, "", -1, "", CrucibleGroup.None, "", ReagentCost.Zero);
 
         [Test]
         public void IsResonant_True_WhenSignMatches()

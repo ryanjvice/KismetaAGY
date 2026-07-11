@@ -104,7 +104,7 @@ namespace Kismeta.UI.Controllers
             }
 
             var targetCards = _rivalId >= 0
-                ? ContestBindings.PublicRivalSpread(_session, _rivalId)
+                ? ContestBindings.DuelTargetSpread(_session, _playerId, _rivalId)
                 : new List<string>();
             ContestBindings.BuildCardChips(El("target-cards"), _session, targetCards, _target, false,
                 _ => RefreshSetup());

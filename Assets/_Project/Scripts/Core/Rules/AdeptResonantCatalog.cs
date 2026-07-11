@@ -14,7 +14,7 @@ namespace Kismeta.Core.Rules
         CombatDicePlus2,       // Strength
         SaltWildCraft,         // Temperance
         NullifyCard,           // Star
-        CrucibleWildcard,      // World — deferred Phase 6
+        CrucibleWildcard,      // World
         DoubleElementAlign     // Hermit
     }
 

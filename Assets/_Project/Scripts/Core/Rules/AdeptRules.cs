@@ -235,6 +235,47 @@ namespace Kismeta.Core.Rules
             return CommandResult.Ok("Nullification cleared.");
         }
 
+        public CommandResult TryActivateWorldWildcard(GameSession session, int playerId)
+        {
+            var player = session.Players[playerId];
+            if (!AdeptAttunement.IsWorldResonant(session, player))
+                return CommandResult.Invalid("World crucible wildcard requires an attuned World.");
+
+            var worldId = AdeptEffectService.FindAdeptInstance(session, player, AdeptEffectService.WorldArcana);
+            if (worldId == null)
+                return CommandResult.Invalid("World adept required.");
+
+            if (player.WorldWildcardFlipped)
+                return CommandResult.Invalid("World wildcard is already flipped.");
+
+            if (player.UsedAdeptInstanceIdsThisAge.Contains(worldId))
+                return CommandResult.Invalid("World wildcard flip already used this age; refresh with 1 Salt.");
+
+            player.WorldWildcardFlipped = true;
+            ActiveEffectsService.MarkAdeptUsed(session, playerId, worldId);
+            return CommandResult.Ok("World wildcard flipped for next Fire.");
+        }
+
+        public CommandResult TryRefreshWorldWildcard(GameSession session, int playerId)
+        {
+            var player = session.Players[playerId];
+            if (!AdeptAttunement.IsWorldResonant(session, player))
+                return CommandResult.Invalid("World refresh requires an attuned World.");
+
+            var worldId = AdeptEffectService.FindAdeptInstance(session, player, AdeptEffectService.WorldArcana);
+            if (worldId == null)
+                return CommandResult.Invalid("World adept required.");
+
+            if (!player.UsedAdeptInstanceIdsThisAge.Contains(worldId))
+                return CommandResult.Invalid("World wildcard flip has not been used this age.");
+
+            if (!player.SpendReagent(ReagentType.Salt, 1))
+                return CommandResult.Invalid("Refreshing World wildcard costs 1 Salt.");
+
+            player.UsedAdeptInstanceIdsThisAge.Remove(worldId);
+            return CommandResult.Ok("World wildcard refresh — may flip again.");
+        }
+
         public bool IsPriestessHarvestPending(GameSession session, int playerId)
             => session.Board.PendingPriestessReturns.Contains(playerId);
 

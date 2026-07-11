@@ -173,9 +173,10 @@ namespace Kismeta.Core.Rules
             // Validate result is within limits
             int newSpreadCount = player.Spread.Count - discardSpreadIds.Count;
             int newHandCount   = player.Hand.Count   - discardHandIds.Count;
-            if (newSpreadCount > SpreadLimit)
+            int spreadLimit = PlayerLimitService.GetSpreadLimit(session, player);
+            if (newSpreadCount > spreadLimit)
                 return CommandResult.Invalid(
-                    $"After discarding, Spread would still be {newSpreadCount} (limit {SpreadLimit}).");
+                    $"After discarding, Spread would still be {newSpreadCount} (limit {spreadLimit}).");
             int handLimit = PlayerLimitService.GetHandLimit(session, player);
             if (newHandCount > handLimit)
                 return CommandResult.Invalid(
@@ -217,7 +218,8 @@ namespace Kismeta.Core.Rules
             foreach (var player in session.Players)
             {
                 int discarded = 0;
-                discarded += TrimZone(player.Spread, SpreadLimit, session.Board.CommonDiscard);
+                int spreadLimit = PlayerLimitService.GetSpreadLimit(session, player);
+                discarded += TrimZone(player.Spread, spreadLimit, session.Board.CommonDiscard);
                 int handLimit = PlayerLimitService.GetHandLimit(session, player);
                 discarded += TrimZone(player.Hand, handLimit, session.Board.CommonDiscard);
                 session.EmitEvent(new CardLimitsEnforcedEvent(player.PlayerId, discarded));
@@ -278,6 +280,7 @@ namespace Kismeta.Core.Rules
                 player.TemperanceSaltWildReagent = null;
                 player.EmperorProtectedCardIds.Clear();
                 player.HierophantOppositionShift = 0;
+                player.WorldWildcardFlipped = false;
             }
 
             session.Board.PendingPriestessReturns.Clear();

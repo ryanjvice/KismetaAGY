@@ -36,7 +36,7 @@ namespace Kismeta.Core.Rules
 
             return formula.FormulaType switch
             {
-                CodexFormulaType.AnyThreePlanet => ValidatePlanet(defs, formula),
+                CodexFormulaType.AnyThreePlanet => ValidatePlanetWithDb(defs, formula),
                 CodexFormulaType.RankSum        => ValidateRankSum(defs, formula),
                 _                               => (false, $"Unknown formula type: {formula.FormulaType}.")
             };
@@ -44,7 +44,7 @@ namespace Kismeta.Core.Rules
 
         // ─── AnyThreePlanet ───────────────────────────────────────────────────────
 
-        private static (bool ok, string reason) ValidatePlanet(
+        private (bool ok, string reason) ValidatePlanetWithDb(
             IReadOnlyList<CardDefinition> defs, CodexFormulaDefinition formula)
         {
             if (defs.Count != 3)
@@ -52,9 +52,9 @@ namespace Kismeta.Core.Rules
 
             foreach (var def in defs)
             {
-                if (def.Planet != formula.RequiredPlanet)
+                if (!WildcardLinkService.MatchesPlanet(def, formula.RequiredPlanet, _db))
                     return (false,
-                        $"Card '{def.Id}' has planet {def.Planet}, but formula requires {formula.RequiredPlanet}.");
+                        $"Card '{def.Id}' does not match planet {formula.RequiredPlanet}.");
             }
 
             return (true, "");

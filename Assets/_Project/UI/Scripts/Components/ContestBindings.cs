@@ -111,6 +111,17 @@ namespace Kismeta.UI.Components
             return MinorSpreadCards(session, session.Players[rivalId]);
         }
 
+        /// <summary>Defender spread minors that may be targeted in a Duel (excludes King/Emperor protection).</summary>
+        public static List<string> DuelTargetSpread(GameSession session, int attackerId, int defenderId)
+        {
+            var list = PublicRivalSpread(session, defenderId);
+            if (defenderId < 0 || defenderId >= session.Players.Count)
+                return list;
+
+            var defender = session.Players[defenderId];
+            return DuelProtectionService.FilterDuelTargets(session, defender, list);
+        }
+
         public static List<string> GambitStakeCards(GameSession session, int playerId)
         {
             var list = new List<string>();

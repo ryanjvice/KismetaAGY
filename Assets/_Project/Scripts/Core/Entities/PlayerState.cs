@@ -83,6 +83,12 @@ namespace Kismeta.Core.Entities
         /// <summary>Hierophant Opposition shift applied to next alignment roll (-1, 0, or +1).</summary>
         public int HierophantOppositionShift { get; set; }
 
+        /// <summary>
+        /// World resonant: flipped crucible wildcard active for the next Fire alignment check.
+        /// Cleared on successful Fire or Winter Transit.
+        /// </summary>
+        public bool WorldWildcardFlipped { get; set; }
+
         // Astral Houses placed (ZodiacSign values the player has claimed)
         public HashSet<ZodiacSign> AstralHouses { get; } = new();
         public int UnplacedAstralHouses { get; set; } = 4;

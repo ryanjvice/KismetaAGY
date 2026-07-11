@@ -282,6 +282,15 @@ namespace Kismeta.Core.Rules
             if (crucibleSlotLabel != null)
                 description += $" Contributes to {crucibleSlotLabel}.";
 
+            if (kind == SpreadCardEffectKind.Wildcard
+                && !string.IsNullOrWhiteSpace(def.WildcardArcanaMajorName))
+            {
+                description += $" Links to {def.WildcardArcanaMajorName}.";
+            }
+
+            if (kind == SpreadCardEffectKind.Passive && DuelProtectionService.IsKingV2Passive(def))
+                description += $" Protecting {def.Suit} in spread (this card vulnerable).";
+
             return description;
         }
 

@@ -12,14 +12,15 @@ namespace Kismeta.Core.Rules
     {
         public static bool CanSpreadSatisfyFormula(
             IReadOnlyList<(string id, CardDefinition def)> spreadCards,
-            CodexFormulaDefinition formula)
+            CodexFormulaDefinition formula,
+            ICardDatabase db)
         {
             if (formula.FormulaType == CodexFormulaType.AnyThreePlanet)
             {
                 int count = 0;
                 foreach (var (_, def) in spreadCards)
                 {
-                    if (def.Planet == formula.RequiredPlanet)
+                    if (WildcardLinkService.MatchesPlanet(def, formula.RequiredPlanet, db))
                         count++;
                 }
                 return count >= 3;
@@ -39,7 +40,7 @@ namespace Kismeta.Core.Rules
                 var matching = new List<string>();
                 foreach (var (id, def) in spreadCards)
                 {
-                    if (def.Planet == formula.RequiredPlanet)
+                    if (WildcardLinkService.MatchesPlanet(def, formula.RequiredPlanet, db))
                         matching.Add(id);
                 }
                 return matching.Count >= 3 ? matching.GetRange(0, 3) : null;

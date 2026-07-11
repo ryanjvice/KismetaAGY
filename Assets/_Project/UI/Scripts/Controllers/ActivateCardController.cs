@@ -441,7 +441,7 @@ namespace Kismeta.UI.Controllers
             CodexFormulaDefinition formula,
             List<(string id, CardDefinition def)> spreadCards,
             ICardDatabase db) =>
-            ActivationCardSuggester.CanSpreadSatisfyFormula(spreadCards, formula)
+            ActivationCardSuggester.CanSpreadSatisfyFormula(spreadCards, formula, db)
             || IsSelectedSetValid(formula, db);
 
         string FormulaCountText(
@@ -500,7 +500,7 @@ namespace Kismeta.UI.Controllers
             if (IsSelectedSetValid(formula, db))
                 return new List<string>(_selected);
 
-            if (ActivationCardSuggester.CanSpreadSatisfyFormula(spreadCards, formula))
+            if (ActivationCardSuggester.CanSpreadSatisfyFormula(spreadCards, formula, db))
                 return ActivationCardSuggester.SuggestActivationCards(spreadCards, formula, db);
 
             return null;

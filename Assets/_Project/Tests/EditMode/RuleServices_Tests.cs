@@ -38,19 +38,23 @@ namespace Kismeta.Core.Tests
             return CrucibleCodexDatabase.LoadFromJson(File.ReadAllText(path));
         }
 
-        private static GameRuleSet BuildRules(CardDatabase db, CrucibleCodexDatabase codexDb, int seed = 42) =>
-            new GameRuleSet(
+        private static GameRuleSet BuildRules(CardDatabase db, CrucibleCodexDatabase codexDb, int seed = 42)
+        {
+            var alchemicalValidator = new AlchemicalAlignmentValidator();
+            var alignmentService = new AlignmentService(db);
+            return new GameRuleSet(
                 cardDatabase:  db,
                 codexDatabase: codexDb,
                 setup:         new GameSetupService(db, seed),
                 harvest:       new SpringRules(db, seed),
-                crucible:      new CrucibleRules(db, codexDb, seed: seed),
+                crucible:      new CrucibleRules(db, codexDb, alchemicalValidator, alignmentService, seed: seed),
                 crafting:      new CraftingRules(db),
                 winter:        new WinterRules(db),
                 validator:     new ActionValidator(),
                 combat:        new CombatRules(seed),
                 trade:         new TradeService(db),
                 adept:         new AdeptRules(db));
+        }
 
         private static GameSession BuildSession(CardDatabase db, CrucibleCodexDatabase codexDb,
             int playerCount = 2, int seed = 42, GameMode mode = GameMode.Quickplay,
@@ -3063,7 +3067,7 @@ namespace Kismeta.Core.Tests
             var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
             SetSeason(session, Season.Summer);
-            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            session.Board.CosmicAgeSign = ZodiacSign.Cancer;
             var ante = PopulateSpread(session, 0, 1, "w4-ante");
             AddSpreadCard(session, 0, "w4", "minor.wands.four.1");
             var targets = PopulateSpread(session, 1, 1, "w4-target");
@@ -3073,6 +3077,291 @@ namespace Kismeta.Core.Tests
             Assert.IsTrue(combat.TryDuel(session, 0, 1, targets[0], ante[0]).IsOk);
             Assert.AreEqual(deckBefore - 2, session.Board.CommonDeck.Count);
             Assert.AreEqual(2, session.Players[1].Hand.Count);
+        }
+
+        // ─── Phase 6 wildcard tests ───────────────────────────────────────────────
+
+        static void ReplaceCrucibleSlot(GameSession session, int playerId, int slotIdx, string crucibleDefId)
+        {
+            var player = session.Players[playerId];
+            var instId = $"test-crucible-p{playerId}-s{slotIdx}";
+            session.RegisterCard(new CardInstance(instId, crucibleDefId, CardZone.Deck, playerId));
+            var slot = new PlayerCrucibleSlot(instId);
+            slot.PlaceCoal();
+            while (player.CrucibleSlots.Count <= slotIdx)
+                player.CrucibleSlots.Add(new PlayerCrucibleSlot($"placeholder-{player.CrucibleSlots.Count}"));
+            player.CrucibleSlots[slotIdx] = slot;
+        }
+
+        [Test]
+        public void Phase6_FireWildcard_SunLinkedCardClosesAlignment()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ReplaceCrucibleSlot(session, 0, 0, "crucible.c.12");
+
+            AddSpreadCard(session, 0, "cup-a", "minor.cups.two.1");
+            AddSpreadCard(session, 0, "cup-b", "minor.cups.three.1");
+            AddSpreadCard(session, 0, "cup-c", "minor.cups.four.1");
+            AddSpreadCard(session, 0, "sun-wild", "minor.cups.five.2");
+
+            var player = session.Players[0];
+            player.CrucibleSlots[0].Activate();
+            player.AddReagent(ReagentType.AquaRegia, 3);
+            SetSeason(session, Season.Autumn);
+
+            var alignIds = new List<string> { "cup-a", "cup-b", "cup-c", "sun-wild" };
+            var result = session.Apply(new FireStoneCommand(0, 0, alignIds));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(CrucibleCardState.Fired, player.CrucibleSlots[0].State);
+        }
+
+        [Test]
+        public void WorldResonant_FlipEnablesCrucibleWildcard()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "world", "major.adept.21");
+            AttunePlayer(session, 0, ZodiacSign.Cancer);
+
+            var flip = session.Apply(new ActivateWorldWildcardCommand(0));
+            Assert.IsTrue(flip.IsOk, flip.Message);
+            Assert.IsTrue(session.Players[0].WorldWildcardFlipped);
+        }
+
+        [Test]
+        public void WorldResonant_ConsumedOnFire()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ReplaceCrucibleSlot(session, 0, 0, "crucible.d.19");
+            AddArcanumCard(session, 0, "world", "major.adept.21");
+            AttunePlayer(session, 0, ZodiacSign.Cancer);
+            Assert.IsTrue(session.Apply(new ActivateWorldWildcardCommand(0)).IsOk);
+
+            AddSpreadCard(session, 0, "w1", "minor.wands.two.1");
+            AddSpreadCard(session, 0, "w2", "minor.wands.three.1");
+            AddSpreadCard(session, 0, "w3", "minor.wands.four.1");
+            AddSpreadCard(session, 0, "w4", "minor.wands.six.1");
+            AddSpreadCard(session, 0, "sun1", "minor.pentacles.ace.1");
+
+            var player = session.Players[0];
+            player.CrucibleSlots[0].Activate();
+            player.AddReagent(ReagentType.Sulphur, 3);
+            player.AddReagent(ReagentType.Vitriol, 1);
+            SetSeason(session, Season.Autumn);
+
+            var alignIds = new List<string> { "w1", "w2", "w3", "w4", "sun1" };
+            var fire = session.Apply(new FireStoneCommand(0, 0, alignIds));
+            Assert.IsTrue(fire.IsOk, fire.Message);
+            Assert.IsFalse(player.WorldWildcardFlipped, "World wildcard should be consumed on successful Fire.");
+        }
+
+        [Test]
+        public void WorldResonant_RefreshWithSalt()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ReplaceCrucibleSlot(session, 0, 0, "crucible.d.19");
+            AddArcanumCard(session, 0, "world", "major.adept.21");
+            AttunePlayer(session, 0, ZodiacSign.Cancer);
+            session.Players[0].AddReagent(ReagentType.Salt, 2);
+
+            Assert.IsTrue(session.Apply(new ActivateWorldWildcardCommand(0)).IsOk);
+
+            AddSpreadCard(session, 0, "w1", "minor.wands.two.1");
+            AddSpreadCard(session, 0, "w2", "minor.wands.three.1");
+            AddSpreadCard(session, 0, "w3", "minor.wands.four.1");
+            AddSpreadCard(session, 0, "w4", "minor.wands.six.1");
+            AddSpreadCard(session, 0, "sun1", "minor.pentacles.ace.1");
+
+            var player = session.Players[0];
+            player.CrucibleSlots[0].Activate();
+            player.AddReagent(ReagentType.Sulphur, 3);
+            player.AddReagent(ReagentType.Vitriol, 1);
+            SetSeason(session, Season.Autumn);
+
+            var alignIds = new List<string> { "w1", "w2", "w3", "w4", "sun1" };
+            Assert.IsTrue(session.Apply(new FireStoneCommand(0, 0, alignIds)).IsOk);
+
+            var refresh = session.Apply(new RefreshWorldWildcardCommand(0));
+            Assert.IsTrue(refresh.IsOk, refresh.Message);
+            Assert.IsFalse(player.UsedAdeptInstanceIdsThisAge.Contains("world"));
+
+            var flipAgain = session.Apply(new ActivateWorldWildcardCommand(0));
+            Assert.IsTrue(flipAgain.IsOk, flipAgain.Message);
+            Assert.IsTrue(player.WorldWildcardFlipped);
+        }
+
+        // ─── Phase 7 limits & protection tests ────────────────────────────────────
+
+        [Test]
+        public void QueenV2_Cups_IncreasesHandLimit()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddSpreadCard(session, 0, "queen-cups", "minor.cups.queen.2");
+
+            Assert.AreEqual(6, PlayerLimitService.GetHandLimit(session, session.Players[0]));
+        }
+
+        [Test]
+        public void QueenV2_Swords_IncreasesSpreadLimit()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddSpreadCard(session, 0, "queen-swords", "minor.swords.queen.2");
+
+            Assert.AreEqual(6, PlayerLimitService.GetSpreadLimit(session, session.Players[0]));
+        }
+
+        [Test]
+        public void QueenV2_StacksWithPriestessResonant()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "priestess", "major.adept.2");
+            AttunePlayer(session, 0, ZodiacSign.Pisces);
+            AddSpreadCard(session, 0, "queen-cups", "minor.cups.queen.2");
+
+            Assert.AreEqual(8, PlayerLimitService.GetHandLimit(session, session.Players[0]));
+        }
+
+        [Test]
+        public void QueenV2_WinterDiscard_RespectsDynamicSpreadLimit()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            PopulateSpread(session, 0, 6, "spread-base");
+            AddSpreadCard(session, 0, "queen-swords", "minor.swords.queen.2");
+
+            Assert.AreEqual(7, session.Players[0].Spread.Count);
+            var discard = new List<string> { "spread-base-p0-0" };
+            var result = session.Rules!.Winter.TryDiscardToLimit(session, 0, discard, new List<string>());
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(6, session.Players[0].Spread.Count);
+        }
+
+        [Test]
+        public void Limits_Compose_PriestessQueenAndCupsFourCurse()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddArcanumCard(session, 0, "priestess", "major.adept.2");
+            AttunePlayer(session, 0, ZodiacSign.Pisces);
+            AddSpreadCard(session, 0, "queen-cups", "minor.cups.queen.2");
+            AddSpreadCard(session, 0, "cups4", "minor.cups.four.1");
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+
+            Assert.AreEqual(7, PlayerLimitService.GetHandLimit(session, session.Players[0]));
+        }
+
+        [Test]
+        public void Limits_Compose_QueenPlusCupsFourNegated()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            AddSpreadCard(session, 0, "queen-cups", "minor.cups.queen.2");
+            AddSpreadCard(session, 0, "cups4", "minor.cups.four.1");
+            session.Board.CosmicAgeSign = ZodiacSign.Cancer;
+
+            Assert.AreEqual(6, PlayerLimitService.GetHandLimit(session, session.Players[0]));
+        }
+
+        [Test]
+        public void KingV2_Cups_ProtectsOtherCupsFromDuel()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            PopulateSpread(session, 0, 1, "duel-ante");
+            AddSpreadCard(session, 1, "king-cups", "minor.cups.king.2");
+            AddSpreadCard(session, 1, "prot-target", "minor.cups.two.1");
+
+            var combat = new CombatRules(42);
+            var result = combat.TryDuel(session, 0, 1, "prot-target", session.Players[0].Spread[0]);
+            Assert.IsFalse(result.IsOk);
+            StringAssert.Contains("King", result.Message);
+        }
+
+        [Test]
+        public void KingV2_Cups_KingItselfRemainsDuelable()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            PopulateSpread(session, 0, 1, "duel-ante");
+            AddSpreadCard(session, 1, "king-cups", "minor.cups.king.2");
+
+            var combat = new CombatRules(FindDuelSeed(attackerWins: true));
+            var result = combat.TryDuel(session, 0, 1, "king-cups", session.Players[0].Spread[0]);
+            Assert.IsTrue(result.IsOk, result.Message);
+        }
+
+        [Test]
+        public void KingV2_Wands_ProtectsOtherWandsFromDuel()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            PopulateSpread(session, 0, 1, "duel-ante");
+            AddSpreadCard(session, 1, "king-wands", "minor.wands.king.2");
+            AddSpreadCard(session, 1, "prot-wands", "minor.wands.three.1");
+
+            var combat = new CombatRules(42);
+            Assert.IsFalse(combat.TryDuel(session, 0, 1, "prot-wands", session.Players[0].Spread[0]).IsOk);
+        }
+
+        [Test]
+        public void KingV2_EmperorMarkOnKing_OverridesSelfVulnerability()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 1, "emperor", "major.adept.4");
+            PopulateSpread(session, 0, 1, "duel-ante");
+            AddSpreadCard(session, 1, "king-cups", "minor.cups.king.2");
+            AddSpreadCard(session, 1, "emperor-filler", "minor.cups.four.1");
+
+            Assert.IsTrue(session.Apply(new ProtectSpreadCardsCommand(1,
+                new List<string> { "king-cups", "emperor-filler" })).IsOk);
+
+            var combat = new CombatRules(42);
+            var result = combat.TryDuel(session, 0, 1, "king-cups", session.Players[0].Spread[0]);
+            Assert.IsFalse(result.IsOk);
+            StringAssert.Contains("Emperor", result.Message);
+        }
+
+        [Test]
+        public void KingV2_DevilSteal_NotBlocked()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 0, "devil", "major.adept.15");
+            GiveHandCard(session, 0, "sacrifice", "minor.cups.two.1");
+            AddSpreadCard(session, 1, "king-cups", "minor.cups.king.2");
+            PopulateSpread(session, 1, 1, "devil-steal-prot");
+            AddSpreadCard(session, 1, "prot-cups", "minor.cups.three.1");
+
+            var result = session.Apply(new DevilStealCommand(0, "sacrifice", 1, "prot-cups"));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(session.Players[0].Spread.Contains("prot-cups"));
         }
     }
 }

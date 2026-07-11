@@ -130,6 +130,9 @@ namespace Kismeta.Core.Rules
             if (AdeptEffectService.IsEmperorProtected(session, defender, targetCardId))
                 return CommandResult.Invalid("Target card is protected by the Emperor.");
 
+            if (DuelProtectionService.IsSuitProtectedFromDuel(session, defender, targetCardId))
+                return CommandResult.Invalid("Target card is protected by a King.");
+
             bool dualAnte = ReversedCurseService.RequiresDualAnte(session, attacker);
             bool opponentChoosesAnte = ReversedCurseService.RequiresOpponentChooseAnte(session, attacker);
 

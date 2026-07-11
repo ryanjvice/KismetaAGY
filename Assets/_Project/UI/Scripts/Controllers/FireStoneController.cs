@@ -193,6 +193,7 @@ namespace Kismeta.UI.Controllers
             if (validator == null) return true;
 
             var db = _session.Rules!.CardDatabase;
+            var player = _session.Players[_playerId];
             var defs = new List<CardDefinition>();
             foreach (var id in _selected)
             {
@@ -200,7 +201,15 @@ namespace Kismeta.UI.Controllers
                 var def = inst != null ? db.GetById(inst.DefinitionId) : null;
                 if (def != null) defs.Add(def);
             }
-            var (ok, _) = validator.Validate(crucibleDef.AlchemicalFormula, defs);
+
+            if (player.WorldWildcardFlipped
+                && AdeptAttunement.IsWorldResonant(_session, player)
+                && crucibleDef.ArcanaNumber >= 0)
+            {
+                defs.Add(WildcardLinkService.CreateVirtualWildcard(crucibleDef.ArcanaNumber));
+            }
+
+            var (ok, _) = validator.Validate(crucibleDef.AlchemicalFormula, defs, db);
             return ok;
         }
 

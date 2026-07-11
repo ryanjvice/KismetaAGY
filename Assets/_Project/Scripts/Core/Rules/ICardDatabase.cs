@@ -11,6 +11,8 @@ namespace Kismeta.Core.Rules
     public interface ICardDatabase
     {
         CardDefinition? GetById(string id);
+        /// <summary>First card with matching arcana number (Fate, Adept, or Crucible).</summary>
+        CardDefinition? GetByArcanaNumber(int arcanaNumber);
         IEnumerable<CardDefinition> GetAll();
         IEnumerable<CardDefinition> GetCrucibleByGroup(CrucibleGroup group);
         IEnumerable<CardDefinition> GetBySuit(Suit suit);

@@ -1530,9 +1530,11 @@ namespace Kismeta.Game.Bootstrap
 
             int newSpread = player.Spread.Count - _discardSpread.Count;
             int newHand   = player.Hand.Count   - _discardHand.Count;
-            bool valid    = newSpread <= WinterRules.SpreadLimit && newHand <= WinterRules.HandLimit;
+            int handLimit = PlayerLimitService.GetHandLimit(_session, player);
+            int spreadLimit = PlayerLimitService.GetSpreadLimit(_session, player);
+            bool valid    = newSpread <= spreadLimit && newHand <= handLimit;
 
-            GUILayout.Label($"After discard → Spread: {newSpread}/5  Hand: {newHand}/5");
+            GUILayout.Label($"After discard → Spread: {newSpread}/{spreadLimit}  Hand: {newHand}/{handLimit}");
 
             GUI.enabled = valid;
             if (GUILayout.Button("Confirm Discard"))
@@ -1686,8 +1688,10 @@ namespace Kismeta.Game.Bootstrap
             bool hierophantResonant = AdeptAttunement.IsHierophantResonant(_session, player);
             bool devilResonant = AdeptAttunement.IsDevilResonant(_session, player);
             bool starResonant = AdeptAttunement.IsStarResonant(_session, player);
+            bool worldResonant = AdeptAttunement.IsWorldResonant(_session, player);
+            bool hasWorld = AdeptEffectService.HasAdept(_session, player, AdeptEffectService.WorldArcana);
 
-            if (!hasMagician && !hasEmperor && !hasHierophant && !hasDevil && !hasChariot && !hasStar)
+            if (!hasMagician && !hasEmperor && !hasHierophant && !hasDevil && !hasChariot && !hasStar && !hasWorld)
                 return;
 
             GUILayout.Space(4f);
@@ -1793,6 +1797,24 @@ namespace Kismeta.Game.Bootstrap
                         {
                             SubmitAction(hs, new StarNullifyCommand(pid, opp.PlayerId, cardId));
                         }
+                    }
+                }
+            }
+
+            if (worldResonant && hasWorld && _session != null)
+            {
+                var worldId = AdeptEffectService.FindAdeptInstance(_session, player, AdeptEffectService.WorldArcana);
+                if (worldId != null)
+                {
+                    if (!player.WorldWildcardFlipped && !player.UsedAdeptInstanceIdsThisAge.Contains(worldId))
+                    {
+                        if (GUILayout.Button("World: flip crucible wildcard"))
+                            SubmitAction(hs, new ActivateWorldWildcardCommand(pid));
+                    }
+                    else if (player.UsedAdeptInstanceIdsThisAge.Contains(worldId))
+                    {
+                        if (GUILayout.Button("World: refresh flip (1 Salt)"))
+                            SubmitAction(hs, new RefreshWorldWildcardCommand(pid));
                     }
                 }
             }

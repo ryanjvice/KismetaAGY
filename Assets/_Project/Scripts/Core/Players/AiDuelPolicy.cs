@@ -1,5 +1,6 @@
 using System;
 using Kismeta.Core.Commands;
+using Kismeta.Core.Rules;
 
 namespace Kismeta.Core.Players
 {
@@ -46,21 +47,47 @@ namespace Kismeta.Core.Players
             if (rollValue >= InitiateChance)
                 return false;
 
+            var targetCardId = FindDuelTargetCard(ctx, targetId);
+            if (targetCardId == null)
+                return false;
+
             command = new InitiateDuelCommand(
-                ownPid, targetId, rivalSpread[0], player.Spread[0]);
+                ownPid, targetId, targetCardId, player.Spread[0]);
             return true;
         }
 
+        static string? FindDuelTargetCard(GameContext ctx, int defenderId)
+        {
+            if (ctx.Session == null)
+            {
+                var spread = ctx.PublicView.Players[defenderId].Spread;
+                return spread.Count > 0 ? spread[0] : null;
+            }
+
+            var defender = ctx.Session.Players[defenderId];
+            var duelable = DuelProtectionService.FilterDuelTargets(
+                ctx.Session, defender, ctx.PublicView.Players[defenderId].Spread);
+            return duelable.Count > 0 ? duelable[0] : null;
+        }
+
         /// <summary>
-        /// Returns the ID of a Duel target (first opponent with spread cards), or -1 if none.
+        /// Returns the ID of a Duel target (first opponent with duelable spread cards), or -1 if none.
         /// </summary>
         public static int FindDuelTarget(GameContext ctx, int ownPid)
         {
             foreach (var opp in ctx.PublicView.Players)
             {
                 if (opp.PlayerId == ownPid) continue;
-                if (opp.Spread.Count > 0)
+                if (ctx.Session != null)
+                {
+                    var defender = ctx.Session.Players[opp.PlayerId];
+                    if (DuelProtectionService.FilterDuelTargets(ctx.Session, defender, opp.Spread).Count > 0)
+                        return opp.PlayerId;
+                }
+                else if (opp.Spread.Count > 0)
+                {
                     return opp.PlayerId;
+                }
             }
             return -1;
         }

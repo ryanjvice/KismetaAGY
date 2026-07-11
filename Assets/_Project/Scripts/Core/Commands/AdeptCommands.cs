@@ -166,4 +166,20 @@ namespace Kismeta.Core.Commands
             TargetCardId = targetCardId;
         }
     }
+
+    /// <summary>World resonant: flip World to enable crucible wildcard on the next Fire.</summary>
+    public sealed class ActivateWorldWildcardCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+
+        public ActivateWorldWildcardCommand(int playerId) => PlayerId = playerId;
+    }
+
+    /// <summary>World resonant: spend 1 Salt to re-enable flip after consumption this age.</summary>
+    public sealed class RefreshWorldWildcardCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+
+        public RefreshWorldWildcardCommand(int playerId) => PlayerId = playerId;
+    }
 }

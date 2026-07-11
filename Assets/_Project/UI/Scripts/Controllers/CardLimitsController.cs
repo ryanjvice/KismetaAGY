@@ -183,18 +183,21 @@ namespace Kismeta.UI.Controllers
             int handLimit = _session != null
                 ? PlayerLimitService.GetHandLimit(_session, player)
                 : WinterRules.HandLimit;
+            int spreadLimit = _session != null
+                ? PlayerLimitService.GetSpreadLimit(_session, player)
+                : WinterRules.SpreadLimit;
             int newSpread = player.Spread.Count - _discardSpread.Count;
             int newHand = player.Hand.Count - _discardHand.Count;
-            int toDiscard = Math.Max(0, newSpread - WinterRules.SpreadLimit)
+            int toDiscard = Math.Max(0, newSpread - spreadLimit)
                           + Math.Max(0, newHand - handLimit);
 
-            SetLabelText("spread-limit", $"{newSpread} / {WinterRules.SpreadLimit}");
+            SetLabelText("spread-limit", $"{newSpread} / {spreadLimit}");
             SetLabelText("hand-limit", $"{newHand} / {handLimit}");
             SetLabelText("hand-tally", $"{newHand} / {handLimit}");
-            SetLabelText("spread-tally", $"{newSpread} / {WinterRules.SpreadLimit}");
+            SetLabelText("spread-tally", $"{newSpread} / {spreadLimit}");
             SetLabelText("to-discard", toDiscard.ToString());
 
-            bool valid = newSpread <= WinterRules.SpreadLimit && newHand <= handLimit;
+            bool valid = newSpread <= spreadLimit && newHand <= handLimit;
             var transit = Btn("transit-btn");
             if (transit != null)
             {
@@ -222,7 +225,9 @@ namespace Kismeta.UI.Controllers
 
             int kept = cardIds.Count - discardSet.Count;
             int limit = isSpread
-                ? WinterRules.SpreadLimit
+                ? (_session != null
+                    ? PlayerLimitService.GetSpreadLimit(_session, _session.Players[_playerId])
+                    : WinterRules.SpreadLimit)
                 : (_session != null ? PlayerLimitService.GetHandLimit(_session, _session.Players[_playerId]) : WinterRules.HandLimit);
             bool zoneOver = kept > limit;
             int overCount = kept - limit;
@@ -383,7 +388,8 @@ namespace Kismeta.UI.Controllers
             int newSpread = player.Spread.Count - _discardSpread.Count;
             int newHand = player.Hand.Count - _discardHand.Count;
             int handLimit = PlayerLimitService.GetHandLimit(_session, player);
-            if (newSpread > WinterRules.SpreadLimit || newHand > handLimit) return;
+            int spreadLimit = PlayerLimitService.GetSpreadLimit(_session, player);
+            if (newSpread > spreadLimit || newHand > handLimit) return;
 
             SetOverlayVisible(false);
             if (!_bridge.TrySubmit(new DiscardToLimitCommand(_playerId,

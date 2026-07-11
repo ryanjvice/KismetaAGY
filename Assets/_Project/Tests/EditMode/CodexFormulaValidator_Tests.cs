@@ -59,7 +59,7 @@ namespace Kismeta.Core.Tests
                 name: "",
                 effectType: "", effectText: "", effectTextResonant: "",
                 isCurse: false, nullifiesCard: "",
-                wildcardArcanaNumber: -1,
+                wildcardArcanaNumber: -1, wildcardArcanaMajorName: "",
                 crucibleGroup: CrucibleGroup.None,
                 alchemicalFormula: "",
                 alchemicalCost: ReagentCost.Zero);
@@ -120,6 +120,22 @@ namespace Kismeta.Core.Tests
             };
             var (ok, _) = _sut.ValidateDefs(defs, formula);
             Assert.IsFalse(ok, "Mismatched planet should fail.");
+        }
+
+        [Test]
+        public void CodexPlanet_WildcardClosesFormula()
+        {
+            var formula = MakePlanetFormula(Planet.Sun);
+            var wild = _db.GetById("minor.cups.five.2");
+            Assert.IsNotNull(wild);
+            var defs = new List<CardDefinition>
+            {
+                FakeDef("a", Planet.Sun),
+                FakeDef("b", Planet.Sun),
+                wild!
+            };
+            var (ok, reason) = _sut.ValidateDefs(defs, formula);
+            Assert.IsTrue(ok, reason);
         }
 
         [Test]

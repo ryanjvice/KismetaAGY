@@ -17,6 +17,8 @@ namespace Kismeta.Core.Rules
         CommandResult TryStarNullify(GameSession session, int playerId,
             int targetPlayerId, string targetCardId);
         CommandResult TryRefreshStarNullify(GameSession session, int playerId, string targetCardId);
+        CommandResult TryActivateWorldWildcard(GameSession session, int playerId);
+        CommandResult TryRefreshWorldWildcard(GameSession session, int playerId);
         CommandResult TryCompletePriestessHarvest(GameSession session, int playerId,
             IReadOnlyList<string> returnCardIds);
         bool IsPriestessHarvestPending(GameSession session, int playerId);

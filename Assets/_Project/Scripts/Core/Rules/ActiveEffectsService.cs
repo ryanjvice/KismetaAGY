@@ -397,6 +397,14 @@ namespace Kismeta.Core.Rules
                     if (def.ArcanaNumber == 1 && attuned)
                         description += " Reversed immunity active in your Spread.";
 
+                    if (def.ArcanaNumber == 21 && attuned)
+                    {
+                        if (player.WorldWildcardFlipped)
+                            description += " Crucible wildcard flipped for next Fire.";
+                        else if (player.UsedAdeptInstanceIdsThisAge.Contains(id))
+                            description += " Refresh with 1 Salt to flip again.";
+                    }
+
                     if (CardEffectSuppressionService.IsSuppressed(session, id))
                         description += " Effects nullified by Star.";
 
@@ -512,6 +520,13 @@ namespace Kismeta.Core.Rules
                     : def.Name;
 
                 string description = state.Description;
+                if (SpreadLimitEffectCatalog.IsQueenV2Passive(def))
+                {
+                    if (SpreadLimitEffectCatalog.GrantsHandBonus(def))
+                        description += $" Hand limit: {PlayerLimitService.GetHandLimit(session, player)}.";
+                    else if (SpreadLimitEffectCatalog.GrantsSpreadBonus(def))
+                        description += $" Spread limit: {PlayerLimitService.GetSpreadLimit(session, player)}.";
+                }
                 if (def.EffectType.Equals("Craft", StringComparison.OrdinalIgnoreCase)
                     && SpreadCraftEffectCatalog.IsRank8CraftDiscount(def, Correspondence.ReagentFor(def.Suit)))
                 {

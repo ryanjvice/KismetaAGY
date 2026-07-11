@@ -396,7 +396,7 @@ namespace Kismeta.Core.Players
 
             foreach (var player in _session.Players)
             {
-                bool overSpread = player.Spread.Count > WinterRules.SpreadLimit;
+                bool overSpread = player.Spread.Count > PlayerLimitService.GetSpreadLimit(_session, player);
                 bool overHand   = player.Hand.Count > PlayerLimitService.GetHandLimit(_session, player);
                 if (!overSpread && !overHand) continue;
 

@@ -144,8 +144,21 @@ namespace Kismeta.Core.Rules
                 }
 
                 var cards = ResolveCardDefs(session, alignmentCardIds);
-                var (ok, reason) = _alignmentValidator.Validate(crucibleDef.AlchemicalFormula, cards);
+                var cardList = new List<CardDefinition>(cards);
+
+                bool worldWildcardActive = player.WorldWildcardFlipped
+                    && AdeptAttunement.IsWorldResonant(session, player)
+                    && crucibleDef.ArcanaNumber >= 0;
+
+                if (worldWildcardActive)
+                    cardList.Add(WildcardLinkService.CreateVirtualWildcard(crucibleDef.ArcanaNumber));
+
+                var (ok, reason) = _alignmentValidator.Validate(
+                    crucibleDef.AlchemicalFormula, cardList, _db);
                 if (!ok) return CommandResult.Invalid($"Alignment not satisfied: {reason}");
+
+                if (worldWildcardActive)
+                    player.WorldWildcardFlipped = false;
 
                 // Discard the alignment cards from Spread
                 if (alignmentCardIds != null)
