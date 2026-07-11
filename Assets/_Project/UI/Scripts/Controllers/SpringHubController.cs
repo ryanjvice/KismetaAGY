@@ -52,6 +52,7 @@ namespace Kismeta.UI.Controllers
             UnwireClick(Btn("wheel-action-btn"), OnWheelAction);
             UnwireClick(Btn("review-tableau-btn"), OnOpenCommuneSubview);
             UnwireClick(Btn("proceed-btn"), OnProceedToSummer);
+            UnwireClick(Btn("review-effects-btn"), OnReviewEffects);
             UnwireClick(Btn("commune-lock-btn"), OnCommuneLock);
             CentralPanelInspectBindings.Unwire();
             _wheelBindKey = int.MinValue;
@@ -69,6 +70,7 @@ namespace Kismeta.UI.Controllers
             WireClick(Btn("wheel-action-btn"), OnWheelAction);
             WireClick(Btn("review-tableau-btn"), OnOpenCommuneSubview);
             WireClick(Btn("proceed-btn"), OnProceedToSummer);
+            WireClick(Btn("review-effects-btn"), OnReviewEffects);
             WireClick(Btn("commune-lock-btn"), OnCommuneLock);
             NarrativeToolbarBindings.WireIntroRecap(Root, Season.Spring, () => IntroRecapHost);
 
@@ -345,6 +347,8 @@ namespace Kismeta.UI.Controllers
             return _bridge.TrySubmitPass();
         }
 
+        void OnReviewEffects() => OnOpenActiveEffects?.Invoke();
+
         void OnOpenCommuneSubview()
         {
             if (_session == null || _bridge == null) return;
@@ -426,7 +430,7 @@ namespace Kismeta.UI.Controllers
         {
             if (showCommune)
             {
-                BindCommuneLockCta(bridge);
+                BindCommuneCtas(bridge);
                 return;
             }
 
@@ -484,6 +488,14 @@ namespace Kismeta.UI.Controllers
             reviewBtn?.EnableInClassList("btn--disabled", !canAct);
             proceedBtn?.SetEnabled(canAct);
             proceedBtn?.EnableInClassList("btn--disabled", !canAct);
+        }
+
+        void BindCommuneCtas(CommandBridge bridge)
+        {
+            var reviewBtn = Btn("review-effects-btn");
+            reviewBtn?.SetEnabled(true);
+            reviewBtn?.EnableInClassList("btn--disabled", false);
+            BindCommuneLockCta(bridge);
         }
 
         void BindCommuneLockCta(CommandBridge bridge)

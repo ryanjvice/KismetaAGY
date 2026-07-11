@@ -34,7 +34,6 @@ namespace Kismeta.UI.Controllers
             SetLabel(scope, "commune-spread-count", spreadIds.Count.ToString());
             SetLabel(scope, "commune-hand-count", handIds.Count.ToString());
             SetLabel(scope, "commune-arcanum-count", arcanumIds.Count.ToString());
-            TapSwapBindings.UpdateReadout(scope, session, spreadIds, handIds, referenceSign);
         }
 
         public static void RebuildCommuneZones(VisualElement? scope, GameSession session, int playerId,
@@ -55,7 +54,6 @@ namespace Kismeta.UI.Controllers
             SetLabel(scope, "commune-spread-count", spreadIds.Count.ToString());
             SetLabel(scope, "commune-hand-count", handIds.Count.ToString());
             SetLabel(scope, "commune-arcanum-count", arcanumIds.Count.ToString());
-            TapSwapBindings.UpdateReadout(scope, session, spreadIds, handIds, referenceSign);
         }
 
         public static VisualElement? AppendRoutedCard(VisualElement? scope, GameSession session,
@@ -96,7 +94,7 @@ namespace Kismeta.UI.Controllers
             zone.Add(chip);
             UiMotion.FadeIn(chip);
 
-            UpdateCountsFromSession(scope, session, routed.PlayerId, referenceSign);
+            UpdateCountsFromSession(scope, session, routed.PlayerId);
             return chip;
         }
 
@@ -105,10 +103,10 @@ namespace Kismeta.UI.Controllers
             if (scope == null) return;
             var zone = scope.Q<VisualElement>("hand-cards");
             zone?.Clear();
-            UpdateCountsFromSession(scope, session, playerId, referenceSign);
+            UpdateCountsFromSession(scope, session, playerId);
         }
 
-        static void UpdateCountsFromSession(VisualElement scope, GameSession session, int playerId, ZodiacSign referenceSign)
+        static void UpdateCountsFromSession(VisualElement scope, GameSession session, int playerId)
         {
             if (playerId < 0 || playerId >= session.Players.Count) return;
             var player = session.Players[playerId];
@@ -120,15 +118,6 @@ namespace Kismeta.UI.Controllers
             SetLabel(scope, "commune-spread-count", spreadCount.ToString());
             SetLabel(scope, "commune-hand-count", player.Hand.Count.ToString());
             SetLabel(scope, "commune-arcanum-count", player.Arcanum.Count.ToString());
-            TapSwapBindings.UpdateReadout(scope, session, CollectSpreadMinors(session, playerId), player.Hand, referenceSign);
-        }
-
-        static List<string> CollectSpreadMinors(GameSession session, int playerId)
-        {
-            var list = new List<string>();
-            foreach (var id in session.Players[playerId].Spread)
-                if (TapSwapBindings.IsMinorArcana(session, id)) list.Add(id);
-            return list;
         }
 
         static int ResolvePlayerIdFromCards(GameSession session, IReadOnlyList<string> spreadIds, IReadOnlyList<string> handIds)

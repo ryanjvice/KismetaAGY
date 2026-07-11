@@ -309,6 +309,20 @@
 .spring-hub__hub-cta--hidden,
 .spring-hub__commune-cta--hidden { display: none; }
 
+.screen--spring .central-panel {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+}
+
+.screen--spring .screen__body--inventory-pad > .central-panel {
+    padding-bottom: 0;
+}
+
+.screen--spring .screen__body--inventory-pad > .commune-cta {
+    margin-bottom: var(--inventory-reserved-bottom);
+}
+
 .screen--spring .stage-cta--multi > .actionbtn {
     width: 100%;
     margin-right: 0;
@@ -431,6 +445,47 @@
     align-self: stretch;
     justify-content: flex-start;
     width: 100%;
+    min-height: 0;
+}
+
+/* Spring hub commune: fill central panel and grow arcanum into leftover space */
+.screen--spring .central-panel > .commune-stage {
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.screen--spring .commune-stage > .tableau-stage {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    justify-content: flex-start;
+}
+
+.screen--spring .tableau-stage .commune-stage__zone-wrap--arcanum {
+    flex-grow: 1;
+    flex-shrink: 0;
+    min-height: 110px;
+}
+
+.screen--spring .tableau-stage .swap-zone--arcanum {
+    flex-grow: 1;
+    flex-shrink: 0;
+    min-height: 102px;
+    margin-bottom: 0;
+}
+
+.screen--spring .tableau-stage .swap-zone--arcanum .swap-zone__cards {
+    min-height: 66px;
+}
+
+.screen--spring .tableau-stage .commune-stage__swap-indicator {
+    margin-top: 0;
+    margin-bottom: 6px;
+}
+
+.screen--spring .tableau-stage .swap-zone {
+    padding: 8px 10px;
+    margin-bottom: 4px;
 }
 .commune-stage--hidden { display: none; }
 .spring-hub__stage--hidden { display: none; }

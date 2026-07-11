@@ -192,6 +192,8 @@ Canonical controller: `SpringHubController.BindCommune()` with `TableauBindings.
 
 During `SpringAction`, **Review the Tableau** (`review-tableau-btn`) reopens the same commune subview for optional last-minute rearrangement; **Lock The Tableau** submits `CommuneCommand` and returns to the hub board without ending the turn.
 
+While arranging cards, **Review Effects** (`review-effects-btn`) opens the Active Effects overlay for quick reference (same panel as the dock Effects FAB).
+
 ---
 
 ## Related code

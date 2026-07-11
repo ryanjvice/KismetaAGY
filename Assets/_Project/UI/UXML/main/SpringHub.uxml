@@ -66,7 +66,8 @@
                 <engine:Button name="proceed-btn" text="Proceed To Summer" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 
-            <engine:VisualElement name="commune-cta" class="stage-cta stage-cta--single spring-hub__commune-cta--hidden">
+            <engine:VisualElement name="commune-cta" class="stage-cta stage-cta--multi spring-hub__commune-cta--hidden">
+                <engine:Button name="review-effects-btn" text="Review Effects" class="actionbtn btn btn--secondary" />
                 <engine:Button name="commune-lock-btn" text="Lock The Tableau" class="actionbtn btn btn--primary" />
             </engine:VisualElement>
 
