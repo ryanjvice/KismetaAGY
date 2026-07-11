@@ -1,6 +1,6 @@
 # Effect Implementation Tracker
 
-**Last updated:** 2026-07-10 (Phase 7 limits & protection)
+**Last updated:** 2026-07-10 (Phase 8 social & forge triggers)
 
 Single source of truth for **which card/cosmic modifiers are enforced in gameplay** vs **display-only / not started**. Grouped by effect family (not by individual card file). Update status when wiring a new effect slice.
 
@@ -188,13 +188,13 @@ One row per **effect family** (not per card). Card data uses `effectType` from [
 
 | EffectType | Cards (ranks × suits) | Status | Target hook | UI | Tests | Notes |
 |------------|----------------------|--------|-------------|-----|-------|-------|
-| Entry Fee | Ace V1 (all suits) | **NotStarted** | `AstralHouseService` / ace discard build | Action badge | No | |
+| Entry Fee | Ace V1 (all suits) | **Enforced** | `HouseModifierService` + `AstralHouseService.TryBuild` | Action badge | Yes | 1 ace when sign element matches suit |
 | Harvest | 2 V1 | **Enforced** | `HarvestModifierService.HouseDoublingBonus` → `SpringRules` | Spread passive badge + breakdown | Yes | `RuleServices_Tests.Rank2_WaterHouse_DoublesHouseBonus` |
 | Build | 3 V1 | **Enforced** | `CraftModifierService` Build-salt path → `CraftingRules` | Action badge | Yes | `RuleServices_Tests.BuildV1_SaltWithTwoSuitCards` |
 | Reversed | 4–6 V1 (curses) | **Enforced** | `ReversedCurseService` + `ReversedCurseCatalog`; hooks in combat, limits, trade, craft, adept buy, duel flow | `reversed · active` / `reversed · negated` badges | Yes | Alignment negates; spread-only; Magician blanket |
-| Forge | 7 V1, Queen V1 | **NotStarted** | `CrucibleRules.TryFire` | Forge badge | No | |
+| Forge | 7 V1, Queen V1 | **Enforced** | `ForgeEffectService` + `ForgeReagentPaymentService` in `CrucibleRules.TryFire` | Forge badge | Yes | Rank 7 grant; Queen wild reagent cost |
 | Craft | 8 V1, King V1 | **Enforced** | `CraftModifierService` rank-8 discount; `CraftingRules.TryKingDiscardCraft` | Action badge + craft cost preview | Yes | `RuleServices_Tests.Rank8_*`, `KingOfCups_*` |
-| Social | 9 V1 | **NotStarted** | Post-contest draw triggers | Spread passive badge | No | |
+| Social | 9 V1 | **Enforced** | `SpreadSocialEffectService` post-contest draws | Spread passive badge | Yes | Owner-only |
 | Opposition | 10 V1 | **NotStarted** | `AlignmentService` wild suit | Spread passive badge | No | |
 | Gambit | Princess V1 | **Enforced** | `ContestCardEffectCatalog` + `CombatRules` | Combat badge | Yes | `ContestModifierService_Tests` |
 | Duel | Knight V1 | **Enforced** | `ContestCardEffectCatalog` + `CombatRules` | Combat badge | Yes | `RuleServices_Tests.Duel_KnightOfSwords_FlipsTieToAttackerWin` |
@@ -340,11 +340,13 @@ Deferred per scope: Magician ★1 resonant → Phase 5; World ★21 resonant →
 - [x] Cups 4 / Priestess / Queen limit composition regression tests
 - [x] Tests: `SpreadLimitEffectCatalog_Tests`, `DuelProtectionService_Tests`, `RuleServices_Tests` Phase 7 block
 
-### Phase 8 — Social & forge triggers
+### Phase 8 — Social & forge triggers ✅ (complete)
 
-- [ ] Rank 9 Social — draw on contest win
-- [ ] Rank 7 / Queen V1 Forge — reagent on fire
-- [ ] Entry Fee ace V1 — astral house build discount
+- [x] Rank 9 Social — draw on contest win (`SpreadSocialEffectService`)
+- [x] Rank 7 / Queen V1 Forge — reagent on fire + wild reagent cost (`ForgeEffectService`, `ForgeReagentPaymentService`)
+- [x] Entry Fee ace V1 — astral house alternate build (`HouseModifierService`)
+- [x] UI footnotes + Social/Entry Fee active predicates
+- [x] Tests: `SpreadForgeEffectCatalog_Tests`, `ForgeReagentPaymentService_Tests`, `SpreadSocialEffectService_Tests`, `HouseModifierService_Tests`, `RuleServices_Tests` Phase 8 block
 
 ### Phase 9 — UI polish per slice
 

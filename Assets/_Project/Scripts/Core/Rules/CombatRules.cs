@@ -262,6 +262,9 @@ namespace Kismeta.Core.Rules
             int winnerId = attackerWins ? attackerId : defenderId;
             AdeptEffectService.TryApplyStarPostLossDraw(session, loserId);
             TryApplyWandsFourWinnerDraw(session, winnerId, loserId);
+            var db = session.Rules?.CardDatabase;
+            if (db != null)
+                SpreadSocialEffectService.TryApplyContestWinDraw(session, winnerId, ContestKind.Duel, db);
 
             string resolvedAnte = anteCardId ?? string.Empty;
             session.EmitEvent(new DuelResolvedEvent(
@@ -437,6 +440,9 @@ namespace Kismeta.Core.Rules
 
             int loserId = attackerWins ? defenderId : attackerId;
             AdeptEffectService.TryApplyStarPostLossDraw(session, loserId);
+            var db = session.Rules?.CardDatabase;
+            if (db != null)
+                SpreadSocialEffectService.TryApplyContestWinDraw(session, series.WinnerId, ContestKind.Gambit, db);
 
             session.EmitEvent(new GambitResolvedEvent(
                 attackerId, defenderId,

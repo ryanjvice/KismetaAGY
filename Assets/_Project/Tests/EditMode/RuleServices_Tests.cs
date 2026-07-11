@@ -51,6 +51,7 @@ namespace Kismeta.Core.Tests
                 crafting:      new CraftingRules(db),
                 winter:        new WinterRules(db),
                 validator:     new ActionValidator(),
+                astralHouse:   new AstralHouseService(db),
                 combat:        new CombatRules(seed),
                 trade:         new TradeService(db),
                 adept:         new AdeptRules(db));
@@ -3362,6 +3363,124 @@ namespace Kismeta.Core.Tests
             var result = session.Apply(new DevilStealCommand(0, "sacrifice", 1, "prot-cups"));
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.IsTrue(session.Players[0].Spread.Contains("prot-cups"));
+        }
+
+        // ─── Phase 8 social & forge tests ─────────────────────────────────────────
+
+        [Test]
+        public void Phase8_Rank7_InSpread_GrantsReagentOnFire()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ReplaceCrucibleSlot(session, 0, 0, "crucible.c.12");
+
+            AddSpreadCard(session, 0, "cup-a", "minor.cups.two.1");
+            AddSpreadCard(session, 0, "cup-b", "minor.cups.three.1");
+            AddSpreadCard(session, 0, "cup-c", "minor.cups.four.1");
+            AddSpreadCard(session, 0, "sun-wild", "minor.cups.ace.1");
+            AddSpreadCard(session, 0, "seven-cups", "minor.cups.seven.1");
+
+            var player = session.Players[0];
+            player.CrucibleSlots[0].Activate();
+            player.AddReagent(ReagentType.AquaRegia, 3);
+            SetSeason(session, Season.Autumn);
+
+            var alignIds = new List<string> { "cup-a", "cup-b", "cup-c", "sun-wild" };
+            Assert.IsTrue(session.Apply(new FireStoneCommand(0, 0, alignIds)).IsOk);
+            Assert.AreEqual(1, player.GetReagent(ReagentType.AquaRegia));
+        }
+
+        [Test]
+        public void Phase8_Rank7_DiscardedAsAlignment_DoesNotGrant()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ReplaceCrucibleSlot(session, 0, 0, "crucible.c.13");
+
+            AddSpreadCard(session, 0, "mars1", "minor.cups.seven.1");
+            AddSpreadCard(session, 0, "mars2", "minor.cups.seven.1");
+            AddSpreadCard(session, 0, "mars3", "minor.cups.seven.1");
+            AddSpreadCard(session, 0, "cup-a", "minor.cups.two.1");
+            AddSpreadCard(session, 0, "cup-b", "minor.cups.three.1");
+
+            var player = session.Players[0];
+            player.CrucibleSlots[0].Activate();
+            player.AddReagent(ReagentType.Sulphur, 2);
+            player.AddReagent(ReagentType.AquaRegia, 1);
+            SetSeason(session, Season.Autumn);
+
+            var alignIds = new List<string> { "mars1", "mars2", "mars3", "cup-a", "cup-b" };
+            var fire = session.Apply(new FireStoneCommand(0, 0, alignIds));
+            Assert.IsTrue(fire.IsOk, fire.Message);
+            Assert.AreEqual(0, player.GetReagent(ReagentType.AquaRegia));
+        }
+
+        [Test]
+        public void Phase8_QueenWild_QuicksilverPaysSulphurCost()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            ReplaceCrucibleSlot(session, 0, 0, "crucible.d.19");
+
+            AddSpreadCard(session, 0, "queen-swords", "minor.swords.queen.1");
+            AddSpreadCard(session, 0, "w1", "minor.wands.two.1");
+            AddSpreadCard(session, 0, "w2", "minor.wands.three.1");
+            AddSpreadCard(session, 0, "w3", "minor.wands.four.1");
+            AddSpreadCard(session, 0, "w4", "minor.wands.six.1");
+            AddSpreadCard(session, 0, "sun1", "minor.pentacles.ace.1");
+            AddSpreadCard(session, 0, "sun2", "minor.wands.ace.1");
+
+            var player = session.Players[0];
+            player.CrucibleSlots[0].Activate();
+            player.AddReagent(ReagentType.Quicksilver, 4);
+            SetSeason(session, Season.Autumn);
+
+            var alignIds = new List<string> { "w1", "w2", "w3", "w4", "sun1", "sun2" };
+            var fire = session.Apply(new FireStoneCommand(0, 0, alignIds));
+            Assert.IsTrue(fire.IsOk, fire.Message);
+            Assert.AreEqual(0, player.GetReagent(ReagentType.Quicksilver));
+        }
+
+        [Test]
+        public void Phase8_CupsNine_TradeDrawsForOwnerOnly()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            AddSpreadCard(session, 0, "trade-offer", "minor.cups.two.1");
+            AddSpreadCard(session, 0, "cups9", "minor.cups.nine.1");
+            var request = PopulateSpread(session, 1, 1, "trade-req");
+            int deckBefore = session.Board.CommonDeck.Count;
+
+            var trade = new TradeService(db);
+            Assert.IsTrue(trade.TryTrade(session, 0, 1,
+                new List<string> { "trade-offer" },
+                new List<string> { request[0] }).IsOk);
+
+            Assert.AreEqual(deckBefore - 1, session.Board.CommonDeck.Count);
+            Assert.AreEqual(1, session.Players[0].Hand.Count);
+            Assert.AreEqual(0, session.Players[1].Hand.Count);
+        }
+
+        [Test]
+        public void Phase8_EntryFeeAce_BuildsOnMatchingElementSign()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, mode: GameMode.Standard);
+            SetSeason(session, Season.Summer);
+            var player = session.Players[0];
+            player.CurrentSign = ZodiacSign.Cancer;
+            AddSpreadCard(session, 0, "ace-cups", "minor.cups.ace.1");
+
+            var result = session.Apply(new BuildAstralHouseCommand(
+                0, ZodiacSign.Cancer, new List<string> { "ace-cups" }));
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(player.AstralHouses.Contains(ZodiacSign.Cancer));
         }
     }
 }

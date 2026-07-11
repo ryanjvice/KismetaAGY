@@ -1183,7 +1183,9 @@ namespace Kismeta.Game.Bootstrap
 
             bool alreadyBuilt = player.AstralHouses.Contains(sign);
             int required = _session == null ? 2 : AstralHouseService.RequiredPaymentCount(_session.Mode);
-            bool canBuild     = hasHouses && signFree && !alreadyBuilt && selList.Count == required;
+            bool canBuild = hasHouses && signFree && !alreadyBuilt && _session != null
+                && HouseModifierService.TryResolvePaymentMode(
+                    _session, pid, sign, selList, _db, out _, out _);
 
             string houseLabel = !hasHouses
                 ? "Build House  (no tokens left)"
@@ -1191,7 +1193,7 @@ namespace Kismeta.Game.Bootstrap
                     ? $"Build House on {sign}  (sign taken)"
                     : alreadyBuilt
                         ? $"Build House on {sign}  (already built)"
-                        : $"Build House on {sign}  (select {required} planet-matching card{(required == 1 ? "" : "s")})";
+                        : $"Build House on {sign}  (select {required} planet card{(required == 1 ? "" : "s")} or 1 Entry Fee ace)";
 
             GUI.enabled = canBuild;
             if (GUILayout.Button(houseLabel))

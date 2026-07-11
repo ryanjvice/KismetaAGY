@@ -27,7 +27,7 @@ namespace Kismeta.UI.Controllers
                 if (slot.State != CrucibleCardState.Active) continue;
                 var inst = session.GetCard(slot.CardInstanceId);
                 var def = inst != null ? db.GetById(inst.DefinitionId) : null;
-                if (def != null && CanPayCost(player, def.AlchemicalCost))
+                if (def != null && CanPayCost(session, player, def.AlchemicalCost))
                     list.Add(i);
             }
             return list;
@@ -102,6 +102,26 @@ namespace Kismeta.UI.Controllers
             && player.GetReagent(ReagentType.Vitriol) >= cost.Vitriol
             && player.GetReagent(ReagentType.Quicksilver) >= cost.Quicksilver
             && player.GetReagent(ReagentType.Salt) >= cost.Salt;
+
+        public static bool CanPayCost(GameSession session, PlayerState player, ReagentCost cost)
+        {
+            var db = session.Rules?.CardDatabase;
+            if (db == null) return CanPayCost(player, cost);
+            var wild = ForgeReagentPaymentService.GetWildReagentTypes(player, session, db);
+            return ForgeReagentPaymentService.CanPayFireCost(player, cost, wild);
+        }
+
+        public static string FormatWildReagentNote(GameSession session, PlayerState player)
+        {
+            var db = session.Rules?.CardDatabase;
+            if (db == null) return "";
+            var wild = ForgeReagentPaymentService.GetWildReagentTypes(player, session, db);
+            if (wild.Count == 0) return "";
+            var parts = new List<string>();
+            foreach (var type in wild)
+                parts.Add($"{type} wild");
+            return " · " + string.Join(", ", parts);
+        }
 
         public static string FormatReagentCost(ReagentCost cost)
         {

@@ -31,7 +31,6 @@ namespace Kismeta.Core.Rules
             ZodiacSign sign, IReadOnlyList<string> paymentCardIds)
         {
             var player = session.Players[playerId];
-            int requiredCount = RequiredPaymentCount(session.Mode);
 
             if (player.UnplacedAstralHouses <= 0)
                 return CommandResult.Invalid("No Astral House tokens remaining.");
@@ -50,30 +49,22 @@ namespace Kismeta.Core.Rules
                 if (p.PlayerId != playerId && p.AstralHouses.Contains(sign))
                     return CommandResult.Invalid($"{sign} is already claimed by P{p.PlayerId}.");
 
-            if (paymentCardIds.Count != requiredCount)
-            {
-                return CommandResult.Invalid(requiredCount == 1
-                    ? "Building an Astral House costs exactly 1 card (Quickplay)."
-                    : "Building an Astral House costs exactly 2 planet-matching cards.");
-            }
+            if (paymentCardIds.Count == 0)
+                return CommandResult.Invalid("No payment cards submitted.");
+
+            if (!HouseModifierService.TryResolvePaymentMode(
+                    session, playerId, sign, paymentCardIds, _db, out _, out var paymentError))
+                return CommandResult.Invalid(paymentError ?? "Invalid house payment.");
 
             // Build player card set (Spread + Hand)
             var playerCards = new HashSet<string>(player.Spread.Count + player.Hand.Count);
             foreach (var id in player.Spread) playerCards.Add(id);
             foreach (var id in player.Hand)   playerCards.Add(id);
 
-            // Validate ownership and planet matching
-            var requiredPlanet = Correspondence.PlanetFor(sign);
             foreach (var id in paymentCardIds)
             {
                 if (!playerCards.Contains(id))
                     return CommandResult.Invalid($"Card {id} does not belong to player {playerId}.");
-
-                var inst = session.GetCard(id);
-                var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
-                if (def == null || def.Planet != requiredPlanet)
-                    return CommandResult.Invalid(
-                        $"Payment cards must match the ruling Planet of {sign} ({requiredPlanet}).");
             }
 
             // Pay the cards

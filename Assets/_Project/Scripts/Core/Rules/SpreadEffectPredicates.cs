@@ -35,6 +35,20 @@ namespace Kismeta.Core.Rules
             return false;
         }
 
+        public static bool IsSocialSpreadActive(CardDefinition def)
+            => def.EffectType.Equals("Social", StringComparison.OrdinalIgnoreCase);
+
+        public static bool IsEntryFeeActive(PlayerState player, CardDefinition def)
+        {
+            if (!SpreadHouseEffectCatalog.IsEntryFeeAce(def))
+                return false;
+            if (player.CurrentSign == ZodiacSign.None)
+                return false;
+            return Correspondence.ElementFor(def.Suit) == Correspondence.ElementFor(player.CurrentSign);
+        }
+
+        public static Element HarvestElementForSuit(Suit suit) => Correspondence.ElementFor(suit);
+
         public static Element HarvestDoubleElementFor(CardDefinition def)
         {
             if (!SpreadHarvestEffectCatalog.IsRank2HarvestDouble(def))
@@ -43,8 +57,6 @@ namespace Kismeta.Core.Rules
                 return element;
             return HarvestElementForSuit(def.Suit);
         }
-
-        public static Element HarvestElementForSuit(Suit suit) => Correspondence.ElementFor(suit);
 
         public static bool TryParseCosmicElementCondition(string text, out Element element)
         {

@@ -117,8 +117,9 @@ namespace Kismeta.UI.Controllers
 
             if (Lbl("cost-summary") != null && def != null)
             {
-                bool canPay = AutumnActionBindings.CanPayCost(player, def.AlchemicalCost);
+                bool canPay = AutumnActionBindings.CanPayCost(_session, player, def.AlchemicalCost);
                 Lbl("cost-summary")!.text = $"Alchemical cost: {AutumnActionBindings.FormatReagentCost(def.AlchemicalCost)}"
+                    + AutumnActionBindings.FormatWildReagentNote(_session, player)
                     + (canPay ? "" : " — insufficient");
             }
 
@@ -168,7 +169,7 @@ namespace Kismeta.UI.Controllers
             var player = _session.Players[_playerId];
             bool ready = _slotIndex >= 0
                 && crucibleDef != null
-                && AutumnActionBindings.CanPayCost(player, crucibleDef.AlchemicalCost)
+                && AutumnActionBindings.CanPayCost(_session, player, crucibleDef.AlchemicalCost)
                 && IsAlignmentReady(crucibleDef);
 
             btn.SetEnabled(ready);

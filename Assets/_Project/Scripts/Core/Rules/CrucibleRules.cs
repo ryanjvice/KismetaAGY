@@ -175,15 +175,18 @@ namespace Kismeta.Core.Rules
             // Pay alchemical reagent cost
             if (crucibleDef != null)
             {
-                if (!CanPayCost(player, crucibleDef.AlchemicalCost))
+                var wildTypes = ForgeReagentPaymentService.GetWildReagentTypes(player, session, _db);
+                if (!ForgeReagentPaymentService.CanPayFireCost(player, crucibleDef.AlchemicalCost, wildTypes))
                     return CommandResult.Invalid("Insufficient reagents to Fire.");
-                PayCost(player, crucibleDef.AlchemicalCost);
+                ForgeReagentPaymentService.PayFireCost(player, crucibleDef.AlchemicalCost, wildTypes);
             }
 
             // Move stone from Mantle to the next Forge position and enter Forging state
             player.StonePosition = player.StonePosition.Advance();
             player.StoneState    = StoneState.Forging;
             slot.Fire(session.Board.RoundNumber);
+
+            ForgeEffectService.TryGrantRank7Reagents(session, playerId, _db);
 
             session.EmitEvent(new StoneFiredEvent(playerId, slotIndex, player.StonePosition));
             return CommandResult.Ok();
@@ -427,6 +430,7 @@ namespace Kismeta.Core.Rules
                 winner.BesiegedBonusCount++;
 
             AdeptEffectService.TryApplyStarPostLossDraw(session, loserId);
+            SpreadSocialEffectService.TryApplyContestWinDraw(session, winnerId, ContestKind.Opposition, _db);
 
             session.EmitEvent(new OppositionResolvedEvent(
                 attackerId, defenderId, attackRoll, defendRoll, loserId,
@@ -526,20 +530,5 @@ namespace Kismeta.Core.Rules
             return defs;
         }
 
-        private static bool CanPayCost(PlayerState player, ReagentCost cost) =>
-            player.GetReagent(ReagentType.Sulphur)     >= cost.Sulphur     &&
-            player.GetReagent(ReagentType.AquaRegia)   >= cost.AquaRegia   &&
-            player.GetReagent(ReagentType.Vitriol)     >= cost.Vitriol     &&
-            player.GetReagent(ReagentType.Quicksilver) >= cost.Quicksilver &&
-            player.GetReagent(ReagentType.Salt)        >= cost.Salt;
-
-        private static void PayCost(PlayerState player, ReagentCost cost)
-        {
-            player.SpendReagent(ReagentType.Sulphur,     cost.Sulphur);
-            player.SpendReagent(ReagentType.AquaRegia,   cost.AquaRegia);
-            player.SpendReagent(ReagentType.Vitriol,     cost.Vitriol);
-            player.SpendReagent(ReagentType.Quicksilver, cost.Quicksilver);
-            player.SpendReagent(ReagentType.Salt,        cost.Salt);
-        }
     }
 }

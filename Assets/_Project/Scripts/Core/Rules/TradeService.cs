@@ -63,6 +63,9 @@ namespace Kismeta.Core.Rules
             if (!validation.IsOk) return validation;
 
             ExecuteSwap(session, initiatorId, targetId, offerCardIds, requestCardIds);
+            var db = session.Rules?.CardDatabase;
+            if (db != null)
+                SpreadSocialEffectService.TryApplyTradeDraws(session, initiatorId, targetId, db);
             session.EmitEvent(new TradeCompletedEvent(
                 initiatorId, targetId, offerCardIds.Count, requestCardIds.Count));
             ExchangeEventEmitter.EmitTrade(session, initiatorId, targetId, offerCardIds, requestCardIds);

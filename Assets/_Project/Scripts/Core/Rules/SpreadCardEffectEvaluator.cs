@@ -145,7 +145,7 @@ namespace Kismeta.Core.Rules
                 SpreadCardEffectKind.SpreadPassive => IsSpreadPassiveActive(player, def),
                 SpreadCardEffectKind.Forge => true,
                 SpreadCardEffectKind.Wildcard => true,
-                SpreadCardEffectKind.Action => true,
+                SpreadCardEffectKind.Action => IsActionActive(player, def),
                 _ => false
             };
         }
@@ -156,7 +156,15 @@ namespace Kismeta.Core.Rules
                    && def.EffectType.Equals("Passive", StringComparison.OrdinalIgnoreCase));
 
         static bool IsSpreadPassiveActive(PlayerState player, CardDefinition def)
-            => SpreadEffectPredicates.IsHarvestHouseElementActive(player, def);
+            => SpreadEffectPredicates.IsSocialSpreadActive(def)
+               || SpreadEffectPredicates.IsHarvestHouseElementActive(player, def);
+
+        static bool IsActionActive(PlayerState player, CardDefinition def)
+        {
+            if (SpreadHouseEffectCatalog.IsEntryFeeAce(def))
+                return SpreadEffectPredicates.IsEntryFeeActive(player, def);
+            return true;
+        }
 
         static ActiveEffectPolarity ResolvePolarity(
             CardDefinition def,
@@ -242,7 +250,16 @@ namespace Kismeta.Core.Rules
                 return new ActiveEffectBadge("wildcard link", ActiveEffectBadgeTone.Neutral);
 
             if (kind == SpreadCardEffectKind.Action)
+            {
+                if (SpreadHouseEffectCatalog.IsEntryFeeAce(def))
+                {
+                    return cardEffectActive
+                        ? new ActiveEffectBadge("action · ready", ActiveEffectBadgeTone.Buff)
+                        : new ActiveEffectBadge("action · unavailable", ActiveEffectBadgeTone.Neutral);
+                }
+
                 return new ActiveEffectBadge("action · available", ActiveEffectBadgeTone.Neutral);
+            }
 
             if (hasCrucible)
                 return new ActiveEffectBadge("in activation set", ActiveEffectBadgeTone.Neutral);
@@ -290,6 +307,12 @@ namespace Kismeta.Core.Rules
 
             if (kind == SpreadCardEffectKind.Passive && DuelProtectionService.IsKingV2Passive(def))
                 description += $" Protecting {def.Suit} in spread (this card vulnerable).";
+
+            if (SpreadForgeEffectCatalog.IsQueenV1WildReagent(def))
+                description += $" {SpreadForgeEffectCatalog.WildReagentForQueen(def)} wild for Fire reagent cost.";
+
+            if (SpreadForgeEffectCatalog.IsRank7ForgeReagent(def))
+                description += $" +1 {SpreadForgeEffectCatalog.ReagentForRank7(def)} when you Fire.";
 
             return description;
         }

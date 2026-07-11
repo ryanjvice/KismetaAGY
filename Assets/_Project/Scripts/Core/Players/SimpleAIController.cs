@@ -105,12 +105,12 @@ namespace Kismeta.Core.Players
         {
             var pid = ctx.ActivePlayerId;
             var player = ctx.PublicView.Players[pid];
-            int required = AstralHouseService.RequiredPaymentCount(ctx.PublicView.Mode);
+            if (ctx.CardDatabase == null)
+                return null;
 
             if (player.UnplacedAstralHouses <= 0
                 || player.CurrentSign == ZodiacSign.None
-                || player.AstralHouses.Contains(player.CurrentSign)
-                || ctx.CardDatabase == null)
+                || player.AstralHouses.Contains(player.CurrentSign))
                 return null;
 
             var sign = player.CurrentSign;
@@ -120,8 +120,35 @@ namespace Kismeta.Core.Players
                     return null;
             }
 
-            var planet = Correspondence.PlanetFor(sign);
+            var signElement = Correspondence.ElementFor(sign);
             var cardMap = ctx.PublicView.CardInstanceToDefinition;
+
+            foreach (var id in player.Spread)
+            {
+                if (!cardMap.TryGetValue(id, out var defId)) continue;
+                var def = ctx.CardDatabase.GetById(defId);
+                if (def != null
+                    && SpreadHouseEffectCatalog.IsEntryFeeAce(def)
+                    && Correspondence.ElementFor(def.Suit) == signElement)
+                {
+                    return new BuildAstralHouseCommand(pid, sign, new List<string> { id });
+                }
+            }
+
+            foreach (var id in ctx.PrivateView.Hand)
+            {
+                if (!cardMap.TryGetValue(id, out var defId)) continue;
+                var def = ctx.CardDatabase.GetById(defId);
+                if (def != null
+                    && SpreadHouseEffectCatalog.IsEntryFeeAce(def)
+                    && Correspondence.ElementFor(def.Suit) == signElement)
+                {
+                    return new BuildAstralHouseCommand(pid, sign, new List<string> { id });
+                }
+            }
+
+            int required = AstralHouseService.RequiredPaymentCount(ctx.PublicView.Mode);
+            var planet = Correspondence.PlanetFor(sign);
             var payment = new List<string>();
 
             foreach (var id in player.Spread)
