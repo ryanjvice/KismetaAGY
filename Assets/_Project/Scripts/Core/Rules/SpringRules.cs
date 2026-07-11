@@ -204,8 +204,10 @@ namespace Kismeta.Core.Rules
         {
             var player = session.Players[playerId];
 
-            if (paymentCardIds.Count != 3)
-                return CommandResult.Invalid("Purchasing an Adept costs exactly 3 cards.");
+            int requiredPayment = 3 + ReversedCurseService.AdeptBuyExtraCardCost(session, playerId);
+            if (paymentCardIds.Count != requiredPayment)
+                return CommandResult.Invalid(
+                    $"Purchasing an Adept costs exactly {requiredPayment} cards.");
 
             // Payment must be minor arcana only — Fate/Adept cards are not valid currency
             foreach (var id in paymentCardIds)

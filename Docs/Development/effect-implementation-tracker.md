@@ -134,7 +134,7 @@ Twelve zodiac signs map to four effect categories. Board-wide age effect plus pe
 | Chariot resonant — reroll in any Duel | Adept ★7 resonant | **Enforced** | `AdeptAttunement` + `ContestModifierService` | Contest response subtitle | Yes | `ContestModifierService_Tests.ChariotResonant_RerollOnlyWhenAttuned` |
 | Knight V1 ±1 duel dice (all suits) | Minor spread | **Enforced** | `ContestCardEffectCatalog` → `CombatRules` | Active Effects + contest preview | Yes | `ContestModifierService_Tests`, `RuleServices_Tests.Duel_KnightOfSwords_FlipsTieToAttackerWin` |
 | Princess V1 ±1 gambit dice (all suits) | Minor spread | **Enforced** | `ContestCardEffectCatalog` → `CombatRules` | `BuildGambitRelevant` | Yes | `ContestModifierService_Tests.PrincessOfCups_GrantsDefenderGambitBonus` |
-| Wands 5/6 reversed duel dice | Minor spread curses | **Enforced** | `ContestCardEffectCatalog` (interim: always active) | Active Effects | Partial | Negation deferred to Phase 5 |
+| Wands 5/6 reversed duel dice | Minor spread curses | **Enforced** | `ReversedCurseService` + `ContestCardEffectCatalog` | Active Effects | Yes | Gated by alignment + Magician resonant |
 
 ---
 
@@ -164,7 +164,7 @@ Twelve zodiac signs map to four effect categories. Board-wide age effect plus pe
 | Adept | ★ | Base status | Resonant status | Rule hook(s) | UI | Tests | Notes |
 |-------|---|-------------|-----------------|--------------|-----|-------|-------|
 | Hermit | 9 | **Partial** | **Enforced** | `SpringRules.ArcanaLimitFor` → limit 3; resonant double element tier in `AlignmentService` | Active Effects attuned line | Yes | `RuleServices_Tests.HermitResonant_*` |
-| Magician | 1 | **Enforced** | **Deferred** | `AdeptRules.TryMagicianSwap` | Active Effects + GameDebugUI | Yes | Resonant reversed nullification → **Phase 5** |
+| Magician | 1 | **Enforced** | **Enforced** | `AdeptRules.TryMagicianSwap`; resonant `ReversedCurseService.MagicianResonantNegates` | Active Effects + GameDebugUI | Yes | Reversed immunity when attuned (Gemini) |
 | High Priestess | 2 | **Enforced** | **Enforced** | `SpringRules.ExecuteHarvest` + `CompletePriestessHarvestCommand`; resonant hand limit 7 via `PlayerLimitService` | Active Effects hand limit line | Yes | `RuleServices_Tests.PriestessResonant_*` |
 | Empress | 3 | **Enforced** | **Enforced** | `CraftingRules.TryMarkEmpressReagent` + `CraftModifierService` 2-for-1; resonant 2 marks via `AdeptAttunement` | Active Effects marked types | Yes | `RuleServices_Tests.EmpressResonant_*` |
 | Emperor | 4 | **Enforced** | **Enforced** | `AdeptRules.TryProtectSpreadCards` (hand+spread when attuned) + `CombatRules` / `AdeptRules.TryDevilSteal` | Active Effects protected ids | Yes | `RuleServices_Tests.EmperorResonant_*` |
@@ -191,7 +191,7 @@ One row per **effect family** (not per card). Card data uses `effectType` from [
 | Entry Fee | Ace V1 (all suits) | **NotStarted** | `AstralHouseService` / ace discard build | Action badge | No | |
 | Harvest | 2 V1 | **Enforced** | `HarvestModifierService.HouseDoublingBonus` → `SpringRules` | Spread passive badge + breakdown | Yes | `RuleServices_Tests.Rank2_WaterHouse_DoublesHouseBonus` |
 | Build | 3 V1 | **Enforced** | `CraftModifierService` Build-salt path → `CraftingRules` | Action badge | Yes | `RuleServices_Tests.BuildV1_SaltWithTwoSuitCards` |
-| Reversed | 4–6 V1 (curses) | **Partial** | Wands/Cups/Swords duel dice via `ContestCardEffectCatalog`; negation **Blocked** | Debuff badge | Partial | Phase 5 for full negation; interim always-active |
+| Reversed | 4–6 V1 (curses) | **Enforced** | `ReversedCurseService` + `ReversedCurseCatalog`; hooks in combat, limits, trade, craft, adept buy, duel flow | `reversed · active` / `reversed · negated` badges | Yes | Alignment negates; spread-only; Magician blanket |
 | Forge | 7 V1, Queen V1 | **NotStarted** | `CrucibleRules.TryFire` | Forge badge | No | |
 | Craft | 8 V1, King V1 | **Enforced** | `CraftModifierService` rank-8 discount; `CraftingRules.TryKingDiscardCraft` | Action badge + craft cost preview | Yes | `RuleServices_Tests.Rank8_*`, `KingOfCups_*` |
 | Social | 9 V1 | **NotStarted** | Post-contest draw triggers | Spread passive badge | No | |
@@ -226,7 +226,7 @@ Defer resolution until the slice that needs them:
 
 | Conflict | Sources | Impact | Tracker action |
 |----------|---------|--------|----------------|
-| Reversed curse negation procedure undefined | Card Reference alignment vs curse text | Ranks 4–6 V1 cannot be **Enforced** | **Blocked** — Phase 5 |
+| Reversed curse negation procedure undefined | Card Reference alignment vs curse text | Ranks 4–6 V1 cannot be **Enforced** | **Resolved** — alignment > 0 negates; `nullifiesCard` is UI-only |
 | Hand limit 5 vs 7 (Priestess resonant) | Game Guide vs Adept resonant text | `PlayerLimitService` dynamic hand limit | **Resolved** — Phase 4 |
 | Arcanum limit 2 vs Hermit 3 vs doc "Hierophant" typo | Card Reference overview table | Hermit 3 enforced; doc says Hierophant | Document only; code uses Hermit ★9 |
 | Justice scope | Card Reference vs implementation | Duel + Gambit only (not Opposition) | **Resolved** in code |
@@ -308,16 +308,18 @@ Deferred per scope: Magician ★1 resonant → Phase 5; World ★21 resonant →
 - [x] Star resonant nullify + `CardEffectSuppressionService` + Salt refresh
 - [x] Consolidate Strength/Chariot/Empress/Temperance resonant (tracker + tests)
 - [x] Active Effects attuned badges + GameDebugUI resonant hooks
-- [ ] Magician resonant reversed nullification — **deferred Phase 5**
+- [x] Magician resonant reversed nullification (`ReversedCurseService`)
 - [ ] World resonant crucible wildcard — **deferred Phase 6**
 
 ### Phase 5 — Reversed curse system
 
-**Blocked** — needs negation rule design decision.
+**Enforced** — alignment negates curses on own Spread; Magician resonant blanket.
 
-- [ ] Define alignment-negates-curse procedure
-- [ ] Enforce in spread validation / combat / craft layers
-- [ ] Update `SpreadCardEffectEvaluator` inactive state when negated
+- [x] Define alignment-negates-curse procedure (`ReversedCurseService`)
+- [x] `isCurse` / `nullifiesCard` on `CardDefinition` + `ReversedCurseCatalog`
+- [x] Enforce in combat, limits, trade, craft, adept buy, duel flow
+- [x] Update `SpreadCardEffectEvaluator` negated state (`reversed · negated`)
+- [x] GameDebugUI cosmic age cycle + active curse count
 
 ### Phase 6 — Wildcard substitution
 

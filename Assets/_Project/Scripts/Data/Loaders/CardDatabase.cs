@@ -116,6 +116,8 @@ namespace Kismeta.Data.Loaders
                 effectType:          d.effectType ?? "",
                 effectText:          d.effectText ?? "",
                 effectTextResonant:  d.effectTextResonant ?? "",
+                isCurse:             d.isCurse,
+                nullifiesCard:       d.nullifiesCard ?? "",
                 wildcardArcanaNumber:d.wildcardArcanaNumber,
                 crucibleGroup:       crucibleGroup,
                 alchemicalFormula:   d.alchemicalFormula ?? "",

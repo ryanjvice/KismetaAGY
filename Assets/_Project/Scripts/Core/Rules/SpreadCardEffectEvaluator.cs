@@ -30,19 +30,45 @@ namespace Kismeta.Core.Rules
     public static class SpreadCardEffectEvaluator
     {
         public static SpreadCardEffectState Evaluate(
+            GameSession session,
+            PlayerState player,
+            string cardInstanceId,
+            CardDefinition def,
+            ZodiacSign cosmic,
+            int alignPts,
+            string? crucibleSlotLabel)
+        {
+            return EvaluateInternal(
+                player, def, cosmic, alignPts, crucibleSlotLabel,
+                curseActive: IsReversedCurseActive(session, player, cardInstanceId, def));
+        }
+
+        public static SpreadCardEffectState Evaluate(
             PlayerState player,
             CardDefinition def,
             ZodiacSign cosmic,
             int alignPts,
             string? crucibleSlotLabel)
         {
+            return EvaluateInternal(player, def, cosmic, alignPts, crucibleSlotLabel, curseActive: null);
+        }
+
+        static SpreadCardEffectState EvaluateInternal(
+            PlayerState player,
+            CardDefinition def,
+            ZodiacSign cosmic,
+            int alignPts,
+            string? crucibleSlotLabel,
+            bool? curseActive)
+        {
             bool hasAlignment = alignPts > 0;
             bool hasCrucible = crucibleSlotLabel != null;
             var effectKind = ClassifyEffect(def);
-            bool cardEffectActive = IsCardEffectActive(player, def, cosmic, effectKind);
+            bool isReversed = effectKind == SpreadCardEffectKind.Reversed;
+            bool cardEffectActive = IsCardEffectActive(player, def, cosmic, effectKind, curseActive);
             bool isActionCard = effectKind == SpreadCardEffectKind.Action;
 
-            bool isListed = hasAlignment || hasCrucible || cardEffectActive || isActionCard;
+            bool isListed = hasAlignment || hasCrucible || cardEffectActive || isActionCard || isReversed;
             if (!isListed)
             {
                 return new SpreadCardEffectState(
@@ -53,7 +79,7 @@ namespace Kismeta.Core.Rules
             }
 
             var polarity = ResolvePolarity(def, effectKind, cardEffectActive, hasAlignment, hasCrucible);
-            var badge = ResolveBadge(def, effectKind, cardEffectActive, hasAlignment, hasCrucible, polarity);
+            var badge = ResolveBadge(def, effectKind, cardEffectActive, hasAlignment, hasCrucible, polarity, isReversed);
             var description = BuildDescription(
                 def,
                 cosmic,
@@ -61,10 +87,18 @@ namespace Kismeta.Core.Rules
                 crucibleSlotLabel,
                 effectKind,
                 cardEffectActive,
-                isActionCard);
+                isActionCard,
+                isReversed);
 
             return new SpreadCardEffectState(true, polarity, badge, description);
         }
+
+        static bool IsReversedCurseActive(
+            GameSession session,
+            PlayerState player,
+            string cardInstanceId,
+            CardDefinition def)
+            => ReversedCurseService.IsCurseActive(session, player, cardInstanceId, def);
 
         enum SpreadCardEffectKind
         {
@@ -100,11 +134,12 @@ namespace Kismeta.Core.Rules
             PlayerState player,
             CardDefinition def,
             ZodiacSign cosmic,
-            SpreadCardEffectKind kind)
+            SpreadCardEffectKind kind,
+            bool? curseActive)
         {
             return kind switch
             {
-                SpreadCardEffectKind.Reversed => true,
+                SpreadCardEffectKind.Reversed => curseActive ?? true,
                 SpreadCardEffectKind.Combat => true,
                 SpreadCardEffectKind.Passive => IsPassiveActive(player, def, cosmic),
                 SpreadCardEffectKind.SpreadPassive => IsSpreadPassiveActive(player, def),
@@ -132,6 +167,9 @@ namespace Kismeta.Core.Rules
         {
             if (kind == SpreadCardEffectKind.Reversed && cardEffectActive)
                 return ActiveEffectPolarity.Debuff;
+
+            if (kind == SpreadCardEffectKind.Reversed && !cardEffectActive)
+                return ActiveEffectPolarity.Neutral;
 
             if (kind == SpreadCardEffectKind.Combat && cardEffectActive)
                 return ClassifyTextPolarity(def.EffectText);
@@ -169,10 +207,14 @@ namespace Kismeta.Core.Rules
             bool cardEffectActive,
             bool hasAlignment,
             bool hasCrucible,
-            ActiveEffectPolarity polarity)
+            ActiveEffectPolarity polarity,
+            bool isReversed)
         {
             if (kind == SpreadCardEffectKind.Reversed && cardEffectActive)
                 return new ActiveEffectBadge("reversed · active", ActiveEffectBadgeTone.Debuff);
+
+            if (kind == SpreadCardEffectKind.Reversed && isReversed && !cardEffectActive)
+                return new ActiveEffectBadge("reversed · negated", ActiveEffectBadgeTone.Neutral);
 
             if (kind == SpreadCardEffectKind.Combat && cardEffectActive)
             {
@@ -215,14 +257,15 @@ namespace Kismeta.Core.Rules
             string? crucibleSlotLabel,
             SpreadCardEffectKind kind,
             bool cardEffectActive,
-            bool isActionCard)
+            bool isActionCard,
+            bool isReversed)
         {
             var parts = new System.Collections.Generic.List<string> { "In spread" };
 
             if (alignPts > 0)
                 parts.Add($"{DescribeSpreadAlignment(alignPts, def, cosmic)} this age");
 
-            if (cardEffectActive || isActionCard)
+            if (cardEffectActive || isActionCard || (isReversed && !cardEffectActive))
             {
                 string effectLine = FirstLine(def.EffectText);
                 if (!string.IsNullOrEmpty(effectLine))
@@ -232,6 +275,9 @@ namespace Kismeta.Core.Rules
             string description = string.Join(" · ", parts);
             if (!description.EndsWith('.'))
                 description += ".";
+
+            if (isReversed && !cardEffectActive)
+                description += " Aligned — curse suppressed.";
 
             if (crucibleSlotLabel != null)
                 description += $" Contributes to {crucibleSlotLabel}.";
@@ -248,10 +294,12 @@ namespace Kismeta.Core.Rules
             if (lower.Contains("must offer")
                 || lower.Contains("reduced by")
                 || lower.Contains("cost an additional")
+                || lower.Contains("costs +1")
                 || lower.Contains("opponent gains")
                 || lower.Contains("opponent chooses")
                 || lower.Contains("pay an extra")
                 || lower.Contains("best-of-3")
+                || lower.Contains("draws 2")
                 || lower.StartsWith("-"))
             {
                 return ActiveEffectPolarity.Debuff;
@@ -262,12 +310,6 @@ namespace Kismeta.Core.Rules
 
             return ActiveEffectPolarity.Buff;
         }
-
-        static bool TryParseCosmicElementCondition(string text, out Element element)
-            => SpreadEffectPredicates.TryParseCosmicElementCondition(text, out element);
-
-        static bool TryParseHarvestElementCondition(string text, out Element element)
-            => SpreadEffectPredicates.TryParseHarvestElementCondition(text, out element);
 
         static string DescribeSpreadAlignment(int points, CardDefinition def, ZodiacSign cosmic)
         {

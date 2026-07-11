@@ -19,6 +19,7 @@ namespace Kismeta.Core.Entities
         // Duel
         public string? TargetCardId { get; set; }
         public string? AnteCardId { get; set; }
+        public string? SecondAnteCardId { get; set; }
 
         // Gambit
         public string? OfferedCardId { get; set; }

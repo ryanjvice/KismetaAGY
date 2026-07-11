@@ -13,6 +13,9 @@ namespace Kismeta.Core.Rules
     public static class ContestCardEffectCatalog
     {
         public static void ApplySpreadCard(
+            GameSession session,
+            PlayerState holder,
+            string cardInstanceId,
             CardDefinition def,
             ContestParticipantRole holderRole,
             ContestKind kind,
@@ -21,7 +24,11 @@ namespace Kismeta.Core.Rules
             ref bool attackerForcesBestOfThree)
         {
             if (def.EffectType.Equals("Reversed", System.StringComparison.OrdinalIgnoreCase))
+            {
+                if (!ReversedCurseService.IsCurseActive(session, holder, cardInstanceId, def))
+                    return;
                 ApplyReversedCombat(def, holderRole, kind, ref attackerMods, ref defenderMods, ref attackerForcesBestOfThree);
+            }
 
             if (def.Rank == Rank.Knight && kind == ContestKind.Duel
                 && def.EffectType.Equals("Duel", System.StringComparison.OrdinalIgnoreCase))
@@ -73,9 +80,6 @@ namespace Kismeta.Core.Rules
             ref ContestRollModifiers defenderMods,
             ref bool attackerForcesBestOfThree)
         {
-            if (!def.EffectType.Equals("Reversed", System.StringComparison.OrdinalIgnoreCase))
-                return;
-
             switch (def.Id)
             {
                 case "minor.wands.five.1":

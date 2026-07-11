@@ -8,7 +8,7 @@ namespace Kismeta.Core.Rules
     /// <summary>
     /// Aggregates spread and adept modifiers for Duel/Gambit resolution.
     /// Stacking: sum all spread bonuses; Strength resonant replaces base; rerolls OR-combine.
-    /// Reversed curses are always active until Phase 5 negation is defined.
+    /// Reversed curses apply only when active (misaligned and not Magician-resonant).
     /// </summary>
     public static class ContestModifierService
     {
@@ -118,7 +118,7 @@ namespace Kismeta.Core.Rules
                 if (def == null) continue;
 
                 ContestCardEffectCatalog.ApplySpreadCard(
-                    def, holderRole, kind,
+                    session, player, cardId, def, holderRole, kind,
                     ref attackerMods, ref defenderMods, ref attackerForcesBestOfThree);
             }
         }

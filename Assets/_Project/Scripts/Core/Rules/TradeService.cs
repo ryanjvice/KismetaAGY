@@ -132,6 +132,11 @@ namespace Kismeta.Core.Rules
                 return CommandResult.Invalid(
                     "Misaligned Magnus trade requires offering 2 cards for every 1 received.");
 
+            if (!ReversedCurseService.IsTradeOfferRatioValid(session, initiatorId,
+                    offerCardIds.Count, requestCardIds.Count))
+                return CommandResult.Invalid(
+                    "Four of Pentacles curse requires offering 2 cards for every 1 received.");
+
             return CommandResult.Ok();
         }
 

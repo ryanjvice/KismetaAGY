@@ -20,30 +20,33 @@ namespace Kismeta.Core.Rules
         // ── Duel ──────────────────────────────────────────────────────────────────
 
         public CommandResult TryInitiateDuel(GameSession session, int attackerId, int defenderId,
-            string targetCardId, string? anteCardId)
+            string targetCardId, string? anteCardId, string? secondAnteCardId = null)
         {
-            var validation = ValidateDuelForInitiation(session, attackerId, defenderId, targetCardId, anteCardId);
+            var validation = ValidateDuelForInitiation(session, attackerId, defenderId, targetCardId,
+                anteCardId, secondAnteCardId);
             if (!validation.IsOk) return validation;
 
-            if (IsNoAnte(anteCardId))
+            if (IsNoAnte(anteCardId) && IsNoAnte(secondAnteCardId))
                 AdeptEffectService.TryMarkUsed(session, attackerId, AdeptEffectService.ChariotArcana);
 
             session.Players[attackerId].DuelChallengedRivalId = defenderId;
 
             session.Board.PendingContest = new PendingContest
             {
-                Kind         = ContestKind.Duel,
-                AttackerId   = attackerId,
-                DefenderId   = defenderId,
-                TargetCardId = targetCardId,
-                AnteCardId   = anteCardId
+                Kind             = ContestKind.Duel,
+                AttackerId       = attackerId,
+                DefenderId       = defenderId,
+                TargetCardId     = targetCardId,
+                AnteCardId       = anteCardId,
+                SecondAnteCardId = secondAnteCardId
             };
 
             session.EmitEvent(new DuelOfferedEvent(attackerId, defenderId, targetCardId, anteCardId));
             return CommandResult.Ok($"Duel offered to P{defenderId}.");
         }
 
-        public CommandResult TryRespondDuel(GameSession session, int defenderId, bool accept)
+        public CommandResult TryRespondDuel(GameSession session, int defenderId, bool accept,
+            string? chosenAnteCardId = null)
         {
             var pending = session.Board.PendingContest;
             if (pending == null || pending.Kind != ContestKind.Duel)
@@ -55,7 +58,8 @@ namespace Kismeta.Core.Rules
 
             var attackerId   = pending.AttackerId;
             var targetCardId = pending.TargetCardId;
-            var anteCardId   = pending.AnteCardId;
+            var anteCardId   = ResolveAnteForDuel(session, attackerId, defenderId,
+                pending.AnteCardId, pending.SecondAnteCardId, chosenAnteCardId);
 
             if (!accept)
             {
@@ -64,26 +68,38 @@ namespace Kismeta.Core.Rules
                 return CommandResult.Ok("Duel declined.");
             }
 
-            var validation = ValidateDuelCards(session, attackerId, defenderId, targetCardId, anteCardId,
-                requireUnusedChariot: false);
+            if (ReversedCurseService.RequiresOpponentChooseAnte(session, session.Players[attackerId]))
+            {
+                if (string.IsNullOrEmpty(chosenAnteCardId))
+                    return CommandResult.Invalid("Defender must choose the attacker's ante card.");
+                if (!session.Players[attackerId].Spread.Contains(chosenAnteCardId))
+                    return CommandResult.Invalid("Chosen ante must be in the attacker's Spread.");
+            }
+
+            var validation = ValidateDuelCards(session, attackerId, defenderId, targetCardId,
+                anteCardId, pending.SecondAnteCardId, requireUnusedChariot: false);
             if (!validation.IsOk) return validation;
 
             session.Board.PendingContest = null;
-            return ResolveDuel(session, attackerId, defenderId, targetCardId, anteCardId);
+            return ResolveDuel(session, attackerId, defenderId, targetCardId,
+                anteCardId, pending.SecondAnteCardId);
         }
 
         public CommandResult TryDuel(GameSession session, int attackerId, int defenderId,
-            string targetCardId, string? anteCardId)
+            string targetCardId, string? anteCardId, string? secondAnteCardId = null,
+            string? chosenAnteCardId = null)
         {
-            var initiate = TryInitiateDuel(session, attackerId, defenderId, targetCardId, anteCardId);
+            var initiate = TryInitiateDuel(session, attackerId, defenderId, targetCardId,
+                anteCardId, secondAnteCardId);
             if (!initiate.IsOk) return initiate;
-            return TryRespondDuel(session, defenderId, accept: true);
+            return TryRespondDuel(session, defenderId, accept: true, chosenAnteCardId);
         }
 
         static CommandResult ValidateDuelForInitiation(GameSession session, int attackerId, int defenderId,
-            string targetCardId, string? anteCardId)
+            string targetCardId, string? anteCardId, string? secondAnteCardId)
         {
-            var cards = ValidateDuelCards(session, attackerId, defenderId, targetCardId, anteCardId);
+            var cards = ValidateDuelCards(session, attackerId, defenderId, targetCardId,
+                anteCardId, secondAnteCardId);
             if (!cards.IsOk) return cards;
 
             if (session.Players[attackerId].DuelChallengedRivalId >= 0)
@@ -93,7 +109,8 @@ namespace Kismeta.Core.Rules
         }
 
         static CommandResult ValidateDuelCards(GameSession session, int attackerId, int defenderId,
-            string targetCardId, string? anteCardId, bool requireUnusedChariot = true)
+            string targetCardId, string? anteCardId, string? secondAnteCardId = null,
+            bool requireUnusedChariot = true)
         {
             if (attackerId == defenderId)
                 return CommandResult.Invalid("Cannot Duel yourself.");
@@ -113,7 +130,22 @@ namespace Kismeta.Core.Rules
             if (AdeptEffectService.IsEmperorProtected(session, defender, targetCardId))
                 return CommandResult.Invalid("Target card is protected by the Emperor.");
 
-            if (!IsNoAnte(anteCardId))
+            bool dualAnte = ReversedCurseService.RequiresDualAnte(session, attacker);
+            bool opponentChoosesAnte = ReversedCurseService.RequiresOpponentChooseAnte(session, attacker);
+
+            if (dualAnte)
+            {
+                if (IsNoAnte(anteCardId) || IsNoAnte(secondAnteCardId))
+                    return CommandResult.Invalid("Four of Swords curse requires offering 2 ante cards.");
+                if (anteCardId == secondAnteCardId)
+                    return CommandResult.Invalid("Dual ante cards must be distinct.");
+            }
+            else if (opponentChoosesAnte)
+            {
+                if (!IsNoAnte(anteCardId) && !attacker.Spread.Contains(anteCardId!))
+                    return CommandResult.Invalid("Ante card must be in your Spread.");
+            }
+            else if (!IsNoAnte(anteCardId))
             {
                 if (!attacker.Spread.Contains(anteCardId!))
                     return CommandResult.Invalid("Ante card must be in your Spread.");
@@ -124,23 +156,61 @@ namespace Kismeta.Core.Rules
                 if (!chariot.IsOk) return chariot;
             }
 
+            if (!IsNoAnte(anteCardId))
+            {
+                var anteValidation = ValidateAnteCard(session, attacker, anteCardId!, db);
+                if (!anteValidation.IsOk) return anteValidation;
+            }
+            if (!IsNoAnte(secondAnteCardId))
+            {
+                var secondValidation = ValidateAnteCard(session, attacker, secondAnteCardId!, db);
+                if (!secondValidation.IsOk) return secondValidation;
+            }
+
             if (db != null)
             {
                 var targetInst = session.GetCard(targetCardId);
                 var targetDef = targetInst != null ? db.GetById(targetInst.DefinitionId) : null;
                 if (targetDef?.IsMajorArcana == true)
                     return CommandResult.Invalid("Target card is Major Arcana and cannot be dueled for.");
-
-                if (!IsNoAnte(anteCardId))
-                {
-                    var anteInst = session.GetCard(anteCardId!);
-                    var anteDef = anteInst != null ? db.GetById(anteInst.DefinitionId) : null;
-                    if (anteDef?.IsMajorArcana == true)
-                        return CommandResult.Invalid("Ante card is Major Arcana and cannot be dueled with.");
-                }
             }
 
             return CommandResult.Ok();
+        }
+
+        static CommandResult ValidateAnteCard(
+            GameSession session,
+            PlayerState attacker,
+            string anteCardId,
+            ICardDatabase? db)
+        {
+            if (!attacker.Spread.Contains(anteCardId))
+                return CommandResult.Invalid("Ante card must be in your Spread.");
+
+            if (db != null)
+            {
+                var anteInst = session.GetCard(anteCardId);
+                var anteDef = anteInst != null ? db.GetById(anteInst.DefinitionId) : null;
+                if (anteDef?.IsMajorArcana == true)
+                    return CommandResult.Invalid("Ante card is Major Arcana and cannot be dueled with.");
+            }
+
+            return CommandResult.Ok();
+        }
+
+        static string? ResolveAnteForDuel(
+            GameSession session,
+            int attackerId,
+            int defenderId,
+            string? pendingAnte,
+            string? pendingSecondAnte,
+            string? chosenAnteCardId)
+        {
+            var attacker = session.Players[attackerId];
+            if (ReversedCurseService.RequiresOpponentChooseAnte(session, attacker))
+                return chosenAnteCardId;
+
+            return pendingAnte;
         }
 
         static CommandResult ValidateChariotNoAnte(GameSession session, PlayerState attacker, bool requireUnused)
@@ -161,7 +231,7 @@ namespace Kismeta.Core.Rules
         static bool IsNoAnte(string? anteCardId) => string.IsNullOrEmpty(anteCardId);
 
         CommandResult ResolveDuel(GameSession session, int attackerId, int defenderId,
-            string targetCardId, string? anteCardId)
+            string targetCardId, string? anteCardId, string? secondAnteCardId = null)
         {
             var attacker = session.Players[attackerId];
             var defender = session.Players[defenderId];
@@ -179,15 +249,16 @@ namespace Kismeta.Core.Rules
                 attacker.Spread.Add(targetCardId);
                 session.GetCard(targetCardId)?.MoveTo(CardZone.Spread, attackerId);
             }
-            else if (!IsNoAnte(anteCardId) && !AdeptEffectService.IsEmperorProtected(session, attacker, anteCardId!))
+            else
             {
-                attacker.Spread.Remove(anteCardId!);
-                session.Board.CommonDiscard.Add(anteCardId!);
-                session.GetCard(anteCardId!)?.MoveTo(CardZone.Discard, -1);
+                DiscardAnteIfLost(session, attacker, anteCardId);
+                DiscardAnteIfLost(session, attacker, secondAnteCardId);
             }
 
             int loserId = attackerWins ? defenderId : attackerId;
+            int winnerId = attackerWins ? attackerId : defenderId;
             AdeptEffectService.TryApplyStarPostLossDraw(session, loserId);
+            TryApplyWandsFourWinnerDraw(session, winnerId, loserId);
 
             string resolvedAnte = anteCardId ?? string.Empty;
             session.EmitEvent(new DuelResolvedEvent(
@@ -203,6 +274,23 @@ namespace Kismeta.Core.Rules
                 $"Duel: P{attackerId}({series.AttackerRoundWins}) vs P{defenderId}({series.DefenderRoundWins}) → P{series.WinnerId} wins.");
         }
 
+        static void DiscardAnteIfLost(GameSession session, PlayerState attacker, string? anteCardId)
+        {
+            if (IsNoAnte(anteCardId) || AdeptEffectService.IsEmperorProtected(session, attacker, anteCardId!))
+                return;
+
+            attacker.Spread.Remove(anteCardId!);
+            session.Board.CommonDiscard.Add(anteCardId!);
+            session.GetCard(anteCardId!)?.MoveTo(CardZone.Discard, -1);
+        }
+
+        static void TryApplyWandsFourWinnerDraw(GameSession session, int winnerId, int loserId)
+        {
+            var loser = session.Players[loserId];
+            if (ReversedCurseService.HasActiveCurse(session, loser, ReversedCurseKind.WinnerDrawTwoOnDuel))
+                AdeptEffectService.DrawCardsToHand(session, winnerId, 2);
+        }
+
         // ── Gambit ────────────────────────────────────────────────────────────────
 
         public CommandResult TryInitiateGambit(GameSession session, int attackerId, int defenderId,
@@ -210,6 +298,9 @@ namespace Kismeta.Core.Rules
         {
             var validation = ValidateGambitSetup(session, attackerId, defenderId, offeredCardId);
             if (!validation.IsOk) return validation;
+
+            var saltCost = TrySpendSwordsFiveSalt(session, session.Players[attackerId], ContestKind.Gambit);
+            if (!saltCost.IsOk) return saltCost;
 
             int wardCost = session.Players[defenderId].StoneWardCount;
             session.Board.PendingContest = new PendingContest
@@ -280,6 +371,21 @@ namespace Kismeta.Core.Rules
             if (!offeredInCrucible && !offeredInArcanum)
                 return CommandResult.Invalid(
                     "Offered card must be in an Active Crucible slot or your Arcanum.");
+
+            return CommandResult.Ok();
+        }
+
+        public static CommandResult TrySpendSwordsFiveSalt(
+            GameSession session,
+            PlayerState attacker,
+            ContestKind kind)
+        {
+            if (!ReversedCurseService.RequiresSaltForContestStart(session, attacker, kind))
+                return CommandResult.Ok();
+
+            if (!attacker.SpendReagent(ReagentType.Salt, 1))
+                return CommandResult.Invalid(
+                    "Five of Swords curse requires 1 extra Salt to start Opposition or Gambit.");
 
             return CommandResult.Ok();
         }

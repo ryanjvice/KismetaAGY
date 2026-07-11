@@ -1,3 +1,4 @@
+using System;
 using Kismeta.Core.Entities;
 
 namespace Kismeta.Core.Rules
@@ -7,10 +8,13 @@ namespace Kismeta.Core.Rules
     {
         public static int GetHandLimit(GameSession session, PlayerState player)
         {
+            int limit = WinterRules.HandLimit;
             if (AdeptEffectService.HasAdept(session, player, AdeptEffectService.PriestessArcana)
                 && AdeptAttunement.IsPriestessResonant(session, player))
-                return 7;
-            return WinterRules.HandLimit;
+                limit = 7;
+
+            limit -= ReversedCurseService.HandLimitPenalty(session, player);
+            return Math.Max(1, limit);
         }
 
         public static int GetSpreadLimit(GameSession session, PlayerState player)

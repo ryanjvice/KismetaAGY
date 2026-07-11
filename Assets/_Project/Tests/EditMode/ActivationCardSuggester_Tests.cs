@@ -51,6 +51,7 @@ namespace Kismeta.Core.Tests
                 planet: planet,
                 name: "",
                 effectType: "", effectText: "", effectTextResonant: "",
+                isCurse: false, nullifiesCard: "",
                 wildcardArcanaNumber: -1,
                 crucibleGroup: CrucibleGroup.None,
                 alchemicalFormula: "",

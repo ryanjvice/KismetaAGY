@@ -54,6 +54,9 @@ namespace Kismeta.Core.Rules
         public static bool IsDevilResonant(GameSession session, PlayerState player)
             => IsResonant(session, player.PlayerId, AdeptEffectService.DevilArcana);
 
+        public static bool IsMagicianResonant(GameSession session, PlayerState player)
+            => IsResonant(session, player.PlayerId, 1);
+
         public static int HierophantMaxShiftDelta(GameSession session, PlayerState player)
             => IsHierophantResonant(session, player) ? 2 : 1;
     }

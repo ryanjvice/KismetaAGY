@@ -14,13 +14,17 @@ namespace Kismeta.Core.Commands
         public string TargetCardId { get; }
         /// <summary>Instance ID of the card the attacker antes from their Spread; null/empty for Chariot no-ante.</summary>
         public string? AnteCardId  { get; }
+        /// <summary>Second ante when Four of Swords curse requires dual ante.</summary>
+        public string? SecondAnteCardId { get; }
 
-        public InitiateDuelCommand(int attackerId, int defenderId, string targetCardId, string? anteCardId = null)
+        public InitiateDuelCommand(int attackerId, int defenderId, string targetCardId,
+            string? anteCardId = null, string? secondAnteCardId = null)
         {
-            AttackerId     = attackerId;
-            DefenderId     = defenderId;
-            TargetCardId   = targetCardId;
-            AnteCardId     = anteCardId;
+            AttackerId        = attackerId;
+            DefenderId        = defenderId;
+            TargetCardId      = targetCardId;
+            AnteCardId        = anteCardId;
+            SecondAnteCardId  = secondAnteCardId;
         }
     }
 

@@ -31,6 +31,10 @@ namespace Kismeta.Core.Entities
         public string EffectText { get; }
         /// <summary>Resonant-layer copy for UI when the adept is attuned. Not parsed for rules.</summary>
         public string EffectTextResonant { get; }
+        /// <summary>True for rank 4–6 V1 curse cards.</summary>
+        public bool IsCurse { get; }
+        /// <summary>Element-wheel pairing label for UI (e.g. "5 of Wands"). Not used for cross-player rules.</summary>
+        public string NullifiesCard { get; }
 
         // Minor Arcana Variant 2 — link to Major Arcana by arcana number (-1 = none)
         public int WildcardArcanaNumber { get; }
@@ -58,6 +62,8 @@ namespace Kismeta.Core.Entities
             string effectType,
             string effectText,
             string effectTextResonant,
+            bool isCurse,
+            string nullifiesCard,
             int wildcardArcanaNumber,
             CrucibleGroup crucibleGroup,
             string alchemicalFormula,
@@ -76,6 +82,8 @@ namespace Kismeta.Core.Entities
             EffectType = effectType;
             EffectText = effectText;
             EffectTextResonant = effectTextResonant;
+            IsCurse = isCurse;
+            NullifiesCard = nullifiesCard;
             WildcardArcanaNumber = wildcardArcanaNumber;
             CrucibleGroup = crucibleGroup;
             AlchemicalFormula = alchemicalFormula;

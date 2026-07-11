@@ -21,11 +21,14 @@ namespace Kismeta.Core.Commands
     {
         public int PlayerId { get; }
         public bool Accept { get; }
+        /// <summary>When attacker has opponent-chooses-ante curse, defender picks this spread card.</summary>
+        public string? ChosenAnteCardId { get; }
 
-        public RespondDuelCommand(int playerId, bool accept)
+        public RespondDuelCommand(int playerId, bool accept, string? chosenAnteCardId = null)
         {
-            PlayerId = playerId;
-            Accept   = accept;
+            PlayerId          = playerId;
+            Accept            = accept;
+            ChosenAnteCardId  = chosenAnteCardId;
         }
     }
 

@@ -2072,6 +2072,7 @@ namespace Kismeta.Core.Tests
         {
             var db = LoadDb(); var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
             Assert.IsFalse(session.Board.ContestEffects.DuelBestOfThree);
 
             var ante = PopulateSpread(session, 0, 1, "six-swords-ante");
@@ -2112,6 +2113,7 @@ namespace Kismeta.Core.Tests
         {
             var db = LoadDb(); var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
 
             var ante = PopulateSpread(session, 0, 1, "cups5-ante");
             var targets = PopulateSpread(session, 1, 1, "cups5-target");
@@ -2915,6 +2917,162 @@ namespace Kismeta.Core.Tests
             var def = db.GetById("major.adept.2");
             Assert.IsNotNull(def);
             Assert.IsTrue(def!.EffectTextResonant.Contains("Hand limit"));
+        }
+
+        // ─── Phase 5 reversed curse tests ─────────────────────────────────────────
+
+        [Test]
+        public void ReversedCombat_NegatedWhenAligned()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Capricorn;
+            AddSpreadCard(session, 0, "six-swords", "minor.swords.six.1");
+
+            var mods = ContestModifierService.Build(session, ContestKind.Duel, 0, 1);
+            Assert.IsFalse(mods.AttackerForcesBestOfThree);
+        }
+
+        [Test]
+        public void CupsFour_ReducesHandLimit_WhenMisaligned()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            AddSpreadCard(session, 0, "cups4", "minor.cups.four.1");
+
+            Assert.AreEqual(WinterRules.HandLimit - 1,
+                PlayerLimitService.GetHandLimit(session, session.Players[0]));
+        }
+
+        [Test]
+        public void CupsFour_NegatedWhenAligned()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Cancer;
+            AddSpreadCard(session, 0, "cups4", "minor.cups.four.1");
+
+            Assert.AreEqual(WinterRules.HandLimit,
+                PlayerLimitService.GetHandLimit(session, session.Players[0]));
+        }
+
+        [Test]
+        public void CupsFour_NegatedByMagician()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            AddSpreadCard(session, 0, "cups4", "minor.cups.four.1");
+            AddArcanumCard(session, 0, "magician", "major.adept.1");
+            AttunePlayer(session, 0, ZodiacSign.Gemini);
+
+            Assert.AreEqual(WinterRules.HandLimit,
+                PlayerLimitService.GetHandLimit(session, session.Players[0]));
+        }
+
+        [Test]
+        public void PentaclesFour_TradeRatio()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            var offer = PopulateSpread(session, 0, 1, "trade-offer");
+            AddSpreadCard(session, 0, "p4", "minor.pentacles.four.1");
+            var request = PopulateSpread(session, 1, 1, "trade-request");
+
+            var fail = session.Rules!.Trade!.TryTrade(session, 0, 1,
+                new List<string> { offer[0] }, new List<string> { request[0] });
+            Assert.IsFalse(fail.IsOk);
+
+            var offer2 = PopulateSpread(session, 0, 2, "trade-offer2");
+            var ok = session.Rules.Trade.TryTrade(session, 0, 1,
+                new List<string> { offer2[0], offer2[1] }, new List<string> { request[0] });
+            Assert.IsTrue(ok.IsOk, ok.Message);
+        }
+
+        [Test]
+        public void PentaclesFive_CraftExtraCard()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            PopulateSpread(session, 0, 0, "clear");
+            AddSpreadCard(session, 0, "p5", "minor.pentacles.five.1");
+            session.Players[0].LightCauldron(Suit.Pentacles);
+
+            Assert.AreEqual(1, ReversedCurseService.CraftExtraCardCost(session, 0));
+            var baseOption = CraftModifierService.GetCostOptions(session, 0, ReagentType.Vitriol)
+                .First(o => o.Source == "base");
+            Assert.AreEqual(4, baseOption.Cost);
+        }
+
+        [Test]
+        public void PentaclesSix_AdeptBuyExtraCard()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            var payment = PopulateSpread(session, 0, 4, "adept-pay");
+            AddSpreadCard(session, 0, "p6", "minor.pentacles.six.1");
+            var adeptInst = new CardInstance("adept-strength", "major.adept.8", CardZone.Hand, 0);
+            session.RegisterCard(adeptInst);
+
+            var result = session.Rules!.Harvest.HandleBuyAdept(session, 0, "adept-strength",
+                payment.Take(3).ToList());
+            Assert.IsFalse(result.IsOk);
+
+            var ok = session.Rules.Harvest.HandleBuyAdept(session, 0, "adept-strength", payment);
+            Assert.IsTrue(ok.IsOk, ok.Message);
+        }
+
+        [Test]
+        public void SwordsFour_DualAnte()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            var ante = PopulateSpread(session, 0, 1, "dual-ante");
+            AddSpreadCard(session, 0, "s4", "minor.swords.four.1");
+            var targets = PopulateSpread(session, 1, 1, "dual-target");
+
+            var combat = new CombatRules(42);
+            var fail = combat.TryDuel(session, 0, 1, targets[0], ante[0]);
+            Assert.IsFalse(fail.IsOk);
+
+            var ante2 = PopulateSpread(session, 0, 2, "dual-ante2");
+            AddSpreadCard(session, 0, "s4b", "minor.swords.four.1");
+            var ok = combat.TryDuel(session, 0, 1, targets[0], ante2[0], ante2[1]);
+            Assert.IsTrue(ok.IsOk, ok.Message);
+        }
+
+        [Test]
+        public void WandsFour_WinnerDrawsTwoOnDuelWin()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Summer);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            var ante = PopulateSpread(session, 0, 1, "w4-ante");
+            AddSpreadCard(session, 0, "w4", "minor.wands.four.1");
+            var targets = PopulateSpread(session, 1, 1, "w4-target");
+            int deckBefore = session.Board.CommonDeck.Count;
+
+            var combat = new CombatRules(FindDuelEqualRollSeed(5));
+            Assert.IsTrue(combat.TryDuel(session, 0, 1, targets[0], ante[0]).IsOk);
+            Assert.AreEqual(deckBefore - 2, session.Board.CommonDeck.Count);
+            Assert.AreEqual(2, session.Players[1].Hand.Count);
         }
     }
 }

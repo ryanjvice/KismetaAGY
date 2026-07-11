@@ -99,6 +99,7 @@ namespace Kismeta.Core.Tests
         {
             var db = LoadDb();
             var session = BuildSession(db);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
             AddSpreadCard(session, 0, "six", "minor.swords.six.1");
 
             var mods = ContestModifierService.Build(session, ContestKind.Duel, 0, 1);
@@ -112,6 +113,7 @@ namespace Kismeta.Core.Tests
         {
             var db = LoadDb();
             var session = BuildSession(db);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
             AddSpreadCard(session, 1, "cups5", "minor.cups.five.1");
 
             var mods = ContestModifierService.Build(session, ContestKind.Duel, 0, 1);

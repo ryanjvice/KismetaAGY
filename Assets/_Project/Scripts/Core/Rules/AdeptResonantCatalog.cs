@@ -4,7 +4,7 @@ namespace Kismeta.Core.Rules
     public enum AdeptResonantKind
     {
         None,
-        ReversedNegation,      // Magician — deferred Phase 5
+        ReversedNegation,      // Magician
         HandLimit7,            // Priestess
         CraftTwoMarks,         // Empress
         BroadProtection,       // Emperor

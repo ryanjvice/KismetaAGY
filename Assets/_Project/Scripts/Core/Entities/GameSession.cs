@@ -241,7 +241,7 @@ namespace Kismeta.Core.Entities
 
                 // ── Combat ────────────────────────────────────────────────────────
                 InitiateDuelCommand   cmd => _rules?.Combat is not null
-                    ? ApplyWithAudit(_rules.Combat.TryInitiateDuel(this, cmd.AttackerId, cmd.DefenderId, cmd.TargetCardId, cmd.AnteCardId), command)
+                    ? ApplyWithAudit(_rules.Combat.TryInitiateDuel(this, cmd.AttackerId, cmd.DefenderId, cmd.TargetCardId, cmd.AnteCardId, cmd.SecondAnteCardId), command)
                     : CommandResult.NotImplemented(nameof(InitiateDuelCommand)),
 
                 InitiateGambitCommand cmd => _rules?.Combat is not null
@@ -249,7 +249,7 @@ namespace Kismeta.Core.Entities
                     : CommandResult.NotImplemented(nameof(InitiateGambitCommand)),
 
                 RespondDuelCommand    cmd => _rules?.Combat is not null
-                    ? ApplyWithAudit(_rules.Combat.TryRespondDuel(this, cmd.PlayerId, cmd.Accept), command)
+                    ? ApplyWithAudit(_rules.Combat.TryRespondDuel(this, cmd.PlayerId, cmd.Accept, cmd.ChosenAnteCardId), command)
                     : CommandResult.NotImplemented(nameof(RespondDuelCommand)),
 
                 RespondGambitCommand  cmd => _rules?.Combat is not null

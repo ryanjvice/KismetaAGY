@@ -79,6 +79,7 @@ namespace Kismeta.Core.Rules
                         $"build-{buildSuit}"));
                 }
 
+                ApplyReversedCraftPenalty(session, playerId, options);
                 return options;
             }
 
@@ -120,7 +121,28 @@ namespace Kismeta.Core.Rules
                     "temperance-wild"));
             }
 
+            ApplyReversedCraftPenalty(session, playerId, options);
             return options;
+        }
+
+        static void ApplyReversedCraftPenalty(
+            GameSession session,
+            int playerId,
+            List<CraftCostOption> options)
+        {
+            int extra = ReversedCurseService.CraftExtraCardCost(session, playerId);
+            if (extra <= 0)
+                return;
+
+            for (int i = 0; i < options.Count; i++)
+            {
+                var opt = options[i];
+                options[i] = new CraftCostOption(
+                    opt.Cost + extra,
+                    opt.Mode,
+                    opt.RequiredSuit,
+                    opt.Source);
+            }
         }
 
         public static CraftCostOption? FindMatchingOption(

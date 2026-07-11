@@ -137,6 +137,8 @@ namespace Kismeta.Game.Bootstrap
             var board = _session!.Board;
             GUILayout.Label($"Round {board.RoundNumber}  |  {_session.Phase.CurrentSeason} — {_session.Phase.CurrentStep.Name}");
             GUILayout.Label($"Cosmic Age: {board.CosmicAgeSign}");
+            if (GUILayout.Button("Cycle Cosmic Age"))
+                board.CosmicAgeSign = NextCosmicAge(board.CosmicAgeSign);
             GUILayout.Label($"Deck: {board.CommonDeckCount}  Disc: {board.CommonDiscardCount}");
             GUILayout.Label($"CardLock: {(_session.CardLockActive ? "YES" : "no")}  Over: {_session.IsOver}");
 
@@ -180,6 +182,7 @@ namespace Kismeta.Game.Bootstrap
                 (p.ReturnedFromStasisThisRound ? "  (stasis return)" : ""));
             GUILayout.Label($"   Hand:{p.Hand.Count} Spr:{p.Spread.Count} Arc:{p.Arcanum.Count}" +
                 (p.FatefulWagerCards.Count > 0 ? $" Wgr:{p.FatefulWagerCards.Count}" : ""));
+            GUILayout.Label($"   Active curses: {CountActiveCurses(p)}");
             GUILayout.Label(
                 $"   Sa:{p.GetReagent(ReagentType.Salt)} " +
                 $"Su:{p.GetReagent(ReagentType.Sulphur)} " +
@@ -1868,6 +1871,32 @@ namespace Kismeta.Game.Bootstrap
             PhaseChangedEvent e         => $"[Phase] {e.Season} step {e.StepIndex}",
             _                           => $"[{evt.GetType().Name}]"
         };
+
+        static ZodiacSign NextCosmicAge(ZodiacSign current)
+        {
+            if (current == ZodiacSign.None)
+                return ZodiacSign.Aries;
+            int next = (int)current + 1;
+            if (next > 12) next = 1;
+            return (ZodiacSign)next;
+        }
+
+        int CountActiveCurses(PlayerState player)
+        {
+            if (_session?.Rules?.CardDatabase == null)
+                return 0;
+
+            int count = 0;
+            var db = _session.Rules.CardDatabase;
+            foreach (var cardId in player.Spread)
+            {
+                var inst = _session.GetCard(cardId);
+                var def = inst != null ? db.GetById(inst.DefinitionId) : null;
+                if (def != null && ReversedCurseService.IsCurseActive(_session, player, cardId, def))
+                    count++;
+            }
+            return count;
+        }
     }
 }
 #endif

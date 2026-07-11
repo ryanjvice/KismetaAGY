@@ -289,6 +289,9 @@ namespace Kismeta.Core.Rules
             var validation = ValidateOppositionSetup(session, attackerId, defenderId);
             if (!validation.IsOk) return validation;
 
+            var saltCost = CombatRules.TrySpendSwordsFiveSalt(session, session.Players[attackerId], ContestKind.Opposition);
+            if (!saltCost.IsOk) return saltCost;
+
             int wardCost = session.Players[defenderId].StoneWardCount;
             session.Board.PendingContest = new PendingContest
             {

@@ -183,12 +183,13 @@ namespace Kismeta.Core.Rules
 
             foreach (var (id, def) in spreadCards)
             {
-                if (!IsContestRelevantSpreadCard(kind, id, def, targetCardId, anteCardId, offeredCardId, highlightCardId))
+                if (!IsContestRelevantSpreadCard(session, player, kind, id, def, targetCardId, anteCardId, offeredCardId, highlightCardId))
                     continue;
 
                 int alignPts = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);
                 crucibleMatches.TryGetValue(id, out var slotLabel);
-                var state = SpreadCardEffectEvaluator.Evaluate(player, def, cosmic, alignPts, slotLabel);
+                var state = SpreadCardEffectEvaluator.Evaluate(
+                    session, player, id, def, cosmic, alignPts, slotLabel);
 
                 string cardTitle = def.IsMinorArcana
                     ? $"{def.Rank} of {def.Suit}"
@@ -226,6 +227,8 @@ namespace Kismeta.Core.Rules
         }
 
         static bool IsContestRelevantSpreadCard(
+            GameSession session,
+            PlayerState player,
             ContestKind kind,
             string id,
             CardDefinition def,
@@ -238,7 +241,11 @@ namespace Kismeta.Core.Rules
                 return true;
 
             if (def.EffectType.Equals("Reversed", StringComparison.OrdinalIgnoreCase))
-                return kind == ContestKind.Duel || kind == ContestKind.Gambit;
+            {
+                if (kind != ContestKind.Duel && kind != ContestKind.Gambit)
+                    return false;
+                return ReversedCurseService.IsCurseActive(session, player, id, def);
+            }
 
             if (kind == ContestKind.Duel
                 && def.EffectType.Equals("Duel", StringComparison.OrdinalIgnoreCase))
@@ -250,15 +257,6 @@ namespace Kismeta.Core.Rules
 
             return false;
         }
-
-        static bool IsDuelRelevantSpreadCard(
-            string id,
-            CardDefinition def,
-            string? targetCardId,
-            string? anteCardId,
-            string? highlightCardId) =>
-            IsContestRelevantSpreadCard(
-                ContestKind.Duel, id, def, targetCardId, anteCardId, null, highlightCardId);
 
         static bool PertainsToContest(ContestKind kind, string text)
         {
@@ -396,6 +394,9 @@ namespace Kismeta.Core.Rules
                         description += $" Opposition shift: {player.HierophantOppositionShift:+0;-0}.";
                     }
 
+                    if (def.ArcanaNumber == 1 && attuned)
+                        description += " Reversed immunity active in your Spread.";
+
                     if (CardEffectSuppressionService.IsSuppressed(session, id))
                         description += " Effects nullified by Star.";
 
@@ -498,7 +499,8 @@ namespace Kismeta.Core.Rules
                 int alignPts = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);
                 crucibleMatches.TryGetValue(id, out var slotLabel);
 
-                var state = SpreadCardEffectEvaluator.Evaluate(player, def, cosmic, alignPts, slotLabel);
+                var state = SpreadCardEffectEvaluator.Evaluate(
+                    session, player, id, def, cosmic, alignPts, slotLabel);
                 if (state.IsInactive)
                 {
                     inactiveCount++;
