@@ -62,7 +62,12 @@ namespace Kismeta.UI.Components
                 UiMotion.AnimateInventoryToggle(overlay, expanding: true);
         }
 
-        public static void BindSummary(VisualElement? root, GameSession session, int localPlayerId)
+        public static void BindSummary(
+            VisualElement? root,
+            GameSession session,
+            int localPlayerId,
+            int? spreadCountOverride = null,
+            int? handCountOverride = null)
         {
             if (root == null) return;
             if (localPlayerId < 0 || localPlayerId >= session.Players.Count)
@@ -70,7 +75,9 @@ namespace Kismeta.UI.Components
 
             PlayerSummaryRowBuilder.BindExisting(
                 root,
-                PublicPlayerView.From(session.Players[localPlayerId]));
+                PublicPlayerView.From(session.Players[localPlayerId]),
+                spreadCountOverride,
+                handCountOverride);
             PlayerHudBindings.Bind(root, session.Players[localPlayerId]);
         }
 
@@ -79,10 +86,12 @@ namespace Kismeta.UI.Components
             GameSession session,
             int localPlayerId,
             DockZone zone,
-            Action<string>? onInspect)
+            Action<string>? onInspect,
+            int? spreadCountOverride = null,
+            int? handCountOverride = null)
         {
             MainSceneBindings.BindPlayerStrip(root, session, localPlayerId);
-            BindSummary(root, session, localPlayerId);
+            BindSummary(root, session, localPlayerId, spreadCountOverride, handCountOverride);
             MainSceneBindings.SetDockZoneFabActive(root, zone);
             MainSceneBindings.BindDockStrip(root, session, localPlayerId, zone, onInspect);
         }

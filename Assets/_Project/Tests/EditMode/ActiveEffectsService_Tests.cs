@@ -51,6 +51,13 @@ namespace Kismeta.Core.Tests
             session.Players[playerId].Spread.Add(instanceId);
         }
 
+        static void AddHandCard(GameSession session, int playerId, string instanceId, string definitionId)
+        {
+            var inst = new CardInstance(instanceId, definitionId, CardZone.Hand, playerId);
+            session.RegisterCard(inst);
+            session.Players[playerId].Hand.Add(instanceId);
+        }
+
         static ActiveEffectSection SpreadSection(ActiveEffectsSnapshot snapshot) => snapshot.Sections[3];
 
         [Test]
@@ -147,6 +154,26 @@ namespace Kismeta.Core.Tests
             Assert.AreEqual(ActiveEffectPolarity.Buff, spread.Items[0].Polarity);
             Assert.IsNotNull(spread.FooterNote);
             StringAssert.Contains("1 other spread card", spread.FooterNote);
+        }
+
+        [Test]
+        public void Build_WithSpreadOverride_ListsDraftSpreadCards()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Scorpio;
+
+            AddSpreadCard(session, 0, "spread-committed", "minor.cups.seven.1");
+            AddHandCard(session, 0, "hand-a", "minor.pentacles.four.1");
+            AddHandCard(session, 0, "hand-b", "minor.wands.princess.1");
+
+            var committed = SpreadSection(ActiveEffectsService.Build(session, 0));
+            Assert.AreEqual(1, committed.Items.Count);
+
+            var overrideIds = new[] { "spread-committed", "hand-a", "hand-b" };
+            var draft = SpreadSection(ActiveEffectsService.Build(session, 0, overrideIds));
+            Assert.AreEqual(3, draft.Items.Count);
         }
 
         [Test]

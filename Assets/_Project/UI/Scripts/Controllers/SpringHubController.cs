@@ -30,6 +30,9 @@ namespace Kismeta.UI.Controllers
         public System.Action? OnOpenForgeInspect;
         public System.Action? OnDismissForgeInspect;
 
+        public IReadOnlyList<string>? CommuneDraftSpreadIds
+            => _communeInitialized ? _spreadIds : null;
+
         public SeasonIntroRecapHost? IntroRecapHost { get; set; }
 
         readonly List<string> _spreadIds = new();
@@ -129,8 +132,12 @@ namespace Kismeta.UI.Controllers
 
         void RefreshDock()
         {
-            if (_session != null)
-                InventoryOverlayBindings.RefreshInventory(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
+            if (_session == null) return;
+
+            int? spreadCount = _communeInitialized ? _spreadIds.Count : null;
+            int? handCount = _communeInitialized ? _handIds.Count : null;
+            InventoryOverlayBindings.RefreshInventory(
+                Root, _session, _localPlayerId, _dockZone, OnInspectCard, spreadCount, handCount);
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -385,6 +392,7 @@ namespace Kismeta.UI.Controllers
             {
                 RefreshCommuneZones(_session);
                 BindCommuneLockCta(_bridge!);
+                RefreshDock();
             }
         }
 

@@ -894,7 +894,8 @@ namespace Kismeta.UI
             {
                 springHub.OnOpenCardTable = () => _endOverlays?.ShowCardTable();
                 springHub.OnRivalSelected = id => _endOverlays?.ShowCardTable(id);
-                springHub.OnOpenActiveEffects = () => _endOverlays?.ShowActiveEffects();
+                springHub.OnOpenActiveEffects = () =>
+                    _endOverlays?.ShowActiveEffects(spreadOverride: springHub.CommuneDraftSpreadIds);
                 springHub.OnOpenCrucibleCodex = () => _endOverlays?.ShowCrucibleCodex();
                 springHub.OnOpenProtectiveWards = () => _endOverlays?.ShowProtectiveWards();
                 springHub.OnInspectCard = id => _endOverlays?.ShowInspect(id);
@@ -1403,7 +1404,8 @@ namespace Kismeta.UI
                 {
                     spring.OnOpenCardTable = () => _endOverlays.ShowCardTable();
                     spring.OnRivalSelected = id => _endOverlays.ShowCardTable(id);
-                    spring.OnOpenActiveEffects = () => _endOverlays.ShowActiveEffects();
+                    spring.OnOpenActiveEffects = () =>
+                        _endOverlays.ShowActiveEffects(spreadOverride: spring.CommuneDraftSpreadIds);
                     spring.OnOpenCrucibleCodex = () => _endOverlays.ShowCrucibleCodex();
                     spring.OnOpenProtectiveWards = () => _endOverlays.ShowProtectiveWards();
                     spring.OnInspectCard = id => _endOverlays.ShowInspect(id);

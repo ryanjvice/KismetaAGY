@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI.Components;
@@ -37,6 +38,7 @@ namespace Kismeta.UI
         bool _reopenCardTableAfterInspect;
         int _cardTableFocusPlayerId = -1;
         int _activeEffectsFocusPlayerId = -1;
+        IReadOnlyList<string>? _activeEffectsSpreadOverride;
 
         public bool IsOpen => _layout != null && _layout.IsOverlayVisible;
 
@@ -88,7 +90,7 @@ namespace Kismeta.UI
             Dismiss();
         }
 
-        public void ShowActiveEffects(int focusPlayerId = -1)
+        public void ShowActiveEffects(int focusPlayerId = -1, IReadOnlyList<string>? spreadOverride = null)
         {
             EnsureControllers();
             if (_activeEffects == null)
@@ -99,6 +101,7 @@ namespace Kismeta.UI
 
             _reopenCardTableAfterInspect = false;
             _activeEffectsFocusPlayerId = focusPlayerId;
+            _activeEffectsSpreadOverride = spreadOverride;
             ShowOverlay(_activeEffects, _activeEffectsCtrl, WireActiveEffects, ActiveOverlay.ActiveEffects);
         }
 
@@ -315,6 +318,8 @@ namespace Kismeta.UI
             {
                 _activeEffectsCtrl?.SetFocus(_activeEffectsFocusPlayerId);
                 _activeEffectsFocusPlayerId = -1;
+                _activeEffectsCtrl?.SetSpreadOverride(_activeEffectsSpreadOverride);
+                _activeEffectsSpreadOverride = null;
                 _activeEffectsCtrl?.BindState(_session, _loop, _bridge!);
             }
             else if (_active == ActiveOverlay.CrucibleDetail)

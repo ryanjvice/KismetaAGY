@@ -16,7 +16,10 @@ namespace Kismeta.Core.Rules
             session.Players[playerId].UsedAdeptInstanceIdsThisAge.Add(adeptInstanceId);
         }
 
-        public static ActiveEffectsSnapshot Build(GameSession session, int playerId)
+        public static ActiveEffectsSnapshot Build(
+            GameSession session,
+            int playerId,
+            IReadOnlyList<string>? spreadOverride = null)
         {
             var player = session.Players[playerId];
             var cosmic = session.Board.CosmicAgeSign;
@@ -33,7 +36,7 @@ namespace Kismeta.Core.Rules
                 BuildAstralHousesSection(session, player, cosmic),
                 BuildAdeptsSection(session, player),
                 BuildFatesSection(session, player),
-                BuildSpreadCardsSection(session, player, cosmic)
+                BuildSpreadCardsSection(session, player, cosmic, spreadOverride)
             };
 
             return new ActiveEffectsSnapshot(subtitle, cosmicAge, sections);
@@ -606,7 +609,8 @@ namespace Kismeta.Core.Rules
         static ActiveEffectSection BuildSpreadCardsSection(
             GameSession session,
             PlayerState player,
-            ZodiacSign cosmic)
+            ZodiacSign cosmic,
+            IReadOnlyList<string>? spreadOverride = null)
         {
             var db = session.Rules?.CardDatabase;
             var codexDb = session.Rules?.CodexDatabase;
@@ -623,8 +627,9 @@ namespace Kismeta.Core.Rules
                     null);
             }
 
+            var spreadIds = spreadOverride ?? player.Spread;
             var spreadCards = new List<(string id, CardDefinition def)>();
-            foreach (var id in player.Spread)
+            foreach (var id in spreadIds)
             {
                 var inst = session.GetCard(id);
                 var def = inst != null ? db.GetById(inst.DefinitionId) : null;

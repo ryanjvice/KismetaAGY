@@ -8,7 +8,11 @@ namespace Kismeta.UI.Components
     /// <summary>Shared glyph + S/H/A/R summary row for player inventory and rival strips.</summary>
     public static class PlayerSummaryRowBuilder
     {
-        public static void BindExisting(VisualElement root, PublicPlayerView player)
+        public static void BindExisting(
+            VisualElement root,
+            PublicPlayerView player,
+            int? spreadCountOverride = null,
+            int? handCountOverride = null)
         {
             var glyph = root.Q<Label>("summary-sign-glyph");
             if (glyph != null)
@@ -19,8 +23,8 @@ namespace Kismeta.UI.Components
                     : SymbolGlyphs.Zodiac(player.CurrentSign);
             }
 
-            SetCountLabel(root, "summary-spread-count", "S", player.Spread.Count);
-            SetCountLabel(root, "summary-hand-count", "H", player.HandCardCount);
+            SetCountLabel(root, "summary-spread-count", "S", spreadCountOverride ?? player.Spread.Count);
+            SetCountLabel(root, "summary-hand-count", "H", handCountOverride ?? player.HandCardCount);
             SetCountLabel(root, "summary-arcanum-count", "A", player.Arcanum.Count);
             SetWagerCountLabel(root, player.FatefulWagerCount);
             SetCountLabel(root, "summary-reagent-total", "R", ReagentTotal(player));

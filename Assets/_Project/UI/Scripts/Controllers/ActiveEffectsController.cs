@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
@@ -15,8 +16,11 @@ namespace Kismeta.UI.Controllers
         int _bindKey = int.MinValue;
         int _focusPlayerId = -1;
         int _localPlayerId = -1;
+        IReadOnlyList<string>? _spreadOverride;
 
         public void SetFocus(int playerId) => _focusPlayerId = playerId;
+
+        public void SetSpreadOverride(IReadOnlyList<string>? spreadIds) => _spreadOverride = spreadIds;
 
         protected override void Wire()
         {
@@ -29,6 +33,7 @@ namespace Kismeta.UI.Controllers
             ApplyHostLayout(tall: false);
             _bindKey = int.MinValue;
             _focusPlayerId = -1;
+            _spreadOverride = null;
         }
 
         void ApplyHostLayout(bool tall)
@@ -47,11 +52,11 @@ namespace Kismeta.UI.Controllers
             int playerId = _focusPlayerId >= 0 ? _focusPlayerId : _localPlayerId;
             if (playerId < 0) return;
 
-            int bindKey = ComputeBindKey(session, playerId);
+            int bindKey = ComputeBindKey(session, playerId, _spreadOverride);
             if (bindKey == _bindKey) return;
             _bindKey = bindKey;
 
-            var snapshot = ActiveEffectsService.Build(session, playerId);
+            var snapshot = ActiveEffectsService.Build(session, playerId, _spreadOverride);
             string subtitle = snapshot.Subtitle;
             if (playerId != _localPlayerId && _localPlayerId >= 0)
                 subtitle = $"{PlayerUiNames.ShortName(playerId)} · {subtitle}";
@@ -59,11 +64,12 @@ namespace Kismeta.UI.Controllers
             ActiveEffectsRows.Populate(Root, snapshot, subtitle);
         }
 
-        static int ComputeBindKey(GameSession session, int playerId)
+        static int ComputeBindKey(GameSession session, int playerId, IReadOnlyList<string>? spreadOverride)
         {
             var player = session.Players[playerId];
+            var spreadSource = spreadOverride ?? player.Spread;
             int spreadHash = 0;
-            foreach (var id in player.Spread)
+            foreach (var id in spreadSource)
                 spreadHash = spreadHash * 31 + id.GetHashCode();
 
             int arcanumHash = 0;
