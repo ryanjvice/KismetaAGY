@@ -247,7 +247,7 @@ namespace Kismeta.UI.Controllers
             if (host == null) return;
             FateDecisionBindings.PopulateMoonCards(host, _session, _moonKeep, RefreshMoonUi);
             if (Lbl("moon-count") != null)
-                Lbl("moon-count")!.text = $"Keeping: {_moonKeep.Count} / 2";
+                Lbl("moon-count")!.text = $"Keeping: {_moonKeep.Count} / 2 · Major Arcana cannot be kept";
             Btn("moon-confirm")?.SetEnabled(_moonKeep.Count == 2);
         }
 

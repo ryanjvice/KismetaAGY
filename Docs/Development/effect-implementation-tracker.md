@@ -195,7 +195,7 @@ One row per **effect family** (not per card). Card data uses `effectType` from [
 | Forge | 7 V1, Queen V1 | **Enforced** | `ForgeEffectService` + `ForgeReagentPaymentService` in `CrucibleRules.TryFire` | Forge badge | Yes | Rank 7 grant; Queen wild reagent cost |
 | Craft | 8 V1, King V1 | **Enforced** | `CraftModifierService` rank-8 discount; `CraftingRules.TryKingDiscardCraft` | Action badge + craft cost preview | Yes | `RuleServices_Tests.Rank8_*`, `KingOfCups_*` |
 | Social | 9 V1 | **Enforced** | `SpreadSocialEffectService` post-contest draws | Spread passive badge | Yes | Owner-only |
-| Opposition | 10 V1 | **NotStarted** | `AlignmentService` wild suit | Spread passive badge | No | |
+| Opposition | 10 V1 | **Enforced** | `AlignmentService.ScoreCardForOpposition` + `SpreadOppositionEffectCatalog` | Spread passive badge | Yes | Wild suit = max alignment over four suits |
 | Gambit | Princess V1 | **Enforced** | `ContestCardEffectCatalog` + `CombatRules` | Combat badge | Yes | `ContestModifierService_Tests` |
 | Duel | Knight V1 | **Enforced** | `ContestCardEffectCatalog` + `CombatRules` | Combat badge | Yes | `RuleServices_Tests.Duel_KnightOfSwords_FlipsTieToAttackerWin` |
 | Passive | Ace V2 (+2 harvest if cosmic element); Queen V2 (+1 hand/spread limit); King V2 (suit protection) | **Enforced** | `PlayerLimitService` + `SpreadLimitEffectCatalog`; `DuelProtectionService` in `CombatRules.ValidateDuelCards` | Buff badges + limit footnotes | Yes | Queen hand/spread split by suit |
@@ -210,7 +210,7 @@ One row per **effect family** (not per card). Card data uses `effectType` from [
 | Card Lock (Spring → Winter unlock) | **Enforced** | `GameSession.CardLockActive`, `SetCardLockCommand`, `GameLoop` | Phase UI | Partial | |
 | Besieged Bonus | **Enforced** | `CrucibleRules.ResolveOpposition` (+1 defend, winner increments `BesiegedBonusCount`) | — | No | Cleared on Transit |
 | Magnus misaligned trade 2:1 | **Enforced** | `TradeService` + `PlayerAspectAlignment.IsMagnusTradeRatioValid` | Trade UI | Yes | `RuleServices_Tests` Magnus trade block |
-| Magnus contest +1 dice | **NotStarted** | Duels / Gambits / Opposition | — | No | No hook in `CombatRules` |
+| Magnus contest +1 dice | **Enforced** | `ContestModifierService` (+1 dice Duel/Gambit); `CrucibleRules` (+1 alignment Opposition) | Contest effect panels + exchange context | Yes | `ContestModifierService_Tests`, `RuleServices_Tests` Magnus opposition |
 | Hand / Spread limits (5 / 5) | **Enforced** | `WinterRules`, `PlayerLimitService.GetHandLimit` / `GetSpreadLimit` (Priestess resonant → 7; Queen V2 +1) | Winter discard + Commune UI | Yes | `RuleServices_Tests` Phase 7 block |
 | Crucible lifecycle (activate / fire / temper / stasis) | **Pipeline** | `CrucibleRules` | Autumn forge UI | Partial | `RuleServices_Tests` crucible block; separate from card wildcards |
 | Agekeeper's Boon (+2 harvest when Agekeeper sign matches cosmic) | **Enforced** | `SpringRules.CalculateHarvestCount` | Harvest breakdown | Partial | |
@@ -350,10 +350,11 @@ Deferred per scope: Magician ★1 resonant → Phase 5; World ★21 resonant →
 
 ### Phase 9 — UI polish per slice
 
-- [ ] Exchange modals for remaining fate edge cases
-- [ ] Contest effect previews (both players)
-- [ ] AI awareness of active combat/craft modifiers
-- [ ] Magnus contest +1 dice (game mode)
+- [x] Exchange modals for remaining fate edge cases (`ExchangeEventEmitter` Tower/Death/Sun/Judgement/Wheel; Lovers empty draw; Moon footnote)
+- [x] Contest effect previews (both players) (`ContestEffectsBindings`, duel/gambit attacker panels, `BuildOppositionRelevant`)
+- [x] AI awareness of active combat/craft modifiers (`AiContestPolicy`, `SimpleAIController`, `AiDuelPolicy`)
+- [x] Magnus contest +1 dice (game mode) (`ContestModifierService`, `CrucibleRules`, UI previews)
+- [x] Opposition rank 10 wild suit (`SpreadOppositionEffectCatalog`, `AlignmentService_Tests`)
 
 ---
 
@@ -368,3 +369,8 @@ Verified against live code:
 | Fate Tower | Arrest adepts on draw | ✅ `FateCardResolver.ResolveTower` |
 | Knight V1 duel | UIOnly | ✅ `SpreadCardEffectEvaluator` only; no `CombatRules` dice hook |
 | Magnus trade 2:1 | Reject 1:1 misaligned | ✅ `TradeService` + `RuleServices_Tests` |
+| Magnus contest +1 | Misaligned challenger bonus | ✅ `ContestModifierService` dice; `CrucibleRules` opposition alignment |
+| Fate exchanges | Tower/Death/Sun/Judgement/Wheel overlays | ✅ `ExchangeEventEmitter_Tests` |
+| Contest previews | Attacker + defender effect panels | ✅ `ContestEffectsBindings`, `Duel.uxml`, `Gambit.uxml` |
+| AI modifiers | Contest/craft/fire/trade heuristics | ✅ `AiContestPolicy`, `SimpleAIController` |
+| Opposition 10 V1 | Wild suit alignment scoring | ✅ `AlignmentService_Tests` |

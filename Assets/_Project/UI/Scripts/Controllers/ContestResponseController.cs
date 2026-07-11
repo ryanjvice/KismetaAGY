@@ -230,40 +230,33 @@ namespace Kismeta.UI.Controllers
                 return;
             }
 
-            ActiveEffectsSnapshot snapshot = pending.Kind == ContestKind.Duel
-                ? ActiveEffectsService.BuildDuelRelevant(
-                    _session, _playerId, pending.AttackerId,
-                    pending.TargetCardId, pending.AnteCardId)
-                : ActiveEffectsService.BuildGambitRelevant(
-                    _session, _playerId, pending.AttackerId, pending.OfferedCardId);
-
-            var modifiers = ContestModifierService.Build(
-                _session, pending.Kind, pending.AttackerId, _playerId);
-            bool boardBestOfThree = _session.Board.ContestEffects.IsBestOfThree(pending.Kind);
-            bool scopedBestOfThree = pending.Kind == ContestKind.Duel && modifiers.AttackerForcesBestOfThree;
-
-            bool showFeatured = (boardBestOfThree || scopedBestOfThree)
-                && !string.IsNullOrWhiteSpace(snapshot.CosmicAge.Description);
-            var featured = FindElement("response-effects-featured");
-            if (featured != null)
+            if (pending.Kind == ContestKind.Duel)
             {
-                featured.Clear();
-                if (showFeatured)
-                    ActiveEffectsRows.PopulateFeatured(featured, snapshot.CosmicAge);
-                SetHidden(featured, !showFeatured);
+                ContestEffectsBindings.ConfigureDuel(
+                    host,
+                    FindElement("response-effects-featured"),
+                    FindElement("response-effects-list"),
+                    FindLabel("response-sub"),
+                    _session,
+                    _playerId,
+                    pending.AttackerId,
+                    _playerId,
+                    pending.TargetCardId,
+                    pending.AnteCardId);
             }
-
-            var list = FindElement("response-effects-list");
-            list?.Clear();
-            if (list != null && snapshot.Sections.Count > 0)
-                ActiveEffectsAccordion.Populate(list, snapshot.Sections);
-
-            SetHidden(host, !showFeatured && snapshot.Sections.Count == 0
-                && string.IsNullOrWhiteSpace(snapshot.Subtitle));
-
-            var sub = FindLabel("response-sub");
-            if (sub != null && !string.IsNullOrWhiteSpace(snapshot.Subtitle))
-                sub.text = snapshot.Subtitle;
+            else
+            {
+                ContestEffectsBindings.ConfigureGambit(
+                    host,
+                    FindElement("response-effects-featured"),
+                    FindElement("response-effects-list"),
+                    FindLabel("response-sub"),
+                    _session,
+                    _playerId,
+                    pending.AttackerId,
+                    _playerId,
+                    pending.OfferedCardId);
+            }
         }
 
         void ConfigureDuelStakes(PendingContest pending)

@@ -16,7 +16,19 @@ namespace Kismeta.UI.Components
             ExchangeKind.FateLovers => "The Lovers",
             ExchangeKind.FateFool => "The Fool",
             ExchangeKind.FateHangedMan => "The Hanged Man",
+            ExchangeKind.FateTower => "The Tower",
+            ExchangeKind.FateDeath => "Death",
+            ExchangeKind.FateSun => "The Sun",
+            ExchangeKind.FateJudgement => "The Judgement",
+            ExchangeKind.FateWheel => "Wheel of Fortune",
             _ => "Resources exchanged"
+        };
+
+        static bool UsesLegsList(ExchangeKind kind) => kind switch
+        {
+            ExchangeKind.FateHangedMan or ExchangeKind.FateTower or ExchangeKind.FateDeath
+                or ExchangeKind.FateSun or ExchangeKind.FateWheel => true,
+            _ => false
         };
 
         public static void Populate(
@@ -42,7 +54,7 @@ namespace Kismeta.UI.Components
             var bilateral = root.Q("bilateral-panel");
             var legsList = root.Q("legs-list");
 
-            if (exchange.Kind == ExchangeKind.FateHangedMan)
+            if (UsesLegsList(exchange.Kind))
             {
                 if (bilateral != null)
                     bilateral.style.display = DisplayStyle.None;

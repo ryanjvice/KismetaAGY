@@ -40,7 +40,7 @@ namespace Kismeta.Core.Rules
                 var inst = session.GetCard(id);
                 var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
                 if (def == null) continue;
-                total += ApplyHermitElementDouble(CardScore(def.Suit, def.Planet, referenceSign), hermitResonant);
+                total += ApplyHermitElementDouble(ScoreCardForOpposition(def, referenceSign), hermitResonant);
             }
 
             foreach (var id in player.Hand)
@@ -48,7 +48,7 @@ namespace Kismeta.Core.Rules
                 var inst = session.GetCard(id);
                 var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
                 if (def == null) continue;
-                total += ApplyHermitElementDouble(CardScore(def.Suit, def.Planet, referenceSign), hermitResonant);
+                total += ApplyHermitElementDouble(ScoreCardForOpposition(def, referenceSign), hermitResonant);
             }
 
             foreach (var id in player.Arcanum)
@@ -82,6 +82,26 @@ namespace Kismeta.Core.Rules
         /// <summary>Alignment points for a single minor-arcana card vs a reference sign.</summary>
         public static int ScoreCard(Suit suit, Planet planet, ZodiacSign reference) =>
             CardScore(suit, planet, reference);
+
+        /// <summary>Scores a minor card in opposition, applying rank-10 wild-suit when applicable.</summary>
+        public static int ScoreCardForOpposition(CardDefinition def, ZodiacSign reference)
+        {
+            if (SpreadOppositionEffectCatalog.IsRank10WildSuit(def))
+                return ScoreWildSuitCard(def.Planet, reference);
+            return CardScore(def.Suit, def.Planet, reference);
+        }
+
+        /// <summary>Best alignment across all four suits (planet held constant).</summary>
+        public static int ScoreWildSuitCard(Planet planet, ZodiacSign reference)
+        {
+            int best = 0;
+            foreach (Suit suit in System.Enum.GetValues(typeof(Suit)))
+            {
+                if (suit == Suit.None) continue;
+                best = System.Math.Max(best, CardScore(suit, planet, reference));
+            }
+            return best;
+        }
 
         private static int CardScore(Suit suit, Planet planet, ZodiacSign reference)
         {

@@ -393,6 +393,8 @@ namespace Kismeta.Core.Rules
 
                 attackScore = _alignmentService.CalculateAlignmentPoints(session, attackerId, cosmicSign);
                 defendScore = _alignmentService.CalculateAlignmentPoints(session, defenderId, cosmicSign);
+                attackScore += PlayerAspectAlignment.MagnusOppositionAlignmentBonus(
+                    session, attackerId, defenderId);
 
                 attackerPlayer.CurrentSign = originalSign;
             }

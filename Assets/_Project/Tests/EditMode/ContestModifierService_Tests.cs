@@ -20,7 +20,7 @@ namespace Kismeta.Core.Tests
             return CardDatabase.LoadFromJson(File.ReadAllText(path));
         }
 
-        static GameSession BuildSession(CardDatabase db)
+        static GameSession BuildSession(CardDatabase db, GameMode mode = GameMode.Quickplay)
         {
             var players = new List<PlayerState>
             {
@@ -37,7 +37,19 @@ namespace Kismeta.Core.Tests
                 new CraftingRules(db),
                 new WinterRules(db),
                 new ActionValidator());
-            return new GameSession("test", GameMode.Quickplay, players, rules, CrucibleBuildMode.Curated);
+            return new GameSession("test", mode, players, rules, CrucibleBuildMode.Curated);
+        }
+
+        static void SetMisalignedMagnusSigns(GameSession session)
+        {
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[1].CurrentSign = ZodiacSign.Gemini;
+        }
+
+        static void SetAlignedMagnusSigns(GameSession session)
+        {
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[1].CurrentSign = ZodiacSign.Leo;
         }
 
         static void AddSpreadCard(GameSession session, int playerId, string instanceId, string definitionId)
@@ -149,6 +161,56 @@ namespace Kismeta.Core.Tests
             session.Players[0].CurrentSign = ZodiacSign.Aries;
             var notAttuned = ContestModifierService.Build(session, ContestKind.Duel, 0, 1);
             Assert.IsFalse(notAttuned.Attacker.MayRerollAttack);
+        }
+
+        [Test]
+        public void MagnusMisaligned_Duel_GrantsAttackerDiceBonus()
+        {
+            var db = LoadDb();
+            var session = BuildSession(db, GameMode.MagnusAlchemist);
+            SetMisalignedMagnusSigns(session);
+
+            var mods = ContestModifierService.Build(session, ContestKind.Duel, 0, 1);
+
+            Assert.AreEqual(1, mods.Attacker.AttackBonus);
+            Assert.AreEqual(0, mods.Defender.AttackBonus);
+            Assert.AreEqual(0, mods.Defender.DefendBonus);
+        }
+
+        [Test]
+        public void MagnusAligned_Duel_NoMagnusBonus()
+        {
+            var db = LoadDb();
+            var session = BuildSession(db, GameMode.MagnusAlchemist);
+            SetAlignedMagnusSigns(session);
+
+            var mods = ContestModifierService.Build(session, ContestKind.Duel, 0, 1);
+
+            Assert.AreEqual(0, mods.Attacker.AttackBonus);
+        }
+
+        [Test]
+        public void MagnusMisaligned_Gambit_GrantsAttackerDiceBonus()
+        {
+            var db = LoadDb();
+            var session = BuildSession(db, GameMode.MagnusAlchemist);
+            SetMisalignedMagnusSigns(session);
+
+            var mods = ContestModifierService.Build(session, ContestKind.Gambit, 0, 1);
+
+            Assert.AreEqual(1, mods.Attacker.AttackBonus);
+        }
+
+        [Test]
+        public void NonMagnus_MisalignedSigns_NoContestBonus()
+        {
+            var db = LoadDb();
+            var session = BuildSession(db, GameMode.Quickplay);
+            SetMisalignedMagnusSigns(session);
+
+            var mods = ContestModifierService.Build(session, ContestKind.Duel, 0, 1);
+
+            Assert.AreEqual(0, mods.Attacker.AttackBonus);
         }
     }
 }

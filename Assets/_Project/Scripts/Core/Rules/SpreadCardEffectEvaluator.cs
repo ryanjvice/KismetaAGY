@@ -157,7 +157,8 @@ namespace Kismeta.Core.Rules
 
         static bool IsSpreadPassiveActive(PlayerState player, CardDefinition def)
             => SpreadEffectPredicates.IsSocialSpreadActive(def)
-               || SpreadEffectPredicates.IsHarvestHouseElementActive(player, def);
+               || SpreadEffectPredicates.IsHarvestHouseElementActive(player, def)
+               || SpreadOppositionEffectCatalog.IsRank10WildSuit(def);
 
         static bool IsActionActive(PlayerState player, CardDefinition def)
         {
@@ -313,6 +314,9 @@ namespace Kismeta.Core.Rules
 
             if (SpreadForgeEffectCatalog.IsRank7ForgeReagent(def))
                 description += $" +1 {SpreadForgeEffectCatalog.ReagentForRank7(def)} when you Fire.";
+
+            if (SpreadOppositionEffectCatalog.IsRank10WildSuit(def))
+                description += " Wild suit in Oppositions.";
 
             return description;
         }

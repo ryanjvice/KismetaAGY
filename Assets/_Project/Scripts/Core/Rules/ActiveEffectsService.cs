@@ -42,27 +42,159 @@ namespace Kismeta.Core.Rules
         /// <summary>Effects that may influence an in-flight duel (both players, staked cards, Justice age).</summary>
         public static ActiveEffectsSnapshot BuildDuelRelevant(
             GameSession session,
-            int defenderId,
+            int perspectivePlayerId,
             int attackerId,
+            int defenderId,
             string? targetCardId,
             string? anteCardId) =>
             BuildContestRelevant(
-                session, ContestKind.Duel, defenderId, attackerId,
+                session, ContestKind.Duel, perspectivePlayerId, defenderId, attackerId,
                 targetCardId, anteCardId, null);
 
         /// <summary>Effects that may influence an in-flight gambit (both players, offered card, Justice age).</summary>
         public static ActiveEffectsSnapshot BuildGambitRelevant(
             GameSession session,
-            int defenderId,
+            int perspectivePlayerId,
             int attackerId,
+            int defenderId,
             string? offeredCardId) =>
             BuildContestRelevant(
-                session, ContestKind.Gambit, defenderId, attackerId,
+                session, ContestKind.Gambit, perspectivePlayerId, defenderId, attackerId,
                 null, null, offeredCardId);
+
+        /// <summary>Effects that may influence an opposition (both players, alignment sources, besieged).</summary>
+        public static ActiveEffectsSnapshot BuildOppositionRelevant(
+            GameSession session,
+            int challengerId,
+            int defenderId)
+        {
+            var cosmic = session.Board.CosmicAgeSign;
+            var planet = Correspondence.PlanetFor(cosmic);
+            var element = Correspondence.ElementFor(cosmic);
+
+            string subtitle = cosmic == ZodiacSign.None
+                ? "Cosmic age not yet cast"
+                : $"Age of {cosmic} · {planet} · {element}";
+
+            var modifierParts = new List<string>();
+            if (PlayerAspectAlignment.IsMagnusMisalignedChallenger(session, challengerId, defenderId))
+                modifierParts.Add("Magnus: +1 alignment (misaligned challenger)");
+
+            int besieged = defenderId >= 0 && defenderId < session.Players.Count
+                ? session.Players[defenderId].BesiegedBonusCount
+                : 0;
+            if (besieged > 0)
+                modifierParts.Add($"Besieged: +{besieged} defender alignment");
+
+            if (modifierParts.Count > 0)
+                subtitle += $" · {string.Join(" · ", modifierParts)}";
+
+            var sections = new List<ActiveEffectSection>();
+
+            if (challengerId >= 0 && challengerId < session.Players.Count)
+            {
+                var challenger = session.Players[challengerId];
+                AddFilteredSection(sections, FilterOppositionSection(
+                    BuildAdeptsSection(session, challenger)));
+                AddFilteredSection(sections, BuildOppositionSpreadSection(
+                    session, challenger, cosmic, "Your spread"));
+            }
+
+            if (defenderId >= 0 && defenderId < session.Players.Count && defenderId != challengerId)
+            {
+                var defender = session.Players[defenderId];
+                AddFilteredSection(sections, FilterOppositionSection(
+                    BuildAdeptsSection(session, defender)));
+                AddFilteredSection(sections, BuildOppositionSpreadSection(
+                    session, defender, cosmic, $"{PlayerLabel(session, defenderId)} spread"));
+            }
+
+            return new ActiveEffectsSnapshot(subtitle, EmptyCosmicAgeItem(), sections);
+        }
+
+        static ActiveEffectSection? FilterOppositionSection(ActiveEffectSection section)
+        {
+            var items = section.Items.Where(item =>
+                PertainsToOpposition(item.Description) || PertainsToOpposition(item.Title)).ToList();
+            if (items.Count == 0)
+                return null;
+
+            return new ActiveEffectSection(
+                section.SectionId,
+                section.Title,
+                items.Count.ToString(),
+                items,
+                section.FooterNote);
+        }
+
+        static bool PertainsToOpposition(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            return text.Contains("opposition", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("alignment", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("wild suit", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("besieged", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("hermit", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("hierophant", StringComparison.OrdinalIgnoreCase);
+        }
+
+        static ActiveEffectSection? BuildOppositionSpreadSection(
+            GameSession session,
+            PlayerState player,
+            ZodiacSign cosmic,
+            string title)
+        {
+            var db = session.Rules?.CardDatabase;
+            if (db == null)
+                return null;
+
+            var items = new List<ActiveEffectItem>();
+            foreach (var id in player.Spread)
+            {
+                var inst = session.GetCard(id);
+                var def = inst != null ? db.GetById(inst.DefinitionId) : null;
+                if (def == null) continue;
+
+                if (!def.EffectType.Equals("Opposition", StringComparison.OrdinalIgnoreCase)
+                    && !def.EffectType.Equals("Harvest", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                int alignPts = AlignmentService.ScoreCardForOpposition(def, cosmic);
+                var state = SpreadCardEffectEvaluator.Evaluate(
+                    session, player, id, def, cosmic, alignPts, null);
+                if (state.IsInactive)
+                    continue;
+
+                string cardTitle = def.IsMinorArcana
+                    ? $"{def.Rank} of {def.Suit}"
+                    : def.Name;
+
+                items.Add(new ActiveEffectItem(
+                    id,
+                    cardTitle,
+                    state.Description,
+                    state.Badge,
+                    iconKey: SuitIconKey(def.Suit),
+                    polarity: state.Polarity));
+            }
+
+            if (items.Count == 0)
+                return null;
+
+            items.Sort(CompareSpreadItems);
+            return new ActiveEffectSection(
+                $"opposition-spread-{player.PlayerId}",
+                title,
+                $"{items.Count} active",
+                items);
+        }
 
         static ActiveEffectsSnapshot BuildContestRelevant(
             GameSession session,
             ContestKind kind,
+            int perspectivePlayerId,
             int defenderId,
             int attackerId,
             string? targetCardId,
@@ -78,7 +210,7 @@ namespace Kismeta.Core.Rules
                 : $"Age of {cosmic} · {planet} · {element}";
 
             string modifierSummary = ContestModifierService.DescribeForPlayer(
-                session, kind, defenderId, attackerId, defenderId);
+                session, kind, perspectivePlayerId, attackerId, defenderId);
             if (!string.IsNullOrWhiteSpace(modifierSummary))
                 subtitle += $" · {modifierSummary}";
 

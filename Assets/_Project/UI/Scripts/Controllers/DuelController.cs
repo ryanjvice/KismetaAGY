@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
 using Kismeta.UI.Diagnostics;
 using Kismeta.UI.Narrative;
@@ -129,6 +130,28 @@ namespace Kismeta.UI.Controllers
                 bool ready = _rivalId >= 0 && _target.Count == 1 && _ante.Count == 1;
                 next.SetEnabled(ready);
             }
+
+            RefreshContestEffects();
+        }
+
+        void RefreshContestEffects()
+        {
+            if (_session == null || _playerId < 0 || _rivalId < 0) return;
+
+            string? targetId = _target.Count > 0 ? GetFirst(_target) : null;
+            string? anteId = _ante.Count > 0 ? GetFirst(_ante) : null;
+
+            ContestEffectsBindings.ConfigureDuel(
+                El("duel-effects"),
+                El("duel-effects-featured"),
+                El("duel-effects-list"),
+                null,
+                _session,
+                _playerId,
+                _playerId,
+                _rivalId,
+                targetId,
+                anteId);
         }
 
         void OnSetupNext()
@@ -150,6 +173,8 @@ namespace Kismeta.UI.Controllers
             var foeName = Lbl("die-foe-name");
             if (foeName != null && _session != null)
                 foeName.text = ContestBindings.RivalName(_session, _rivalId);
+
+            RefreshContestEffects();
         }
 
         IEnumerator DoRoll()

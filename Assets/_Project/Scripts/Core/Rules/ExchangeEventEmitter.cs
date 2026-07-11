@@ -119,6 +119,13 @@ namespace Kismeta.Core.Rules
                     items.Add(ExchangeItem.Spread(id));
                 legs.Add(new ExchangeLeg(chooserId, drawerId, items));
             }
+            else if (drawCards)
+            {
+                session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateLovers,
+                    System.Array.Empty<ExchangeLeg>(),
+                    "The Lovers — rival chose draw two, but no cards were available"));
+                return;
+            }
             else if (!drawCards)
             {
                 legs.Add(new ExchangeLeg(chooserId, drawerId,
@@ -153,6 +160,99 @@ namespace Kismeta.Core.Rules
 
             session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateHangedMan, legs,
                 "The Hanged Man — hands passed clockwise"));
+        }
+
+        public static void EmitTower(GameSession session, int drawerId,
+            IReadOnlyList<(int playerId, IReadOnlyList<string> arrestedIds)> arrests)
+        {
+            var legs = new List<ExchangeLeg>();
+            foreach (var (playerId, ids) in arrests)
+            {
+                if (ids.Count == 0) continue;
+                var items = new List<ExchangeItem>(ids.Count);
+                foreach (var id in ids)
+                    items.Add(ExchangeItem.Adept(id));
+                legs.Add(new ExchangeLeg(playerId, playerId, items));
+            }
+
+            if (legs.Count == 0) return;
+            session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateTower, legs,
+                "The Tower — all Adepts arrested"));
+        }
+
+        public static void EmitDeath(GameSession session,
+            IReadOnlyList<(int playerId, IReadOnlyList<string> handCardIds)> hands)
+        {
+            var legs = new List<ExchangeLeg>();
+            foreach (var (playerId, cards) in hands)
+            {
+                if (cards.Count == 0) continue;
+                var items = new List<ExchangeItem>();
+                int show = System.Math.Min(cards.Count, 4);
+                for (int c = 0; c < show; c++)
+                    items.Add(ExchangeItem.Discard(cards[c]));
+                if (cards.Count > show)
+                    items.Add(new ExchangeItem(ExchangeItemKind.ToDiscard, count: cards.Count - show));
+                legs.Add(new ExchangeLeg(playerId, PlayerExchangeEvent.SinkDeck, items));
+            }
+
+            if (legs.Count == 0) return;
+            session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateDeath, legs,
+                "Death — all hands returned to the deck"));
+        }
+
+        public static void EmitSun(GameSession session)
+        {
+            var reagentTypes = new[]
+            {
+                ReagentType.Salt, ReagentType.Sulphur, ReagentType.AquaRegia,
+                ReagentType.Vitriol, ReagentType.Quicksilver
+            };
+            var legs = new List<ExchangeLeg>();
+            foreach (var player in session.Players)
+            {
+                var items = new List<ExchangeItem>(reagentTypes.Length);
+                foreach (var rt in reagentTypes)
+                    items.Add(ExchangeItem.Reagent(rt));
+                legs.Add(new ExchangeLeg(PlayerExchangeEvent.SinkDeck, player.PlayerId, items));
+            }
+
+            session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateSun, legs,
+                "The Sun — every player received one of each reagent"));
+        }
+
+        public static void EmitJudgement(GameSession session, int drawerId, int cardsDrawn)
+        {
+            if (cardsDrawn <= 0)
+            {
+                session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateJudgement,
+                    System.Array.Empty<ExchangeLeg>(),
+                    "The Judgement — no lit cauldrons to draw from"));
+                return;
+            }
+
+            session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateJudgement,
+                new[] { new ExchangeLeg(PlayerExchangeEvent.SinkDeck, drawerId,
+                    new[] { new ExchangeItem(ExchangeItemKind.SpreadCard, count: cardsDrawn) }) },
+                $"The Judgement — drew {cardsDrawn} card{(cardsDrawn == 1 ? "" : "s")} from lit cauldrons"));
+        }
+
+        public static void EmitWheel(GameSession session,
+            IReadOnlyList<(int playerId, int roll, bool gainedSalt, bool discardedCard)> outcomes)
+        {
+            var legs = new List<ExchangeLeg>();
+            foreach (var (playerId, roll, gainedSalt, discardedCard) in outcomes)
+            {
+                if (gainedSalt)
+                    legs.Add(new ExchangeLeg(PlayerExchangeEvent.SinkDeck, playerId,
+                        new[] { ExchangeItem.Reagent(ReagentType.Salt, 2) }));
+                if (discardedCard)
+                    legs.Add(new ExchangeLeg(playerId, PlayerExchangeEvent.SinkDiscard,
+                        new[] { new ExchangeItem(ExchangeItemKind.ToDiscard, count: 1) }));
+            }
+
+            session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateWheel, legs,
+                "Wheel of Fortune — all players re-rolled zodiac"));
         }
     }
 

@@ -80,8 +80,10 @@ namespace Kismeta.Core.Rules
         private void ResolveTower(GameSession session, int drawerId, string fateCardId)
         {
             int totalArrested = 0;
+            var arrests = new List<(int playerId, IReadOnlyList<string> arrestedIds)>();
             foreach (var player in session.Players)
             {
+                var arrested = new List<string>();
                 foreach (var id in player.Arcanum)
                 {
                     var inst = session.GetCard(id);
@@ -89,22 +91,30 @@ namespace Kismeta.Core.Rules
                     if (def?.MajorArcanaType == MajorArcanaType.Adept)
                     {
                         player.ArrestedAdepts.Add(id);
+                        arrested.Add(id);
                         totalArrested++;
                     }
                 }
+                if (arrested.Count > 0)
+                    arrests.Add((player.PlayerId, arrested));
             }
             SetFateNote(session, fateCardId,
                 $"Already resolved: arrested {totalArrested} Adept{(totalArrested == 1 ? "" : "s")} table-wide. Now face-up in Arcanum.");
             session.EmitEvent(new TowerFateResolvedEvent(drawerId, totalArrested));
+            ExchangeEventEmitter.EmitTower(session, drawerId, arrests);
         }
 
         /// <summary>Death (13): All players discard their entire Hand to the Common Deck.</summary>
         private static void ResolveDeath(GameSession session, int drawerId, string fateCardId)
         {
             int discarded = 0;
+            var hands = new List<(int playerId, IReadOnlyList<string> handCardIds)>();
             var toReturn = new List<string>();
             foreach (var player in session.Players)
             {
+                var handCopy = new List<string>(player.Hand);
+                if (handCopy.Count > 0)
+                    hands.Add((player.PlayerId, handCopy));
                 foreach (var id in player.Hand)
                 {
                     session.GetCard(id)?.MoveTo(CardZone.Deck, -1);
@@ -118,6 +128,7 @@ namespace Kismeta.Core.Rules
                 session.Board.CommonDeck.Push(id);
             SetFateNote(session, fateCardId,
                 $"Already resolved: all hands returned to the deck ({discarded} cards). Now face-up in Arcanum.");
+            ExchangeEventEmitter.EmitDeath(session, hands);
         }
 
         /// <summary>Sun (19): All players receive 1 of each Reagent.</summary>
@@ -133,6 +144,7 @@ namespace Kismeta.Core.Rules
             }
             SetFateNote(session, fateCardId,
                 "Already resolved: every player received one of each reagent. Now face-up in Arcanum.");
+            ExchangeEventEmitter.EmitSun(session);
         }
 
         /// <summary>Judgement (20): Drawing player draws 1 card per lit Cauldron.</summary>
@@ -166,6 +178,7 @@ namespace Kismeta.Core.Rules
             }
             SetFateNote(session, fateCardId,
                 $"Already resolved: drew {drawn} card{(drawn == 1 ? "" : "s")} from lit cauldrons. Now face-up in Arcanum.");
+            ExchangeEventEmitter.EmitJudgement(session, drawerId, drawn);
         }
 
         /// <summary>Justice (11): Duels and Gambits this round resolve as best-of-3.</summary>
@@ -184,6 +197,7 @@ namespace Kismeta.Core.Rules
         {
             int highest = -1, lowest = 13;
             int highPid = -1, lowPid = -1;
+            var outcomes = new List<(int playerId, int roll, bool gainedSalt, bool discardedCard)>();
 
             foreach (var player in session.Players)
             {
@@ -208,10 +222,18 @@ namespace Kismeta.Core.Rules
                 discarded = 1;
             }
 
+            foreach (var player in session.Players)
+            {
+                bool gainedSalt = player.PlayerId == highPid;
+                bool lostCard = player.PlayerId == lowPid && discarded > 0;
+                outcomes.Add((player.PlayerId, (int)player.CurrentSign, gainedSalt, lostCard));
+            }
+
             SetFateNote(session, fateCardId,
                 discarded > 0
                     ? "Already resolved: all players re-rolled zodiac; highest gained 2 Salt, lowest lost 1 card. Now face-up in Arcanum."
                     : "Already resolved: all players re-rolled zodiac; highest gained 2 Salt. Now face-up in Arcanum.");
+            ExchangeEventEmitter.EmitWheel(session, outcomes);
         }
 
         /// <summary>Hanged Man (12): Each player passes their Hand to the left (lower player id, wrapping).</summary>

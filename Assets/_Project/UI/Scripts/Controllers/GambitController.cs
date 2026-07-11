@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
 using Kismeta.UI.Narrative;
 using UnityEngine;
@@ -159,6 +160,31 @@ namespace Kismeta.UI.Controllers
                 Btn("g-stake-next")?.SetEnabled(_stake.Count > 0);
             });
             Btn("g-stake-next")?.SetEnabled(_stake.Count > 0);
+            RefreshContestEffects();
+        }
+
+        void RefreshContestEffects()
+        {
+            if (_session == null || _playerId < 0 || _rivalId < 0) return;
+
+            string? offeredId = _stake.Count > 0 ? GetFirst(_stake) : null;
+
+            ContestEffectsBindings.ConfigureGambit(
+                El("gambit-effects"),
+                El("gambit-effects-featured"),
+                El("gambit-effects-list"),
+                null,
+                _session,
+                _playerId,
+                _playerId,
+                _rivalId,
+                offeredId);
+        }
+
+        static string GetFirst(HashSet<string> set)
+        {
+            foreach (var id in set) return id;
+            return "";
         }
 
         void OnStakeNext()

@@ -54,7 +54,7 @@ namespace Kismeta.Core.Players
                 ActionHint.WinterAction      => DecideWinter(context),
                 ActionHint.DiscardToLimit    => DecideDiscardToLimit(context),
                 ActionHint.TradeResponse     => DecideTradeResponse(context),
-                ActionHint.DuelResponse      => new RespondDuelCommand(Slot.Index, accept: true),
+                ActionHint.DuelResponse      => DecideDuelResponse(context),
                 ActionHint.GambitResponse    => DecideGambitResponse(context),
                 ActionHint.OppositionResponse => new RespondOppositionCommand(Slot.Index, accept: true),
                 _                            => new PassActionCommand(Slot.Index)
@@ -186,7 +186,17 @@ namespace Kismeta.Core.Players
 
             var gambitTarget = FindGambitTarget(ctx, pid);
             if (gambitTarget.TargetId >= 0 && gambitTarget.OfferedCardId != null)
-                return new InitiateGambitCommand(pid, gambitTarget.TargetId, gambitTarget.OfferedCardId);
+            {
+                if (ctx.Session == null
+                    || AiContestPolicy.CanAffordContestStart(
+                        ctx.Session, ctx.Session.Players[pid], ContestKind.Gambit))
+                {
+                    if (ctx.Session == null
+                        || AiContestPolicy.HasFavorableAttackModifiers(
+                            ctx.Session, ContestKind.Gambit, pid, gambitTarget.TargetId))
+                        return new InitiateGambitCommand(pid, gambitTarget.TargetId, gambitTarget.OfferedCardId);
+                }
+            }
 
             var build = TryBuildAstralHouse(ctx);
             if (build != null)
@@ -241,23 +251,30 @@ namespace Kismeta.Core.Players
                     player.Reagents.TryGetValue(ReagentType.Vitriol,     out int vi) && vi > 0 ||
                     player.Reagents.TryGetValue(ReagentType.Quicksilver, out int qk) && qk > 0;
 
-                if (hasFireReagents)
+                if (hasFireReagents || CanAffordAnyFireSlot(ctx, pid))
                 {
                     for (int i = 0; i < player.CrucibleSlots.Count; i++)
                     {
                         if (player.CrucibleSlots[i].State != CrucibleCardState.Active) continue;
+                        if (ctx.Session != null && !CanAffordFireSlot(ctx, pid, i))
+                            continue;
 
-                        // Submit only the minimum cards that satisfy the alchemical formula.
                         var alignCards = FindMinimumFireCards(ctx, player.AssignedCodex, i, spreadIds);
                         return new FireStoneCommand(pid, i, alignCards);
                     }
                 }
             }
 
-            // Try to craft Salt (needs any 3 cards from Spread)
-            if (spreadIds.Count >= 3)
+            int craftCost = 3;
+            if (ctx.Session != null)
             {
-                var payment = spreadIds.GetRange(0, 3);
+                craftCost = CraftModifierService.GetMinimumCost(ctx.Session, pid, ReagentType.Salt);
+                craftCost += ReversedCurseService.CraftExtraCardCost(ctx.Session, pid);
+            }
+
+            if (spreadIds.Count >= craftCost)
+            {
+                var payment = spreadIds.GetRange(0, craftCost);
                 return new CraftReagentCommand(pid, ReagentType.Salt, payment);
             }
 
@@ -358,11 +375,51 @@ namespace Kismeta.Core.Players
             return new CompletePriestessHarvestCommand(Slot.Index, returns);
         }
 
-        private IGameCommand DecideTradeResponse(GameContext ctx) =>
-            new RespondTradeCommand(Slot.Index, accept: true);
+        private IGameCommand DecideTradeResponse(GameContext ctx)
+        {
+            var pending = ctx.Session?.Board.PendingContest;
+            if (pending?.Kind == ContestKind.Trade)
+            {
+                int offer = pending.OfferCardIds?.Count ?? 0;
+                int request = pending.RequestCardIds?.Count ?? 0;
+                int initiator = pending.AttackerId;
+                if (ctx.Session != null)
+                {
+                    if (!PlayerAspectAlignment.IsMagnusTradeRatioValid(
+                            ctx.Session, initiator, Slot.Index, offer, request))
+                        return new RespondTradeCommand(Slot.Index, accept: false);
+                    if (!ReversedCurseService.IsTradeOfferRatioValid(
+                            ctx.Session, initiator, offer, request))
+                        return new RespondTradeCommand(Slot.Index, accept: false);
+                }
+            }
+
+            return new RespondTradeCommand(Slot.Index, accept: true);
+        }
+
+        private IGameCommand DecideDuelResponse(GameContext ctx)
+        {
+            var pending = ctx.Session?.Board.PendingContest;
+            if (pending?.Kind == ContestKind.Duel && ctx.Session != null)
+            {
+                bool accept = AiDuelPolicy.ShouldAcceptAsDefender(
+                    ctx.Session, ContestKind.Duel, pending.AttackerId, Slot.Index);
+                return new RespondDuelCommand(Slot.Index, accept);
+            }
+
+            return new RespondDuelCommand(Slot.Index, accept: true);
+        }
 
         private IGameCommand DecideGambitResponse(GameContext ctx)
         {
+            var pending = ctx.Session?.Board.PendingContest;
+            if (pending?.Kind == ContestKind.Gambit && ctx.Session != null)
+            {
+                if (!AiDuelPolicy.ShouldAcceptAsDefender(
+                        ctx.Session, ContestKind.Gambit, pending.AttackerId, Slot.Index))
+                    return new RespondGambitCommand(Slot.Index, accept: false);
+            }
+
             var ps = ctx.PublicView.Players[Slot.Index];
             int wardCost = ps.StoneWardCount;
             if (wardCost <= 0)
@@ -408,7 +465,15 @@ namespace Kismeta.Core.Players
             {
                 if (opp.PlayerId == ownPid) continue;
                 if (opp.StoneState != StoneState.Forging) continue;
-                if (totalSelfReagents < opp.StoneWardCount) continue; // can't afford ward fee
+                if (totalSelfReagents < opp.StoneWardCount) continue;
+
+                if (ctx.Session != null)
+                {
+                    var attacker = ctx.Session.Players[ownPid];
+                    if (!AiContestPolicy.CanAffordContestStart(
+                            ctx.Session, attacker, ContestKind.Opposition))
+                        continue;
+                }
 
                 // Don't target a stone that was Fired this round (immune rule; server enforces,
                 // but we can check heuristically by FiredAtRound — not in public view, so just try)
@@ -545,6 +610,33 @@ namespace Kismeta.Core.Players
             }
 
             return ActivationCardSuggester.SuggestActivationCards(spreadDefs, formula, ctx.CardDatabase);
+        }
+
+        static bool CanAffordAnyFireSlot(GameContext ctx, int pid)
+        {
+            if (ctx.Session == null || ctx.CardDatabase == null) return false;
+            var player = ctx.Session.Players[pid];
+            for (int i = 0; i < player.CrucibleSlots.Count; i++)
+            {
+                if (player.CrucibleSlots[i].State == CrucibleCardState.Active
+                    && CanAffordFireSlot(ctx, pid, i))
+                    return true;
+            }
+            return false;
+        }
+
+        static bool CanAffordFireSlot(GameContext ctx, int pid, int slotIndex)
+        {
+            if (ctx.Session == null || ctx.CardDatabase == null) return true;
+            var player = ctx.Session.Players[pid];
+            if (slotIndex >= player.CrucibleSlots.Count) return false;
+            var slot = player.CrucibleSlots[slotIndex];
+            if (string.IsNullOrEmpty(slot.CardInstanceId)) return false;
+            var inst = ctx.Session.GetCard(slot.CardInstanceId);
+            var def = inst != null ? ctx.CardDatabase.GetById(inst.DefinitionId) : null;
+            if (def?.AlchemicalCost == null) return true;
+            var wild = ForgeReagentPaymentService.GetWildReagentTypes(player, ctx.Session, ctx.CardDatabase);
+            return ForgeReagentPaymentService.CanPayFireCost(player, def.AlchemicalCost, wild);
         }
     }
 }

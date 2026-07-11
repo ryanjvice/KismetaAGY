@@ -6,6 +6,7 @@
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/SummerActions.uss" />
     <engine:Style src="../../USS/Contests.uss" />
+    <engine:Style src="../../USS/ActiveEffects.uss" />
     <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
@@ -75,6 +76,12 @@
             <engine:Label text="win to swap · lose and it's arrested (1 Salt to free)" style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 8px; white-space: normal;" />
             <engine:VisualElement name="stake-cards" class="tray__cards" />
             <engine:Button name="g-stake-next" text="Stake &amp; Roll" class="btn btn--primary" style="margin-top: 12px;" />
+
+            <engine:VisualElement name="gambit-effects" class="contest-response__effects is-hidden" style="margin-top: 12px;">
+                <engine:Label text="Active effects" class="eyebrow" />
+                <engine:VisualElement name="gambit-effects-featured" class="active-effects-featured" />
+                <engine:VisualElement name="gambit-effects-list" class="active-effects-sections" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <!-- step 4: roll -->

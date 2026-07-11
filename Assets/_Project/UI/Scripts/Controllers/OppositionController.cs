@@ -3,6 +3,7 @@ using System.Collections;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
 using Kismeta.UI.Narrative;
 using UnityEngine;
@@ -66,6 +67,21 @@ namespace Kismeta.UI.Controllers
                     RefreshTargetStep();
                 });
             Btn("target-next")?.SetEnabled(_rivalId >= 0);
+            RefreshContestEffects();
+        }
+
+        void RefreshContestEffects()
+        {
+            if (_session == null || _playerId < 0 || _rivalId < 0) return;
+
+            ContestEffectsBindings.ConfigureOpposition(
+                El("opposition-effects"),
+                El("opposition-effects-featured"),
+                El("opposition-effects-list"),
+                null,
+                _session,
+                _playerId,
+                _rivalId);
         }
 
         void OnTargetNext()

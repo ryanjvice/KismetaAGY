@@ -32,5 +32,20 @@ namespace Kismeta.Core.Rules
             if (ArePlayersAlignedForTrade(session, initiatorId, targetId)) return true;
             return offerCount >= 2 * requestCount;
         }
+
+        /// <summary>
+        /// Magnus Alchemist: misaligned challenger gains +1 dice (Duel/Gambit) or +1 alignment (Opposition).
+        /// </summary>
+        public static bool IsMagnusMisalignedChallenger(GameSession session, int challengerId, int defenderId)
+        {
+            if (session.Mode != GameMode.MagnusAlchemist) return false;
+            return !ArePlayersAlignedForTrade(session, challengerId, defenderId);
+        }
+
+        public static int MagnusContestDiceBonus(GameSession session, int challengerId, int defenderId)
+            => IsMagnusMisalignedChallenger(session, challengerId, defenderId) ? 1 : 0;
+
+        public static int MagnusOppositionAlignmentBonus(GameSession session, int challengerId, int defenderId)
+            => MagnusContestDiceBonus(session, challengerId, defenderId);
     }
 }

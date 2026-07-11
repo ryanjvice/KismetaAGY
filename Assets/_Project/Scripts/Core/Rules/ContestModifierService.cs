@@ -42,6 +42,13 @@ namespace Kismeta.Core.Rules
                 ApplyAdeptModifiers(session, db, session.Players[defenderId], ContestParticipantRole.Defender,
                     kind, ref defenderMods);
 
+            if (kind == ContestKind.Duel || kind == ContestKind.Gambit)
+            {
+                int magnusBonus = PlayerAspectAlignment.MagnusContestDiceBonus(session, attackerId, defenderId);
+                if (magnusBonus != 0)
+                    attackerMods.AttackBonus += magnusBonus;
+            }
+
             return new ContestModifiers(attackerMods, defenderMods, attackerForcesBestOfThree);
         }
 
@@ -79,6 +86,12 @@ namespace Kismeta.Core.Rules
                 lines.Add("6 of Swords: challenger best-of-three");
             }
 
+            if ((kind == ContestKind.Duel || kind == ContestKind.Gambit)
+                && PlayerAspectAlignment.IsMagnusMisalignedChallenger(session, attackerId, defenderId))
+            {
+                lines.Add("Magnus: +1 dice (misaligned challenger)");
+            }
+
             return lines.Count == 0 ? string.Empty : string.Join(" · ", lines);
         }
 
@@ -89,8 +102,10 @@ namespace Kismeta.Core.Rules
             int defenderId)
         {
             var mods = Build(session, kind, attackerId, defenderId);
+            bool magnusMisaligned = (kind == ContestKind.Duel || kind == ContestKind.Gambit)
+                && PlayerAspectAlignment.IsMagnusMisalignedChallenger(session, attackerId, defenderId);
             if (!mods.Attacker.HasAnyEffect && !mods.Defender.HasAnyEffect
-                && !mods.AttackerForcesBestOfThree)
+                && !mods.AttackerForcesBestOfThree && !magnusMisaligned)
                 return string.Empty;
 
             var parts = new List<string>();
@@ -98,6 +113,8 @@ namespace Kismeta.Core.Rules
             AppendSide(parts, $"P{defenderId}", mods.Defender);
             if (mods.AttackerForcesBestOfThree && kind == ContestKind.Duel)
                 parts.Add("scoped best-of-3");
+            if (magnusMisaligned)
+                parts.Add("Magnus +1 dice");
             return string.Join("; ", parts);
         }
 

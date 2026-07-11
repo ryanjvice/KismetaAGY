@@ -1,5 +1,7 @@
 using System;
 using Kismeta.Core.Commands;
+using Kismeta.Core.Domain;
+using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
 
 namespace Kismeta.Core.Players
@@ -44,6 +46,17 @@ namespace Kismeta.Core.Players
             if (rivalSpread.Count == 0)
                 return false;
 
+            if (ctx.Session != null)
+            {
+                var attacker = ctx.Session.Players[ownPid];
+                if (ReversedCurseService.RequiresDualAnte(ctx.Session, attacker)
+                    && player.Spread.Count < 2)
+                    return false;
+                if (!AiContestPolicy.HasFavorableAttackModifiers(
+                        ctx.Session, ContestKind.Duel, ownPid, targetId))
+                    return false;
+            }
+
             if (rollValue >= InitiateChance)
                 return false;
 
@@ -54,6 +67,15 @@ namespace Kismeta.Core.Players
             command = new InitiateDuelCommand(
                 ownPid, targetId, targetCardId, player.Spread[0]);
             return true;
+        }
+
+        public static bool ShouldAcceptAsDefender(GameSession session, ContestKind kind,
+            int attackerId, int defenderId)
+        {
+            var mods = ContestModifierService.Build(session, kind, attackerId, defenderId);
+            int attackNet = mods.Attacker.AttackBonus;
+            int defendNet = mods.Defender.DefendBonus;
+            return defendNet >= attackNet - 1;
         }
 
         static string? FindDuelTargetCard(GameContext ctx, int defenderId)

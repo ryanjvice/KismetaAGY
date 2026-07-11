@@ -286,7 +286,7 @@ namespace Kismeta.Core.Tests
                 GambitBestOfThree = true
             };
 
-            var snapshot = ActiveEffectsService.BuildDuelRelevant(session, 0, 1, null, null);
+            var snapshot = ActiveEffectsService.BuildDuelRelevant(session, 0, 1, 0, null, null);
 
             StringAssert.Contains("best-of-three", snapshot.CosmicAge.Description);
             StringAssert.Contains("Gambits", snapshot.CosmicAge.Description);
@@ -306,7 +306,7 @@ namespace Kismeta.Core.Tests
             AddSpreadCard(session, 1, "att-ante", "minor.wands.seven.1");
 
             var snapshot = ActiveEffectsService.BuildDuelRelevant(
-                session, 0, 1, "def-target", "att-ante");
+                session, 0, 1, 0, "def-target", "att-ante");
 
             var spreadSections = snapshot.Sections.Where(s => s.SectionId.StartsWith("spread-cards")).ToList();
             Assert.AreEqual(2, spreadSections.Count);

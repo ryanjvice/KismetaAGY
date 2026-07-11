@@ -1483,6 +1483,62 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
+        public void Opposition_MagnusMisaligned_GrantsChallengerAlignmentBonus()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, mode: GameMode.MagnusAlchemist);
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[1].CurrentSign = ZodiacSign.Gemini;
+            session.Players[1].StoneState = StoneState.Forging;
+            session.Board.CosmicAgeSign = ZodiacSign.Virgo;
+            SetSeason(session, Season.Autumn);
+            session.CurrentTurnPlayerId = 0;
+
+            var alignmentService = new AlignmentService(db);
+            int baseAttackAlign = alignmentService.CalculateAlignmentPoints(session, 0, session.Board.CosmicAgeSign);
+
+            OppositionResolvedEvent? resolved = null;
+            session.OnEvent += e => { if (e is OppositionResolvedEvent o) resolved = o; };
+
+            var initiate = session.Apply(new InitiateOppositionCommand(0, 1));
+            Assert.IsTrue(initiate.IsOk, initiate.Message);
+            var respond = session.Apply(new RespondOppositionCommand(1, accept: true));
+            Assert.IsTrue(respond.IsOk, respond.Message);
+
+            Assert.NotNull(resolved);
+            Assert.AreEqual(baseAttackAlign + 1, resolved!.AttackAlign,
+                "Misaligned Magnus challenger should receive +1 alignment.");
+        }
+
+        [Test]
+        public void Opposition_MagnusAligned_NoExtraAlignmentBonus()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, mode: GameMode.MagnusAlchemist);
+            session.Players[0].CurrentSign = ZodiacSign.Aries;
+            session.Players[1].CurrentSign = ZodiacSign.Leo;
+            session.Players[1].StoneState = StoneState.Forging;
+            session.Board.CosmicAgeSign = ZodiacSign.Virgo;
+            SetSeason(session, Season.Autumn);
+            session.CurrentTurnPlayerId = 0;
+
+            var alignmentService = new AlignmentService(db);
+            int baseAttackAlign = alignmentService.CalculateAlignmentPoints(session, 0, session.Board.CosmicAgeSign);
+
+            OppositionResolvedEvent? resolved = null;
+            session.OnEvent += e => { if (e is OppositionResolvedEvent o) resolved = o; };
+
+            var initiate = session.Apply(new InitiateOppositionCommand(0, 1));
+            Assert.IsTrue(initiate.IsOk, initiate.Message);
+            var respond = session.Apply(new RespondOppositionCommand(1, accept: true));
+            Assert.IsTrue(respond.IsOk, respond.Message);
+
+            Assert.NotNull(resolved);
+            Assert.AreEqual(baseAttackAlign, resolved!.AttackAlign,
+                "Aligned Magnus challenger should not receive Magnus alignment bonus.");
+        }
+
+        [Test]
         public void Trade_QuickplayMisaligned_1For1_Accepted()
         {
             var db = LoadDb(); var codexDb = LoadCodexDb();

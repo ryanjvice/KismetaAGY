@@ -5,6 +5,7 @@
 
     <engine:Style src="../../USS/Kismeta.uss" />
     <engine:Style src="../../USS/Contests.uss" />
+    <engine:Style src="../../USS/ActiveEffects.uss" />
     <engine:Template src="../shell/NarrativeSlots.uxml" name="NarrativeSlots" />
 
     <!-- ============================================================
@@ -58,6 +59,12 @@
             </engine:VisualElement>
 
             <engine:Button name="setup-next" text="Ante &amp; Roll" class="btn btn--primary" style="margin-top: 12px;" />
+
+            <engine:VisualElement name="duel-effects" class="contest-response__effects is-hidden" style="margin-top: 12px;">
+                <engine:Label text="Active effects" class="eyebrow" />
+                <engine:VisualElement name="duel-effects-featured" class="active-effects-featured" />
+                <engine:VisualElement name="duel-effects-list" class="active-effects-sections" />
+            </engine:VisualElement>
         </engine:VisualElement>
 
         <!-- roll -->

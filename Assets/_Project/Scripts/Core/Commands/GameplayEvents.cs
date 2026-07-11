@@ -401,7 +401,12 @@ namespace Kismeta.Core.Commands
         Gambit,
         FateLovers,
         FateFool,
-        FateHangedMan
+        FateHangedMan,
+        FateTower,
+        FateDeath,
+        FateSun,
+        FateJudgement,
+        FateWheel
     }
 
     public enum ExchangeItemKind
