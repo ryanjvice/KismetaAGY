@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Players;
+using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
 using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
@@ -37,6 +39,11 @@ namespace Kismeta.UI.Controllers
             RefreshTemperBtn();
             UiMotion.PulseTrackNode(Root?.Q(className: "stage-node--now"));
             NarrativeSlotBindings.BindById(Root, "autumn.temper");
+            ModifierPreviewBindings.PopulateForContext(
+                Root?.Q<VisualElement>("modifier-preview"),
+                session,
+                _playerId,
+                scopeOverride: EffectGlanceScope.Forge);
         }
 
         void BuildForgedCards()

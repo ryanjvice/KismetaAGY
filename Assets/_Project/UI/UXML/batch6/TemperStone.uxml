@@ -31,6 +31,8 @@
             <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
+        <engine:VisualElement name="modifier-preview" class="modifier-preview" style="padding: 0 14px;" />
+
         <engine:VisualElement style="padding: 16px 14px 4px;">
             <!-- stage track Lead..Altar -->
             <engine:VisualElement class="stage-track">

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Players;
 
 namespace Kismeta.Core.Rules
 {
@@ -14,6 +15,252 @@ namespace Kismeta.Core.Rules
             if (playerId < 0 || playerId >= session.Players.Count)
                 return;
             session.Players[playerId].UsedAdeptInstanceIdsThisAge.Add(adeptInstanceId);
+        }
+
+        public static int CountTotalActiveEffects(ActiveEffectsSnapshot snapshot)
+        {
+            int count = string.IsNullOrWhiteSpace(snapshot.CosmicAge.Title) ? 0 : 1;
+            foreach (var section in snapshot.Sections)
+                count += section.Items.Count;
+            return count;
+        }
+
+        public static int CountActiveEffects(GameSession session, int playerId)
+            => CountTotalActiveEffects(Build(session, playerId));
+
+        public static EffectGlanceSnapshot BuildForContext(
+            GameSession session,
+            int playerId,
+            ActionHint hint = ActionHint.None,
+            IReadOnlyList<string>? spreadOverride = null,
+            int maxChips = 3)
+        {
+            var context = EffectGlanceContext.From(session, hint, spreadOverride);
+            return BuildGlance(session, playerId, context, maxChips);
+        }
+
+        public static EffectGlanceSnapshot BuildGlance(
+            GameSession session,
+            int playerId,
+            EffectGlanceContext context,
+            int maxChips = 3)
+        {
+            if (playerId < 0 || playerId >= session.Players.Count || maxChips <= 0)
+                return EffectGlanceSnapshot.Empty;
+
+            var snapshot = Build(session, playerId, context.SpreadOverride);
+            int total = CountTotalActiveEffects(snapshot);
+            var candidates = CollectGlanceCandidates(session, snapshot, context);
+
+            var debuffs = new List<ActiveEffectItem>();
+            var others = new List<ActiveEffectItem>();
+            foreach (var item in candidates)
+            {
+                if (item.Polarity == ActiveEffectPolarity.Debuff)
+                    debuffs.Add(item);
+                else
+                    others.Add(item);
+            }
+
+            var selected = new List<ActiveEffectItem>();
+            foreach (var item in debuffs)
+            {
+                if (selected.Count >= maxChips) break;
+                selected.Add(item);
+            }
+
+            foreach (var item in others)
+            {
+                if (selected.Count >= maxChips) break;
+                selected.Add(item);
+            }
+
+            int overflow = Math.Max(0, candidates.Count - selected.Count);
+            return new EffectGlanceSnapshot(total, selected, overflow);
+        }
+
+        static List<ActiveEffectItem> CollectGlanceCandidates(
+            GameSession session,
+            ActiveEffectsSnapshot snapshot,
+            EffectGlanceContext context)
+        {
+            var items = new List<ActiveEffectItem>();
+            var seen = new HashSet<string>();
+
+            void AddItem(ActiveEffectItem item)
+            {
+                if (string.IsNullOrWhiteSpace(item.Title) || !seen.Add(item.Id))
+                    return;
+                items.Add(item);
+            }
+
+            if (context.Scope == EffectGlanceScope.Winter)
+                AddItem(MakeGlanceChip("age-expires", "Age ends", "Effects expire at Winter Transit",
+                    ActiveEffectPolarity.Neutral, ActiveEffectBadgeTone.Active));
+
+            if (session.Board.CosmicAgeSign != ZodiacSign.None
+                && !string.IsNullOrWhiteSpace(snapshot.CosmicAge.Title))
+            {
+                AddItem(MakeGlanceChip(
+                    snapshot.CosmicAge.Id,
+                    snapshot.CosmicAge.Title,
+                    snapshot.CosmicAge.Description,
+                    ActiveEffectPolarity.Buff,
+                    ActiveEffectBadgeTone.Active));
+            }
+
+            if (session.Board.ContestEffects.DuelBestOfThree
+                || session.Board.ContestEffects.GambitBestOfThree)
+            {
+                AddItem(MakeGlanceChip(
+                    "justice-best-of-three",
+                    "Best-of-3",
+                    "Duels and Gambits resolve as best-of-three this age (Justice).",
+                    ActiveEffectPolarity.Neutral,
+                    ActiveEffectBadgeTone.Active));
+            }
+
+            foreach (var section in snapshot.Sections)
+            {
+                foreach (var item in section.Items)
+                {
+                    if (section.SectionId == "spread-cards"
+                        && item.Polarity != ActiveEffectPolarity.Debuff
+                        && context.Scope != EffectGlanceScope.Contest
+                        && context.Scope != EffectGlanceScope.Forge
+                        && context.Scope != EffectGlanceScope.Craft)
+                        continue;
+
+                    if (!IsGlanceRelevant(section.SectionId, item, context))
+                        continue;
+                    AddItem(ToGlanceChip(item));
+                }
+            }
+
+            int activeSpread = 0;
+            foreach (var section in snapshot.Sections)
+            {
+                if (section.SectionId == "spread-cards")
+                    activeSpread = section.Items.Count;
+            }
+
+            if (activeSpread > 0 && !seen.Contains("spread-summary"))
+            {
+                AddItem(MakeGlanceChip(
+                    "spread-summary",
+                    $"{activeSpread} spread",
+                    $"{activeSpread} spread card{(activeSpread == 1 ? "" : "s")} active this age.",
+                    ActiveEffectPolarity.Neutral,
+                    ActiveEffectBadgeTone.Active));
+            }
+
+            return items;
+        }
+
+        static ActiveEffectItem ToGlanceChip(ActiveEffectItem item)
+        {
+            string label = !string.IsNullOrWhiteSpace(item.Badge.Text)
+                && item.Badge.Text.Length <= 18
+                    ? item.Badge.Text
+                    : ShortGlanceTitle(item.Title);
+            return MakeGlanceChip(item.Id, label, item.Description, item.Polarity, item.Badge.Tone);
+        }
+
+        static ActiveEffectItem MakeGlanceChip(
+            string id,
+            string title,
+            string description,
+            ActiveEffectPolarity polarity,
+            ActiveEffectBadgeTone tone)
+        {
+            return new ActiveEffectItem(
+                id,
+                title,
+                description,
+                new ActiveEffectBadge(string.Empty, tone),
+                polarity: polarity);
+        }
+
+        static string ShortGlanceTitle(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                return "Effect";
+            return title.Length <= 16 ? title : title[..14] + "…";
+        }
+
+        static bool IsGlanceRelevant(
+            string sectionId,
+            ActiveEffectItem item,
+            EffectGlanceContext context)
+        {
+            if (sectionId == "fates" && item.Badge.Tone == ActiveEffectBadgeTone.Pending)
+                return true;
+
+            if (item.Polarity == ActiveEffectPolarity.Debuff)
+                return true;
+
+            return context.Scope switch
+            {
+                EffectGlanceScope.Harvest or EffectGlanceScope.Commune =>
+                    sectionId == "astral-houses"
+                    || PertainsToHarvest(item),
+                EffectGlanceScope.Contest =>
+                    sectionId == "adepts" && PertainsToContest(ContestKind.Duel, item.Description)
+                    || sectionId == "adepts" && PertainsToContest(ContestKind.Gambit, item.Description)
+                    || sectionId == "spread-cards" && (
+                        PertainsToContest(ContestKind.Duel, item.Description)
+                        || PertainsToContest(ContestKind.Gambit, item.Description)),
+                EffectGlanceScope.Opposition =>
+                    sectionId == "astral-houses"
+                    || PertainsToOpposition(item.Description)
+                    || PertainsToOpposition(item.Title)
+                    || sectionId == "spread-cards" && (
+                        PertainsToOpposition(item.Description)
+                        || PertainsToOpposition(item.Title)),
+                EffectGlanceScope.Forge =>
+                    sectionId == "spread-cards" && PertainsToForge(item),
+                EffectGlanceScope.Craft =>
+                    sectionId == "spread-cards" && PertainsToCraft(item),
+                EffectGlanceScope.Winter =>
+                    sectionId != "spread-cards" || item.Polarity != ActiveEffectPolarity.Neutral,
+                _ => sectionId != "spread-cards" || item.Polarity != ActiveEffectPolarity.Neutral
+            };
+        }
+
+        static bool PertainsToHarvest(ActiveEffectItem item)
+        {
+            return PertainsToHarvest(item.Description) || PertainsToHarvest(item.Title);
+        }
+
+        static bool PertainsToHarvest(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            return text.Contains("harvest", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("alignment", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("wild suit", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("hand limit", StringComparison.OrdinalIgnoreCase)
+                || text.Contains("spread limit", StringComparison.OrdinalIgnoreCase);
+        }
+
+        static bool PertainsToForge(ActiveEffectItem item)
+        {
+            return item.Description.Contains("forge", StringComparison.OrdinalIgnoreCase)
+                || item.Description.Contains("crucible", StringComparison.OrdinalIgnoreCase)
+                || item.Description.Contains("formula", StringComparison.OrdinalIgnoreCase)
+                || item.Title.Contains("forge", StringComparison.OrdinalIgnoreCase);
+        }
+
+        static bool PertainsToCraft(ActiveEffectItem item)
+        {
+            return item.Description.Contains("craft", StringComparison.OrdinalIgnoreCase)
+                || item.Description.Contains("reagent", StringComparison.OrdinalIgnoreCase)
+                || item.Description.Contains("cauldron", StringComparison.OrdinalIgnoreCase)
+                || item.Description.Contains("build", StringComparison.OrdinalIgnoreCase)
+                || item.Description.Contains("entry fee", StringComparison.OrdinalIgnoreCase)
+                || item.Description.Contains("house", StringComparison.OrdinalIgnoreCase)
+                || item.Badge.Text.Contains("craft", StringComparison.OrdinalIgnoreCase);
         }
 
         public static ActiveEffectsSnapshot Build(

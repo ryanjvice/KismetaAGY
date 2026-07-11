@@ -14,7 +14,7 @@ namespace Kismeta.UI.Components
     /// <summary>Simplified player roster for the Summer main-scene central panel.</summary>
     public static class SummerRosterBindings
     {
-        const string LayoutSchema = "roster-inline-v1";
+        const string LayoutSchema = "roster-inline-v2";
 
         public static void Populate(
             VisualElement root,
@@ -54,7 +54,7 @@ namespace Kismeta.UI.Components
                 block.AddToClassList("player-block");
                 block.style.borderLeftColor = new StyleColor(PlayerUiNames.PlayerColor(p.PlayerId));
 
-                block.Add(BuildHeader(p, inStasis, threat, onOpenEffects));
+                block.Add(BuildHeader(session, p, inStasis, threat, onOpenEffects));
 
                 block.Add(MakeEyebrow("spread"));
                 var spreadRow = MakeCardZone();
@@ -65,7 +65,7 @@ namespace Kismeta.UI.Components
                     var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
                     if (def == null) continue;
                     int align = AlignmentService.ScoreCard(def.Suit, def.Planet, cosmic);
-                    spreadRow.Add(MakeChip(def, cardId, align > 0, onInspect));
+                    spreadRow.Add(MakeChip(session, p.PlayerId, def, cardId, align > 0, onInspect));
                 }
                 block.Add(spreadRow);
 
@@ -88,6 +88,7 @@ namespace Kismeta.UI.Components
         }
 
         static VisualElement BuildHeader(
+            GameSession session,
             PublicPlayerView p,
             bool inStasis,
             int threat,
@@ -131,6 +132,17 @@ namespace Kismeta.UI.Components
                 badge.AddToClassList("threat-badge");
                 badge.style.marginLeft = 6;
                 header.Add(badge);
+            }
+
+            int effectCount = ActiveEffectsService.CountActiveEffects(session, p.PlayerId);
+            if (effectCount > 0)
+            {
+                var effectsChip = new Label($"{effectCount} fx");
+                effectsChip.AddToClassList("effect-glance-chip");
+                effectsChip.AddToClassList("effect-glance-chip--neutral");
+                effectsChip.style.marginLeft = 6;
+                effectsChip.tooltip = $"{effectCount} active effect{(effectCount == 1 ? "" : "s")} this age";
+                header.Add(effectsChip);
             }
 
             var hand = new Label($"Hand {p.HandCardCount}");
@@ -186,6 +198,8 @@ namespace Kismeta.UI.Components
                         inspectViaButton: true);
                     if (onInspect != null)
                         WireChipInspect(chip, cardId, onInspect);
+                    var player = session.Players[p.PlayerId];
+                    CardChipEffectBindings.ApplyAdeptEffect(session, player, chip, cardId, def);
                     zone.Add(chip);
                 }
             }
@@ -224,6 +238,8 @@ namespace Kismeta.UI.Components
                         if (def != null)
                         {
                             zone.Add(MakeChip(
+                                session,
+                                p.PlayerId,
                                 def,
                                 slot.CardInstanceId,
                                 aligned: false,
@@ -257,6 +273,8 @@ namespace Kismeta.UI.Components
         }
 
         static VisualElement MakeChip(
+            GameSession session,
+            int playerId,
             CardDefinition def,
             string cardId,
             bool aligned,
@@ -273,6 +291,12 @@ namespace Kismeta.UI.Components
 
             if (onInspect != null && !string.IsNullOrEmpty(cardId))
                 WireChipInspect(chip, cardId, onInspect);
+
+            if (playerId >= 0 && playerId < session.Players.Count)
+            {
+                CardChipEffectBindings.ApplySpreadEffect(
+                    session, session.Players[playerId], chip, cardId, def);
+            }
 
             return chip;
         }
@@ -346,6 +370,7 @@ namespace Kismeta.UI.Components
                 sb.Append(string.Join(",", p.Arcanum)).Append('|');
                 foreach (var slot in p.CrucibleSlots)
                     sb.Append(slot.CardInstanceId).Append('@').Append((int)slot.State).Append(',');
+                sb.Append('@').Append(ActiveEffectsService.CountActiveEffects(session, p.PlayerId));
                 sb.Append(';');
             }
 

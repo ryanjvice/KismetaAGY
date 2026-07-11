@@ -12,6 +12,7 @@ namespace Kismeta.UI
     {
         protected VisualElement Root { get; private set; }
         protected bool IsAttached => Root != null;
+        public VisualElement? VisualRoot => Root;
 
         public abstract string ScreenId { get; }
 

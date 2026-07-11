@@ -24,7 +24,8 @@
             </engine:VisualElement>
 
             <engine:VisualElement class="central-panel">
-            <engine:VisualElement name="winter-stage" class="stage winter-hub__stage">
+                <engine:VisualElement name="winter-stage" class="stage winter-hub__stage">
+                <engine:VisualElement name="modifier-preview" class="modifier-preview" style="padding: 0 14px 8px;" />
                 <engine:VisualElement class="winter-hub__narrative" style="width: 100%; padding: 0 14px 8px;">
                     <engine:Instance template="NarrativeSlots" />
                 </engine:VisualElement>

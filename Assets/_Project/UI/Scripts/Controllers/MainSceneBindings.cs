@@ -385,13 +385,15 @@ namespace Kismeta.UI.Controllers
             var strip = root.Q<VisualElement>("spread-strip");
             if (strip == null) return;
 
+            var cosmic = session.Board.CosmicAgeSign;
             var zonePrefix = zone switch
             {
                 DockZone.Hand => "H:",
                 DockZone.Arcanum => "A:",
                 _ => "S:"
             };
-            var signature = zonePrefix + (onInspect != null ? "I:" : "i:")
+            var signature = zonePrefix + cosmic + ":"
+                + (onInspect != null ? "I:" : "i:")
                 + string.Join(",", cardIds);
             if (strip.userData as string == signature)
                 return;
@@ -402,17 +404,30 @@ namespace Kismeta.UI.Controllers
             var db = session.Rules?.CardDatabase;
             if (db == null) return;
 
+            var player = session.Players[localPlayerId];
             foreach (var cardId in cardIds)
             {
                 var inst = session.GetCard(cardId);
                 if (inst == null) continue;
                 var def = db.GetById(inst.DefinitionId);
                 if (def == null) continue;
-                strip.Add(zone == DockZone.Arcanum
-                    ? CardChipFactory.CreateForArcanum(
-                        def, instanceId: cardId, onInspect: onInspect, inspectViaButton: true)
-                    : CardChipFactory.CreateFromDefinition(
-                        def, instanceId: cardId, onInspect: onInspect, inspectViaButton: true));
+
+                VisualElement chip;
+                if (zone == DockZone.Arcanum)
+                {
+                    chip = CardChipFactory.CreateForArcanum(
+                        def, instanceId: cardId, onInspect: onInspect, inspectViaButton: true);
+                    CardChipEffectBindings.ApplyAdeptEffect(session, player, chip, cardId, def);
+                }
+                else
+                {
+                    chip = CardChipFactory.CreateFromDefinition(
+                        def, instanceId: cardId, onInspect: onInspect, inspectViaButton: true);
+                    if (zone == DockZone.Spread)
+                        CardChipEffectBindings.ApplySpreadEffect(session, player, chip, cardId, def);
+                }
+
+                strip.Add(chip);
             }
         }
     }

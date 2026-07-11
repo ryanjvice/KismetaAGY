@@ -29,6 +29,8 @@
             <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
+        <engine:VisualElement name="modifier-preview" class="modifier-preview" style="padding: 0 14px;" />
+
         <engine:VisualElement style="padding: 12px 14px 4px;">
             <engine:Label text="cost — 2 Mars cards" class="eyebrow" />
             <engine:VisualElement name="cost-cards" class="formula card-pool">

@@ -25,6 +25,7 @@ namespace Kismeta.UI.Controllers
         public System.Action? OnOpenProtectiveWards;
         public System.Action<string>? OnInspectCard;
         public System.Action<int>? OnRivalSelected;
+        public System.Action<int>? OnOpenPlayerEffects;
         public System.Action? OnOpenBoardInspect;
         public System.Action? OnDismissBoardInspect;
         public System.Action? OnOpenForgeInspect;
@@ -137,7 +138,10 @@ namespace Kismeta.UI.Controllers
             int? spreadCount = _communeInitialized ? _spreadIds.Count : null;
             int? handCount = _communeInitialized ? _handIds.Count : null;
             InventoryOverlayBindings.RefreshInventory(
-                Root, _session, _localPlayerId, _dockZone, OnInspectCard, spreadCount, handCount);
+                Root, _session, _localPlayerId, _dockZone, OnInspectCard, spreadCount, handCount,
+                _bridge?.PendingHint ?? ActionHint.None,
+                _communeInitialized ? _spreadIds : null,
+                OnOpenActiveEffects);
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -307,7 +311,9 @@ namespace Kismeta.UI.Controllers
         void RefreshRoster()
         {
             if (Root == null || _session == null) return;
-            SummerRosterBindings.Populate(Root, _session, _localPlayerId, OnInspectCard);
+            SummerRosterBindings.Populate(
+                Root, _session, _localPlayerId, OnInspectCard,
+                id => OnOpenPlayerEffects?.Invoke(id));
         }
 
         void BindCommune(GameSession session, CommandBridge bridge)

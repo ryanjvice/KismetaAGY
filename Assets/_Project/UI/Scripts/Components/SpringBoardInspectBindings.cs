@@ -178,6 +178,17 @@ namespace Kismeta.UI.Components
             var ownerName = new Label($"{PlayerUiNames.ForPlayer(playerId)} · {sign}");
             ownerName.AddToClassList("central-panel-inspect-house-row__owner-name");
             ownerRow.Add(ownerName);
+
+            int alignPts = HarvestBreakdownService.AlignmentBonus(sign, cosmic);
+            if (alignPts > 0)
+            {
+                var alignChip = new Label($"+{alignPts} alignment");
+                alignChip.AddToClassList("active-effects-badge");
+                alignChip.AddToClassList("active-effects-badge--aligned");
+                alignChip.style.marginLeft = 6;
+                ownerRow.Add(alignChip);
+            }
+
             info.Add(ownerRow);
 
             string description = CosmicEffectDescriber.DescribeAlignmentContribution(sign, cosmic);

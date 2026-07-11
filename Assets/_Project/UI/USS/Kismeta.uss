@@ -2277,3 +2277,142 @@
     max-width: 56px;
     min-width: 44px;
 }
+
+/* ---------- Effect glance HUD ---------- */
+.effect-glance-strip {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    flex-shrink: 1;
+    min-width: 0;
+    margin-right: 6px;
+    overflow: hidden;
+}
+
+.effect-glance-strip.is-hidden {
+    display: none;
+}
+
+.effect-glance-chip {
+    font-size: 9px;
+    padding: 2px 6px;
+    margin-right: 4px;
+    border-radius: 999px;
+    border-width: 1px;
+    white-space: nowrap;
+    color: rgb(207, 196, 184);
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.effect-glance-chip--buff {
+    color: rgb(159, 196, 180);
+    border-color: rgba(127, 196, 168, 0.35);
+    background-color: rgba(36, 58, 48, 0.65);
+}
+
+.effect-glance-chip--debuff {
+    color: rgb(232, 160, 160);
+    border-color: rgba(201, 96, 96, 0.4);
+    background-color: rgba(58, 24, 24, 0.65);
+}
+
+.effect-glance-chip--neutral {
+    color: rgb(184, 168, 210);
+    border-color: rgba(154, 122, 192, 0.25);
+}
+
+.effect-glance-chip--pending {
+    color: rgb(232, 185, 74);
+    border-color: rgba(201, 150, 47, 0.45);
+}
+
+.effect-glance-chip--overflow {
+    color: rgb(184, 154, 110);
+}
+
+.effects-fab {
+    position: relative;
+}
+
+.effects-fab__count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 3px;
+    border-radius: 999px;
+    font-size: 8px;
+    -unity-text-align: middle-center;
+    color: rgb(18, 16, 22);
+    background-color: rgb(201, 150, 47);
+}
+
+.effects-fab__count.is-hidden {
+    display: none;
+}
+
+.cosmic-age-banner__effect-summary {
+    font-size: 9px;
+    color: rgb(184, 154, 110);
+    white-space: normal;
+    margin-top: 2px;
+}
+
+.cosmic-age-banner__effect-summary.is-hidden {
+    display: none;
+}
+
+.modifier-preview {
+    flex-direction: column;
+}
+
+.modifier-preview.is-hidden {
+    display: none;
+}
+
+.modifier-preview__eyebrow {
+    font-size: 8px;
+    color: rgb(154, 138, 172);
+    margin-bottom: 4px;
+}
+
+.modifier-preview__row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.card-chip__effect-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.45);
+}
+
+.card-chip__effect-dot--buff { background-color: rgb(127, 196, 168); }
+.card-chip__effect-dot--debuff { background-color: rgb(232, 120, 120); }
+.card-chip__effect-dot--neutral { background-color: rgb(184, 154, 110); }
+
+.card-chip__effect-badge {
+    position: absolute;
+    bottom: 1px;
+    left: 1px;
+    right: 1px;
+    font-size: 6px;
+    -unity-text-align: middle-center;
+    padding: 1px 2px;
+    border-radius: 3px;
+    color: rgb(243, 233, 210);
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+.card-chip__effect-badge--attuned { color: rgb(205, 176, 224); }
+.card-chip__effect-badge--debuff { color: rgb(232, 160, 160); }
+.card-chip__effect-badge--used { color: rgb(154, 138, 172); }
+.card-chip__effect-badge--available { color: rgb(159, 196, 180); }

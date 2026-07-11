@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Players;
+using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 using Kismeta.UI.Controllers;
 using UnityEngine.UIElements;
@@ -10,6 +13,7 @@ namespace Kismeta.UI.Components
     public static class InventoryOverlayBindings
     {
         static bool s_expanded;
+        static Action? s_onOpenActiveEffects;
 
         public struct Callbacks
         {
@@ -32,6 +36,7 @@ namespace Kismeta.UI.Components
             root.Q<Button>("codex-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenCrucibleCodex?.Invoke());
             root.Q<Button>("effects-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenActiveEffects?.Invoke());
             root.Q<Button>("wards-fab")?.RegisterCallback<ClickEvent>(_ => callbacks.OnOpenProtectiveWards?.Invoke());
+            s_onOpenActiveEffects = callbacks.OnOpenActiveEffects;
 
             SetExpanded(root, s_expanded, animate: false);
             OverlayRoot(root)?.BringToFront();
@@ -60,6 +65,35 @@ namespace Kismeta.UI.Components
 
             if (animate && expanded)
                 UiMotion.AnimateInventoryToggle(overlay, expanding: true);
+
+            if (root != null)
+                RefreshEffectGlance(root);
+        }
+
+        static void RefreshEffectGlance(VisualElement root)
+        {
+            var strip = root.Q<VisualElement>("effect-glance-strip");
+            var fab = root.Q<Button>("effects-fab");
+            if (strip == null && fab == null)
+                return;
+
+            // Glance chips are refreshed by the active screen via RefreshInventory.
+            // Re-populate only the chip cap when expand/collapse toggles.
+            if (strip?.userData is EffectGlanceSnapshot cached)
+                EffectGlanceBindings.Populate(root, RebuildGlanceCap(cached), s_onOpenActiveEffects);
+        }
+
+        static EffectGlanceSnapshot RebuildGlanceCap(EffectGlanceSnapshot cached)
+        {
+            int max = s_expanded ? 5 : 3;
+            if (cached.Chips.Count <= max)
+                return cached;
+
+            var chips = new List<ActiveEffectItem>();
+            for (int i = 0; i < max && i < cached.Chips.Count; i++)
+                chips.Add(cached.Chips[i]);
+            int overflow = Math.Max(0, cached.TotalCount - chips.Count);
+            return new EffectGlanceSnapshot(cached.TotalCount, chips, overflow);
         }
 
         public static void BindSummary(
@@ -88,12 +122,23 @@ namespace Kismeta.UI.Components
             DockZone zone,
             Action<string>? onInspect,
             int? spreadCountOverride = null,
-            int? handCountOverride = null)
+            int? handCountOverride = null,
+            ActionHint hint = ActionHint.None,
+            IReadOnlyList<string>? spreadOverride = null,
+            Action? onOpenActiveEffects = null)
         {
             MainSceneBindings.BindPlayerStrip(root, session, localPlayerId);
             BindSummary(root, session, localPlayerId, spreadCountOverride, handCountOverride);
             MainSceneBindings.SetDockZoneFabActive(root, zone);
             MainSceneBindings.BindDockStrip(root, session, localPlayerId, zone, onInspect);
+
+            bool expanded = s_expanded;
+            var glance = ActiveEffectsService.BuildForContext(
+                session, localPlayerId, hint, spreadOverride, maxChips: expanded ? 5 : 3);
+            var strip = root?.Q<VisualElement>("effect-glance-strip");
+            if (strip != null)
+                strip.userData = glance;
+            EffectGlanceBindings.Populate(root, glance, onOpenActiveEffects ?? s_onOpenActiveEffects);
         }
 
         public static void SetVisible(VisualElement? root, bool visible)

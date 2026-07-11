@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
 using Kismeta.Data.Loaders;
 using NUnit.Framework;
@@ -346,6 +347,71 @@ namespace Kismeta.Core.Tests
             var theirs = spreadSections.First(s => s.Title.Contains("Green"));
             Assert.AreEqual(1, theirs.Items.Count);
             Assert.AreEqual("att-ante", theirs.Items[0].Id);
+        }
+
+        [Test]
+        public void BuildGlance_IncludesCosmicAgeAndSpreadSummary()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Aries;
+            new CosmicEffectService().Apply(session, ZodiacSign.Aries);
+            session.Players[0].AstralHouses.Add(ZodiacSign.Pisces);
+
+            var context = EffectGlanceContext.From(session, ActionHint.SpringAction);
+            var glance = ActiveEffectsService.BuildGlance(session, 0, context, maxChips: 5);
+
+            Assert.Greater(glance.TotalCount, 0);
+            Assert.Greater(glance.Chips.Count, 0);
+            StringAssert.Contains("Harvest", glance.Chips[0].Title);
+        }
+
+        [Test]
+        public void BuildGlance_WinterScope_IncludesAgeExpiryReminder()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Scorpio;
+
+            var context = new EffectGlanceContext(
+                Season.Winter, ActionHint.WinterAction, EffectGlanceScope.Winter);
+            var glance = ActiveEffectsService.BuildGlance(session, 0, context, maxChips: 5);
+
+            Assert.IsTrue(glance.Chips.Any(c => c.Id == "age-expires"));
+        }
+
+        [Test]
+        public void BuildGlance_Prioritizes_Debuffs()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Scorpio;
+            AddSpreadCard(session, 0, "rev-1", "minor.cups.two.1");
+
+            var context = EffectGlanceContext.From(session);
+            var glance = ActiveEffectsService.BuildGlance(session, 0, context, maxChips: 3);
+
+            if (glance.Chips.Any(c => c.Polarity == ActiveEffectPolarity.Debuff))
+                Assert.AreEqual(ActiveEffectPolarity.Debuff, glance.Chips[0].Polarity);
+        }
+
+        [Test]
+        public void CountActiveEffects_MatchesSnapshotSections()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = BuildSession(db, codexDb);
+            session.Board.CosmicAgeSign = ZodiacSign.Libra;
+            session.Players[0].AstralHouses.Add(ZodiacSign.Aries);
+
+            var snapshot = ActiveEffectsService.Build(session, 0);
+            int counted = ActiveEffectsService.CountTotalActiveEffects(snapshot);
+
+            Assert.AreEqual(counted, ActiveEffectsService.CountActiveEffects(session, 0));
+            Assert.GreaterOrEqual(counted, 2);
         }
     }
 }

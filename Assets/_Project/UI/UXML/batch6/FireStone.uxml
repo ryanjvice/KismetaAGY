@@ -30,6 +30,8 @@
             <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
+        <engine:VisualElement name="modifier-preview" class="modifier-preview" style="padding: 0 14px;" />
+
         <engine:VisualElement style="padding: 16px 14px 6px;">
             <!-- position track 5 -> 6 -> (7) -->
             <engine:VisualElement class="track">

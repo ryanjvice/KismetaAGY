@@ -29,6 +29,8 @@
                 <engine:Label name="narrative-charge" text="" class="narrative-charge" />
             </engine:VisualElement>
 
+            <engine:VisualElement name="modifier-preview" class="modifier-preview" style="padding: 0 14px;" />
+
             <engine:ScrollView name="craft-scroll" class="craft-scroll">
                 <engine:VisualElement class="craft-scroll__content">
 

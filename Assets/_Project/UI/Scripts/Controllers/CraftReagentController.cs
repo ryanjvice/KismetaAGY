@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
+using Kismeta.Core.Players;
+using Kismeta.Core.Rules;
 using Kismeta.UI;
 using Kismeta.UI.Components;
 using Kismeta.UI.Narrative;
@@ -99,6 +101,12 @@ namespace Kismeta.UI.Controllers
                 ApplyReagentUi();
 
             BindCraftNarrative();
+            ModifierPreviewBindings.PopulateForContext(
+                Root?.Q<VisualElement>("modifier-preview"),
+                _session,
+                _playerId,
+                _bridge?.PendingHint ?? ActionHint.None,
+                EffectGlanceScope.Craft);
         }
 
         void BindCraftNarrative()

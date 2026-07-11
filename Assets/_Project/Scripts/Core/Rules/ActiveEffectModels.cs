@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using Kismeta.Core.Domain;
+using Kismeta.Core.Entities;
+using Kismeta.Core.Players;
 
 namespace Kismeta.Core.Rules
 {
@@ -104,5 +107,85 @@ namespace Kismeta.Core.Rules
             CosmicAge = cosmicAge;
             Sections = sections;
         }
+    }
+
+    public enum EffectGlanceScope
+    {
+        General,
+        Harvest,
+        Commune,
+        Contest,
+        Opposition,
+        Forge,
+        Craft,
+        Winter
+    }
+
+    public readonly struct EffectGlanceContext
+    {
+        public readonly Season Season;
+        public readonly ActionHint Hint;
+        public readonly EffectGlanceScope Scope;
+        public readonly IReadOnlyList<string>? SpreadOverride;
+
+        public EffectGlanceContext(
+            Season season,
+            ActionHint hint,
+            EffectGlanceScope scope,
+            IReadOnlyList<string>? spreadOverride = null)
+        {
+            Season = season;
+            Hint = hint;
+            Scope = scope;
+            SpreadOverride = spreadOverride;
+        }
+
+        public static EffectGlanceContext From(
+            GameSession session,
+            ActionHint hint = ActionHint.None,
+            IReadOnlyList<string>? spreadOverride = null)
+        {
+            var season = session.Phase.CurrentSeason;
+            return new EffectGlanceContext(season, hint, ResolveScope(season, hint), spreadOverride);
+        }
+
+        public static EffectGlanceScope ResolveScope(Season season, ActionHint hint) => hint switch
+        {
+            ActionHint.Commune => EffectGlanceScope.Commune,
+            ActionHint.ConfirmHarvest => EffectGlanceScope.Harvest,
+            ActionHint.DuelResponse or ActionHint.GambitResponse
+                or ActionHint.SummerContestResponse or ActionHint.TradeResponse => EffectGlanceScope.Contest,
+            ActionHint.OppositionResponse => EffectGlanceScope.Opposition,
+            ActionHint.AutumnForgeResponse => EffectGlanceScope.Forge,
+            ActionHint.WinterAction => EffectGlanceScope.Winter,
+            _ => season switch
+            {
+                Season.Spring => EffectGlanceScope.Harvest,
+                Season.Summer => EffectGlanceScope.Contest,
+                Season.Autumn => EffectGlanceScope.Opposition,
+                Season.Winter => EffectGlanceScope.Winter,
+                _ => EffectGlanceScope.General
+            }
+        };
+    }
+
+    public readonly struct EffectGlanceSnapshot
+    {
+        public readonly int TotalCount;
+        public readonly IReadOnlyList<ActiveEffectItem> Chips;
+        public readonly int OverflowCount;
+
+        public EffectGlanceSnapshot(
+            int totalCount,
+            IReadOnlyList<ActiveEffectItem> chips,
+            int overflowCount)
+        {
+            TotalCount = totalCount;
+            Chips = chips;
+            OverflowCount = overflowCount;
+        }
+
+        public static EffectGlanceSnapshot Empty { get; } =
+            new(0, System.Array.Empty<ActiveEffectItem>(), 0);
     }
 }

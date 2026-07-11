@@ -47,6 +47,11 @@ namespace Kismeta.UI.Controllers
 
             RefreshUi();
             NarrativeSlotBindings.BindById(Root, "summer.buildhouse");
+            ModifierPreviewBindings.PopulateForContext(
+                Root?.Q<VisualElement>("modifier-preview"),
+                session,
+                _playerId,
+                scopeOverride: EffectGlanceScope.Craft);
         }
 
         int StandardPaymentCount =>

@@ -28,6 +28,7 @@
                             <engine:Label text="·" class="cosmic-age-banner__sep" />
                             <engine:Label name="age-element" text="Water" class="cosmic-age-banner__element" />
                         </engine:VisualElement>
+                        <engine:Label name="age-effect-summary" text="" class="cosmic-age-banner__effect-summary" />
                     </engine:VisualElement>
                     <engine:Label name="status-round" text="Round 1" class="statusbar__sub game-header__round" />
                 </engine:VisualElement>

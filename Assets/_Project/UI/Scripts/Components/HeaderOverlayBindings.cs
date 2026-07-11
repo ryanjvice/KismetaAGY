@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
+using Kismeta.Core.Rules;
 using Kismeta.Core.Views;
 using Kismeta.UI.Controllers;
 using UnityEngine;
@@ -133,6 +134,7 @@ namespace Kismeta.UI.Components
             BindSummary(root, session, localPlayerId);
             MainSceneBindings.BindStatusBar(root, session, loop);
             MainSceneBindings.BindCosmicAgeBanner(root, session);
+            BindAgeEffectSummary(root, session);
             RivalStripBuilder.Populate(
                 root?.Q<VisualElement>("rivals"),
                 GamePublicView.From(session),
@@ -140,6 +142,24 @@ namespace Kismeta.UI.Components
                 activePlayerId,
                 s_globalRivalHandler ?? onRivalSelected ?? s_onRivalSelected);
             ApplyHeaderPad(root);
+        }
+
+        public static void BindAgeEffectSummary(VisualElement? root, GameSession session)
+        {
+            var lbl = root?.Q<Label>("age-effect-summary");
+            if (lbl == null) return;
+
+            var sign = session.Board.CosmicAgeSign;
+            if (sign == ZodiacSign.None)
+            {
+                lbl.text = string.Empty;
+                lbl.EnableInClassList("is-hidden", true);
+                return;
+            }
+
+            var (_, desc) = CosmicEffectDescriber.DescribeCosmicAge(sign);
+            lbl.text = desc;
+            lbl.EnableInClassList("is-hidden", string.IsNullOrWhiteSpace(desc));
         }
 
         public static void SetVisible(VisualElement? root, bool visible)

@@ -2,7 +2,7 @@ using Kismeta.Core.Commands;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
-using Kismeta.UI;
+using Kismeta.Core.Rules;
 using Kismeta.UI.Components;
 using Kismeta.UI.Narrative;
 using UnityEngine.UIElements;
@@ -69,7 +69,10 @@ namespace Kismeta.UI.Controllers
         void RefreshDock()
         {
             if (_session != null)
-                InventoryOverlayBindings.RefreshInventory(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
+                InventoryOverlayBindings.RefreshInventory(
+                    Root, _session, _localPlayerId, _dockZone, OnInspectCard,
+                    hint: _bridge?.PendingHint ?? ActionHint.None,
+                    onOpenActiveEffects: OnOpenActiveEffects);
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)
@@ -96,6 +99,12 @@ namespace Kismeta.UI.Controllers
             BindUnlockZones(winterAction);
             BindWinterCta(session, bridge, winterAction);
             NarrativeSlotBindings.BindById(Root, "winter.unlock");
+            ModifierPreviewBindings.PopulateForContext(
+                Root?.Q<VisualElement>("modifier-preview"),
+                session,
+                _localPlayerId,
+                ActionHint.WinterAction,
+                EffectGlanceScope.Winter);
         }
 
         void BindUnlockZones(bool winterAction)

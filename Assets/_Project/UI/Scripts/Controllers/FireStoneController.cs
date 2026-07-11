@@ -40,6 +40,11 @@ namespace Kismeta.UI.Controllers
             SelectFirstFireableSlot();
             RefreshTrack();
             NarrativeSlotBindings.BindById(Root, "autumn.fire");
+            ModifierPreviewBindings.PopulateForContext(
+                Root?.Q<VisualElement>("modifier-preview"),
+                session,
+                _playerId,
+                scopeOverride: EffectGlanceScope.Forge);
         }
 
         void BuildSlotPicker()

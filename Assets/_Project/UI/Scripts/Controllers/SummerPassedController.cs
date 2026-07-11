@@ -64,7 +64,9 @@ namespace Kismeta.UI.Controllers
         void RefreshDock()
         {
             if (_session != null)
-                InventoryOverlayBindings.RefreshInventory(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
+                InventoryOverlayBindings.RefreshInventory(
+                    Root, _session, _localPlayerId, _dockZone, OnInspectCard,
+                    onOpenActiveEffects: OnOpenActiveEffects);
         }
 
         public void BindState(GameSession session, GameLoop loop, CommandBridge bridge)

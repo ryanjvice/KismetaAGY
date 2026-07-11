@@ -388,6 +388,17 @@ namespace Kismeta.UI
                 RefreshInventoryAfterMutation();
             else
                 RefreshActiveScreenIfNeeded();
+
+            var effectBeat = EffectChangeNotifier.TryGetBeat(evt, _session);
+            if (!string.IsNullOrWhiteSpace(effectBeat))
+                ApplyEffectChangeBeat(effectBeat);
+        }
+
+        void ApplyEffectChangeBeat(string beat)
+        {
+            var root = _router.ActiveController?.VisualRoot;
+            if (root == null) return;
+            EffectChangeNotifier.ApplyBeat(root, beat);
         }
 
         static bool IsInventoryMutationEvent(IGameEvent evt) => evt switch
@@ -1406,6 +1417,7 @@ namespace Kismeta.UI
                     spring.OnRivalSelected = id => _endOverlays.ShowCardTable(id);
                     spring.OnOpenActiveEffects = () =>
                         _endOverlays.ShowActiveEffects(spreadOverride: spring.CommuneDraftSpreadIds);
+                    spring.OnOpenPlayerEffects = id => _endOverlays.ShowActiveEffects(id);
                     spring.OnOpenCrucibleCodex = () => _endOverlays.ShowCrucibleCodex();
                     spring.OnOpenProtectiveWards = () => _endOverlays.ShowProtectiveWards();
                     spring.OnInspectCard = id => _endOverlays.ShowInspect(id);

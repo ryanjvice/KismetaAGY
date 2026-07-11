@@ -112,7 +112,10 @@ namespace Kismeta.UI.Controllers
         void RefreshDock()
         {
             if (_session != null)
-                InventoryOverlayBindings.RefreshInventory(Root, _session, _localPlayerId, _dockZone, OnInspectCard);
+                InventoryOverlayBindings.RefreshInventory(
+                    Root, _session, _localPlayerId, _dockZone, OnInspectCard,
+                    hint: _bridge?.PendingHint ?? ActionHint.None,
+                    onOpenActiveEffects: OnOpenActiveEffects);
         }
 
         void WireBtn(string name, Action handler)
