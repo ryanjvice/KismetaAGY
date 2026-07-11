@@ -39,89 +39,97 @@
             <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
-        <!-- step 0: target rival -->
-        <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
-            <engine:Label text="choose a rival forging stone" class="eyebrow" />
-            <engine:VisualElement name="rival-cards" class="tray__cards" />
-            <engine:VisualElement name="opposition-effects" class="contest-response__effects is-hidden" style="margin-top: 8px;">
-                <engine:Label text="Active effects" class="eyebrow" />
-                <engine:VisualElement name="opposition-effects-featured" class="active-effects-featured" />
-                <engine:VisualElement name="opposition-effects-list" class="active-effects-sections" />
-            </engine:VisualElement>
-            <engine:Button name="target-next" text="Oppose This Rival" class="btn btn--primary" style="margin-top: 12px;" />
-        </engine:VisualElement>
+        <engine:VisualElement class="contest-body">
+            <engine:ScrollView name="opposition-scroll" class="contest-scroll">
+                <engine:VisualElement class="contest-scroll__content">
 
-        <!-- step 1: fee -->
-        <engine:VisualElement name="step-fee" style="display: none; padding: 8px 14px 4px;">
-            <engine:Label text="pay the stone-ward fee — 2 reagents" class="eyebrow" />
-            <engine:VisualElement class="pay-pill">
-                <engine:VisualElement style="flex-direction: row; align-items: center;">
-                    <engine:Label text="paying" style="font-size: 10px; color: rgb(184, 154, 110); margin-right: 8px;" />
-                    <engine:VisualElement name="fee-slots" style="flex-direction: row;">
-                        <engine:VisualElement class="pay-slot pay-slot--empty" />
-                        <engine:VisualElement class="pay-slot pay-slot--empty" />
+                    <!-- step 0: target rival -->
+                    <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
+                        <engine:Label text="choose a rival forging stone" class="eyebrow" />
+                        <engine:VisualElement name="rival-cards" class="tray__cards" />
+                        <engine:VisualElement name="opposition-effects" class="contest-response__effects is-hidden" style="margin-top: 8px;">
+                            <engine:Label text="Active effects" class="eyebrow" />
+                            <engine:VisualElement name="opposition-effects-featured" class="active-effects-featured" />
+                            <engine:VisualElement name="opposition-effects-list" class="active-effects-sections" />
+                        </engine:VisualElement>
+                        <engine:Button name="target-next" text="Oppose This Rival" class="btn btn--primary" style="margin-top: 12px;" />
                     </engine:VisualElement>
+
+                    <!-- step 1: fee -->
+                    <engine:VisualElement name="step-fee" style="display: none; padding: 8px 14px 4px;">
+                        <engine:Label text="pay the stone-ward fee — 2 reagents" class="eyebrow" />
+                        <engine:VisualElement class="pay-pill">
+                            <engine:VisualElement style="flex-direction: row; align-items: center;">
+                                <engine:Label text="paying" style="font-size: 10px; color: rgb(184, 154, 110); margin-right: 8px;" />
+                                <engine:VisualElement name="fee-slots" style="flex-direction: row;">
+                                    <engine:VisualElement class="pay-slot pay-slot--empty" />
+                                    <engine:VisualElement class="pay-slot pay-slot--empty" />
+                                </engine:VisualElement>
+                            </engine:VisualElement>
+                            <engine:Label name="fee-count" text="0 / 2" style="font-size: 11px; color: rgb(184, 154, 110);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="fee-supply">
+                            <engine:VisualElement class="stepper-row">
+                                <engine:VisualElement class="reagent-dot reagent-dot--vitriol" style="margin-right: 9px;" />
+                                <engine:Label text="Vitriol" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
+                                <engine:Button name="o-fee-minus" class="stepper-btn stepper-btn--minus"><engine:Label text="&#8722;" style="color: rgb(212,160,122);" /></engine:Button>
+                                <engine:Label name="o-fee-val" text="0" class="stepper-value" style="color: rgb(184, 154, 110);" />
+                                <engine:Button name="o-fee-plus" class="stepper-btn stepper-btn--plus"><engine:Label text="+" style="color: rgb(232, 185, 74);" /></engine:Button>
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:Button name="o-fee-next" text="Pay 2 more" class="btn btn--disabled" style="margin-top: 8px;" />
+                    </engine:VisualElement>
+
+                    <!-- step 2: roll to set sign -->
+                    <engine:VisualElement name="step-roll" style="display: none; padding: 8px 14px 4px;">
+                        <engine:Label text="roll to set your sign" class="eyebrow" />
+                        <engine:VisualElement class="dice-row">
+                            <engine:VisualElement name="die-set" class="die-big die-big--you"><engine:Label name="die-set-pip" text="?" class="die-big__pip" style="color: rgb(232, 185, 74);" /></engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:Label name="set-sign" text="" style="font-size: 13px; color: rgb(244, 211, 94); -unity-text-align: middle-center; display: none;" />
+                        <engine:Button name="o-roll-btn" text="Roll For Your Sign" class="btn btn--primary" style="margin-top: 8px;" />
+                    </engine:VisualElement>
+
+                    <!-- step 3: alignment tally -->
+                    <engine:VisualElement name="step-tally" style="display: none; padding: 8px 14px 4px;">
+                        <engine:Label text="alignment tally — higher total wins" class="eyebrow" />
+
+                        <engine:Label text="you" style="font-size: 10px; color: rgb(232, 185, 74); margin-bottom: 4px;" />
+                        <engine:VisualElement name="tally-you-rows" />
+                        <engine:VisualElement class="tally tally__total">
+                            <engine:Label text="your total" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
+                            <engine:Label name="you-total" text="4" class="tally__pts" style="color: rgb(127, 196, 168); font-size: 16px;" />
+                        </engine:VisualElement>
+
+                        <engine:Label text="rival" style="font-size: 10px; color: rgb(168,205,240); margin: 8px 0 4px;" />
+                        <engine:VisualElement name="tally-foe-rows" />
+                        <engine:VisualElement class="tally tally__total" style="background-color: rgb(38,16,22); border-color: rgb(106,48,48);">
+                            <engine:Label text="her total" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
+                            <engine:Label name="foe-total" text="2" class="tally__pts" style="color: rgb(240, 144, 138); font-size: 16px;" />
+                        </engine:VisualElement>
+
+                        <engine:Button name="o-resolve-btn" text="Resolve The Opposition" class="btn btn--primary" style="margin-top: 10px;" />
+                    </engine:VisualElement>
+
+                    <!-- ===== STASIS RESULT (#33) — hidden until resolved ===== -->
+                    <engine:VisualElement name="stasis-result" style="display: none;">
+                        <engine:VisualElement class="verdict-banner verdict-banner--win">
+                            <engine:Label text="OPPOSED" class="verdict-title" style="color: rgb(127, 196, 168);" />
+                            <engine:Label text="Iolanthe's stone is sent to Stasis" style="font-size: 11px; color: rgb(159,196,180); margin-top: 6px;" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="padding: 12px 14px 4px;">
+                            <engine:VisualElement class="tip tip--ok" style="margin: 0 0 8px;">
+                                <engine:Label text="Her stone leaves the forge for the Stasis zone. Your Crucible card stays Fired — your progress is untouched."
+                                              class="tip__text" style="color: rgb(159,196,180);" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement style="padding: 4px 14px 16px;">
+                            <engine:Button name="stasis-done-btn" text="Back To The Forge" class="btn btn--primary" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+
                 </engine:VisualElement>
-                <engine:Label name="fee-count" text="0 / 2" style="font-size: 11px; color: rgb(184, 154, 110);" />
-            </engine:VisualElement>
-            <engine:VisualElement name="fee-supply">
-                <engine:VisualElement class="stepper-row">
-                    <engine:VisualElement class="reagent-dot reagent-dot--vitriol" style="margin-right: 9px;" />
-                    <engine:Label text="Vitriol" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
-                    <engine:Button name="o-fee-minus" class="stepper-btn stepper-btn--minus"><engine:Label text="&#8722;" style="color: rgb(212,160,122);" /></engine:Button>
-                    <engine:Label name="o-fee-val" text="0" class="stepper-value" style="color: rgb(184, 154, 110);" />
-                    <engine:Button name="o-fee-plus" class="stepper-btn stepper-btn--plus"><engine:Label text="+" style="color: rgb(232, 185, 74);" /></engine:Button>
-                </engine:VisualElement>
-            </engine:VisualElement>
-            <engine:Button name="o-fee-next" text="Pay 2 more" class="btn btn--disabled" style="margin-top: 8px;" />
-        </engine:VisualElement>
-
-        <!-- step 2: roll to set sign -->
-        <engine:VisualElement name="step-roll" style="display: none; padding: 8px 14px 4px;">
-            <engine:Label text="roll to set your sign" class="eyebrow" />
-            <engine:VisualElement class="dice-row">
-                <engine:VisualElement name="die-set" class="die-big die-big--you"><engine:Label name="die-set-pip" text="?" class="die-big__pip" style="color: rgb(232, 185, 74);" /></engine:VisualElement>
-            </engine:VisualElement>
-            <engine:Label name="set-sign" text="" style="font-size: 13px; color: rgb(244, 211, 94); -unity-text-align: middle-center; display: none;" />
-            <engine:Button name="o-roll-btn" text="Roll For Your Sign" class="btn btn--primary" style="margin-top: 8px;" />
-        </engine:VisualElement>
-
-        <!-- step 3: alignment tally -->
-        <engine:VisualElement name="step-tally" style="display: none; padding: 8px 14px 4px;">
-            <engine:Label text="alignment tally — higher total wins" class="eyebrow" />
-
-            <engine:Label text="you" style="font-size: 10px; color: rgb(232, 185, 74); margin-bottom: 4px;" />
-            <engine:VisualElement name="tally-you-rows" />
-            <engine:VisualElement class="tally tally__total">
-                <engine:Label text="your total" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
-                <engine:Label name="you-total" text="4" class="tally__pts" style="color: rgb(127, 196, 168); font-size: 16px;" />
-            </engine:VisualElement>
-
-            <engine:Label text="rival" style="font-size: 10px; color: rgb(168,205,240); margin: 8px 0 4px;" />
-            <engine:VisualElement name="tally-foe-rows" />
-            <engine:VisualElement class="tally tally__total" style="background-color: rgb(38,16,22); border-color: rgb(106,48,48);">
-                <engine:Label text="her total" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
-                <engine:Label name="foe-total" text="2" class="tally__pts" style="color: rgb(240, 144, 138); font-size: 16px;" />
-            </engine:VisualElement>
-
-            <engine:Button name="o-resolve-btn" text="Resolve The Opposition" class="btn btn--primary" style="margin-top: 10px;" />
-        </engine:VisualElement>
-
-        <!-- ===== STASIS RESULT (#33) — hidden until resolved ===== -->
-        <engine:VisualElement name="stasis-result" style="display: none;">
-            <engine:VisualElement class="verdict-banner verdict-banner--win">
-                <engine:Label text="OPPOSED" class="verdict-title" style="color: rgb(127, 196, 168);" />
-                <engine:Label text="Iolanthe's stone is sent to Stasis" style="font-size: 11px; color: rgb(159,196,180); margin-top: 6px;" />
-            </engine:VisualElement>
-            <engine:VisualElement style="padding: 12px 14px 4px;">
-                <engine:VisualElement class="tip tip--ok" style="margin: 0 0 8px;">
-                    <engine:Label text="Her stone leaves the forge for the Stasis zone. Your Crucible card stays Fired — your progress is untouched."
-                                  class="tip__text" style="color: rgb(159,196,180);" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-            <engine:VisualElement style="padding: 4px 14px 16px;">
-                <engine:Button name="stasis-done-btn" text="Back To The Forge" class="btn btn--primary" />
-            </engine:VisualElement>
+            </engine:ScrollView>
         </engine:VisualElement>
 
     </engine:VisualElement>

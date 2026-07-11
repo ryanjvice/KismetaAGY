@@ -37,70 +37,79 @@
             <engine:Instance template="NarrativeSlots" />
         </engine:VisualElement>
 
-        <!-- step 1: target active card -->
-        <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
-            <engine:Label text="choose a rival" class="eyebrow" />
-            <engine:VisualElement name="rival-cards" class="tray__cards" style="margin-bottom: 8px;" />
-            <engine:Label name="ward-note" text="select a rival to see ward fee" style="font-size: 10px; color: rgb(224,200,120); margin-bottom: 6px;" />
-            <engine:Button name="g-target-next" text="Challenge This Rival" class="btn btn--primary" style="margin-top: 8px;" />
-        </engine:VisualElement>
+        <engine:VisualElement class="contest-body">
+            <engine:ScrollView name="gambit-scroll" class="contest-scroll">
+                <engine:VisualElement class="contest-scroll__content">
 
-        <!-- step 2: pay ward fee (reuses stepper; skipped if unwarded) -->
-        <engine:VisualElement name="step-fee" style="display: none; padding: 8px 14px 4px;">
-            <engine:Label text="rival pays the ward fee to enter" class="eyebrow" />
-            <engine:VisualElement class="pay-pill">
-                <engine:VisualElement style="flex-direction: row; align-items: center;">
-                    <engine:Label text="paying" style="font-size: 10px; color: rgb(184, 154, 110); margin-right: 8px;" />
-                    <engine:VisualElement name="fee-slots" style="flex-direction: row;">
-                        <engine:VisualElement class="pay-slot pay-slot--empty" />
-                        <engine:VisualElement class="pay-slot pay-slot--empty" />
+                    <!-- step 1: target active card -->
+                    <engine:VisualElement name="step-target" style="padding: 8px 14px 4px;">
+                        <engine:Label text="choose a rival" class="eyebrow" />
+                        <engine:VisualElement name="rival-cards" class="tray__cards" style="margin-bottom: 8px;" />
+                        <engine:Label name="ward-note" text="select a rival to see ward fee" style="font-size: 10px; color: rgb(224,200,120); margin-bottom: 6px;" />
+                        <engine:Button name="g-target-next" text="Challenge This Rival" class="btn btn--primary" style="margin-top: 8px;" />
                     </engine:VisualElement>
-                </engine:VisualElement>
-                <engine:Label name="fee-count" text="0 / 2" style="font-size: 11px; color: rgb(184, 154, 110);" />
-            </engine:VisualElement>
-            <engine:VisualElement name="fee-supply">
-                <engine:VisualElement class="stepper-row">
-                    <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 9px;" />
-                    <engine:Label text="Salt" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
-                    <engine:Button name="fee-salt-minus" class="stepper-btn stepper-btn--minus"><engine:Label text="&#8722;" style="color: rgb(212,160,122);" /></engine:Button>
-                    <engine:Label name="fee-salt-val" text="0" class="stepper-value" style="color: rgb(184, 154, 110);" />
-                    <engine:Button name="fee-salt-plus" class="stepper-btn stepper-btn--plus"><engine:Label text="+" style="color: rgb(232, 185, 74);" /></engine:Button>
-                </engine:VisualElement>
-            </engine:VisualElement>
-            <engine:Button name="g-fee-next" text="Pay 2 more" class="btn btn--disabled" style="margin-top: 8px;" />
-        </engine:VisualElement>
 
-        <!-- step 3: stake -->
-        <engine:VisualElement name="step-stake" style="display: none; padding: 8px 14px 4px;">
-            <engine:Label text="stake a matching-type card" class="eyebrow" />
-            <engine:Label text="win to swap · lose and it's arrested (1 Salt to free)" style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 8px; white-space: normal;" />
-            <engine:VisualElement name="stake-cards" class="tray__cards" />
-            <engine:Button name="g-stake-next" text="Stake &amp; Roll" class="btn btn--primary" style="margin-top: 12px;" />
+                    <!-- step 2: pay ward fee (reuses stepper; skipped if unwarded) -->
+                    <engine:VisualElement name="step-fee" style="display: none; padding: 8px 14px 4px;">
+                        <engine:Label text="rival pays the ward fee to enter" class="eyebrow" />
+                        <engine:VisualElement class="pay-pill">
+                            <engine:VisualElement style="flex-direction: row; align-items: center;">
+                                <engine:Label text="paying" style="font-size: 10px; color: rgb(184, 154, 110); margin-right: 8px;" />
+                                <engine:VisualElement name="fee-slots" style="flex-direction: row;">
+                                    <engine:VisualElement class="pay-slot pay-slot--empty" />
+                                    <engine:VisualElement class="pay-slot pay-slot--empty" />
+                                </engine:VisualElement>
+                            </engine:VisualElement>
+                            <engine:Label name="fee-count" text="0 / 2" style="font-size: 11px; color: rgb(184, 154, 110);" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="fee-supply">
+                            <engine:VisualElement class="stepper-row">
+                                <engine:VisualElement class="reagent-dot reagent-dot--salt" style="margin-right: 9px;" />
+                                <engine:Label text="Salt" style="flex-grow: 1; font-size: 12px; color: rgb(243, 233, 210);" />
+                                <engine:Button name="fee-salt-minus" class="stepper-btn stepper-btn--minus"><engine:Label text="&#8722;" style="color: rgb(212,160,122);" /></engine:Button>
+                                <engine:Label name="fee-salt-val" text="0" class="stepper-value" style="color: rgb(184, 154, 110);" />
+                                <engine:Button name="fee-salt-plus" class="stepper-btn stepper-btn--plus"><engine:Label text="+" style="color: rgb(232, 185, 74);" /></engine:Button>
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:Button name="g-fee-next" text="Pay 2 more" class="btn btn--disabled" style="margin-top: 8px;" />
+                    </engine:VisualElement>
 
-            <engine:VisualElement name="gambit-effects" class="contest-response__effects is-hidden" style="margin-top: 12px;">
-                <engine:Label text="Active effects" class="eyebrow" />
-                <engine:VisualElement name="gambit-effects-featured" class="active-effects-featured" />
-                <engine:VisualElement name="gambit-effects-list" class="active-effects-sections" />
-            </engine:VisualElement>
-        </engine:VisualElement>
+                    <!-- step 3: stake -->
+                    <engine:VisualElement name="step-stake" style="display: none; padding: 8px 14px 4px;">
+                        <engine:Label text="stake a matching-type card" class="eyebrow" />
+                        <engine:Label text="win to swap · lose and it's arrested (1 Salt to free)" style="font-size: 10px; color: rgb(184, 154, 110); margin-bottom: 8px; white-space: normal;" />
+                        <engine:VisualElement name="stake-cards" class="tray__cards" />
 
-        <!-- step 4: roll -->
-        <engine:VisualElement name="step-roll" style="display: none; padding: 8px 14px 4px;">
-            <engine:VisualElement class="dice-row">
-                <engine:VisualElement style="align-items: center;">
-                    <engine:VisualElement name="die-you" class="die-big die-big--you"><engine:Label name="die-you-pip" text="?" class="die-big__pip" style="color: rgb(232, 185, 74);" /></engine:VisualElement>
-                    <engine:Label text="you" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 4px;" />
+                        <engine:VisualElement name="gambit-effects" class="contest-response__effects is-hidden" style="margin-top: 12px;">
+                            <engine:Label text="Active effects" class="eyebrow" />
+                            <engine:VisualElement name="gambit-effects-featured" class="active-effects-featured" />
+                            <engine:VisualElement name="gambit-effects-list" class="active-effects-sections" />
+                        </engine:VisualElement>
+
+                        <engine:Button name="g-stake-next" text="Stake &amp; Roll" class="btn btn--primary" style="margin-top: 12px;" />
+                    </engine:VisualElement>
+
+                    <!-- step 4: roll -->
+                    <engine:VisualElement name="step-roll" style="display: none; padding: 8px 14px 4px;">
+                        <engine:VisualElement class="dice-row">
+                            <engine:VisualElement style="align-items: center;">
+                                <engine:VisualElement name="die-you" class="die-big die-big--you"><engine:Label name="die-you-pip" text="?" class="die-big__pip" style="color: rgb(232, 185, 74);" /></engine:VisualElement>
+                                <engine:Label text="you" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 4px;" />
+                            </engine:VisualElement>
+                            <engine:Label text="vs" class="die-vs" />
+                            <engine:VisualElement style="align-items: center;">
+                                <engine:VisualElement name="die-foe" class="die-big die-big--foe"><engine:Label name="die-foe-pip" text="?" class="die-big__pip" style="color: rgb(184,154,192);" /></engine:VisualElement>
+                                <engine:Label text="Iolanthe" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 4px;" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:Label name="roll-series-round" text="" style="font-size: 11px; color: rgb(184, 154, 110); -unity-text-align: middle-center; margin-bottom: 4px; display: none;" />
+                        <engine:Label name="roll-series-score" text="" style="font-size: 12px; color: rgb(243, 233, 210); -unity-text-align: middle-center; margin-bottom: 6px; display: none;" />
+                        <engine:Button name="g-roll-btn" text="Roll The Dice" class="btn btn--primary" />
+                        <engine:Label name="roll-outcome" text="" style="font-size: 12px; color: rgb(243, 233, 210); -unity-text-align: middle-center; margin-top: 10px; display: none;" />
+                    </engine:VisualElement>
+
                 </engine:VisualElement>
-                <engine:Label text="vs" class="die-vs" />
-                <engine:VisualElement style="align-items: center;">
-                    <engine:VisualElement name="die-foe" class="die-big die-big--foe"><engine:Label name="die-foe-pip" text="?" class="die-big__pip" style="color: rgb(184,154,192);" /></engine:VisualElement>
-                    <engine:Label text="Iolanthe" style="font-size: 9px; color: rgb(184, 154, 110); margin-top: 4px;" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-            <engine:Label name="roll-series-round" text="" style="font-size: 11px; color: rgb(184, 154, 110); -unity-text-align: middle-center; margin-bottom: 4px; display: none;" />
-            <engine:Label name="roll-series-score" text="" style="font-size: 12px; color: rgb(243, 233, 210); -unity-text-align: middle-center; margin-bottom: 6px; display: none;" />
-            <engine:Button name="g-roll-btn" text="Roll The Dice" class="btn btn--primary" />
-            <engine:Label name="roll-outcome" text="" style="font-size: 12px; color: rgb(243, 233, 210); -unity-text-align: middle-center; margin-top: 10px; display: none;" />
+            </engine:ScrollView>
         </engine:VisualElement>
 
     </engine:VisualElement>

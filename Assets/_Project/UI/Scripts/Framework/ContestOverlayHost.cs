@@ -240,7 +240,11 @@ namespace Kismeta.UI
 
             controller.AttachTo(root);
             _active = kind;
-            if (kind == ActiveContest.Response)
+            if (kind == ActiveContest.Response
+                || kind == ActiveContest.Trade
+                || kind == ActiveContest.Duel
+                || kind == ActiveContest.Gambit
+                || kind == ActiveContest.Opposition)
                 _layout.ApplyBoundedOverlaySheet();
             wire();
             RefreshOpenOverlay();
