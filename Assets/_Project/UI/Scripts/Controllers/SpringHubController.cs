@@ -174,7 +174,7 @@ namespace Kismeta.UI.Controllers
             if (isWheel)
                 BindWheelAndHarvest(session, player, hint);
 
-            if (isHub || _communeSubviewOpen)
+            if (isWheel || isHub || _communeSubviewOpen)
                 RefreshDock();
 
             HeaderOverlayBindings.ApplyHeaderPad(Root);
