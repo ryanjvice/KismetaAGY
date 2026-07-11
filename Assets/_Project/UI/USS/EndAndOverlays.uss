@@ -157,32 +157,44 @@
 }
 
 /* ---------- Card modals (inspect / adept / fate) ---------- */
+.overlay-clone-host > #card-modals {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+}
+
 .card-modals {
     width: 100%;
     min-width: 0;
     flex-direction: column;
     align-items: stretch;
-    flex-grow: 0;
-    flex-shrink: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
 }
+
+.card-modals > .card-modal {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+}
+
 .card-modal--inspect {
     background-color: rgb(14,10,20);
     border-color: rgb(90,43,43);
-    max-height: none;
-    flex-shrink: 0;
 }
 .card-modal--adept {
     background-color: rgb(18,10,24);
     border-color: rgb(90,58,122);
-    max-height: none;
-    flex-shrink: 0;
 }
 .card-modal--fate { background-color: rgb(10,14,24); border-color: rgb(58,90,138); }
 .card-modal--fate-decision {
     background-color: rgb(14,12,28);
     border-color: rgb(74,58,106);
-    max-height: none;
-    flex-shrink: 0;
 }
 
 .card-modal__body--grow {
@@ -195,7 +207,10 @@
 .moon-cards {
     flex-shrink: 0;
 }
-.card-modal__hero--inspect { background-color: rgb(36,16,16); }
+.card-modal__hero--inspect {
+    background-color: rgb(36,16,16);
+    flex-shrink: 0;
+}
 .card-modal__hero--adept { background-color: rgb(46,26,68); }
 .card-modal__hero--fate { background-color: rgb(22,51,90); }
 .card-modal__hero--fate-decision { background-color: rgb(18,22,42); }
@@ -383,7 +398,12 @@
     flex-shrink: 1;
     min-height: 0;
     min-width: 0;
-    overflow: auto;
+}
+
+.card-modal__body-scroll-content {
+    flex-shrink: 0;
+    flex-direction: column;
+    align-items: stretch;
     padding: var(--space-md) var(--space-lg) var(--space-md);
 }
 
@@ -416,17 +436,17 @@
     flex-shrink: 0;
 }
 
-.card-modal__body--inspect > .inspect-block,
-.card-modal__body--inspect > .inspect-minor-detail,
-.card-modal__body--inspect > .inspect-major-detail,
+.card-modal__body-scroll-content > .inspect-block,
+.card-modal__body-scroll-content > .inspect-minor-detail,
+.card-modal__body-scroll-content > .inspect-major-detail,
 .inspect-minor-detail > .inspect-block,
 .inspect-major-detail > .inspect-block {
     margin-bottom: var(--space-md);
 }
 
-.card-modal__body--inspect > .inspect-block:last-child,
-.card-modal__body--inspect > .inspect-minor-detail:last-child,
-.card-modal__body--inspect > .inspect-major-detail:last-child,
+.card-modal__body-scroll-content > .inspect-block:last-child,
+.card-modal__body-scroll-content > .inspect-minor-detail:last-child,
+.card-modal__body-scroll-content > .inspect-major-detail:last-child,
 .inspect-minor-detail > .inspect-block:last-child,
 .inspect-major-detail > .inspect-block:last-child {
     margin-bottom: 0;

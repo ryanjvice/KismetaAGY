@@ -7,24 +7,15 @@ namespace Kismeta.UI.Components
     {
         static readonly List<IReadOnlyList<VisualElement?>> Groups = new();
 
-        public static void RevealGameOverviewIntro(VisualElement? root, int stepIndex)
+        public static void RevealGameOverviewIntro(VisualElement? root)
         {
             if (root == null)
                 return;
 
             Groups.Clear();
-
-            if (stepIndex == 0)
-                Groups.Add(Group(root.Q(className: "menu-screen__hero")));
-
-            var stepPanel = stepIndex == 0
-                ? root.Q<VisualElement>("step-great-work")
-                : root.Q<VisualElement>("step-seasons");
-            if (stepPanel != null && stepPanel.style.display != DisplayStyle.None)
-                Groups.Add(Group(stepPanel));
-
+            Groups.Add(Group(root.Q(className: "menu-screen__hero")));
+            Groups.Add(Group(root.Q<VisualElement>("overview-content-panel")));
             Groups.Add(Group(root.Q(className: "menu-screen__footer")));
-
             UiMotion.StaggerFadeIn(Groups);
         }
 

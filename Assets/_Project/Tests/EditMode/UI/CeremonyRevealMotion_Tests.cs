@@ -43,10 +43,10 @@ namespace Kismeta.UI.Tests
             Assert.NotNull(asset);
 
             var root = asset.CloneTree();
-            CeremonyRevealMotion.RevealGameOverviewIntro(root, stepIndex: 0);
+            CeremonyRevealMotion.RevealGameOverviewIntro(root);
 
             Assert.AreEqual(1f, root.Q(className: "menu-screen__hero")!.style.opacity.value);
-            Assert.AreEqual(1f, root.Q<VisualElement>("step-great-work")!.style.opacity.value);
+            Assert.AreEqual(1f, root.Q<VisualElement>("overview-content-panel")!.style.opacity.value);
             Assert.AreEqual(1f, root.Q(className: "menu-screen__footer")!.style.opacity.value);
         }
     }

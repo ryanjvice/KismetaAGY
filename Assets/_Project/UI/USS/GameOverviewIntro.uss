@@ -60,6 +60,13 @@
     min-height: 0;
 }
 
+.intro--overview .overview-step-content {
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+}
+
 .overview-wizard-steps {
     flex-direction: row;
     align-items: center;

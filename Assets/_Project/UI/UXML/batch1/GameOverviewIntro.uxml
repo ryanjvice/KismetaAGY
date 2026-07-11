@@ -23,59 +23,59 @@
         </engine:VisualElement>
 
         <engine:VisualElement class="ceremony-reveal-body">
-            <engine:VisualElement name="step-great-work" class="ceremony-panel-wrap">
+            <engine:VisualElement name="overview-content-panel" class="ceremony-panel-wrap">
                 <engine:VisualElement class="panel intro-content-panel">
-                    <engine:Label text="The Great Work" class="eyebrow intro-content-panel__eyebrow" />
-                    <engine:VisualElement name="intro-goals">
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--gold">
-                                <engine:Label text="1" class="intro-row__num-label" />
+                    <engine:VisualElement name="step-great-work" class="overview-step-content">
+                        <engine:Label text="The Great Work" class="eyebrow intro-content-panel__eyebrow" />
+                        <engine:VisualElement name="intro-goals">
+                            <engine:VisualElement class="intro-row">
+                                <engine:VisualElement class="intro-row__num intro-row__num--gold">
+                                    <engine:Label text="1" class="intro-row__num-label" />
+                                </engine:VisualElement>
+                                <engine:Label text="Align with each Cosmic Age to gather the cards you need." class="intro-row__label" />
                             </engine:VisualElement>
-                            <engine:Label text="Align with each Cosmic Age to gather the cards you need." class="intro-row__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--purple">
-                                <engine:Label text="2" class="intro-row__num-label" />
+                            <engine:VisualElement class="intro-row">
+                                <engine:VisualElement class="intro-row__num intro-row__num--purple">
+                                    <engine:Label text="2" class="intro-row__num-label" />
+                                </engine:VisualElement>
+                                <engine:Label text="Work with, attack and defend yourself against your Rivals." class="intro-row__label" />
                             </engine:VisualElement>
-                            <engine:Label text="Work with, attack and defend yourself against your Rivals." class="intro-row__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--green">
-                                <engine:Label text="3" class="intro-row__num-label" />
+                            <engine:VisualElement class="intro-row">
+                                <engine:VisualElement class="intro-row__num intro-row__num--green">
+                                    <engine:Label text="3" class="intro-row__num-label" />
+                                </engine:VisualElement>
+                                <engine:Label text="Win by completing all four Crucible Cards and reaching the Altar before your rivals." class="intro-row__label" />
                             </engine:VisualElement>
-                            <engine:Label text="Win by completing all four Crucible Cards and reaching the Altar before your rivals." class="intro-row__label" />
                         </engine:VisualElement>
                     </engine:VisualElement>
-                </engine:VisualElement>
-            </engine:VisualElement>
 
-            <engine:VisualElement name="step-seasons" class="ceremony-panel-wrap" style="display: none;">
-                <engine:VisualElement class="panel intro-content-panel">
-                    <engine:Label text="One Age - Four Seasons" class="eyebrow intro-content-panel__eyebrow" />
-                    <engine:VisualElement name="intro-steps">
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--green">
-                                <engine:Label text="1" class="intro-row__num-label" />
+                    <engine:VisualElement name="step-seasons" class="overview-step-content" style="display: none;">
+                        <engine:Label text="One Age - Four Seasons" class="eyebrow intro-content-panel__eyebrow" />
+                        <engine:VisualElement name="intro-steps">
+                            <engine:VisualElement class="intro-row">
+                                <engine:VisualElement class="intro-row__num intro-row__num--green">
+                                    <engine:Label text="1" class="intro-row__num-label" />
+                                </engine:VisualElement>
+                                <engine:Label text="Spring: Set the Age, Harvest and Commune with your Tableau" class="intro-row__label" />
                             </engine:VisualElement>
-                            <engine:Label text="Spring: Set the Age, Harvest and Commune with your Tableau" class="intro-row__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--gold">
-                                <engine:Label text="2" class="intro-row__num-label" />
+                            <engine:VisualElement class="intro-row">
+                                <engine:VisualElement class="intro-row__num intro-row__num--gold">
+                                    <engine:Label text="2" class="intro-row__num-label" />
+                                </engine:VisualElement>
+                                <engine:Label text="Summer: Craft, Trade, and Duel Rivals" class="intro-row__label" />
                             </engine:VisualElement>
-                            <engine:Label text="Summer: Craft, Trade, and Duel Rivals" class="intro-row__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--red">
-                                <engine:Label text="3" class="intro-row__num-label" />
+                            <engine:VisualElement class="intro-row">
+                                <engine:VisualElement class="intro-row__num intro-row__num--red">
+                                    <engine:Label text="3" class="intro-row__num-label" />
+                                </engine:VisualElement>
+                                <engine:Label text="Autumn: Navigate the Crucible and Stasis" class="intro-row__label" />
                             </engine:VisualElement>
-                            <engine:Label text="Autumn: Navigate the Crucible and Stasis" class="intro-row__label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="intro-row">
-                            <engine:VisualElement class="intro-row__num intro-row__num--winter">
-                                <engine:Label text="4" class="intro-row__num-label" />
+                            <engine:VisualElement class="intro-row">
+                                <engine:VisualElement class="intro-row__num intro-row__num--winter">
+                                    <engine:Label text="4" class="intro-row__num-label" />
+                                </engine:VisualElement>
+                                <engine:Label text="Winter: Fateful Wager, card limits, transit the age" class="intro-row__label" />
                             </engine:VisualElement>
-                            <engine:Label text="Winter: Fateful Wager, card limits, transit the age" class="intro-row__label" />
                         </engine:VisualElement>
                     </engine:VisualElement>
                 </engine:VisualElement>

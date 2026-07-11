@@ -72,6 +72,7 @@ namespace Kismeta.UI
         {
             if (_cardModals == null) return;
             _layout.ShowModal(_cardModals);
+            _layout.ApplyBoundedOverlaySheet();
             var close = _layout.Root?.Q<Button>("inspect-close");
             if (close != null)
             {

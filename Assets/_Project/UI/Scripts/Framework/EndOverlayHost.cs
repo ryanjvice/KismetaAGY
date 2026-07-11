@@ -293,6 +293,7 @@ namespace Kismeta.UI
                 return;
             }
             _layout.ShowModal(asset);
+            _layout.ApplyBoundedOverlaySheet();
             var root = _layout.OverlayContentRoot;
             if (root == null) return;
             controller.AttachTo(root);
