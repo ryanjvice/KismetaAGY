@@ -300,6 +300,15 @@
 .active-effects-badge--debuff { background-color: rgb(42, 18, 18); }
 .active-effects-badge--debuff .active-effects-item__badge-label { color: rgb(208, 144, 128); }
 
+.active-effects-item--actionable .active-effects-item__badge--actionable {
+    cursor: link;
+}
+
+.active-effects-item__badge--actionable:hover {
+    border-width: 1px;
+    border-color: rgb(154, 122, 192);
+}
+
 .active-effects-spread-group__eyebrow {
     font-size: 9px;
     color: rgb(122, 138, 154);

@@ -1450,6 +1450,14 @@ namespace Kismeta.UI
                 _fateModalOpen = false;
                 ScheduleTryShowQueuedExchange();
             };
+            _endOverlays.OnEmperorProtectionCompleted = RefreshAfterEmperorProtection;
+        }
+
+        void RefreshAfterEmperorProtection()
+        {
+            if (_session == null || _loop == null || _bridge == null) return;
+            var springHub = _router.GetController<SpringHubController>(ScreenIds.SpringHub);
+            springHub?.BindState(_session, _loop, _bridge);
         }
 
         private void EnsureOverlayHosts()

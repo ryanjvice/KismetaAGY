@@ -16,13 +16,14 @@ namespace Kismeta.UI.Controllers
         public enum Modal
         {
             Inspect, Adept, Fate,
-            Moon, LoversTarget, LoversChoice, FoolAltar
+            Moon, LoversTarget, LoversChoice, FoolAltar, Emperor
         }
 
         static readonly string[] AllModalRoots =
         {
             "inspect-modal", "adept-modal", "fate-modal",
-            "moon-modal", "lovers-target-modal", "lovers-choice-modal", "fool-altar-modal"
+            "moon-modal", "lovers-target-modal", "lovers-choice-modal", "fool-altar-modal",
+            "emperor-modal"
         };
 
         GameSession? _session;
@@ -33,6 +34,7 @@ namespace Kismeta.UI.Controllers
         readonly HashSet<string> _moonGiftCards = new();
         readonly Dictionary<ReagentType, int> _moonGiftReagents = new();
         readonly HashSet<string> _foolAltarAlignment = new();
+        readonly HashSet<string> _emperorSelected = new();
         int _moonGiftRecipientId = -1;
         int _foolAltarSlotIndex = -1;
         string? _swapOutAdeptId;
@@ -43,6 +45,7 @@ namespace Kismeta.UI.Controllers
         public Action? OnAdeptCompleted;
         public Action? OnFateAccept;
         public Action? OnFateDecisionCompleted;
+        public Action? OnEmperorCompleted;
 
         protected override void Wire()
         {
@@ -54,6 +57,8 @@ namespace Kismeta.UI.Controllers
             Btn("moon-confirm")!.clicked += OnMoonGiftConfirm;
             Btn("fool-altar-confirm")!.clicked += OnFoolAltarConfirm;
             Btn("lovers-draw-btn")!.clicked += OnLoversDraw;
+            Btn("emperor-confirm")!.clicked += OnEmperorConfirm;
+            Btn("emperor-cancel")!.clicked += () => OnEmperorCompleted?.Invoke();
         }
 
         public void Show(Modal which)
@@ -68,6 +73,7 @@ namespace Kismeta.UI.Controllers
                 Modal.LoversTarget => "lovers-target-modal",
                 Modal.LoversChoice => "lovers-choice-modal",
                 Modal.FoolAltar => "fool-altar-modal",
+                Modal.Emperor => "emperor-modal",
                 _ => "inspect-modal"
             };
             foreach (var name in AllModalRoots)
@@ -223,6 +229,55 @@ namespace Kismeta.UI.Controllers
                     && _bridge.TrySubmit(new FateLoversChoiceCommand(_playerId, false, type)))
                     OnFateDecisionCompleted?.Invoke();
             });
+        }
+
+        public void BindEmperor(GameSession session, CommandBridge bridge)
+        {
+            _session = session;
+            _bridge = bridge;
+            _playerId = ResolvePlayerId(session, bridge);
+            _emperorSelected.Clear();
+            Show(Modal.Emperor);
+
+            var player = session.Players[_playerId];
+            bool resonant = AdeptAttunement.IsEmperorResonant(session, player);
+            if (Lbl("emperor-subtitle") != null)
+            {
+                Lbl("emperor-subtitle")!.text = resonant
+                    ? "Select 2 minor cards from your Hand or Spread."
+                    : "Select 2 minor cards from your Spread.";
+            }
+
+            RefreshEmperorUi();
+        }
+
+        void RefreshEmperorUi()
+        {
+            if (_session == null || _playerId < 0) return;
+            var host = El("emperor-cards");
+            if (host != null)
+                EmperorProtectionBindings.PopulateCards(
+                    host, _session, _playerId, _emperorSelected, RefreshEmperorUi);
+
+            if (Lbl("emperor-count") != null)
+                Lbl("emperor-count")!.text =
+                    $"{_emperorSelected.Count} / {EmperorProtectionBindings.RequiredCount} selected";
+            Btn("emperor-confirm")?.SetEnabled(
+                _emperorSelected.Count == EmperorProtectionBindings.RequiredCount);
+        }
+
+        void OnEmperorConfirm()
+        {
+            if (_bridge == null || _playerId < 0) return;
+            if (_emperorSelected.Count != EmperorProtectionBindings.RequiredCount) return;
+
+            var cmd = new ProtectSpreadCardsCommand(
+                _playerId, new List<string>(_emperorSelected));
+            if (_bridge.TrySubmit(cmd))
+            {
+                _emperorSelected.Clear();
+                OnEmperorCompleted?.Invoke();
+            }
         }
 
         void RefreshMoonGiftUi()

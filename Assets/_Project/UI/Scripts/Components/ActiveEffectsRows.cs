@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Kismeta.Core.Rules;
 using UnityEngine.UIElements;
@@ -6,7 +7,11 @@ namespace Kismeta.UI.Components
 {
     public static class ActiveEffectsRows
     {
-        public static void Populate(VisualElement? root, ActiveEffectsSnapshot snapshot, string? subtitleOverride = null)
+        public static void Populate(
+            VisualElement? root,
+            ActiveEffectsSnapshot snapshot,
+            string? subtitleOverride = null,
+            Action<ActiveEffectItem>? onItemAction = null)
         {
             if (root == null) return;
 
@@ -15,7 +20,8 @@ namespace Kismeta.UI.Components
                 subtitle.text = subtitleOverride ?? snapshot.Subtitle;
 
             PopulateFeatured(root.Q<VisualElement>("cosmic-age-featured"), snapshot.CosmicAge);
-            ActiveEffectsAccordion.Populate(root.Q<VisualElement>("sections-list"), snapshot.Sections);
+            ActiveEffectsAccordion.Populate(
+                root.Q<VisualElement>("sections-list"), snapshot.Sections, onItemAction);
         }
 
         public static void PopulateFeatured(VisualElement? host, ActiveEffectItem item)

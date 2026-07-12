@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Kismeta.Core.Rules;
 using UnityEngine.UIElements;
@@ -8,7 +9,10 @@ namespace Kismeta.UI.Components
     {
         static readonly HashSet<string> s_expandedSectionIds = new();
 
-        public static void Populate(VisualElement? host, IReadOnlyList<ActiveEffectSection> sections)
+        public static void Populate(
+            VisualElement? host,
+            IReadOnlyList<ActiveEffectSection> sections,
+            Action<ActiveEffectItem>? onItemAction = null)
         {
             if (host == null) return;
             host.Clear();
@@ -21,10 +25,10 @@ namespace Kismeta.UI.Components
             }
 
             foreach (var section in sections)
-                host.Add(BuildSection(section));
+                host.Add(BuildSection(section, onItemAction));
         }
 
-        static VisualElement BuildSection(ActiveEffectSection section)
+        static VisualElement BuildSection(ActiveEffectSection section, Action<ActiveEffectItem>? onItemAction)
         {
             var container = new VisualElement();
             container.AddToClassList("active-effects-section");
@@ -66,11 +70,11 @@ namespace Kismeta.UI.Components
             body.AddToClassList("active-effects-section__body");
 
             if (section.SectionId == "spread-cards")
-                PopulateSpreadBody(body, section.Items);
+                PopulateSpreadBody(body, section.Items, onItemAction);
             else
             {
                 foreach (var item in section.Items)
-                    body.Add(BuildItem(item));
+                    body.Add(BuildItem(item, onItemAction));
             }
 
             container.Add(header);
@@ -86,7 +90,7 @@ namespace Kismeta.UI.Components
             return container;
         }
 
-        static VisualElement BuildItem(ActiveEffectItem item)
+        static VisualElement BuildItem(ActiveEffectItem item, Action<ActiveEffectItem>? onItemAction)
         {
             var row = new VisualElement();
             row.AddToClassList("active-effects-item");
@@ -118,6 +122,19 @@ namespace Kismeta.UI.Components
                 var badgeLabel = new Label(item.Badge.Text);
                 badgeLabel.AddToClassList("active-effects-item__badge-label");
                 badge.Add(badgeLabel);
+
+                if (item.Action != ActiveEffectActionKind.None && onItemAction != null)
+                {
+                    row.AddToClassList("active-effects-item--actionable");
+                    badge.AddToClassList("active-effects-item__badge--actionable");
+                    var captured = item;
+                    badge.RegisterCallback<ClickEvent>(evt =>
+                    {
+                        evt.StopPropagation();
+                        onItemAction(captured);
+                    });
+                }
+
                 content.Add(badge);
             }
 
@@ -126,7 +143,10 @@ namespace Kismeta.UI.Components
             return row;
         }
 
-        static void PopulateSpreadBody(VisualElement body, IReadOnlyList<ActiveEffectItem> items)
+        static void PopulateSpreadBody(
+            VisualElement body,
+            IReadOnlyList<ActiveEffectItem> items,
+            Action<ActiveEffectItem>? onItemAction)
         {
             ActiveEffectPolarity? currentGroup = null;
             foreach (var item in items)
@@ -137,7 +157,7 @@ namespace Kismeta.UI.Components
                     body.Add(BuildSpreadGroupEyebrow(currentGroup.Value));
                 }
 
-                body.Add(BuildItem(item));
+                body.Add(BuildItem(item, onItemAction));
             }
         }
 

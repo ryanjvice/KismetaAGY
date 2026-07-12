@@ -12,6 +12,12 @@ namespace Kismeta.Core.Rules
         Debuff
     }
 
+    public enum ActiveEffectActionKind
+    {
+        None,
+        ActivateEmperor
+    }
+
     public enum ActiveEffectBadgeTone
     {
         Neutral,
@@ -49,6 +55,7 @@ namespace Kismeta.Core.Rules
         public readonly ActiveEffectBadge Badge;
         public readonly string? IconKey;
         public readonly ActiveEffectPolarity Polarity;
+        public readonly ActiveEffectActionKind Action;
 
         public ActiveEffectItem(
             string id,
@@ -57,7 +64,8 @@ namespace Kismeta.Core.Rules
             ActiveEffectBadge badge,
             string? iconKey = null,
             string? footer = null,
-            ActiveEffectPolarity polarity = ActiveEffectPolarity.Neutral)
+            ActiveEffectPolarity polarity = ActiveEffectPolarity.Neutral,
+            ActiveEffectActionKind action = ActiveEffectActionKind.None)
         {
             Id = id;
             Title = title;
@@ -66,6 +74,7 @@ namespace Kismeta.Core.Rules
             Badge = badge;
             IconKey = iconKey;
             Polarity = polarity;
+            Action = action;
         }
     }
 

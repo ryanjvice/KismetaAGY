@@ -2682,17 +2682,47 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
-        public void Emperor_ProtectedTarget_Rejected()
+        public void Emperor_Activation_SucceedsInSpring()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Spring);
+            AddArcanumCard(session, 0, "emperor", "major.adept.4");
+            var protectedCards = PopulateSpread(session, 0, 2, "emperor-spring");
+
+            Assert.IsTrue(session.Apply(new ProtectSpreadCardsCommand(0, protectedCards)).IsOk);
+            Assert.AreEqual(2, session.Players[0].EmperorProtectedCardIds.Count);
+        }
+
+        [Test]
+        public void Emperor_Activation_RejectedInSummer()
         {
             var db = LoadDb();
             var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
             SetSeason(session, Season.Summer);
+            AddArcanumCard(session, 0, "emperor", "major.adept.4");
+            var protectedCards = PopulateSpread(session, 0, 2, "emperor-summer");
+
+            var result = session.Apply(new ProtectSpreadCardsCommand(0, protectedCards));
+            Assert.IsFalse(result.IsOk);
+            StringAssert.Contains("Spring", result.Message);
+        }
+
+        [Test]
+        public void Emperor_ProtectedTarget_Rejected()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            SetSeason(session, Season.Spring);
             AddArcanumCard(session, 1, "emperor", "major.adept.4");
             var protectedCards = PopulateSpread(session, 1, 2, "emperor-prot");
             PopulateSpread(session, 0, 1, "emperor-ante");
 
             Assert.IsTrue(session.Apply(new ProtectSpreadCardsCommand(1, protectedCards)).IsOk);
+            SetSeason(session, Season.Summer);
             var combat = new CombatRules(42);
             var result = combat.TryDuel(session, 0, 1, protectedCards[0], session.Players[0].Spread[0]);
             Assert.IsFalse(result.IsOk);
@@ -2704,12 +2734,13 @@ namespace Kismeta.Core.Tests
             var db = LoadDb();
             var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Spring);
             AddArcanumCard(session, 0, "emperor", "major.adept.4");
             var ante = PopulateSpread(session, 0, 2, "emperor-ante");
             var targets = PopulateSpread(session, 1, 1, "emperor-target");
 
             Assert.IsTrue(session.Apply(new ProtectSpreadCardsCommand(0, ante)).IsOk);
+            SetSeason(session, Season.Summer);
             var combat = new CombatRules(FindDuelSeed(attackerWins: false));
             var result = combat.TryDuel(session, 0, 1, targets[0], ante[0]);
             Assert.IsTrue(result.IsOk, result.Message);
@@ -2868,7 +2899,7 @@ namespace Kismeta.Core.Tests
             var db = LoadDb();
             var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Spring);
             AddArcanumCard(session, 0, "emperor", "major.adept.4");
             AttunePlayer(session, 0, ZodiacSign.Aries);
             GiveHandCard(session, 0, "hand-prot-a", "minor.cups.two.1");
@@ -3454,7 +3485,7 @@ namespace Kismeta.Core.Tests
             var db = LoadDb();
             var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
-            SetSeason(session, Season.Summer);
+            SetSeason(session, Season.Spring);
             AddArcanumCard(session, 1, "emperor", "major.adept.4");
             PopulateSpread(session, 0, 1, "duel-ante");
             AddSpreadCard(session, 1, "king-cups", "minor.cups.king.2");
@@ -3463,6 +3494,7 @@ namespace Kismeta.Core.Tests
             Assert.IsTrue(session.Apply(new ProtectSpreadCardsCommand(1,
                 new List<string> { "king-cups", "emperor-filler" })).IsOk);
 
+            SetSeason(session, Season.Summer);
             var combat = new CombatRules(42);
             var result = combat.TryDuel(session, 0, 1, "king-cups", session.Players[0].Spread[0]);
             Assert.IsFalse(result.IsOk);

@@ -795,12 +795,18 @@ namespace Kismeta.Core.Rules
                     bool used = player.UsedAdeptInstanceIdsThisAge.Contains(id);
                     var badge = AdeptEffectCatalog.BadgeFor(def.ArcanaNumber, arrested, used, attuned);
 
+                    var action = def.ArcanaNumber == AdeptEffectService.EmperorArcana
+                        && badge.Tone == ActiveEffectBadgeTone.Available
+                        ? ActiveEffectActionKind.ActivateEmperor
+                        : ActiveEffectActionKind.None;
+
                     items.Add(new ActiveEffectItem(
                         id,
                         def.Name,
                         description,
                         badge,
-                        iconKey: $"adept-{def.ArcanaNumber}"));
+                        iconKey: $"adept-{def.ArcanaNumber}",
+                        action: action));
                 }
             }
 

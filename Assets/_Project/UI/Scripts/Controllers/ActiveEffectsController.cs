@@ -10,8 +10,10 @@ namespace Kismeta.UI.Controllers
     public sealed class ActiveEffectsController : OverlayController
     {
         public Action? OnClose;
+        public Action? OnEmperorActivate;
 
         GameSession? _session;
+        GameLoop? _loop;
         CommandBridge? _bridge;
         int _bindKey = int.MinValue;
         int _focusPlayerId = -1;
@@ -45,6 +47,7 @@ namespace Kismeta.UI.Controllers
         public void BindState(GameSession session, GameLoop? loop, CommandBridge bridge)
         {
             _session = session;
+            _loop = loop;
             _bridge = bridge;
             if (Root == null) return;
 
@@ -61,7 +64,26 @@ namespace Kismeta.UI.Controllers
             if (playerId != _localPlayerId && _localPlayerId >= 0)
                 subtitle = $"{PlayerUiNames.ShortName(playerId)} · {subtitle}";
 
-            ActiveEffectsRows.Populate(Root, snapshot, subtitle);
+            Action<ActiveEffectItem>? onItemAction = null;
+            if (playerId == _localPlayerId
+                && EmperorActivationService.CanActivate(
+                    session, playerId, bridge.PendingHint, bridge.CanSubmit))
+            {
+                onItemAction = item =>
+                {
+                    if (item.Action == ActiveEffectActionKind.ActivateEmperor)
+                        OnEmperorActivate?.Invoke();
+                };
+            }
+
+            ActiveEffectsRows.Populate(Root, snapshot, subtitle, onItemAction);
+        }
+
+        public void ForceRefresh()
+        {
+            _bindKey = int.MinValue;
+            if (_session != null && _bridge != null)
+                BindState(_session, _loop, _bridge);
         }
 
         static int ComputeBindKey(GameSession session, int playerId, IReadOnlyList<string>? spreadOverride)
@@ -76,11 +98,16 @@ namespace Kismeta.UI.Controllers
             foreach (var id in player.Arcanum)
                 arcanumHash = arcanumHash * 31 + id.GetHashCode();
 
+            int emperorHash = 0;
+            foreach (var id in player.EmperorProtectedCardIds)
+                emperorHash = emperorHash * 31 + id.GetHashCode();
+
             return playerId * 10000
                    + (int)session.Board.CosmicAgeSign * 100
                    + player.UsedAdeptInstanceIdsThisAge.Count * 10
                    + spreadHash
-                   + arcanumHash;
+                   + arcanumHash
+                   + emperorHash;
         }
     }
 }

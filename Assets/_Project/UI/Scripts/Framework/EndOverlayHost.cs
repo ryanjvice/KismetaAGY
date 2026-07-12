@@ -46,6 +46,7 @@ namespace Kismeta.UI
         public Action<int>? OnGambitFromTable;
         public Action<int>? OnTradeFromTable;
         public Action? OnOverlayDismissed;
+        public Action? OnEmperorProtectionCompleted;
 
         void Awake() => EnsureControllers();
 
@@ -262,6 +263,15 @@ namespace Kismeta.UI
                 _modals?.BindLoversChoice(_session, _bridge, drawerId);
         }
 
+        public void ShowEmperorProtection()
+        {
+            EnsureControllers();
+            _reopenCardTableAfterInspect = false;
+            ShowOverlay(_cardModals, _modals, WireModals, ActiveOverlay.CardModals);
+            if (_session != null && _bridge != null)
+                _modals?.BindEmperor(_session, _bridge);
+        }
+
         public void Dismiss()
         {
             _active = ActiveOverlay.None;
@@ -341,6 +351,7 @@ namespace Kismeta.UI
         {
             if (_activeEffectsCtrl == null) return;
             _activeEffectsCtrl.OnClose = Dismiss;
+            _activeEffectsCtrl.OnEmperorActivate = ShowEmperorProtection;
         }
 
         void WireTable()
@@ -360,6 +371,13 @@ namespace Kismeta.UI
             _modals.OnAdeptCompleted = OnModalDone;
             _modals.OnFateAccept = OnModalDone;
             _modals.OnFateDecisionCompleted = OnModalDone;
+            _modals.OnEmperorCompleted = OnEmperorModalDone;
+        }
+
+        void OnEmperorModalDone()
+        {
+            OnEmperorProtectionCompleted?.Invoke();
+            OnModalDone();
         }
 
         void WireCrucibleDetail()

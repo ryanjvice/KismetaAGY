@@ -57,8 +57,8 @@ The 22 Major Arcana cards are divided into two sets.
 |                |             | Resonant        | Expand your maximum Hand limit to 7 cards.                                                   |
 | Empress        | Taurus      | Base            | Craft One Reagent type 2-for-1. Mark the matching Cauldron with Salt.                        |
 |                |             | Resonant        | Apply 2-for-1 to any two Reagent types.                                                      |
-| Emperor        | Aries       | Base            | Protect any 2 Spread cards from being lost in Duels or Gambits.                              |
-|                |             | Resonant        | Protect any 2 cards from any type of attack.                                                 |
+| Emperor        | Aries       | Base            | Protect any 2 Spread cards from being lost in Duels or Gambits. Activate during Spring.      |
+|                |             | Resonant        | Protect any 2 cards from any type of attack. Protection lasts until Winter transit.          |
 | Hierophant     | Scorpio     | Base            | Shift your Zodiac Dice roll ±1 Sign on the Zodiac Wheel for Harvest or Opposition.           |
 |                |             | Resonant        | Shift your Zodiac Dice roll ±2. Apply this effect during any Opposition.                     |
 | Devil          | Capricorn   | Base            | Sacrifice any card to steal any one card from an opponent's Spread.                          |

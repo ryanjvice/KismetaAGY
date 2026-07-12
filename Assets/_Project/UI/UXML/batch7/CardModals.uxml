@@ -193,6 +193,24 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
+        <!-- ===== The Emperor — protect 2 cards ===== -->
+        <engine:VisualElement name="emperor-modal" class="card-modal card-modal--fate-decision" style="display: none;">
+            <engine:Label name="emperor-sr" text="The Emperor — protect two cards from duel and gambit loss." class="sr-only" />
+            <engine:VisualElement class="card-modal__hero card-modal__hero--fate-decision">
+                <engine:Label text="the emperor" class="eyebrow" style="color: rgb(176,144,208); -unity-text-align: middle-center;" />
+                <engine:Label text="Imperial Protection" class="tarot__name" style="color: rgb(224,200,240); font-size: 16px;" />
+                <engine:Label name="emperor-subtitle" text="Select 2 minor cards from your Spread." style="font-size: 10px; color: rgb(168,144,192); white-space: normal; -unity-text-align: middle-center;" />
+            </engine:VisualElement>
+            <engine:VisualElement class="card-modal__body card-modal__body--grow">
+                <engine:VisualElement name="emperor-cards" class="fate-chip-row moon-cards" />
+                <engine:Label name="emperor-count" text="0 / 2 selected" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 8px; margin-bottom: 8px;" />
+                <engine:VisualElement style="flex-direction: row;">
+                    <engine:Button name="emperor-cancel" text="Cancel" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
+                    <engine:Button name="emperor-confirm" text="Protect Cards" class="btn btn--primary" style="flex-grow: 1.4;" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
         <!-- ===== Legacy reagent modal (Lovers uses lovers-choice) ===== -->
         <engine:VisualElement name="fate-reagent-modal" class="card-modal card-modal--fate-decision" style="display: none;">
             <engine:Label name="reagent-sr" text="Choose one reagent to receive from the Fool fate." class="sr-only" />
