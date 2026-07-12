@@ -4,13 +4,13 @@
 
 # Crucible Group B — Standard
 
-| **Group** | **Card** | **SP** | **AR** | **V** | **Q** | **S** | **Tot.** | **Alignment Requirement** |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| B | The Emperor | 2 | — | 1 | — | — | 3 | 3-card Wands Straight (Any 3 consecutive ranks) |
-| B | The Hierophant | — | — | 2 | — | 1 | 3 | One Venus + Pair of Pentacles (Same Rank) |
-| B | The Lovers | — | — | — | 2 | 1 | 3 | 3-card Swords Straight (Any 3 consecutive ranks) |
-| B | The Chariot | — | 2 | — | — | 1 | 3 | 3 Moons (2s & Queens) |
-| B | Strength | 2 | — | — | — | 1 | 3 | One Sun + Pair of Wands (Same Rank) |
-| B | The Hermit | — | — | 1 | 2 | — | 3 | 3-card Pentacles Straight (Any 3 consecutive ranks) |
-| B | Wheel of Fortune | — | 2 | — | — | 1 | 3 | 3-card Cups Straight (Any 3 consecutive ranks) |
-|  |  | 4 | 4 | 4 | 4 | 5 |  |  |
+| **Group** | **Card**         | **SP** | **AR** | **V** | **Q** | **S** | **Tot.** | **Alignment Requirement**                           |
+| --------- | ---------------- | ------ | ------ | ----- | ----- | ----- | -------- | --------------------------------------------------- |
+| B         | The Emperor      | 2      | —      | 1     | —     | —     | 3        | 3-card Wands Straight (Any 3 consecutive ranks)     |
+| B         | The Hierophant   | —      | —      | 2     | —     | 1     | 3        | One Venus + Pair of Pentacles (Same Rank)           |
+| B         | The Lovers       | —      | —      | —     | 2     | 1     | 3        | 3-card Swords Straight (Any 3 consecutive ranks)    |
+| B         | The Chariot      | —      | 2      | —     | —     | 1     | 3        | 3 Moons (2s & Queens)                               |
+| B         | Strength         | 2      | —      | —     | —     | 1     | 3        | One Sun + Pair of Wands (Same Rank)                 |
+| B         | The Hermit       | —      | —      | 1     | 2     | —     | 3        | 3-card Pentacles Straight (Any 3 consecutive ranks) |
+| B         | Wheel of Fortune | —      | 2      | —     | —     | 1     | 3        | 3-card Cups Straight (Any 3 consecutive ranks)      |
+|           |                  | 4      | 4      | 4     | 4     | 5     |          |                                                     |

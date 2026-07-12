@@ -208,13 +208,15 @@ namespace Kismeta.Core.Entities
                     : CommandResult.NotImplemented(nameof(TransitAgeCommand)),
 
                 // ── Fate async decisions ──────────────────────────────────────────
-                FateMoonDecisionCommand   cmd => _rules?.FateResolver is not null
-                    ? ApplyWithAudit(_rules.FateResolver.HandleMoonDecision(this, cmd.PlayerId, cmd.KeepCardIds), command)
-                    : CommandResult.NotImplemented(nameof(FateMoonDecisionCommand)),
+                FateMoonGiftCommand cmd => _rules?.FateResolver is not null
+                    ? ApplyWithAudit(_rules.FateResolver.HandleMoonGift(this, cmd.GiverId, cmd.RecipientId,
+                        cmd.CardIds, cmd.Reagents), command)
+                    : CommandResult.NotImplemented(nameof(FateMoonGiftCommand)),
 
-                FateReagentChoiceCommand  cmd => _rules?.FateResolver is not null
-                    ? ApplyWithAudit(_rules.FateResolver.HandleFoolReagentChoice(this, cmd.PlayerId, cmd.ReagentType), command)
-                    : CommandResult.NotImplemented(nameof(FateReagentChoiceCommand)),
+                ClaimFoolAltarCrucibleCommand cmd => _rules?.FateResolver is not null
+                    ? ApplyWithAudit(_rules.FateResolver.TryClaimFoolAltar(this, cmd.PlayerId,
+                        cmd.DormantSlotIndex, cmd.AlignmentCardIds), command)
+                    : CommandResult.NotImplemented(nameof(ClaimFoolAltarCrucibleCommand)),
 
                 FateLoversChoiceCommand   cmd => _rules?.FateResolver is not null
                     ? ApplyWithAudit(_rules.FateResolver.HandleLoversChoice(this, cmd.PlayerId, cmd.DrawCards,

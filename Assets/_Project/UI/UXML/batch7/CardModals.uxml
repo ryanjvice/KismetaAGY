@@ -162,22 +162,38 @@
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <!-- ===== The Moon — keep 2 of 4 ===== -->
+        <!-- ===== The Moon — meaningful gift ===== -->
         <engine:VisualElement name="moon-modal" class="card-modal card-modal--fate-decision" style="display: none;">
-            <engine:Label name="moon-sr" text="The Moon — choose two cards to keep from four drawn cards." class="sr-only" />
+            <engine:Label name="moon-sr" text="The Moon — give a meaningful gift of cards and/or reagents." class="sr-only" />
             <engine:VisualElement class="card-modal__hero card-modal__hero--fate-decision">
                 <engine:Label text="the moon" class="eyebrow" style="color: rgb(138,176,224); -unity-text-align: middle-center;" />
-                <engine:Label text="Keep 2 of 4" class="tarot__name" style="color: rgb(188,216,240); font-size: 16px;" />
-                <engine:Label text="The rest return to the bottom of the deck." style="font-size: 10px; color: rgb(127,160,196); white-space: normal; -unity-text-align: middle-center;" />
+                <engine:Label text="Meaningful Gift" class="tarot__name" style="color: rgb(188,216,240); font-size: 16px;" />
+                <engine:Label text="Select minor cards from Hand or Spread, and/or reagents to gift." style="font-size: 10px; color: rgb(127,160,196); white-space: normal; -unity-text-align: middle-center;" />
             </engine:VisualElement>
             <engine:VisualElement class="card-modal__body card-modal__body--grow">
                 <engine:VisualElement name="moon-cards" class="fate-chip-row moon-cards" />
-                <engine:Label name="moon-count" text="Keeping: 0 / 2" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 8px; margin-bottom: 8px;" />
-                <engine:Button name="moon-confirm" text="Confirm Keep" class="btn btn--primary" />
+                <engine:VisualElement name="moon-reagents" style="margin-top: 8px; margin-bottom: 8px;" />
+                <engine:Label name="moon-count" text="Gift: 0 items selected" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 8px; margin-bottom: 8px;" />
+                <engine:Button name="moon-confirm" text="Confirm Gift" class="btn btn--primary" />
             </engine:VisualElement>
         </engine:VisualElement>
 
-        <!-- ===== The Fool — reagent pick ===== -->
+        <!-- ===== Fool altar claim ===== -->
+        <engine:VisualElement name="fool-altar-modal" class="card-modal card-modal--fate-decision" style="display: none;">
+            <engine:Label name="fool-altar-sr" text="Claim the Fool altar Crucible card." class="sr-only" />
+            <engine:VisualElement class="card-modal__hero card-modal__hero--fate-decision">
+                <engine:Label text="the fool · altar" class="eyebrow" style="color: rgb(138,176,224); -unity-text-align: middle-center;" />
+                <engine:Label name="fool-altar-name" text="Altar Crucible" class="tarot__name" style="color: rgb(188,216,240); font-size: 16px;" />
+                <engine:Label name="fool-altar-formula" text="" style="font-size: 10px; color: rgb(127,160,196); white-space: normal; -unity-text-align: middle-center;" />
+                <engine:Label name="fool-altar-slot" text="" style="font-size: 10px; color: rgb(184, 154, 110); white-space: normal; -unity-text-align: middle-center;" />
+            </engine:VisualElement>
+            <engine:VisualElement class="card-modal__body card-modal__body--grow">
+                <engine:VisualElement name="fool-altar-cards" class="fate-chip-row moon-cards" />
+                <engine:Button name="fool-altar-confirm" text="Claim Altar Card" class="btn btn--primary" style="margin-top: 8px;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- ===== Legacy reagent modal (Lovers uses lovers-choice) ===== -->
         <engine:VisualElement name="fate-reagent-modal" class="card-modal card-modal--fate-decision" style="display: none;">
             <engine:Label name="reagent-sr" text="Choose one reagent to receive from the Fool fate." class="sr-only" />
             <engine:VisualElement class="card-modal__hero card-modal__hero--fate-decision">

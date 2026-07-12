@@ -9,8 +9,8 @@ namespace Kismeta.Core.Rules
     /// <summary>
     /// Resolves Fate card effects immediately when drawn during Harvest.
     ///
-    /// Auto-resolving fates (7) apply their effect inline in ExecuteHarvest.
-    /// Async fates (3 — Moon, Fool, Lovers) queue a pending decision in
+    /// Auto-resolving fates (8) apply their effect inline in ExecuteHarvest.
+    /// Async fates (2 — Moon, Lovers) queue a pending decision in
     /// <see cref="BoardState.PendingFateDecisions"/> for GameLoop to handle.
     ///
     /// Fate card arcana numbers (from cards.json):
@@ -40,10 +40,10 @@ namespace Kismeta.Core.Rules
                 case 11: ResolveJustice(session, fateCardId);              break;
                 case 10: ResolveWheelOfFortune(session, fateCardId);       break;
                 case 12: ResolveHangedMan(session, fateCardId);            break;
+                case  0: ResolveFool(session, drawerId, fateCardId);       break;
 
-                // Async: Moon, Fool, Lovers — defer to GameLoop
+                // Async: Moon, Lovers — defer to GameLoop
                 case 18:
-                case  0:
                 case  6:
                     SetFateNote(session, fateCardId, PendingFateNote(arcanaNumber));
                     return false;
@@ -65,8 +65,7 @@ namespace Kismeta.Core.Rules
 
         static string PendingFateNote(int arcanaNumber) => arcanaNumber switch
         {
-            18 => "Awaiting your keep-2 decision from the Moon draw.",
-            0 => "Opponents are choosing a reagent gift from the Fool.",
+            18 => "Awaiting Moon gifts — receive from your left, then give to your right.",
             6 => "Awaiting the Lovers choice — draw two cards or take a reagent.",
             _ => "Awaiting resolution."
         };
@@ -261,68 +260,230 @@ namespace Kismeta.Core.Rules
             ExchangeEventEmitter.EmitHangedMan(session, hands);
         }
 
+        /// <summary>
+        /// Fool (0): draw one Crucible card onto the shared altar for any player to claim.
+        /// </summary>
+        private static void ResolveFool(GameSession session, int drawerId, string fateCardId)
+        {
+            if (session.Board.CrucibleDeck.Count == 0)
+            {
+                SetFateNote(session, fateCardId,
+                    "Already resolved: no crucible cards remained in the pile. Now face-up in Arcanum.");
+                ExchangeEventEmitter.EmitFoolAltar(session, drawerId, null);
+                return;
+            }
+
+            var altarId = session.Board.CrucibleDeck.Pop();
+            session.Board.FoolAltarCrucibleCardId = altarId;
+            session.GetCard(altarId)?.MoveTo(CardZone.Altar, -1);
+
+            var db  = session.Rules?.CardDatabase;
+            var def = db != null && session.GetCard(altarId) is { } inst
+                ? db.GetById(inst.DefinitionId)
+                : null;
+            string cardName = def?.Name ?? "Crucible card";
+
+            SetFateNote(session, fateCardId,
+                $"Already resolved: {cardName} placed on the Altar — first to complete its formula claims it. Now face-up in Arcanum.");
+            ExchangeEventEmitter.EmitFoolAltar(session, drawerId, altarId);
+        }
+
         // ── Async fate resolution (called by GameLoop after RequestAsync returns) ──
 
-        /// <summary>
-        /// Moon (18): Player chose 2 cards to keep from the 4 Moon-drawn cards.
-        /// The unchosen 2 Moon cards return to the bottom of the deck.
-        /// The player's existing hand cards are untouched.
-        /// </summary>
-        public CommandResult HandleMoonDecision(GameSession session, int playerId,
-            IReadOnlyList<string> keepCardIds)
+        /// <summary>Begins a Moon gift exchange for the drawing player.</summary>
+        public void BeginMoonExchange(GameSession session, int drawerId, string fateCardId)
         {
-            if (keepCardIds.Count != 2)
-                return CommandResult.Invalid("The Moon: you must keep exactly 2 cards.");
-
-            var player        = session.Players[playerId];
-            var keepSet       = new HashSet<string>(keepCardIds);
-            var moonDrawn     = session.Board.FateMoonDrawnCardIds;
-
-            // Validate that the chosen cards are from the Moon draw and are minor arcana
-            foreach (var id in keepCardIds)
+            session.Board.PendingMoonGift = new PendingMoonExchange
             {
-                if (!moonDrawn.Contains(id))
-                    return CommandResult.Invalid($"The Moon: card {id} was not drawn by the Moon.");
-                var inst = session.GetCard(id);
-                var def  = inst != null ? _db.GetById(inst.DefinitionId) : null;
-                if (def?.IsMajorArcana == true)
-                    return CommandResult.Invalid($"The Moon: card {id} is a Major Arcana card and cannot be kept in Hand.");
+                DrawerId    = drawerId,
+                FateCardId  = fateCardId,
+                LeftGiftComplete = false
+            };
+        }
+
+        /// <summary>
+        /// Moon (18): transfer a meaningful gift (minor cards and/or reagents) between neighbors.
+        /// </summary>
+        public CommandResult HandleMoonGift(GameSession session, int giverId, int recipientId,
+            IReadOnlyList<string> cardIds, IReadOnlyDictionary<ReagentType, int> reagents)
+        {
+            var pending = session.Board.PendingMoonGift;
+            if (pending == null)
+                return CommandResult.Invalid("The Moon: no gift exchange is in progress.");
+
+            int n = session.Players.Count;
+            int leftId  = (pending.DrawerId - 1 + n) % n;
+            int rightId = (pending.DrawerId + 1) % n;
+
+            if (!pending.LeftGiftComplete)
+            {
+                if (giverId != leftId || recipientId != pending.DrawerId)
+                    return CommandResult.Invalid("The Moon: your left neighbor must gift you first.");
+            }
+            else
+            {
+                if (giverId != pending.DrawerId || recipientId != rightId)
+                    return CommandResult.Invalid("The Moon: you must gift your right neighbor.");
             }
 
-            // Return the unchosen Moon cards to the bottom of the deck
-            var toReturn = new List<string>();
-            foreach (var id in moonDrawn)
-            {
-                if (keepSet.Contains(id)) continue; // player keeps this one
+            var validation = ValidateMoonGiftContents(session, giverId, cardIds, reagents);
+            if (!validation.IsOk) return validation;
 
-                player.Hand.Remove(id);
-                session.GetCard(id)?.MoveTo(CardZone.Deck, -1);
-                toReturn.Add(id);
+            TransferMoonGift(session, giverId, recipientId, cardIds, reagents);
+            ExchangeEventEmitter.EmitMoonGift(session, giverId, recipientId, cardIds, reagents);
+
+            if (!pending.LeftGiftComplete)
+            {
+                pending.LeftGiftComplete = true;
+                return CommandResult.Ok("Moon: left neighbor's gift received.");
             }
 
-            // Append to bottom (bottom of a Stack<T> = enumerated first, pushed last)
-            var deckList = new List<string>(session.Board.CommonDeck);
-            deckList.AddRange(toReturn);
-            session.Board.CommonDeck.Clear();
-            foreach (var id in deckList)
-                session.Board.CommonDeck.Push(id);
-
-            SetFateNote(session, FindFateCardId(session, playerId, 18),
-                "Already resolved: kept 2 Moon cards; unchosen cards returned to the deck. Now face-up in Arcanum.");
+            session.Board.PendingMoonGift = null;
+            SetFateNote(session, pending.FateCardId,
+                "Already resolved: meaningful gifts exchanged with neighbors. Now face-up in Arcanum.");
+            session.EmitEvent(new FateResolvedEvent(pending.DrawerId, pending.FateCardId, 18));
             return CommandResult.Ok("Moon resolved.");
         }
 
-        /// <summary>Fool (0): opponents receive 1 Reagent of their choice (called per opponent).</summary>
-        public CommandResult HandleFoolReagentChoice(GameSession session, int chooserId,
-            ReagentType reagentType)
+        static CommandResult ValidateMoonGiftContents(GameSession session, int giverId,
+            IReadOnlyList<string> cardIds, IReadOnlyDictionary<ReagentType, int> reagents)
         {
-            session.Players[chooserId].AddReagent(reagentType);
-            int drawerId = FindFoolDrawerPlayerId(session);
-            if (drawerId >= 0)
-                ExchangeEventEmitter.EmitFoolGift(session, drawerId, chooserId, reagentType);
-            SetFateNote(session, FindDrawerFateCardId(session, 0),
-                $"Already resolved: opponents received reagents from the Fool. Now face-up in Arcanum.");
-            return CommandResult.Ok($"P{chooserId} received 1 {reagentType} (Fool).");
+            int totalReagents = 0;
+            foreach (var kv in reagents)
+                totalReagents += kv.Value;
+
+            if (cardIds.Count == 0 && totalReagents == 0)
+                return CommandResult.Invalid("The Moon: a meaningful gift must include at least one card or reagent.");
+
+            var giver = session.Players[giverId];
+            var db    = session.Rules?.CardDatabase;
+
+            foreach (var id in cardIds)
+            {
+                bool inHand   = giver.Hand.Contains(id);
+                bool inSpread = giver.Spread.Contains(id);
+                if (!inHand && !inSpread)
+                    return CommandResult.Invalid($"The Moon: card {id} is not in your Hand or Spread.");
+
+                if (db != null)
+                {
+                    var inst = session.GetCard(id);
+                    var def  = inst != null ? db.GetById(inst.DefinitionId) : null;
+                    if (def?.IsMajorArcana == true)
+                        return CommandResult.Invalid($"The Moon: card {id} is Major Arcana and cannot be gifted.");
+                }
+            }
+
+            foreach (var kv in reagents)
+            {
+                if (kv.Value <= 0) continue;
+                if (giver.GetReagent(kv.Key) < kv.Value)
+                    return CommandResult.Invalid($"The Moon: insufficient {kv.Key} to gift.");
+            }
+
+            return CommandResult.Ok();
+        }
+
+        static void TransferMoonGift(GameSession session, int giverId, int recipientId,
+            IReadOnlyList<string> cardIds, IReadOnlyDictionary<ReagentType, int> reagents)
+        {
+            var giver     = session.Players[giverId];
+            var recipient = session.Players[recipientId];
+
+            foreach (var id in cardIds)
+            {
+                if (giver.Hand.Contains(id))
+                {
+                    giver.Hand.Remove(id);
+                    session.GetCard(id)?.MoveTo(CardZone.Hand, recipientId);
+                    recipient.Hand.Add(id);
+                }
+                else if (giver.Spread.Contains(id))
+                {
+                    giver.Spread.Remove(id);
+                    session.GetCard(id)?.MoveTo(CardZone.Spread, recipientId);
+                    recipient.Spread.Add(id);
+                }
+            }
+
+            foreach (var kv in reagents)
+            {
+                if (kv.Value <= 0) continue;
+                giver.SpendReagent(kv.Key, kv.Value);
+                recipient.AddReagent(kv.Key, kv.Value);
+            }
+        }
+
+        /// <summary>
+        /// Claim the Fool altar Crucible card by satisfying its Alchemical Formula from Spread.
+        /// </summary>
+        public CommandResult TryClaimFoolAltar(GameSession session, int playerId,
+            int dormantSlotIndex, IReadOnlyList<string> alignmentCardIds)
+        {
+            var altarId = session.Board.FoolAltarCrucibleCardId;
+            if (string.IsNullOrEmpty(altarId))
+                return CommandResult.Invalid("No Crucible card is on the Fool altar.");
+
+            var player = session.Players[playerId];
+            if (dormantSlotIndex < 0 || dormantSlotIndex >= player.CrucibleSlots.Count)
+                return CommandResult.Invalid($"No Crucible slot at index {dormantSlotIndex}.");
+
+            var slot = player.CrucibleSlots[dormantSlotIndex];
+            if (slot.State != CrucibleCardState.Dormant)
+                return CommandResult.Invalid("The Fool altar card can only replace a Dormant Crucible slot.");
+
+            var altarInst = session.GetCard(altarId);
+            var altarDef  = altarInst != null ? _db.GetById(altarInst.DefinitionId) : null;
+            if (altarDef == null || string.IsNullOrWhiteSpace(altarDef.AlchemicalFormula))
+                return CommandResult.Invalid("Altar Crucible card has no alchemical formula.");
+
+            if (alignmentCardIds == null || alignmentCardIds.Count == 0)
+                return CommandResult.Invalid("Submit Spread cards that satisfy the altar formula.");
+
+            foreach (var id in alignmentCardIds)
+            {
+                if (!player.Spread.Contains(id))
+                    return CommandResult.Invalid($"Alignment card {id} is not in your Spread.");
+            }
+
+            var defs = new List<CardDefinition>(alignmentCardIds.Count);
+            foreach (var id in alignmentCardIds)
+            {
+                var inst = session.GetCard(id);
+                if (inst == null)
+                    return CommandResult.Invalid($"Card instance {id} not found.");
+                var def = _db.GetById(inst.DefinitionId);
+                if (def == null)
+                    return CommandResult.Invalid($"Card definition for {id} not found.");
+                defs.Add(def);
+            }
+
+            var validator = session.Rules?.AlchemicalValidator ?? new AlchemicalAlignmentValidator();
+            var (ok, reason) = validator.Validate(altarDef.AlchemicalFormula, defs, _db);
+            if (!ok)
+                return CommandResult.Invalid($"Alignment not satisfied: {reason}");
+
+            // First valid claim wins — re-check altar is still available.
+            if (session.Board.FoolAltarCrucibleCardId != altarId)
+                return CommandResult.Invalid("Another player already claimed the Fool altar card.");
+
+            foreach (var id in alignmentCardIds)
+            {
+                player.Spread.Remove(id);
+                session.Board.CommonDiscard.Add(id);
+                session.GetCard(id)?.MoveTo(CardZone.Discard, -1);
+            }
+
+            var replacedId = slot.CardInstanceId;
+            session.Board.CrucibleDiscard.Add(replacedId);
+            session.GetCard(replacedId)?.MoveTo(CardZone.Discard, -1);
+
+            player.CrucibleSlots[dormantSlotIndex] = new PlayerCrucibleSlot(altarId);
+            session.GetCard(altarId)?.MoveTo(CardZone.Deck, playerId);
+            session.Board.FoolAltarCrucibleCardId = null;
+
+            ExchangeEventEmitter.EmitFoolAltarClaim(session, playerId, altarId, dormantSlotIndex, alignmentCardIds);
+            return CommandResult.Ok($"Claimed {altarDef.Name} from the Fool altar.");
         }
 
         /// <summary>Lovers (6): target's choice resolves for the drawer.</summary>
@@ -394,51 +555,8 @@ namespace Kismeta.Core.Rules
             return null;
         }
 
-        static int FindFoolDrawerPlayerId(GameSession session)
-        {
-            foreach (var (pid, _, num) in session.Board.PendingFateDecisions)
-            {
-                if (num == 0)
-                    return pid;
-            }
-
-            foreach (var player in session.Players)
-            {
-                foreach (var id in player.Arcanum)
-                {
-                    var inst = session.GetCard(id);
-                    if (inst == null) continue;
-                    var def = session.Rules?.CardDatabase.GetById(inst.DefinitionId);
-                    if (def?.MajorArcanaType == MajorArcanaType.Fate && def.ArcanaNumber == 0)
-                        return player.PlayerId;
-                }
-            }
-
-            return -1;
-        }
-
-        static string? FindDrawerFateCardId(GameSession session, int arcanaNumber)
-        {
-            foreach (var (pid, fateId, num) in session.Board.PendingFateDecisions)
-            {
-                if (num == arcanaNumber)
-                    return fateId;
-            }
-
-            foreach (var player in session.Players)
-            {
-                foreach (var id in player.Arcanum)
-                {
-                    var inst = session.GetCard(id);
-                    if (inst == null) continue;
-                    var def = session.Rules?.CardDatabase.GetById(inst.DefinitionId);
-                    if (def?.MajorArcanaType == MajorArcanaType.Fate && def.ArcanaNumber == arcanaNumber)
-                        return id;
-                }
-            }
-
-            return null;
-        }
+        static int NeighborRight(int playerId, int playerCount) => (playerId + 1) % playerCount;
+        static int NeighborLeft(int playerId, int playerCount)  => (playerId - 1 + playerCount) % playerCount;
 
         private static void Shuffle<T>(IList<T> list, Random rng)
         {

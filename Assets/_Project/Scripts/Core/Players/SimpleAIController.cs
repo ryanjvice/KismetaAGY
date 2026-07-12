@@ -46,10 +46,9 @@ namespace Kismeta.Core.Players
                 ActionHint.SummerAction      => DecideSummer(context),
                 ActionHint.AutumnAction      => DecideAutumn(context),
                 ActionHint.AdeptDecision     => DecideAdept(context),
-                ActionHint.FateReagentChoice    => new FateReagentChoiceCommand(Slot.Index, ReagentType.Salt),
                 ActionHint.FateLoversChoice     => new FateLoversChoiceCommand(Slot.Index, false),
                 ActionHint.FateLoversTargetPick => DecideFateLoversTarget(context),
-                ActionHint.FateMoonDecision  => DecideFateMoon(context),
+                ActionHint.FateMoonGift         => DecideFateMoonGift(context),
                 ActionHint.PriestessHarvestReturn => DecidePriestessReturn(context),
                 ActionHint.WinterAction      => DecideWinter(context),
                 ActionHint.DiscardToLimit    => DecideDiscardToLimit(context),
@@ -356,14 +355,22 @@ namespace Kismeta.Core.Players
             return new FateLoversTargetCommand(Slot.Index, targetId);
         }
 
-        private IGameCommand DecideFateMoon(GameContext ctx)
+        private IGameCommand DecideFateMoonGift(GameContext ctx)
         {
-            // Pick the first 2 from the 4 Moon-drawn cards (provided via context)
-            var source = ctx.MoonDrawnCardIds ?? ctx.PrivateView.Hand;
-            var keep = source.Count >= 2
-                ? new List<string> { source[0], source[1] }
-                : new List<string>(source);
-            return new FateMoonDecisionCommand(Slot.Index, keep);
+            int recipientId = ctx.MoonGiftRecipientId;
+            var cardIds = new List<string>();
+            var spread = ctx.PublicView.Players[Slot.Index].Spread;
+            if (spread.Count > 0)
+                cardIds.Add(spread[0]);
+            else if (ctx.PrivateView.Hand.Count > 0)
+                cardIds.Add(ctx.PrivateView.Hand[0]);
+            else
+            {
+                var reagents = new Dictionary<ReagentType, int> { { ReagentType.Salt, 1 } };
+                return new FateMoonGiftCommand(Slot.Index, recipientId, cardIds, reagents);
+            }
+
+            return new FateMoonGiftCommand(Slot.Index, recipientId, cardIds);
         }
 
         private IGameCommand DecidePriestessReturn(GameContext ctx)

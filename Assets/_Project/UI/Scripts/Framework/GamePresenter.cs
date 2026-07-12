@@ -511,11 +511,8 @@ namespace Kismeta.UI
             _fateModalOpen = true;
             switch (hint)
             {
-                case ActionHint.FateMoonDecision:
-                    _endOverlays.ShowMoonDecision();
-                    break;
-                case ActionHint.FateReagentChoice:
-                    _endOverlays.ShowFateReagentChoice(_loop?.PendingCardId);
+                case ActionHint.FateMoonGift:
+                    _endOverlays.ShowMoonGift(_loop?.PendingMoonGiftRecipientId ?? -1);
                     break;
                 case ActionHint.FateLoversTargetPick:
                     _endOverlays.ShowLoversTargetPick();
@@ -530,8 +527,7 @@ namespace Kismeta.UI
 
         static bool IsFateDecisionHint(ActionHint hint) => hint switch
         {
-            ActionHint.FateMoonDecision or ActionHint.FateReagentChoice
-                or ActionHint.FateLoversTargetPick or ActionHint.FateLoversChoice => true,
+            ActionHint.FateMoonGift or ActionHint.FateLoversTargetPick or ActionHint.FateLoversChoice => true,
             _ => false
         };
 

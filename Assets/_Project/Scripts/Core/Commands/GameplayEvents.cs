@@ -401,6 +401,7 @@ namespace Kismeta.Core.Commands
         Gambit,
         FateLovers,
         FateFool,
+        FateMoon,
         FateHangedMan,
         FateTower,
         FateDeath,

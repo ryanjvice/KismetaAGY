@@ -4,13 +4,13 @@
 
 # Crucible Group C — Advanced
 
-| **Group** | **Card** | **SP** | **AR** | **V** | **Q** | **S** | **Tot.** | **Alignment Requirement** |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| C | Justice | — | — | 1 | 2 | — | 3 | Two Pairs — Pentacles and Swords Suits only |
-| C | The Hanged Man | — | 3 | — | — | — | 3 | Three Cups (any ranks) + one Sun card (Ace) |
-| C | Death | 2 | 1 | — | — | — | 3 | Three Mars planets (7s + Knights) + Two Cups |
-| C | Temperance | 2 | — | 1 | — | — | 3 | Three Jupiter planets (3s + 8s) + Two Wands |
-| C | The Devil | 1 | — | 1 | — | 1 | 3 | Three Saturn planets (6s, 10s, or Kings) + Two Pentacles |
-| C | The Tower |  | 1 | 2 |  | — | 3 | Two Mars planet (7 or Knight) + 3-card Wands straight |
-| C | The Star |  |  | — | 3 | — | 3 | 3-card Swords straight + Two Venus cards (3 or 8) |
-|  |  | 5 | 5 | 5 | 5 | 1 |  |  |
+| **Group** | **Card**       | **SP** | **AR** | **V** | **Q** | **S** | **Tot.** | **Alignment Requirement**                                |
+| --------- | -------------- | ------ | ------ | ----- | ----- | ----- | -------- | -------------------------------------------------------- |
+| C         | Justice        | —      | —      | 1     | 2     | —     | 3        | Two Pairs — Pentacles and Swords Suits only              |
+| C         | The Hanged Man | —      | 3      | —     | —     | —     | 3        | Three Cups (any ranks) + one Sun card (Ace)              |
+| C         | Death          | 2      | 1      | —     | —     | —     | 3        | Three Mars planets (7s + Knights) + Two Cups             |
+| C         | Temperance     | 2      | —      | 1     | —     | —     | 3        | Three Jupiter planets (3s + 8s) + Two Wands              |
+| C         | The Devil      | 1      | —      | 1     | —     | 1     | 3        | Three Saturn planets (6s, 10s, or Kings) + Two Pentacles |
+| C         | The Tower      |        | 1      | 2     |       | —     | 3        | Two Mars planet (7 or Knight) + 3-card Wands straight    |
+| C         | The Star       |        |        | —     | 3     | —     | 3        | 3-card Swords straight + Two Venus cards (3 or 8)        |
+|           |                | 5      | 5      | 5     | 5     | 1     |          |                                                          |

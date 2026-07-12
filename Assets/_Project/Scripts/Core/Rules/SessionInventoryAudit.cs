@@ -17,6 +17,7 @@ namespace Kismeta.Core.Rules
         FatefulWager,
         CrucibleSlot,
         PendingAdept,
+        FoolAltar,
     }
 
     public sealed class InventoryViolation
@@ -103,6 +104,9 @@ namespace Kismeta.Core.Rules
 
             foreach (var id in session.Board.CrucibleDeck)
                 Record(id, InventoryLocationKind.CrucibleDeck);
+
+            if (!string.IsNullOrEmpty(session.Board.FoolAltarCrucibleCardId))
+                Record(session.Board.FoolAltarCrucibleCardId, InventoryLocationKind.FoolAltar);
 
             var crucibleSlotIds = new HashSet<string>();
             foreach (var player in session.Players)
@@ -284,45 +288,31 @@ namespace Kismeta.Core.Rules
                 }
             }
 
-            if (session.Board.FateMoonDrawnCardIds.Count > 0)
+            if (!string.IsNullOrEmpty(session.Board.FoolAltarCrucibleCardId))
             {
-                bool moonPending = false;
-                foreach (var (_, _, arcanaNum) in session.Board.PendingFateDecisions)
-                {
-                    if (arcanaNum == 18)
-                    {
-                        moonPending = true;
-                        break;
-                    }
-                }
-
-                if (!moonPending)
+                var altarId = session.Board.FoolAltarCrucibleCardId;
+                var inst = session.GetCard(altarId);
+                if (inst == null)
                 {
                     violations.Add(new InventoryViolation(
-                        "moon_pool_stale",
-                        $"FateMoonDrawnCardIds has {session.Board.FateMoonDrawnCardIds.Count} card(s) but no pending Moon fate."));
+                        "fool_altar_missing",
+                        "Fool altar tracks a card that is not registered.",
+                        altarId));
                 }
-
-                foreach (var id in session.Board.FateMoonDrawnCardIds)
+                else if (inst.Zone != CardZone.Altar)
                 {
-                    bool inHand = false;
-                    foreach (var player in session.Players)
-                    {
-                        if (player.Hand.Contains(id))
-                        {
-                            inHand = true;
-                            break;
-                        }
-                    }
-
-                    if (!inHand)
-                    {
-                        violations.Add(new InventoryViolation(
-                            "moon_pool_hand",
-                            "Moon-drawn card is tracked in FateMoonDrawnCardIds but not in any Hand.",
-                            id));
-                    }
+                    violations.Add(new InventoryViolation(
+                        "fool_altar_zone",
+                        "Fool altar card must be in the Altar zone.",
+                        altarId));
                 }
+            }
+
+            if (session.Board.PendingMoonGift != null && session.Board.PendingFateDecisions.Count == 0)
+            {
+                violations.Add(new InventoryViolation(
+                    "moon_gift_stale",
+                    "PendingMoonGift is set but no Moon fate is pending."));
             }
         }
 
@@ -340,6 +330,7 @@ namespace Kismeta.Core.Rules
                 InventoryLocationKind.FatefulWager => zone == CardZone.Deck && registryOwnerId == -1,
                 InventoryLocationKind.CrucibleSlot => zone == CardZone.Deck && registryOwnerId == ownerId,
                 InventoryLocationKind.PendingAdept => zone == CardZone.Deck && registryOwnerId == -1,
+                InventoryLocationKind.FoolAltar => zone == CardZone.Altar && registryOwnerId == -1,
                 _ => false,
             };
         }

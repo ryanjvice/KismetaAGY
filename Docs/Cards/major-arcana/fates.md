@@ -4,15 +4,15 @@
 
 # Fate Cards
 
-| Card Name | Summary |
-| --- | --- |
-| Tower | Turn all Adept cards face down. Players will have to pay 1 salt to refresh. |
-| Death | All Hands are returned to the deck. The Agekeeper shuffles the deck. |
-| Sun | All players receive one of each Reagent. |
-| Judgement | Draw 1 card for each Cauldron you have lit. |
-| Justice | All Duels and Gambits are resolved via a best-of-3 series until the end of the round. |
-| Moon | Draw four cards from the top of the Deck. Keep any two. Return the rest to the bottom of the deck. |
-| Fool | Draw 2 cards. Your Opponents receive 1 Reagent of their choice. |
-| Wheel of Fortune | All players roll their Zodiac Dice. Highest roll gains 2 Salt. Lowest roll discards 1 card. |
-| Hanged Man | All players pass their Hand cards to the Player to their Left. |
-| The Lovers | Pick 1 other player. They choose both for you, either: Draw 2 cards or Gain 1 Reagent of their choice. |
+| Card Name        | Summary                                                                                                                                                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tower            | Turn all Adept cards face down. Players will have to pay 1 salt to refresh.                                                                                                                                               |
+| Death            | All Hands are returned to the deck. The Agekeeper shuffles the deck.                                                                                                                                                      |
+| Sun              | All players receive one of each Reagent.                                                                                                                                                                                  |
+| Judgement        | Draw 1 card for each Cauldron you have lit.                                                                                                                                                                               |
+| Justice          | All Duels and Gambits are resolved via a best-of-3 series until the end of the round.                                                                                                                                     |
+| Moon             | Give a meaningful gift to the player to your right. Receive a meaningful gift from the player to your left. (Kismeta Cards & Reagents only)                                                                               |
+| Fool             | Draw an additional Crucible Card from the remaining pile. Place it on the Altar. The first player to complete the Alchemical Formula on it claims it and can use it in place of any one of their existing Crucible cards. |
+| Wheel of Fortune | All players roll their Zodiac Dice. Highest roll gains 2 Salt. Lowest roll discards 1 card.                                                                                                                               |
+| Hanged Man       | All players pass their Hand cards to the Player to their Left.                                                                                                                                                            |
+| The Lovers       | Pick 1 other player. They choose both for you, either: Draw 2 cards or Gain 1 Reagent of their choice.                                                                                                                    |

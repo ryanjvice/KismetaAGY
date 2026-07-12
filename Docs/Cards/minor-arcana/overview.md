@@ -4,19 +4,19 @@
 
 # Minor Arcana Overview
 
-| **Card 1 — Active Effect** | **Card 2 — Wildcard Link + Active Effect** |
-| --- | --- |
-| Carries a base Active Effect (always on while in Spread or Hand as applicable) | Carries a Wildcard Link to a specific Major Arcana card; may substitute for that card in all requirements |
-| Curse cards (Ranks 4, 5, 6) have negative Active Effects; their Alignment conditions negate the curse | Carries a standalone Active Effect of its own, independent of the Wildcard function |
+| **Card 1 — Active Effect**                                                                            | **Card 2 — Wildcard Link + Active Effect**                                                                |
+| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Carries a base Active Effect (always on while in Spread or Hand as applicable)                        | Carries a Wildcard Link to a specific Major Arcana card; may substitute for that card in all requirements |
+| Curse cards (Ranks 4, 5, 6) have negative Active Effects; their Alignment conditions negate the curse | Carries a standalone Active Effect of its own, independent of the Wildcard function                       |
 
 **Suit Correspondence**
 
-| **Color** | **Suit** | **Element** | **Reagent** | **Cauldron** | **Wild Reagent (Queens)** |
-| --- | --- | --- | --- | --- | --- |
-| **■ Red** | **Wands** | Fire | Sulphur | Red | Sulphur |
-| **■ Blue** | **Cups** | Water | Aqua Regia | Blue | Aqua Regia |
-| **■ Green** | **Pentacles** | Earth | Vitriol | Green | Vitriol |
-| **■ Yellow** | **Swords** | Air | Quicksilver | Yellow | Quicksilver |
+| **Color**    | **Suit**      | **Element** | **Reagent** | **Cauldron** | **Wild Reagent (Queens)** |
+| ------------ | ------------- | ----------- | ----------- | ------------ | ------------------------- |
+| **■ Red**    | **Wands**     | Fire        | Sulphur     | Red          | Sulphur                   |
+| **■ Blue**   | **Cups**      | Water       | Aqua Regia  | Blue         | Aqua Regia                |
+| **■ Green**  | **Pentacles** | Earth       | Vitriol     | Green        | Vitriol                   |
+| **■ Yellow** | **Swords**    | Air         | Quicksilver | Yellow       | Quicksilver               |
 
 ---
 

@@ -6,38 +6,38 @@
 
 ### Card 1 — Active Effect
 
-| **Rank** | **CV** | **Planet** | **Type** | **Effect** |
-| --- | --- | --- | --- | --- |
-| **Ace** | 1 | *Sun* | *Entry Fee* | Discard to build an Astral House when your Zodiac die is on a Fire sign. |
-| **2** | 2 | *Moon* | *Harvest* | Astral Houses on Fire signs earn double at Harvest. |
-| **3** | 3 | *Jupiter* | *Build* | Craft Salt for any two Wands cards. |
-| **4** ⚠ | 4 | *Venus* | *Reversed* | **Nullify 5 of Pentacles** — Your opponent draws 2 Kismeta Cards if they win a Duel against you. |
-| **5** ⚠ | 5 | *Mercury* | *Reversed* | **Nullify 6 of Pentacles** — -1 to Dice rolls when you defend in Duels. |
-| **6** ⚠ | 6 | *Saturn* | *Reversed* | **Nullify 4 of Pentacles** — -1 to dice rolls when you attack in Duels. |
-| **7** | 7 | *Mars* | *Forge* | When you Fire the Stone, gain 1 Sulphur. |
-| **8** | 8 | *Jupiter* | *Craft* | Reduce the cost to craft Sulphur by -1 card (minimum 1). |
-| **9** | 9 | *Venus* | *Social* | Draw 1 Kismeta Card for each successful Opposition this round. |
-| **10** | 10 | *Saturn* | *Opposition* | This card counts as a Wild Suit in Oppositions. |
-| **Princess** | 11 | *Mercury* | *Gambit* | +1 to Dice Rolls when Attacking in a Gambit. |
-| **Knight** | 12 | *Mars* | *Duel* | +1 to Dice Rolls when Attacking in a Duel. |
-| **Queen** | 13 | *Moon* | *Forge* | Sulphur is Wild for Alchemical Formulas. |
-| **King** | 14 | *Saturn* | *Craft* | Discard to craft 1 Sulphur. |
+| **Rank**     | **CV** | **Planet** | **Type**     | **Effect**                                                                                       |
+| ------------ | ------ | ---------- | ------------ | ------------------------------------------------------------------------------------------------ |
+| **Ace**      | 1      | _Sun_      | _Entry Fee_  | Discard to build an Astral House when your Zodiac die is on a Fire sign.                         |
+| **2**        | 2      | _Moon_     | _Harvest_    | Astral Houses on Fire signs earn double at Harvest.                                              |
+| **3**        | 3      | _Jupiter_  | _Build_      | Craft Salt for any two Wands cards.                                                              |
+| **4** ⚠      | 4      | _Venus_    | _Reversed_   | **Nullify 5 of Pentacles** — Your opponent draws 2 Kismeta Cards if they win a Duel against you. |
+| **5** ⚠      | 5      | _Mercury_  | _Reversed_   | **Nullify 6 of Pentacles** — -1 to Dice rolls when you defend in Duels.                          |
+| **6** ⚠      | 6      | _Saturn_   | _Reversed_   | **Nullify 4 of Pentacles** — -1 to dice rolls when you attack in Duels.                          |
+| **7**        | 7      | _Mars_     | _Forge_      | When you Fire the Stone, gain 1 Sulphur.                                                         |
+| **8**        | 8      | _Jupiter_  | _Craft_      | Reduce the cost to craft Sulphur by -1 card (minimum 1).                                         |
+| **9**        | 9      | _Venus_    | _Social_     | Draw 1 Kismeta Card for each successful Opposition this round.                                   |
+| **10**       | 10     | _Saturn_   | _Opposition_ | This card counts as a Wild Suit in Oppositions.                                                  |
+| **Princess** | 11     | _Mercury_  | _Gambit_     | +1 to Dice Rolls when Attacking in a Gambit.                                                     |
+| **Knight**   | 12     | _Mars_     | _Duel_       | +1 to Dice Rolls when Attacking in a Duel.                                                       |
+| **Queen**    | 13     | _Moon_     | _Forge_      | Sulphur is Wild for Alchemical Formulas.                                                         |
+| **King**     | 14     | _Saturn_   | _Craft_      | Discard to craft 1 Sulphur.                                                                      |
 
 ### Card 2 — Wildcard Link + Active Effect
 
-| **Rank** | **CV** | **Planet** | **Wildcard Link** | **#** | **Active Effect** |
-| --- | --- | --- | --- | --- | --- |
-| **Ace** | 1 | Sun | — |  | +2 Bonus Harvest Cards when the Cosmic Age's Element is Fire. |
-| **2** | 2 | Moon | The Lovers | 6 | Wildcard for The Lovers. |
-| **3** | 3 | Jupiter | The Magician | 1 | Wildcard for The Magician. |
-| **4** | 4 | Venus | The Hanged Man | 12 | Wildcard for The Hanged Man. |
-| **5** | 5 | Mercury | Temperance | 14 | Wildcard for Temperance. |
-| **6** | 6 | Saturn | The Emperor | 4 | Wildcard for The Emperor. |
-| **7** | 7 | Mars | The Fool | 0 | Wildcard for The Fool. |
-| **8** | 8 | Jupiter | The Magician | 1 | Wildcard for The Magician. |
-| **9** | 9 | Venus | Temperance | 14 | Wildcard for Temperance. |
-| **10** | 10 | Saturn | The Emperor | 4 | Wildcard for The Emperor. |
-| **Princess** | 11 | Mercury | Judgement | 20 | Wildcard for Judgement. |
-| **Knight** | 12 | Mars | The World | 21 | Wildcard for The World. |
-| **Queen** | 13 | Moon | — |  | Increase your Spread Limit by +1 at Round end. |
-| **King** | 14 | Saturn | — |  | Wands are protected from Duels. This card remains vulnerable. |
+| **Rank**     | **CV** | **Planet** | **Wildcard Link** | **#** | **Active Effect**                                             |
+| ------------ | ------ | ---------- | ----------------- | ----- | ------------------------------------------------------------- |
+| **Ace**      | 1      | Sun        | —                 |       | +2 Bonus Harvest Cards when the Cosmic Age's Element is Fire. |
+| **2**        | 2      | Moon       | The Lovers        | 6     | Wildcard for The Lovers.                                      |
+| **3**        | 3      | Jupiter    | The Magician      | 1     | Wildcard for The Magician.                                    |
+| **4**        | 4      | Venus      | The Hanged Man    | 12    | Wildcard for The Hanged Man.                                  |
+| **5**        | 5      | Mercury    | Temperance        | 14    | Wildcard for Temperance.                                      |
+| **6**        | 6      | Saturn     | The Emperor       | 4     | Wildcard for The Emperor.                                     |
+| **7**        | 7      | Mars       | The Fool          | 0     | Wildcard for The Fool.                                        |
+| **8**        | 8      | Jupiter    | The Magician      | 1     | Wildcard for The Magician.                                    |
+| **9**        | 9      | Venus      | Temperance        | 14    | Wildcard for Temperance.                                      |
+| **10**       | 10     | Saturn     | The Emperor       | 4     | Wildcard for The Emperor.                                     |
+| **Princess** | 11     | Mercury    | Judgement         | 20    | Wildcard for Judgement.                                       |
+| **Knight**   | 12     | Mars       | The World         | 21    | Wildcard for The World.                                       |
+| **Queen**    | 13     | Moon       | —                 |       | Increase your Spread Limit by +1 at Round end.                |
+| **King**     | 14     | Saturn     | —                 |       | Wands are protected from Duels. This card remains vulnerable. |

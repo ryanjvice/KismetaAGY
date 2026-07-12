@@ -15,6 +15,7 @@ namespace Kismeta.UI.Components
             ExchangeKind.Gambit => "Gambit resolved",
             ExchangeKind.FateLovers => "The Lovers",
             ExchangeKind.FateFool => "The Fool",
+            ExchangeKind.FateMoon => "The Moon",
             ExchangeKind.FateHangedMan => "The Hanged Man",
             ExchangeKind.FateTower => "The Tower",
             ExchangeKind.FateDeath => "Death",

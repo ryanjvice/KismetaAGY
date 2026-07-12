@@ -4,24 +4,28 @@ using Kismeta.Core.Domain;
 namespace Kismeta.Core.Commands
 {
     /// <summary>
-    /// The Moon (18): player keeps exactly 2 of the 4 drawn cards;
-    /// the rest return to the bottom of the Common Deck.
+    /// The Moon (18): give a meaningful gift (minor cards and/or reagents) to another player.
     /// </summary>
-    public sealed class FateMoonDecisionCommand : IGameCommand
+    public sealed class FateMoonGiftCommand : IGameCommand
     {
-        public int PlayerId { get; }
-        /// <summary>Exactly 2 card instance IDs to keep in Hand.</summary>
-        public IReadOnlyList<string> KeepCardIds { get; }
+        public int GiverId { get; }
+        public int RecipientId { get; }
+        public IReadOnlyList<string> CardIds { get; }
+        public IReadOnlyDictionary<ReagentType, int> Reagents { get; }
 
-        public FateMoonDecisionCommand(int playerId, IReadOnlyList<string> keepCardIds)
+        public FateMoonGiftCommand(int giverId, int recipientId,
+            IReadOnlyList<string> cardIds,
+            IReadOnlyDictionary<ReagentType, int>? reagents = null)
         {
-            PlayerId    = playerId;
-            KeepCardIds = keepCardIds;
+            GiverId     = giverId;
+            RecipientId = recipientId;
+            CardIds     = cardIds;
+            Reagents    = reagents ?? new Dictionary<ReagentType, int>();
         }
     }
 
     /// <summary>
-    /// The Fool (0) / Lovers (6): an opponent picks a Reagent to receive.
+    /// The Fool (0) / Lovers (6): an opponent picks a Reagent to receive (Lovers only).
     /// </summary>
     public sealed class FateReagentChoiceCommand : IGameCommand
     {
@@ -32,6 +36,24 @@ namespace Kismeta.Core.Commands
         {
             PlayerId    = playerId;
             ReagentType = reagentType;
+        }
+    }
+
+    /// <summary>
+    /// Claim the Fool altar Crucible card by completing its Alchemical Formula from Spread.
+    /// </summary>
+    public sealed class ClaimFoolAltarCrucibleCommand : IGameCommand
+    {
+        public int PlayerId { get; }
+        public int DormantSlotIndex { get; }
+        public IReadOnlyList<string> AlignmentCardIds { get; }
+
+        public ClaimFoolAltarCrucibleCommand(int playerId, int dormantSlotIndex,
+            IReadOnlyList<string> alignmentCardIds)
+        {
+            PlayerId          = playerId;
+            DormantSlotIndex  = dormantSlotIndex;
+            AlignmentCardIds  = alignmentCardIds;
         }
     }
 

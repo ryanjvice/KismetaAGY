@@ -98,14 +98,51 @@ namespace Kismeta.Core.Rules
             session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.Gambit, legs, context));
         }
 
-        public static void EmitFoolGift(GameSession session, int drawerId, int recipientId, ReagentType reagentType)
+        public static void EmitFoolAltar(GameSession session, int drawerId, string? altarCardId)
         {
-            var legs = new List<ExchangeLeg>
+            if (string.IsNullOrEmpty(altarCardId))
             {
-                new(drawerId, recipientId, new[] { ExchangeItem.Reagent(reagentType) })
-            };
-            session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateFool, legs,
-                "The Fool — opponent receives a reagent"));
+                session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateFool,
+                    System.Array.Empty<ExchangeLeg>(),
+                    "The Fool — no crucible cards remained"));
+                return;
+            }
+
+            session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateFool,
+                new[] { new ExchangeLeg(PlayerExchangeEvent.SinkDeck, drawerId,
+                    new[] { ExchangeItem.Crucible(altarCardId) }) },
+                "The Fool — a Crucible card awaits on the Altar"));
+        }
+
+        public static void EmitFoolAltarClaim(GameSession session, int claimerId, string altarCardId,
+            int slotIndex, IReadOnlyList<string> alignmentCardIds)
+        {
+            var items = new List<ExchangeItem> { ExchangeItem.Crucible(altarCardId) };
+            foreach (var id in alignmentCardIds)
+                items.Add(ExchangeItem.Spread(id));
+
+            session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateFool,
+                new[] { new ExchangeLeg(claimerId, claimerId, items) },
+                $"The Fool — P{claimerId} claimed the altar card into slot {slotIndex + 1}"));
+        }
+
+        public static void EmitMoonGift(GameSession session, int giverId, int recipientId,
+            IReadOnlyList<string> cardIds, IReadOnlyDictionary<ReagentType, int> reagents)
+        {
+            var items = new List<ExchangeItem>();
+            foreach (var id in cardIds)
+                items.Add(ExchangeItem.Spread(id));
+            foreach (var kv in reagents)
+            {
+                if (kv.Value <= 0) continue;
+                items.Add(ExchangeItem.Reagent(kv.Key, kv.Value));
+            }
+
+            if (items.Count == 0) return;
+
+            session.EmitEvent(new PlayerExchangeEvent(ExchangeKind.FateMoon,
+                new[] { new ExchangeLeg(giverId, recipientId, items) },
+                "The Moon — meaningful gift exchanged"));
         }
 
         public static void EmitLoversChoice(GameSession session, int drawerId, int chooserId,

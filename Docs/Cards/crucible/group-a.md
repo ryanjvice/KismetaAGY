@@ -4,11 +4,11 @@
 
 # Crucible Group A — Beginner
 
-| **Group** | **Card** | **SP** | **AR** | **V** | **Q** | **S** | **Tot.** | **Alignment Requirement** |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **GROUP A  ·  Beginner  ·  Lead Stage  ·  2 Reagents** |
-| A | The Fool | 1 | — | — | — | 1 | 2 | Pair of Swords with the same Rank |
-| A | The Magician | — | — | — | 1 | 1 | 2 | Pair of Mercury planets (5s + Princess) |
-| A | The High Priestess | — | 1 | — | — | 1 | 2 | Pair of Moon planets (2s + Queens) |
-| A | The Empress | — | — | 1 | — | 1 | 2 | Pair of Venus planets (4s + 9s) |
-|  |  | 1 | 1 | 1 | 1 | 4 |  |  |
+| **Group**                                        | **Card**           | **SP** | **AR** | **V** | **Q** | **S** | **Tot.** | **Alignment Requirement**               |
+| ------------------------------------------------ | ------------------ | ------ | ------ | ----- | ----- | ----- | -------- | --------------------------------------- |
+| **GROUP A · Beginner · Lead Stage · 2 Reagents** |
+| A                                                | The Fool           | 1      | —      | —     | —     | 1     | 2        | Pair of Swords with the same Rank       |
+| A                                                | The Magician       | —      | —      | —     | 1     | 1     | 2        | Pair of Mercury planets (5s + Princess) |
+| A                                                | The High Priestess | —      | 1      | —     | —     | 1     | 2        | Pair of Moon planets (2s + Queens)      |
+| A                                                | The Empress        | —      | —      | 1     | —     | 1     | 2        | Pair of Venus planets (4s + 9s)         |
+|                                                  |                    | 1      | 1      | 1     | 1     | 4     |          |                                         |

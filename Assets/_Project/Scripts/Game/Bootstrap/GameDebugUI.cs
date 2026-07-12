@@ -275,17 +275,13 @@ namespace Kismeta.Game.Bootstrap
             {
                 DrawAdeptDecisionPanel(hs, pid, player);
             }
-            else if (hint == ActionHint.FateMoonDecision)
+            else if (hint == ActionHint.FateMoonGift)
             {
-                DrawFateMoonPanel(hs, pid, player, colH);
+                DrawFateMoonGiftPanel(hs, pid, player);
             }
             else if (hint == ActionHint.PriestessHarvestReturn)
             {
                 DrawPriestessReturnPanel(hs, pid, player, colH);
-            }
-            else if (hint == ActionHint.FateReagentChoice)
-            {
-                DrawFateReagentChoicePanel(hs, pid);
             }
             else if (hint == ActionHint.FateLoversChoice)
             {
@@ -499,12 +495,41 @@ namespace Kismeta.Game.Bootstrap
             if (scrollH > 0f)
             {
                 _crucibleScroll = GUILayout.BeginScrollView(_crucibleScroll, GUILayout.Height(scrollH));
+                DrawFoolAltarSection(pid, player);
                 DrawSlots();
                 GUILayout.EndScrollView();
             }
             else
             {
+                DrawFoolAltarSection(pid, player);
                 DrawSlots();
+            }
+        }
+
+        void DrawFoolAltarSection(int pid, PlayerState player)
+        {
+            var altarId = _session?.Board.FoolAltarCrucibleCardId;
+            if (string.IsNullOrEmpty(altarId)) return;
+
+            var inst = _session!.GetCard(altarId);
+            var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
+            GUILayout.Label("── FOOL ALTAR (claimable) ──");
+            GUILayout.Label(def != null ? $"{def.Name}: {def.AlchemicalFormula}" : altarId);
+            for (int i = 0; i < player.CrucibleSlots.Count; i++)
+            {
+                if (player.CrucibleSlots[i].State != CrucibleCardState.Dormant) continue;
+                int slotIndex = i;
+                if (GUILayout.Button($"Claim altar card into dormant slot {slotIndex + 1}"))
+                {
+                    var alignment = _selectedCards.Count > 0
+                        ? _selectedCards.ToList()
+                        : player.Spread.Count > 0
+                            ? new System.Collections.Generic.List<string> { player.Spread[0] }
+                            : new System.Collections.Generic.List<string>();
+                    var hs = _loop?.PendingHumanController as HotSeatController;
+                    if (hs != null)
+                        SubmitAction(hs, new ClaimFoolAltarCrucibleCommand(pid, slotIndex, alignment));
+                }
             }
         }
 
@@ -800,51 +825,57 @@ namespace Kismeta.Game.Bootstrap
             }
         }
 
-        // ── Fate: Moon decision ───────────────────────────────────────────────────
+        // ── Fate: Moon gift ───────────────────────────────────────────────────────
 
-        // Scroll position for Moon's 4-card offer list
         private Vector2 _fateMoonScroll;
-        private readonly HashSet<string> _moonKeep = new();
+        private readonly HashSet<string> _moonGiftCards = new();
 
-        private void DrawFateMoonPanel(HotSeatController hs, int pid, PlayerState player, float colH)
+        private void DrawFateMoonGiftPanel(HotSeatController hs, int pid, PlayerState player)
         {
-            GUILayout.Label("── THE MOON — Keep 2 of 4 ──");
+            int recipientId = _loop?.PendingMoonGiftRecipientId ?? -1;
+            GUILayout.Label($"── THE MOON — Gift to P{recipientId} ──");
             GUILayout.Space(4f);
-            GUILayout.Label("Select exactly 2 cards to keep. The rest return to the bottom of the deck.");
-            GUILayout.Space(4f);
-
-            // Show only the 4 Moon-specific drawn cards (tracked on BoardState)
-            var moonCards = _session?.Board.FateMoonDrawnCardIds ?? new System.Collections.Generic.List<string>();
-
-            if (moonCards.Count == 0)
-            {
-                GUILayout.Label("(Waiting for Moon cards to be drawn…)");
-                return;
-            }
+            GUILayout.Label("Select cards from Hand/Spread and/or gift 1 Salt.");
 
             _fateMoonScroll = GUILayout.BeginScrollView(_fateMoonScroll, GUILayout.Height(200f));
-            foreach (var id in moonCards)
+            foreach (var id in player.Spread)
             {
-                bool sel = _moonKeep.Contains(id);
-                string label = (sel ? "★ " : "  ") + CardLabel(id);
-                if (GUILayout.Button(label))
+                if (!IsMinorArcana(id)) continue;
+                bool sel = _moonGiftCards.Contains(id);
+                if (GUILayout.Button((sel ? "★ " : "  ") + "[Spread] " + CardLabel(id)))
                 {
-                    if (sel) _moonKeep.Remove(id);
-                    else     _moonKeep.Add(id);
+                    if (sel) _moonGiftCards.Remove(id);
+                    else _moonGiftCards.Add(id);
+                }
+            }
+            foreach (var id in player.Hand)
+            {
+                if (!IsMinorArcana(id)) continue;
+                bool sel = _moonGiftCards.Contains(id);
+                if (GUILayout.Button((sel ? "★ " : "  ") + "[Hand] " + CardLabel(id)))
+                {
+                    if (sel) _moonGiftCards.Remove(id);
+                    else _moonGiftCards.Add(id);
                 }
             }
             GUILayout.EndScrollView();
 
-            GUILayout.Label($"Keeping: {_moonKeep.Count} / 2");
-
-            GUI.enabled = _moonKeep.Count == 2;
-            if (GUILayout.Button("Confirm Keep"))
+            bool giftSalt = _moonGiftCards.Count == 0;
+            if (GUILayout.Button(giftSalt ? "Gift 1 Salt (no cards selected)" : "Confirm card gift"))
             {
-                var keep = _moonKeep.ToList();
-                _moonKeep.Clear();
-                SubmitAction(hs, new FateMoonDecisionCommand(pid, keep));
+                var reagents = giftSalt && player.GetReagent(ReagentType.Salt) > 0
+                    ? new Dictionary<ReagentType, int> { { ReagentType.Salt, 1 } }
+                    : new Dictionary<ReagentType, int>();
+                SubmitAction(hs, new FateMoonGiftCommand(pid, recipientId, _moonGiftCards.ToList(), reagents));
+                _moonGiftCards.Clear();
             }
-            GUI.enabled = true;
+        }
+
+        bool IsMinorArcana(string instanceId)
+        {
+            var inst = _session?.GetCard(instanceId);
+            var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
+            return def != null && !def.IsMajorArcana;
         }
 
         private void DrawPriestessReturnPanel(HotSeatController hs, int pid, PlayerState player, float colH)
@@ -877,27 +908,6 @@ namespace Kismeta.Game.Bootstrap
                 SubmitAction(hs, new CompletePriestessHarvestCommand(pid, returns));
             }
             GUI.enabled = true;
-        }
-
-        // ── Fate: Reagent choice (Fool / Lovers) ──────────────────────────────────
-
-        private void DrawFateReagentChoicePanel(HotSeatController hs, int pid)
-        {
-            GUILayout.Label("── FATE: Choose 1 Reagent ──");
-            GUILayout.Space(6f);
-            GUILayout.Label("Pick one Reagent to receive:");
-            GUILayout.Space(4f);
-
-            var reagents = new[]
-            {
-                ReagentType.Salt, ReagentType.Sulphur, ReagentType.AquaRegia,
-                ReagentType.Vitriol, ReagentType.Quicksilver
-            };
-            foreach (var r in reagents)
-            {
-                if (GUILayout.Button($"Take 1 {r}"))
-                    SubmitAction(hs, new FateReagentChoiceCommand(pid, r));
-            }
         }
 
         private void DrawFateLoversTargetPickPanel(HotSeatController hs, int pid)
@@ -1601,14 +1611,6 @@ namespace Kismeta.Game.Bootstrap
         }
 
         // ── Card helpers ─────────────────────────────────────────────────────────
-
-        /// <summary>Returns true when the card instance is a minor arcana (not Fate or Adept).</summary>
-        private bool IsMinorArcana(string instanceId)
-        {
-            var inst = _session?.GetCard(instanceId);
-            var def  = inst != null ? _db?.GetById(inst.DefinitionId) : null;
-            return def != null && !def.IsMajorArcana;
-        }
 
         private bool IsAdeptArcana(string instanceId)
         {

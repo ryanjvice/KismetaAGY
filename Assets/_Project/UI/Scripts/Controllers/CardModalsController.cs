@@ -16,13 +16,13 @@ namespace Kismeta.UI.Controllers
         public enum Modal
         {
             Inspect, Adept, Fate,
-            Moon, ReagentChoice, LoversTarget, LoversChoice
+            Moon, LoversTarget, LoversChoice, FoolAltar
         }
 
         static readonly string[] AllModalRoots =
         {
             "inspect-modal", "adept-modal", "fate-modal",
-            "moon-modal", "fate-reagent-modal", "lovers-target-modal", "lovers-choice-modal"
+            "moon-modal", "lovers-target-modal", "lovers-choice-modal", "fool-altar-modal"
         };
 
         GameSession? _session;
@@ -30,7 +30,11 @@ namespace Kismeta.UI.Controllers
         string? _inspectCardId;
         string? _adeptCardId;
         readonly HashSet<string> _payment = new();
-        readonly HashSet<string> _moonKeep = new();
+        readonly HashSet<string> _moonGiftCards = new();
+        readonly Dictionary<ReagentType, int> _moonGiftReagents = new();
+        readonly HashSet<string> _foolAltarAlignment = new();
+        int _moonGiftRecipientId = -1;
+        int _foolAltarSlotIndex = -1;
         string? _swapOutAdeptId;
         int _playerId = -1;
         int _loversDrawerId = -1;
@@ -47,7 +51,8 @@ namespace Kismeta.UI.Controllers
             Btn("adept-place")!.clicked += OnAdeptPlace;
             Btn("adept-hold")!.clicked += OnAdeptHold;
             Btn("fate-accept")!.clicked += () => OnFateAccept?.Invoke();
-            Btn("moon-confirm")!.clicked += OnMoonConfirm;
+            Btn("moon-confirm")!.clicked += OnMoonGiftConfirm;
+            Btn("fool-altar-confirm")!.clicked += OnFoolAltarConfirm;
             Btn("lovers-draw-btn")!.clicked += OnLoversDraw;
         }
 
@@ -60,9 +65,9 @@ namespace Kismeta.UI.Controllers
                 Modal.Adept => "adept-modal",
                 Modal.Fate => "fate-modal",
                 Modal.Moon => "moon-modal",
-                Modal.ReagentChoice => "fate-reagent-modal",
                 Modal.LoversTarget => "lovers-target-modal",
                 Modal.LoversChoice => "lovers-choice-modal",
+                Modal.FoolAltar => "fool-altar-modal",
                 _ => "inspect-modal"
             };
             foreach (var name in AllModalRoots)
@@ -140,65 +145,45 @@ namespace Kismeta.UI.Controllers
             }
         }
 
-        public void BindMoonDecision(GameSession session, CommandBridge bridge)
+        public void BindMoonGift(GameSession session, CommandBridge bridge, int recipientId)
         {
             _session = session;
             _bridge = bridge;
             _playerId = ResolvePlayerId(session, bridge);
-            _moonKeep.Clear();
+            _moonGiftRecipientId = recipientId;
+            _moonGiftCards.Clear();
+            _moonGiftReagents.Clear();
             Show(Modal.Moon);
-            RefreshMoonUi();
+
+            if (Lbl("moon-sr") != null)
+                Lbl("moon-sr")!.text =
+                    $"Give a meaningful gift to {PlayerUiNames.ShortName(recipientId)} — cards and/or reagents.";
+            RefreshMoonGiftUi();
         }
 
-        public void BindReagentChoice(GameSession session, CommandBridge bridge, string? fateInstanceId = null)
+        public void BindFoolAltarClaim(GameSession session, CommandBridge bridge, int slotIndex)
         {
             _session = session;
             _bridge = bridge;
             _playerId = ResolvePlayerId(session, bridge);
-            Show(Modal.ReagentChoice);
+            _foolAltarSlotIndex = slotIndex;
+            _foolAltarAlignment.Clear();
+            Show(Modal.FoolAltar);
 
-            var def = ResolveFateCardDefinition(session, fateInstanceId);
-            if (def != null)
-            {
-                if (Lbl("reagent-card-name") != null)
-                    Lbl("reagent-card-name")!.text = def.Name.EndsWith(".") ? def.Name : $"{def.Name}.";
-                if (Lbl("reagent-card-description") != null)
-                    Lbl("reagent-card-description")!.text = def.EffectText;
-                if (Lbl("reagent-sr") != null)
-                    Lbl("reagent-sr")!.text =
-                        $"Choose one reagent to receive from {def.Name}. {def.EffectText}";
-
-                var artHost = El("reagent-card-art");
-                if (artHost != null)
-                    CardArtBindings.Apply(artHost, Lbl("reagent-card-art-fallback"), def);
-            }
-
-            var host = El("reagent-buttons");
-            if (host == null) return;
-            FateDecisionBindings.PopulateReagentButtons(host, type =>
-            {
-                if (_bridge != null && _playerId >= 0
-                    && _bridge.TrySubmit(new FateReagentChoiceCommand(_playerId, type)))
-                    OnFateDecisionCompleted?.Invoke();
-            });
-        }
-
-        static CardDefinition? ResolveFateCardDefinition(GameSession session, string? fateInstanceId)
-        {
+            var altarId = session.Board.FoolAltarCrucibleCardId;
             var db = session.Rules?.CardDatabase;
-            if (db == null) return null;
+            var def = altarId != null && session.GetCard(altarId) is { } inst && db != null
+                ? db.GetById(inst.DefinitionId)
+                : null;
 
-            if (!string.IsNullOrEmpty(fateInstanceId))
-            {
-                var inst = session.GetCard(fateInstanceId);
-                if (inst != null)
-                {
-                    var def = db.GetById(inst.DefinitionId);
-                    if (def != null) return def;
-                }
-            }
+            if (Lbl("fool-altar-name") != null)
+                Lbl("fool-altar-name")!.text = def?.Name ?? "Altar Crucible";
+            if (Lbl("fool-altar-formula") != null)
+                Lbl("fool-altar-formula")!.text = def?.AlchemicalFormula ?? "";
+            if (Lbl("fool-altar-slot") != null)
+                Lbl("fool-altar-slot")!.text = $"Replacing dormant slot {slotIndex + 1}";
 
-            return db.GetById("major.fate.0");
+            RefreshFoolAltarUi();
         }
 
         public void BindLoversTarget(GameSession session, CommandBridge bridge)
@@ -240,24 +225,69 @@ namespace Kismeta.UI.Controllers
             });
         }
 
-        void RefreshMoonUi()
+        void RefreshMoonGiftUi()
         {
-            if (_session == null) return;
-            var host = El("moon-cards");
-            if (host == null) return;
-            FateDecisionBindings.PopulateMoonCards(host, _session, _moonKeep, RefreshMoonUi);
+            if (_session == null || _playerId < 0) return;
+            var cardHost = El("moon-cards");
+            var reagentHost = El("moon-reagents");
+            if (cardHost != null)
+                FateDecisionBindings.PopulateMoonGiftCards(
+                    cardHost, _session, _playerId, _moonGiftCards, RefreshMoonGiftUi);
+            if (reagentHost != null)
+                FateDecisionBindings.PopulateMoonGiftReagents(
+                    reagentHost, _moonGiftReagents, _playerId, _session, RefreshMoonGiftUi);
+
+            int reagentTotal = 0;
+            foreach (var kv in _moonGiftReagents)
+                reagentTotal += kv.Value;
+
+            int total = _moonGiftCards.Count + reagentTotal;
             if (Lbl("moon-count") != null)
-                Lbl("moon-count")!.text = $"Keeping: {_moonKeep.Count} / 2 · Major Arcana cannot be kept";
-            Btn("moon-confirm")?.SetEnabled(_moonKeep.Count == 2);
+                Lbl("moon-count")!.text =
+                    $"Gift to {PlayerUiNames.ShortName(_moonGiftRecipientId)}: {total} item{(total == 1 ? "" : "s")} selected";
+            Btn("moon-confirm")?.SetEnabled(total >= 1);
         }
 
-        void OnMoonConfirm()
+        void RefreshFoolAltarUi()
         {
-            if (_bridge == null || _playerId < 0 || _moonKeep.Count != 2) return;
-            var keep = new List<string>(_moonKeep);
-            if (_bridge.TrySubmit(new FateMoonDecisionCommand(_playerId, keep)))
+            if (_session == null || _playerId < 0) return;
+            var host = El("fool-altar-cards");
+            if (host == null) return;
+            FateDecisionBindings.PopulateAlignmentCards(
+                host, _session, _playerId, _foolAltarAlignment, RefreshFoolAltarUi);
+            Btn("fool-altar-confirm")?.SetEnabled(_foolAltarAlignment.Count > 0);
+        }
+
+        void OnMoonGiftConfirm()
+        {
+            if (_bridge == null || _playerId < 0 || _moonGiftRecipientId < 0) return;
+            int reagentTotal = 0;
+            foreach (var kv in _moonGiftReagents)
+                reagentTotal += kv.Value;
+            if (_moonGiftCards.Count == 0 && reagentTotal == 0) return;
+
+            var cmd = new FateMoonGiftCommand(
+                _playerId, _moonGiftRecipientId,
+                new List<string>(_moonGiftCards),
+                new Dictionary<ReagentType, int>(_moonGiftReagents));
+            if (_bridge.TrySubmit(cmd))
             {
-                _moonKeep.Clear();
+                _moonGiftCards.Clear();
+                _moonGiftReagents.Clear();
+                OnFateDecisionCompleted?.Invoke();
+            }
+        }
+
+        void OnFoolAltarConfirm()
+        {
+            if (_bridge == null || _playerId < 0 || _foolAltarSlotIndex < 0) return;
+            if (_foolAltarAlignment.Count == 0) return;
+
+            var cmd = new ClaimFoolAltarCrucibleCommand(
+                _playerId, _foolAltarSlotIndex, new List<string>(_foolAltarAlignment));
+            if (_bridge.TrySubmit(cmd))
+            {
+                _foolAltarAlignment.Clear();
                 OnFateDecisionCompleted?.Invoke();
             }
         }

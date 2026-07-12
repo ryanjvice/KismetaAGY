@@ -4,6 +4,16 @@ using Kismeta.Core.Domain;
 namespace Kismeta.Core.Entities
 {
     /// <summary>
+    /// Tracks the two-step Moon gift exchange: left neighbor → drawer, then drawer → right neighbor.
+    /// </summary>
+    public sealed class PendingMoonExchange
+    {
+        public int DrawerId { get; set; }
+        public string FateCardId { get; set; } = "";
+        public bool LeftGiftComplete { get; set; }
+    }
+
+    /// <summary>
     /// Shared board state: current Cosmic Age, common deck, stasis occupancy.
     /// </summary>
     public sealed class BoardState
@@ -30,11 +40,14 @@ namespace Kismeta.Core.Entities
         // Each entry is (playerId, fateCardId, arcanaNumber)
         public List<(int PlayerId, string FateCardId, int ArcanaNumber)> PendingFateDecisions { get; } = new();
 
+        /// <summary>Active Moon gift exchange awaiting one or two gift picks.</summary>
+        public PendingMoonExchange? PendingMoonGift { get; set; }
+
         /// <summary>
-        /// Temporarily holds the 4 card instance IDs drawn by The Moon so the UI can
-        /// present exactly those cards for the keep-2 decision. Cleared after resolution.
+        /// Crucible card on the shared Fool altar (instance id), or null when none is available.
+        /// Persists across rounds until claimed.
         /// </summary>
-        public List<string> FateMoonDrawnCardIds { get; } = new();
+        public string? FoolAltarCrucibleCardId { get; set; }
 
         /// <summary>Players who must return 2 Priestess harvest cards before Spring continues.</summary>
         public HashSet<int> PendingPriestessReturns { get; } = new();

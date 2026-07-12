@@ -15,6 +15,8 @@
             <engine:Button name="crucible-codex-close" text="&#10005;" class="crucible-codex__close" />
         </engine:VisualElement>
 
+        <engine:VisualElement name="fool-altar-banner" class="crucible-codex__fool-altar" style="display: none; margin: 8px 12px;" />
+
         <engine:ScrollView name="crucible-codex-scroll" class="crucible-codex__scroll">
             <engine:VisualElement class="crucible-codex__section-head">
                 <engine:Label text="Activation formulas" class="crucible-codex__section-header" />

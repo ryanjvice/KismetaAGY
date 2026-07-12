@@ -6,9 +6,9 @@
 
 **Group Structure**
 
-| **Group** | **Arcana** | **Difficulty** | **Cards** | **Game Modes** |
-| --- | --- | --- | --- | --- |
-| **Group A** | (0–3) | *Beginner* | 4 cards | Heavy use in Quickplay; included in all build types at low counts. |
-| **Group B** | (4–10) | *Standard* | 7 cards | Core of Standard and Magnus Alchemist builds. |
-| **Group C** | (11–17) | *Advanced* | 7 cards | Higher distribution in Standard; heavier presence in Magnus Alchemist. |
-| **Group D** | (18–21) | *Mastery* | 4 cards | Magnus Alchemist builds only. |
+| **Group**   | **Arcana** | **Difficulty** | **Cards** | **Game Modes**                                                         |
+| ----------- | ---------- | -------------- | --------- | ---------------------------------------------------------------------- |
+| **Group A** | (0–3)      | _Beginner_     | 4 cards   | Heavy use in Quickplay; included in all build types at low counts.     |
+| **Group B** | (4–10)     | _Standard_     | 7 cards   | Core of Standard and Magnus Alchemist builds.                          |
+| **Group C** | (11–17)    | _Advanced_     | 7 cards   | Higher distribution in Standard; heavier presence in Magnus Alchemist. |
+| **Group D** | (18–21)    | _Mastery_      | 4 cards   | Magnus Alchemist builds only.                                          |

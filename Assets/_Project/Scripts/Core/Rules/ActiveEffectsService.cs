@@ -280,6 +280,7 @@ namespace Kismeta.Core.Rules
             var cosmicAge = BuildCosmicAgeFeatured(session, cosmic, planet, element);
             var sections = new List<ActiveEffectSection>
             {
+                BuildFoolAltarSection(session),
                 BuildAstralHousesSection(session, player, cosmic),
                 BuildAdeptsSection(session, player),
                 BuildFatesSection(session, player),
@@ -807,6 +808,33 @@ namespace Kismeta.Core.Rules
                 "adepts",
                 "Adepts",
                 $"{items.Count} / {limit}",
+                items);
+        }
+
+        static ActiveEffectSection BuildFoolAltarSection(GameSession session)
+        {
+            var items = new List<ActiveEffectItem>();
+            var altarId = session.Board.FoolAltarCrucibleCardId;
+            if (!string.IsNullOrEmpty(altarId))
+            {
+                var db = session.Rules?.CardDatabase;
+                var inst = session.GetCard(altarId);
+                var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
+                string description = def != null
+                    ? $"{def.AlchemicalFormula} — first valid claim replaces a dormant Crucible card."
+                    : "Awaiting claim.";
+                items.Add(new ActiveEffectItem(
+                    altarId,
+                    def?.Name ?? "Fool Altar",
+                    description,
+                    new ActiveEffectBadge("altar · claimable", ActiveEffectBadgeTone.Pending),
+                    iconKey: "fate-0"));
+            }
+
+            return new ActiveEffectSection(
+                "fool-altar",
+                "Fool Altar",
+                items.Count.ToString(),
                 items);
         }
 

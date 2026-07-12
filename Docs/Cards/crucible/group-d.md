@@ -4,10 +4,10 @@
 
 # Crucible Group D — Mastery
 
-| **Group** | **Card** | **SP** | **AR** | **V** | **Q** | **S** | **Tot.** | **Alignment Requirement** |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| D | The Moon | — | 3 | — | 1 | — | 4 | Four Mercury planets (5s + Princesses) + Two Cups |
-| D | The Sun | 3 | — | 1 | — | — | 4 | Four Wands + Two Sun cards (Aces) |
-| D | Judgement | — | — | 2 | 2 | — | 4 | Four Swords + Two Venus planets (4s or 9s) |
-| D | The World | 1 | 1 | 1 | 1 | — | 4 | Four Saturn planets (6s/10s/Kings) + Two Pentacles |
-|  |  | 4 | 4 | 4 | 4 | — |  |  |
+| **Group** | **Card**  | **SP** | **AR** | **V** | **Q** | **S** | **Tot.** | **Alignment Requirement**                          |
+| --------- | --------- | ------ | ------ | ----- | ----- | ----- | -------- | -------------------------------------------------- |
+| D         | The Moon  | —      | 3      | —     | 1     | —     | 4        | Four Mercury planets (5s + Princesses) + Two Cups  |
+| D         | The Sun   | 3      | —      | 1     | —     | —     | 4        | Four Wands + Two Sun cards (Aces)                  |
+| D         | Judgement | —      | —      | 2     | 2     | —     | 4        | Four Swords + Two Venus planets (4s or 9s)         |
+| D         | The World | 1      | 1      | 1     | 1     | —     | 4        | Four Saturn planets (6s/10s/Kings) + Two Pentacles |
+|           |           | 4      | 4      | 4     | 4     | —     |          |                                                    |

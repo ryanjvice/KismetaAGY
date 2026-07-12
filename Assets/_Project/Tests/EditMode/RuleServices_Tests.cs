@@ -54,7 +54,9 @@ namespace Kismeta.Core.Tests
                 astralHouse:   new AstralHouseService(db),
                 combat:        new CombatRules(seed),
                 trade:         new TradeService(db),
-                adept:         new AdeptRules(db));
+                adept:         new AdeptRules(db),
+                fateResolver:  new FateCardResolver(db),
+                cosmicEffect:  new CosmicEffectService());
         }
 
         private static GameSession BuildSession(CardDatabase db, CrucibleCodexDatabase codexDb,
@@ -1042,45 +1044,127 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
-        public void MoonDraw_MajorArcana_NotInMoonPool()
+        public void ResolveJudgement_LitCauldrons_DrawsMatchingCount()
         {
-            var db      = LoadDb();  var codexDb = LoadCodexDb();
+            var db = LoadDb(); var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb);
-            var player  = session.Players[0];
+            var player = session.Players[0];
+            player.LightCauldron(Suit.Wands);
+            player.LightCauldron(Suit.Cups);
 
-            // Clear deck and place 1 Fate then 3 minors so Moon's 4-draw has mixed types
             session.Board.CommonDeck.Clear();
-
-            var fate = new CardInstance("fate-moon-01", "major.fate.11", CardZone.Deck, -1);
-            session.RegisterCard(fate);
-            session.Board.CommonDeck.Push(fate.InstanceId); // drawn last (stack: last-in first-out)
-
             for (int i = 0; i < 3; i++)
             {
-                var minor = new CardInstance($"minor-moon-0{i}", "minor.cups.seven.1", CardZone.Deck, -1);
+                var minor = new CardInstance($"jud-minor-{i}", "minor.cups.seven.1", CardZone.Deck, -1);
                 session.RegisterCard(minor);
                 session.Board.CommonDeck.Push(minor.InstanceId);
             }
-            // Deck top → minor-moon-02, minor-moon-01, minor-moon-00, fate-moon-01
 
-            session.Board.FateMoonDrawnCardIds.Clear();
-            var harvest = session.Rules!.Harvest;
-            // Simulate what GameLoop does for Moon: draw 4, collect minors into pool
-            for (int i = 0; i < 4 && session.Board.CommonDeck.Count > 0; i++)
+            int handBefore = player.Hand.Count;
+            var resolver = new FateCardResolver(db);
+            Assert.IsTrue(resolver.Resolve(session, 0, "judgement-fate", 20));
+
+            Assert.AreEqual(handBefore + 2, player.Hand.Count,
+                "Judgement should draw one card per lit cauldron.");
+        }
+
+        [Test]
+        public void MoonGift_EmptyGift_Rejected()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, playerCount: 3);
+            session.Board.PendingMoonGift = new PendingMoonExchange
             {
-                var id = session.Board.CommonDeck.Pop();
-                harvest.RouteDrawnCard(session, 0, id, session.Board.FateMoonDrawnCardIds);
-            }
+                DrawerId = 1,
+                FateCardId = "moon-fate",
+                LeftGiftComplete = false
+            };
 
-            // The Fate must not be in the moon pool and must be in Arcanum
-            Assert.IsFalse(session.Board.FateMoonDrawnCardIds.Contains(fate.InstanceId),
-                "Fate card must NOT appear in the Moon draw pool.");
-            Assert.IsTrue(player.Arcanum.Contains(fate.InstanceId),
-                "Fate card must be routed to Arcanum during Moon draw.");
+            var resolver = new FateCardResolver(db);
+            var result = resolver.HandleMoonGift(session, 0, 1,
+                Array.Empty<string>(), new Dictionary<ReagentType, int>());
 
-            // All 3 minors should be in the pool
-            Assert.AreEqual(3, session.Board.FateMoonDrawnCardIds.Count,
-                "Only the 3 minor arcana should be in the Moon draw pool.");
+            Assert.IsFalse(result.IsOk);
+        }
+
+        [Test]
+        public void MoonGift_TransfersCardsAndReagents()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb, playerCount: 3);
+            var giver = session.Players[0];
+            var receiver = session.Players[1];
+
+            var card = new CardInstance("moon-gift-card", "minor.cups.seven.1", CardZone.Spread, 0);
+            session.RegisterCard(card);
+            giver.Spread.Add(card.InstanceId);
+            giver.AddReagent(ReagentType.Salt, 2);
+
+            session.Board.PendingMoonGift = new PendingMoonExchange
+            {
+                DrawerId = 1,
+                FateCardId = "moon-fate",
+                LeftGiftComplete = false
+            };
+
+            var resolver = new FateCardResolver(db);
+            var result = resolver.HandleMoonGift(session, 0, 1,
+                new List<string> { card.InstanceId },
+                new Dictionary<ReagentType, int> { { ReagentType.Salt, 1 } });
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsTrue(receiver.Spread.Contains(card.InstanceId));
+            Assert.AreEqual(1, giver.GetReagent(ReagentType.Salt));
+            Assert.AreEqual(1, receiver.GetReagent(ReagentType.Salt));
+        }
+
+        [Test]
+        public void ResolveFool_PlacesCrucibleOnAltar()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+
+            var deckCard = new CardInstance("fool-deck-crucible", "crucible.a.0", CardZone.Deck, -1);
+            session.RegisterCard(deckCard);
+            session.Board.CrucibleDeck.Push(deckCard.InstanceId);
+
+            var resolver = new FateCardResolver(db);
+            Assert.IsTrue(resolver.Resolve(session, 0, "fool-fate", 0));
+
+            Assert.IsNotNull(session.Board.FoolAltarCrucibleCardId);
+            Assert.AreEqual(deckCard.InstanceId, session.Board.FoolAltarCrucibleCardId);
+            Assert.AreEqual(0, session.Board.CrucibleDeck.Count);
+            var inst = session.GetCard(session.Board.FoolAltarCrucibleCardId!);
+            Assert.AreEqual(CardZone.Altar, inst!.Zone);
+        }
+
+        [Test]
+        public void FoolAltarClaim_SwapsDormantSlot()
+        {
+            var db = LoadDb(); var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player = session.Players[0];
+
+            var altarInst = new CardInstance("altar-crucible", "crucible.a.0", CardZone.Altar, -1);
+            session.RegisterCard(altarInst);
+            session.Board.FoolAltarCrucibleCardId = altarInst.InstanceId;
+
+            var oldSlotId = player.CrucibleSlots[0].CardInstanceId;
+            var s1 = new CardInstance("align-1", "minor.swords.two.1", CardZone.Spread, 0);
+            var s2 = new CardInstance("align-2", "minor.swords.two.2", CardZone.Spread, 0);
+            session.RegisterCard(s1);
+            session.RegisterCard(s2);
+            player.Spread.Add(s1.InstanceId);
+            player.Spread.Add(s2.InstanceId);
+
+            var resolver = new FateCardResolver(db);
+            var result = resolver.TryClaimFoolAltar(session, 0, 0,
+                new List<string> { s1.InstanceId, s2.InstanceId });
+
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.IsNull(session.Board.FoolAltarCrucibleCardId);
+            Assert.AreEqual(altarInst.InstanceId, player.CrucibleSlots[0].CardInstanceId);
+            Assert.Contains(oldSlotId, session.Board.CrucibleDiscard);
         }
 
         // ─── Winter Phase tests ───────────────────────────────────────────────────
@@ -1830,11 +1914,18 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
-        public void FoolReagentChoice_EmitsPlayerExchangeEvent()
+        public void MoonGift_EmitsPlayerExchangeEvent()
         {
             var db = LoadDb(); var codexDb = LoadCodexDb();
             var session = SetupSession(db, codexDb, playerCount: 3);
-            session.Board.PendingFateDecisions.Add((0, "fool-fate", 0));
+            var giver = session.Players[0];
+            giver.AddReagent(ReagentType.Salt, 1);
+            session.Board.PendingMoonGift = new PendingMoonExchange
+            {
+                DrawerId = 1,
+                FateCardId = "moon-fate",
+                LeftGiftComplete = false
+            };
 
             var resolver = new FateCardResolver(db);
             PlayerExchangeEvent? exchange = null;
@@ -1844,15 +1935,14 @@ namespace Kismeta.Core.Tests
             }
             session.OnEvent += Handler;
 
-            var result = resolver.HandleFoolReagentChoice(session, 1, ReagentType.Salt);
+            var result = resolver.HandleMoonGift(session, 0, 1,
+                Array.Empty<string>(),
+                new Dictionary<ReagentType, int> { { ReagentType.Salt, 1 } });
             session.OnEvent -= Handler;
 
             Assert.IsTrue(result.IsOk, result.Message);
             Assert.NotNull(exchange);
-            Assert.AreEqual(ExchangeKind.FateFool, exchange!.Kind);
-            Assert.AreEqual(0, exchange.Legs[0].FromPlayerId);
-            Assert.AreEqual(1, exchange.Legs[0].ToPlayerId);
-            Assert.AreEqual(ReagentType.Salt, exchange.Legs[0].Items[0].ReagentType);
+            Assert.AreEqual(ExchangeKind.FateMoon, exchange!.Kind);
         }
 
         // ─── SessionInventoryAudit tests ───────────────────────────────────────────
@@ -1897,32 +1987,8 @@ namespace Kismeta.Core.Tests
             AssertInventoryConsistent(session, "after FreeArrested");
         }
 
-        [Test]
-        public void MoonDecision_InvalidKeepCount_LeavesPoolIntact()
-        {
-            var db = LoadDb(); var codexDb = LoadCodexDb();
-            var session = SetupSession(db, codexDb);
-            var player = session.Players[0];
-            session.Board.PendingFateDecisions.Add((0, "fate-moon", 18));
-            var moonIds = new List<string>();
-            for (int i = 0; i < 4; i++)
-            {
-                string id = $"moon-{i}";
-                var c = new CardInstance(id, "minor.cups.seven.1", CardZone.Hand, 0);
-                session.RegisterCard(c);
-                player.Hand.Add(id);
-                session.Board.FateMoonDrawnCardIds.Add(id);
-                moonIds.Add(id);
-            }
 
-            var resolver = new FateCardResolver(db);
-            var result = resolver.HandleMoonDecision(session, 0, new List<string> { moonIds[0] });
-
-            Assert.IsFalse(result.IsOk, "Moon must require exactly 2 kept cards.");
-            Assert.AreEqual(4, session.Board.FateMoonDrawnCardIds.Count);
-            Assert.AreEqual(4, player.Hand.Count);
-            AssertInventoryConsistent(session, "after invalid Moon decision");
-        }
+        // ─── SessionInventoryAudit tests ───────────────────────────────────────────
 
         [Test]
         public void Duel_AttackerWins_InventoryConsistent()

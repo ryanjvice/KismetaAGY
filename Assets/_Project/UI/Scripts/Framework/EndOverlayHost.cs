@@ -226,22 +226,22 @@ namespace Kismeta.UI
                 _modals?.BindFate(_session, fateInstanceId, arcanaNum);
         }
 
-        public void ShowMoonDecision()
+        public void ShowMoonGift(int recipientId)
         {
             EnsureControllers();
             _reopenCardTableAfterInspect = false;
             ShowOverlay(_cardModals, _modals, WireModals, ActiveOverlay.CardModals);
             if (_session != null && _bridge != null)
-                _modals?.BindMoonDecision(_session, _bridge);
+                _modals?.BindMoonGift(_session, _bridge, recipientId);
         }
 
-        public void ShowFateReagentChoice(string? fateInstanceId = null)
+        public void ShowFoolAltarClaim(int dormantSlotIndex)
         {
             EnsureControllers();
             _reopenCardTableAfterInspect = false;
             ShowOverlay(_cardModals, _modals, WireModals, ActiveOverlay.CardModals);
             if (_session != null && _bridge != null)
-                _modals?.BindReagentChoice(_session, _bridge, fateInstanceId);
+                _modals?.BindFoolAltarClaim(_session, _bridge, dormantSlotIndex);
         }
 
         public void ShowLoversTargetPick()
@@ -372,6 +372,7 @@ namespace Kismeta.UI
         {
             if (_crucibleCodexCtrl == null) return;
             _crucibleCodexCtrl.OnClose = Dismiss;
+            _crucibleCodexCtrl.OnClaimFoolAltar = slotIndex => ShowFoolAltarClaim(slotIndex);
         }
 
         void WireProtectiveWards()

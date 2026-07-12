@@ -55,6 +55,9 @@ namespace Kismeta.Core.Players
         /// </summary>
         public string? PendingCardId { get; private set; }
 
+        /// <summary>When PendingHint is FateMoonGift: the recipient of this gift leg.</summary>
+        public int PendingMoonGiftRecipientId { get; private set; } = -1;
+
         /// <summary>Fired on every log-worthy event (phase changes, errors, etc.).</summary>
         public event Action<string>? OnLog;
 
@@ -303,30 +306,7 @@ namespace Kismeta.Core.Players
                 switch (arcanaNum)
                 {
                     case 18:
-                        Log($"Spring — Fate: The Moon — P{pid} draws 4, keeps 2");
-                        _session.Board.FateMoonDrawnCardIds.Clear();
-                        DrawCards(pid, 4, _session.Board.FateMoonDrawnCardIds);
-                        var moonCmd = await RequestAsync(pid, ActionHint.FateMoonDecision, ct, fateCardId);
-                        var moonResult = Apply(moonCmd);
-                        if (moonResult.IsOk)
-                            _session.Board.FateMoonDrawnCardIds.Clear();
-                        else
-                        {
-                            pending.Add((pid, fateCardId, arcanaNum));
-                            Log($"[WARN] Moon decision rejected: {moonResult.Message}");
-                        }
-                        break;
-
-                    case 0:
-                        Log($"Spring — Fate: The Fool — P{pid} draws 2");
-                        DrawCards(pid, 2);
-                        foreach (var opp in _session.Players)
-                        {
-                            if (opp.PlayerId == pid || ct.IsCancellationRequested) continue;
-                            Log($"Spring — Fate: The Fool — P{opp.PlayerId} picks a Reagent");
-                            var reagentCmd = await RequestAsync(opp.PlayerId, ActionHint.FateReagentChoice, ct, fateCardId);
-                            Apply(reagentCmd);
-                        }
+                        await ResolveMoonGiftExchangeAsync(pid, fateCardId, ct, pending, arcanaNum);
                         break;
 
                     case 6:
@@ -388,27 +368,7 @@ namespace Kismeta.Core.Players
                 switch (arcanaNum)
                 {
                     case 18:
-                        Log($"Spring — Fate: The Moon — P{playerId} draws 4, keeps 2");
-                        _session.Board.FateMoonDrawnCardIds.Clear();
-                        DrawCards(playerId, 4, _session.Board.FateMoonDrawnCardIds);
-                        var moonCmd = await RequestAsync(playerId, ActionHint.FateMoonDecision, ct, fateCardId);
-                        var moonResult = Apply(moonCmd);
-                        if (moonResult.IsOk)
-                            _session.Board.FateMoonDrawnCardIds.Clear();
-                        else
-                            Log($"[WARN] Moon decision rejected: {moonResult.Message}");
-                        break;
-
-                    case 0:
-                        Log($"Spring — Fate: The Fool — P{playerId} draws 2");
-                        DrawCards(playerId, 2);
-                        foreach (var opp in _session.Players)
-                        {
-                            if (opp.PlayerId == playerId || ct.IsCancellationRequested) continue;
-                            Log($"Spring — Fate: The Fool — P{opp.PlayerId} picks a Reagent");
-                            var reagentCmd = await RequestAsync(opp.PlayerId, ActionHint.FateReagentChoice, ct, fateCardId);
-                            Apply(reagentCmd);
-                        }
+                        await ResolveMoonGiftExchangeAsync(playerId, fateCardId, ct);
                         break;
 
                     case 6:
@@ -423,6 +383,39 @@ namespace Kismeta.Core.Players
                             Apply(new FateLoversChoiceCommand(playerId, lc.DrawCards, lc.ChosenReagent, targetId));
                         break;
                 }
+            }
+        }
+
+        async Task ResolveMoonGiftExchangeAsync(int drawerId, string fateCardId, CancellationToken ct,
+            List<(int PlayerId, string FateCardId, int ArcanaNumber)>? requeueOnFailure = null,
+            int arcanaNum = 18)
+        {
+            int n = _session.Players.Count;
+            int leftId  = (drawerId - 1 + n) % n;
+            int rightId = (drawerId + 1) % n;
+
+            Log($"Spring — Fate: The Moon — gift exchange for P{drawerId}");
+            _session.Rules?.FateResolver?.BeginMoonExchange(_session, drawerId, fateCardId);
+
+            Log($"Spring — Fate: The Moon — P{leftId} gifts P{drawerId}");
+            var leftCmd = await RequestAsync(leftId, ActionHint.FateMoonGift, ct, fateCardId, drawerId);
+            var leftResult = Apply(leftCmd);
+            if (!leftResult.IsOk)
+            {
+                _session.Board.PendingMoonGift = null;
+                requeueOnFailure?.Add((drawerId, fateCardId, arcanaNum));
+                Log($"[WARN] Moon left gift rejected: {leftResult.Message}");
+                return;
+            }
+
+            Log($"Spring — Fate: The Moon — P{drawerId} gifts P{rightId}");
+            var rightCmd = await RequestAsync(drawerId, ActionHint.FateMoonGift, ct, fateCardId, rightId);
+            var rightResult = Apply(rightCmd);
+            if (!rightResult.IsOk)
+            {
+                _session.Board.PendingMoonGift = null;
+                requeueOnFailure?.Add((drawerId, fateCardId, arcanaNum));
+                Log($"[WARN] Moon right gift rejected: {rightResult.Message}");
             }
         }
 
@@ -669,18 +662,15 @@ namespace Kismeta.Core.Players
         // ─── Controller dispatch ──────────────────────────────────────────────────
 
         private async Task<IGameCommand> RequestAsync(int playerId, ActionHint hint,
-            CancellationToken ct, string? pendingCardId = null)
+            CancellationToken ct, string? pendingCardId = null, int moonGiftRecipientId = -1)
         {
             ActivePlayerId = playerId;
             PendingCardId  = pendingCardId;
+            PendingMoonGiftRecipientId = hint == ActionHint.FateMoonGift ? moonGiftRecipientId : -1;
             var controller = _controllers[playerId];
 
             var pubView  = GamePublicView.From(_session);
             var privView = PlayerPrivateView.From(_session, playerId);
-
-            IReadOnlyList<string>? moonDrawnIds = hint == ActionHint.FateMoonDecision
-                ? _session.Board.FateMoonDrawnCardIds
-                : null;
 
             IReadOnlyList<string>? arcanumAdeptIds = null;
             if (hint == ActionHint.AdeptDecision)
@@ -698,7 +688,7 @@ namespace Kismeta.Core.Players
             }
 
             var ctx = new GameContext(pubView, privView, playerId, hint, pendingCardId,
-                moonDrawnIds, arcanumAdeptIds,
+                moonGiftRecipientId, arcanumAdeptIds,
                 _session.Rules?.CodexDatabase,
                 _session.Rules?.CardDatabase,
                 _session.Rules?.AlchemicalValidator,
@@ -720,6 +710,7 @@ namespace Kismeta.Core.Players
                 PendingHumanController = null;
                 PendingHint            = ActionHint.None;
                 PendingCardId          = null;
+                PendingMoonGiftRecipientId = -1;
                 ActivePlayerId         = -1;
             }
 
@@ -816,8 +807,7 @@ namespace Kismeta.Core.Players
         /// <summary>Future: defender responds to an Autumn forge action.</summary>
         AutumnForgeResponse,
         AdeptDecision,
-        FateMoonDecision,
-        FateReagentChoice,
+        FateMoonGift,
         FateLoversChoice,
         FateLoversTargetPick,
         PriestessHarvestReturn,

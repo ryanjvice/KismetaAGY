@@ -40,7 +40,7 @@ namespace Kismeta.Core.Rules
                 MarkEmpressReagentCommand _ => CommandResult.Ok(),
                 MarkTemperanceWildReagentCommand _ => CommandResult.Ok(),
                 MagicianSwapCommand _ => CommandResult.Ok(),
-                ProtectSpreadCardsCommand cmd => ValidatePlayerTurnInSeason(session, cmd.PlayerId, Season.Summer),
+                ProtectSpreadCardsCommand cmd => ValidatePlayerTurnInSeason(session, cmd.PlayerId, Season.Spring),
                 ShiftZodiacCommand _ => ValidateSeason(session, Season.Spring),
                 ShiftOppositionZodiacCommand cmd => ValidatePlayerTurnInSeason(session, cmd.PlayerId, Season.Autumn),
                 DevilStealCommand cmd => ValidatePlayerTurnInSeason(session, cmd.PlayerId, Season.Summer),

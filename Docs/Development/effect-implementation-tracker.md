@@ -149,8 +149,8 @@ Twelve zodiac signs map to four effect categories. Board-wide age effect plus pe
 | Wheel of Fortune | 10 | **Pipeline** | `FateCardResolver.ResolveWheelOfFortune` | Exchange overlay | No | |
 | Hanged Man | 12 | **Pipeline** | `FateCardResolver.ResolveHangedMan` (pass hands left) | Exchange overlay | No | Pass direction: see Section G |
 | Justice | 11 | **Enforced** | `FateCardResolver.ResolveJustice` → `ContestEffectFlags` | Contest UI + Active Effects | Yes | |
-| Moon | 18 | **Pipeline** | `FateCardResolver` queues; `GameLoop` / `CardModalsController` | Modal keep-2 UI | No | Returns `false` from `Resolve` |
-| Fool | 0 | **Pipeline** | `FateCardResolver` queues; opponent gift UI | Modal UI | No | |
+| Moon | 18 | **Pipeline** | `FateCardResolver.HandleMoonGift` + `GameLoop.ResolveMoonGiftExchangeAsync` | Moon gift modal | Yes | Bilateral neighbor gift exchange |
+| Fool | 0 | **Pipeline** | `FateCardResolver.ResolveFool` + `TryClaimFoolAltar` | Altar banner + claim modal | Yes | Crucible card on shared altar until claimed |
 | Lovers | 6 | **Pipeline** | `FateCardResolver` queues; choice UI | Modal UI | No | |
 
 **Adept purchase flow (all Adepts):** buy / decline / swap / arrest / refresh — **Pipeline** via `SpringRules` + `GameSession`; powers themselves mostly **UIOnly** (Section D).

@@ -6,38 +6,38 @@
 
 ### Card 1 — Active Effect
 
-| **Rank** | **CV** | **Planet** | **Type** | **Effect** |
-| --- | --- | --- | --- | --- |
-| **Ace** | 1 | *Sun* | *Entry Fee* | Discard to build an Astral House when your Zodiac die is on an Air sign. |
-| **2** | 2 | *Moon* | *Harvest* | Astral Houses on Air signs earn double at Harvest. |
-| **3** | 3 | *Jupiter* | *Build* | Craft Salt for any two Swords cards. |
-| **4** ⚠ | 4 | *Venus* | *Reversed* | **Nullify 5 of Cups** — You must offer 2 Ante Cards (instead of 1) to begin a Duel. |
-| **5** ⚠ | 5 | *Mercury* | *Reversed* | **Nullify 6 of Cups** — Pay an extra +1 Salt to start any Opposition or Gambit. |
-| **6** ⚠ | 6 | *Saturn* | *Reversed* | **Nullify 4 of Cups** — Duels you start are a best-of-3 dice roll. |
-| **7** | 7 | *Mars* | *Forge* | When you Fire the Stone, gain 1 Quicksilver. |
-| **8** | 8 | *Jupiter* | *Craft* | Reduce the cost to craft Quicksilver by -1 card (minimum 1). |
-| **9** | 9 | *Venus* | *Social* | Draw +2 Cards for each successful Duel this round. |
-| **10** | 10 | *Saturn* | *Opposition* | This card counts as a Wild Suit in Oppositions. |
-| **Princess** | 11 | *Mercury* | *Gambit* | +1 to Dice Rolls when Attacking in Gambits. |
-| **Knight** | 12 | *Mars* | *Duel* | +1 to Dice Rolls when Attacking in Duels. |
-| **Queen** | 13 | *Moon* | *Forge* | Quicksilver is Wild for Alchemical Formulas. |
-| **King** | 14 | *Saturn* | *Craft* | Discard to craft 1 Quicksilver. |
+| **Rank**     | **CV** | **Planet** | **Type**     | **Effect**                                                                          |
+| ------------ | ------ | ---------- | ------------ | ----------------------------------------------------------------------------------- |
+| **Ace**      | 1      | _Sun_      | _Entry Fee_  | Discard to build an Astral House when your Zodiac die is on an Air sign.            |
+| **2**        | 2      | _Moon_     | _Harvest_    | Astral Houses on Air signs earn double at Harvest.                                  |
+| **3**        | 3      | _Jupiter_  | _Build_      | Craft Salt for any two Swords cards.                                                |
+| **4** ⚠      | 4      | _Venus_    | _Reversed_   | **Nullify 5 of Cups** — You must offer 2 Ante Cards (instead of 1) to begin a Duel. |
+| **5** ⚠      | 5      | _Mercury_  | _Reversed_   | **Nullify 6 of Cups** — Pay an extra +1 Salt to start any Opposition or Gambit.     |
+| **6** ⚠      | 6      | _Saturn_   | _Reversed_   | **Nullify 4 of Cups** — Duels you start are a best-of-3 dice roll.                  |
+| **7**        | 7      | _Mars_     | _Forge_      | When you Fire the Stone, gain 1 Quicksilver.                                        |
+| **8**        | 8      | _Jupiter_  | _Craft_      | Reduce the cost to craft Quicksilver by -1 card (minimum 1).                        |
+| **9**        | 9      | _Venus_    | _Social_     | Draw +2 Cards for each successful Duel this round.                                  |
+| **10**       | 10     | _Saturn_   | _Opposition_ | This card counts as a Wild Suit in Oppositions.                                     |
+| **Princess** | 11     | _Mercury_  | _Gambit_     | +1 to Dice Rolls when Attacking in Gambits.                                         |
+| **Knight**   | 12     | _Mars_     | _Duel_       | +1 to Dice Rolls when Attacking in Duels.                                           |
+| **Queen**    | 13     | _Moon_     | _Forge_      | Quicksilver is Wild for Alchemical Formulas.                                        |
+| **King**     | 14     | _Saturn_   | _Craft_      | Discard to craft 1 Quicksilver.                                                     |
 
 ### Card 2 — Wildcard Link + Active Effect
 
-| **Rank** | **CV** | **Planet** | **Wildcard Link** | **#** | **Active Effect** |
-| --- | --- | --- | --- | --- | --- |
-| **Ace** | 1 | Sun | — |  | +2 Bonus Harvest Cards when the Cosmic Age's Element is Air. |
-| **2** | 2 | Moon | The High Priestess | 2 | Wildcard for The High Priestess. |
-| **3** | 3 | Jupiter | Justice | 11 | Wildcard for Justice. |
-| **4** | 4 | Venus | Justice | 11 | Wildcard for Justice. |
-| **5** | 5 | Mercury | The World | 21 | Wildcard for The World. |
-| **6** | 6 | Saturn | Strength | 8 | Wildcard for Strength. |
-| **7** | 7 | Mars | Strength | 8 | Wildcard for Strength. |
-| **8** | 8 | Jupiter | Death | 13 | Wildcard for Death. |
-| **9** | 9 | Venus | The Tower | 16 | Wildcard for The Tower. |
-| **10** | 10 | Saturn | The Tower | 16 | Wildcard for The Tower. |
-| **Princess** | 11 | Mercury | The Sun | 19 | Wildcard for The Sun. |
-| **Knight** | 12 | Mars | The Star | 17 | Wildcard for The Star. |
-| **Queen** | 13 | Moon | — |  | Increase your Spread Limit by +1 at Round end. |
-| **King** | 14 | Saturn | — |  | Swords are protected from Duels. This card remains vulnerable. |
+| **Rank**     | **CV** | **Planet** | **Wildcard Link**  | **#** | **Active Effect**                                              |
+| ------------ | ------ | ---------- | ------------------ | ----- | -------------------------------------------------------------- |
+| **Ace**      | 1      | Sun        | —                  |       | +2 Bonus Harvest Cards when the Cosmic Age's Element is Air.   |
+| **2**        | 2      | Moon       | The High Priestess | 2     | Wildcard for The High Priestess.                               |
+| **3**        | 3      | Jupiter    | Justice            | 11    | Wildcard for Justice.                                          |
+| **4**        | 4      | Venus      | Justice            | 11    | Wildcard for Justice.                                          |
+| **5**        | 5      | Mercury    | The World          | 21    | Wildcard for The World.                                        |
+| **6**        | 6      | Saturn     | Strength           | 8     | Wildcard for Strength.                                         |
+| **7**        | 7      | Mars       | Strength           | 8     | Wildcard for Strength.                                         |
+| **8**        | 8      | Jupiter    | Death              | 13    | Wildcard for Death.                                            |
+| **9**        | 9      | Venus      | The Tower          | 16    | Wildcard for The Tower.                                        |
+| **10**       | 10     | Saturn     | The Tower          | 16    | Wildcard for The Tower.                                        |
+| **Princess** | 11     | Mercury    | The Sun            | 19    | Wildcard for The Sun.                                          |
+| **Knight**   | 12     | Mars       | The Star           | 17    | Wildcard for The Star.                                         |
+| **Queen**    | 13     | Moon       | —                  |       | Increase your Spread Limit by +1 at Round end.                 |
+| **King**     | 14     | Saturn     | —                  |       | Swords are protected from Duels. This card remains vulnerable. |

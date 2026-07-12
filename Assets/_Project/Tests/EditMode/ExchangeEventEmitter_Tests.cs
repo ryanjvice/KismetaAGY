@@ -126,6 +126,32 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
+        public void ResolveJudgement_LitCauldrons_EmitsDrawCount()
+        {
+            var db = LoadDb();
+            var session = BuildSession(db);
+            session.Players[0].LightCauldron(Suit.Wands);
+            session.Players[0].LightCauldron(Suit.Cups);
+            session.Board.CommonDeck.Clear();
+            for (int i = 0; i < 2; i++)
+            {
+                var minor = new CardInstance($"jud-ex-{i}", "minor.cups.seven.1", CardZone.Deck, -1);
+                session.RegisterCard(minor);
+                session.Board.CommonDeck.Push(minor.InstanceId);
+            }
+
+            PlayerExchangeEvent? exchange = null;
+            session.OnEvent += e => { if (e is PlayerExchangeEvent pe) exchange = pe; };
+
+            var resolver = new FateCardResolver(db);
+            Assert.IsTrue(resolver.Resolve(session, 0, "judgement-fate", 20));
+
+            Assert.NotNull(exchange);
+            Assert.AreEqual(ExchangeKind.FateJudgement, exchange!.Kind);
+            StringAssert.Contains("drew 2", exchange.ContextLine);
+        }
+
+        [Test]
         public void ResolveWheel_EmitsFateWheelExchange()
         {
             var db = LoadDb();

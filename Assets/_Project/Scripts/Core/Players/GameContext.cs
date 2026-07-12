@@ -23,15 +23,12 @@ namespace Kismeta.Core.Players
 
         /// <summary>
         /// When Hint == AdeptDecision: the instance ID of the Adept card being offered.
-        /// When Hint == FateMoonDecision / FateLoversDecision etc.: the Fate card's instance ID.
+        /// When Hint == FateMoonGift / FateLoversDecision etc.: the Fate card's instance ID.
         /// </summary>
         public string? PendingCardId { get; }
 
-        /// <summary>
-        /// When Hint == FateMoonDecision: the 4 card instance IDs drawn by The Moon.
-        /// The player must keep exactly 2 of these; the rest return to the bottom of the deck.
-        /// </summary>
-        public IReadOnlyList<string>? MoonDrawnCardIds { get; }
+        /// <summary>When Hint == FateMoonGift: the player who receives this gift leg.</summary>
+        public int MoonGiftRecipientId { get; }
 
         /// <summary>
         /// When Hint == AdeptDecision: instance IDs of Adept cards currently in the player's
@@ -41,7 +38,7 @@ namespace Kismeta.Core.Players
 
         public GameContext(GamePublicView publicView, PlayerPrivateView privateView,
             int activePlayerId, ActionHint hint = ActionHint.None, string? pendingCardId = null,
-            IReadOnlyList<string>? moonDrawnCardIds = null,
+            int moonGiftRecipientId = -1,
             IReadOnlyList<string>? arcanumAdeptIds = null,
             ICrucibleCodexDatabase? codexDatabase = null,
             ICardDatabase? cardDatabase = null,
@@ -53,7 +50,7 @@ namespace Kismeta.Core.Players
             ActivePlayerId      = activePlayerId;
             Hint                = hint;
             PendingCardId       = pendingCardId;
-            MoonDrawnCardIds    = moonDrawnCardIds;
+            MoonGiftRecipientId = moonGiftRecipientId;
             ArcanumAdeptIds     = arcanumAdeptIds;
             CodexDatabase       = codexDatabase;
             CardDatabase        = cardDatabase;

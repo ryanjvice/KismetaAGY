@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Rules;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Components
@@ -16,36 +16,94 @@ namespace Kismeta.UI.Components
             ReagentType.Vitriol, ReagentType.Quicksilver
         };
 
-        public static void PopulateMoonCards(
+        public static void PopulateMoonGiftCards(
             VisualElement host,
             GameSession session,
+            int playerId,
             HashSet<string> selected,
             Action onChanged)
         {
             host.Clear();
             var db = session.Rules?.CardDatabase;
-            foreach (var id in session.Board.FateMoonDrawnCardIds)
-            {
-                var inst = session.GetCard(id);
-                var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
-                if (def == null) continue;
+            var player = session.Players[playerId];
 
-                bool sel = selected.Contains(id);
-                var chip = CardChipFactory.CreateFromDefinition(def, selected: sel);
-                chip.style.width = 36;
-                chip.style.height = 50;
-                chip.style.marginRight = 6;
-                chip.style.marginBottom = 6;
-                string captured = id;
-                chip.RegisterCallback<ClickEvent>(_ =>
+            void AddZoneCards(IReadOnlyList<string> ids, string zoneLabel)
+            {
+                foreach (var id in ids)
                 {
-                    if (selected.Contains(captured))
-                        selected.Remove(captured);
-                    else if (selected.Count < 2)
-                        selected.Add(captured);
+                    var inst = session.GetCard(id);
+                    var def  = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
+                    if (def == null || def.IsMajorArcana) continue;
+
+                    bool sel = selected.Contains(id);
+                    var chip = CardChipFactory.CreateFromDefinition(def, selected: sel);
+                    chip.style.width = 36;
+                    chip.style.height = 50;
+                    chip.style.marginRight = 6;
+                    chip.style.marginBottom = 6;
+                    chip.tooltip = zoneLabel;
+                    string captured = id;
+                    chip.RegisterCallback<ClickEvent>(_ =>
+                    {
+                        if (selected.Contains(captured))
+                            selected.Remove(captured);
+                        else
+                            selected.Add(captured);
+                        onChanged();
+                    });
+                    host.Add(chip);
+                }
+            }
+
+            AddZoneCards(player.Hand, "Hand");
+            AddZoneCards(player.Spread, "Spread");
+        }
+
+        public static void PopulateMoonGiftReagents(
+            VisualElement host,
+            Dictionary<ReagentType, int> amounts,
+            int playerId,
+            GameSession session,
+            Action onChanged)
+        {
+            host.Clear();
+            var player = session.Players[playerId];
+
+            foreach (var r in Reagents)
+            {
+                amounts.TryGetValue(r, out int count);
+                var row = new VisualElement();
+                row.style.flexDirection = FlexDirection.Row;
+                row.style.alignItems = Align.Center;
+                row.style.marginBottom = 4;
+
+                var label = new Label($"{r}") { style = { width = 90, fontSize = 10 } };
+                row.Add(label);
+
+                var minus = new Button(() =>
+                {
+                    if (count <= 0) return;
+                    amounts[r] = count - 1;
+                    if (amounts[r] == 0) amounts.Remove(r);
                     onChanged();
-                });
-                host.Add(chip);
+                }) { text = "−" };
+                minus.style.width = 28;
+                row.Add(minus);
+
+                row.Add(new Label(count.ToString()) { style = { width = 24, unityTextAlign = TextAnchor.MiddleCenter } });
+
+                var plus = new Button(() =>
+                {
+                    int owned = player.GetReagent(r);
+                    int next = count + 1;
+                    if (next > owned) return;
+                    amounts[r] = next;
+                    onChanged();
+                }) { text = "+" };
+                plus.style.width = 28;
+                row.Add(plus);
+
+                host.Add(row);
             }
         }
 
@@ -82,6 +140,40 @@ namespace Kismeta.UI.Components
                 btn.AddToClassList("btn--secondary");
                 btn.style.marginBottom = 6;
                 host.Add(btn);
+            }
+        }
+
+        public static void PopulateAlignmentCards(
+            VisualElement host,
+            GameSession session,
+            int playerId,
+            HashSet<string> selected,
+            Action onChanged)
+        {
+            host.Clear();
+            var db = session.Rules?.CardDatabase;
+            foreach (var id in session.Players[playerId].Spread)
+            {
+                var inst = session.GetCard(id);
+                var def  = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
+                if (def == null) continue;
+
+                bool sel = selected.Contains(id);
+                var chip = CardChipFactory.CreateFromDefinition(def, selected: sel);
+                chip.style.width = 36;
+                chip.style.height = 50;
+                chip.style.marginRight = 6;
+                chip.style.marginBottom = 6;
+                string captured = id;
+                chip.RegisterCallback<ClickEvent>(_ =>
+                {
+                    if (selected.Contains(captured))
+                        selected.Remove(captured);
+                    else
+                        selected.Add(captured);
+                    onChanged();
+                });
+                host.Add(chip);
             }
         }
     }

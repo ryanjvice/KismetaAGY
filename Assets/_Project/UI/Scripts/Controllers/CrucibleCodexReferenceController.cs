@@ -1,13 +1,17 @@
 using System;
+using UnityEngine;
+using Kismeta.Core.Domain;
 using Kismeta.Core.Entities;
 using Kismeta.Core.Players;
 using Kismeta.UI.Components;
+using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
 {
     public sealed class CrucibleCodexReferenceController : OverlayController
     {
         public Action? OnClose;
+        public Action<int>? OnClaimFoolAltar;
 
         GameSession? _session;
         CommandBridge? _bridge;
@@ -49,6 +53,57 @@ namespace Kismeta.UI.Controllers
             _bindKey = bindKey;
 
             CrucibleCodexRows.Populate(Root, session, _localPlayerId);
+            BindFoolAltarBanner(session);
+        }
+
+        void BindFoolAltarBanner(GameSession session)
+        {
+            var host = El("fool-altar-banner");
+            if (host == null) return;
+
+            host.Clear();
+            var altarId = session.Board.FoolAltarCrucibleCardId;
+            if (string.IsNullOrEmpty(altarId))
+            {
+                host.style.display = DisplayStyle.None;
+                return;
+            }
+
+            host.style.display = DisplayStyle.Flex;
+            var db = session.Rules?.CardDatabase;
+            var inst = session.GetCard(altarId);
+            var def = inst != null && db != null ? db.GetById(inst.DefinitionId) : null;
+
+            host.Add(new Label("Fool Altar — first to complete the formula claims this card")
+            {
+                style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginBottom = 4 }
+            });
+            host.Add(new Label(def?.Name ?? "Crucible card")
+            {
+                style = { fontSize = 12, unityFontStyleAndWeight = FontStyle.Bold, marginBottom = 2 }
+            });
+            if (!string.IsNullOrWhiteSpace(def?.AlchemicalFormula))
+            {
+                host.Add(new Label(def!.AlchemicalFormula)
+                {
+                    style = { fontSize = 10, whiteSpace = WhiteSpace.Normal, marginBottom = 6 }
+                });
+            }
+
+            var player = session.Players[_localPlayerId];
+            for (int i = 0; i < player.CrucibleSlots.Count; i++)
+            {
+                if (player.CrucibleSlots[i].State != CrucibleCardState.Dormant) continue;
+                int slotIndex = i;
+                var btn = new Button(() => OnClaimFoolAltar?.Invoke(slotIndex))
+                {
+                    text = $"Claim into dormant slot {slotIndex + 1}"
+                };
+                btn.AddToClassList("btn");
+                btn.AddToClassList("btn--secondary");
+                btn.style.marginBottom = 4;
+                host.Add(btn);
+            }
         }
 
         static int ComputeBindKey(GameSession session, int playerId)
@@ -68,6 +123,7 @@ namespace Kismeta.UI.Controllers
 
             return playerId * 10000
                    + (int)player.AssignedCodex * 100
+                   + (session.Board.FoolAltarCrucibleCardId?.GetHashCode() ?? 0)
                    + spreadHash
                    + slotHash;
         }

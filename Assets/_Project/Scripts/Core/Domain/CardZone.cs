@@ -9,6 +9,8 @@ namespace Kismeta.Core.Domain
         Discard,
         Spread,
         Hand,
-        Arcanum
+        Arcanum,
+        /// <summary>Shared Fool Fate altar — one Crucible card awaiting claim.</summary>
+        Altar
     }
 }
