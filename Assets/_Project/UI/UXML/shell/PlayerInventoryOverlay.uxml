@@ -13,7 +13,6 @@
                 <engine:Label name="summary-arcanum-count" text="A 0" class="inventory-summary__count inventory-summary__count--arcanum" />
                 <engine:Label name="summary-reagent-total" text="R 0" class="inventory-summary__count inventory-summary__count--reagent" />
             </engine:VisualElement>
-            <engine:VisualElement name="effect-glance-strip" class="effect-glance-strip" />
             <engine:Button name="codex-fab" text="Codex" class="codex-fab btn btn--secondary" />
             <engine:Button name="effects-fab" text="Effects" class="effects-fab btn btn--secondary" />
             <engine:Button name="inventory-toggle-btn" text="&#xea62;" class="inventory-toggle-btn btn btn--secondary" />

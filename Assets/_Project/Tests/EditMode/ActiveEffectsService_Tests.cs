@@ -59,7 +59,11 @@ namespace Kismeta.Core.Tests
             session.Players[playerId].Hand.Add(instanceId);
         }
 
-        static ActiveEffectSection SpreadSection(ActiveEffectsSnapshot snapshot) => snapshot.Sections[3];
+        static ActiveEffectSection Section(ActiveEffectsSnapshot snapshot, string sectionId)
+            => snapshot.Sections.First(s => s.SectionId == sectionId);
+
+        static ActiveEffectSection SpreadSection(ActiveEffectsSnapshot snapshot)
+            => Section(snapshot, "spread-cards");
 
         [Test]
         public void Build_CosmicAgeFeatured_IncludesSubtitleAndFooter()
@@ -89,7 +93,7 @@ namespace Kismeta.Core.Tests
             session.Players[0].AstralHouses.Add(ZodiacSign.Aries);
 
             var snapshot = ActiveEffectsService.Build(session, 0);
-            var houses = snapshot.Sections[0];
+            var houses = Section(snapshot, "astral-houses");
 
             Assert.AreEqual("astral-houses", houses.SectionId);
             Assert.AreEqual(1, houses.Items.Count);
@@ -109,12 +113,12 @@ namespace Kismeta.Core.Tests
             session.Players[0].Arcanum.Add(adeptId);
 
             var available = ActiveEffectsService.Build(session, 0);
-            var adepts = available.Sections[1];
+            var adepts = Section(available, "adepts");
             Assert.AreEqual("once per age · available", adepts.Items[0].Badge.Text);
 
             ActiveEffectsService.MarkAdeptUsed(session, 0, adeptId);
             var used = ActiveEffectsService.Build(session, 0);
-            Assert.AreEqual("once per age · used", used.Sections[1].Items[0].Badge.Text);
+            Assert.AreEqual("once per age · used", Section(used, "adepts").Items[0].Badge.Text);
         }
 
         [Test]
@@ -130,7 +134,7 @@ namespace Kismeta.Core.Tests
             session.Players[0].Arcanum.Add(fateId);
 
             var snapshot = ActiveEffectsService.Build(session, 0);
-            var fates = snapshot.Sections[2];
+            var fates = Section(snapshot, "fates");
 
             Assert.AreEqual("Already resolved: drew 3 cards, lost 1 reagent.", fates.Items[0].Description);
             Assert.AreEqual("resolved · face-up", fates.Items[0].Badge.Text);

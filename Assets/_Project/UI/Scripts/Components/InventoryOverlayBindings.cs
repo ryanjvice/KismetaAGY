@@ -65,35 +65,6 @@ namespace Kismeta.UI.Components
 
             if (animate && expanded)
                 UiMotion.AnimateInventoryToggle(overlay, expanding: true);
-
-            if (root != null)
-                RefreshEffectGlance(root);
-        }
-
-        static void RefreshEffectGlance(VisualElement root)
-        {
-            var strip = root.Q<VisualElement>("effect-glance-strip");
-            var fab = root.Q<Button>("effects-fab");
-            if (strip == null && fab == null)
-                return;
-
-            // Glance chips are refreshed by the active screen via RefreshInventory.
-            // Re-populate only the chip cap when expand/collapse toggles.
-            if (strip?.userData is EffectGlanceSnapshot cached)
-                EffectGlanceBindings.Populate(root, RebuildGlanceCap(cached), s_onOpenActiveEffects);
-        }
-
-        static EffectGlanceSnapshot RebuildGlanceCap(EffectGlanceSnapshot cached)
-        {
-            int max = s_expanded ? 5 : 3;
-            if (cached.Chips.Count <= max)
-                return cached;
-
-            var chips = new List<ActiveEffectItem>();
-            for (int i = 0; i < max && i < cached.Chips.Count; i++)
-                chips.Add(cached.Chips[i]);
-            int overflow = Math.Max(0, cached.TotalCount - chips.Count);
-            return new EffectGlanceSnapshot(cached.TotalCount, chips, overflow);
         }
 
         public static void BindSummary(
@@ -132,13 +103,9 @@ namespace Kismeta.UI.Components
             MainSceneBindings.SetDockZoneFabActive(root, zone);
             MainSceneBindings.BindDockStrip(root, session, localPlayerId, zone, onInspect);
 
-            bool expanded = s_expanded;
             var glance = ActiveEffectsService.BuildForContext(
-                session, localPlayerId, hint, spreadOverride, maxChips: expanded ? 5 : 3);
-            var strip = root?.Q<VisualElement>("effect-glance-strip");
-            if (strip != null)
-                strip.userData = glance;
-            EffectGlanceBindings.Populate(root, glance, onOpenActiveEffects ?? s_onOpenActiveEffects);
+                session, localPlayerId, hint, spreadOverride, maxChips: 3);
+            EffectGlanceBindings.Populate(root, glance);
         }
 
         public static void SetVisible(VisualElement? root, bool visible)
