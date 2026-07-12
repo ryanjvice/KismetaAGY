@@ -29,7 +29,7 @@
                 <engine:Label name="inspect-subtitle" text="minor arcana · rank 7" class="inspect-subtitle" style="color: rgb(208,144,128);" />
             </engine:VisualElement>
 
-            <engine:ScrollView class="card-modal__body-scroll card-modal__body--inspect" horizontal-scroller-visibility="Hidden">
+            <engine:ScrollView class="card-modal__body-scroll card-modal__body--inspect" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
                 <engine:VisualElement class="card-modal__body-scroll-content">
                 <engine:VisualElement name="inspect-minor-detail" class="inspect-minor-detail">
                     <engine:VisualElement class="inspect-block">
@@ -104,19 +104,23 @@
                 <engine:Label text="active adept · major arcana" style="font-size: 10px; color: rgb(168,144,192);" />
             </engine:VisualElement>
 
-            <engine:VisualElement class="card-modal__body">
-                <engine:VisualElement class="panel" style="border-color: rgb(74,58,106); margin-bottom: 10px;">
-                    <engine:Label text="its power" class="eyebrow" style="color: rgb(138,106,170);" />
-                    <engine:Label name="adept-power" text="Counts as a Sign alignment toward the Cosmic Age — adding to your Harvest and every Opposition while active."
-                                  style="font-size: 12px; color: rgb(243, 233, 210); white-space: normal;" />
-                </engine:VisualElement>
+            <engine:ScrollView class="card-modal__body-scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                <engine:VisualElement class="card-modal__body-scroll-content">
+                    <engine:VisualElement class="panel" style="border-color: rgb(74,58,106); margin-bottom: 10px;">
+                        <engine:Label text="its power" class="eyebrow" style="color: rgb(138,106,170);" />
+                        <engine:Label name="adept-power" text="Counts as a Sign alignment toward the Cosmic Age — adding to your Harvest and every Opposition while active."
+                                      style="font-size: 12px; color: rgb(243, 233, 210); white-space: normal;" />
+                    </engine:VisualElement>
 
-                <engine:VisualElement class="tip tip--ok" style="margin-bottom: 10px; margin-left: 0; margin-right: 0;">
-                    <engine:Label name="adept-tip" text="Your Arcanum has open slots for active Adepts."
-                                  class="tip__text" style="color: rgb(159,196,180);" />
+                    <engine:VisualElement class="tip tip--ok" style="margin-bottom: 10px; margin-left: 0; margin-right: 0;">
+                        <engine:Label name="adept-tip" text="Your Arcanum has open slots for active Adepts."
+                                      class="tip__text" style="color: rgb(159,196,180);" />
+                    </engine:VisualElement>
                 </engine:VisualElement>
+            </engine:ScrollView>
 
-                <engine:VisualElement name="adept-actions" style="flex-direction: row;">
+            <engine:VisualElement class="card-modal__footer">
+                <engine:VisualElement name="adept-actions" class="card-modal__footer-actions">
                     <engine:Button name="adept-hold" text="Hold inactive" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
                     <engine:Button name="adept-place" text="Place active" class="btn" style="flex-grow: 1.4; background-color: rgb(46,26,68); border-color: rgb(154,122,192); color: rgb(224,200,240);" />
                 </engine:VisualElement>
@@ -134,30 +138,34 @@
                 <engine:Label text="fate · resolves at once" style="font-size: 10px; color: rgb(127,160,196);" />
             </engine:VisualElement>
 
-            <engine:VisualElement class="card-modal__body">
-                <engine:Label text="the wheel turns — now" class="eyebrow" style="-unity-text-align: middle-center; color: rgb(127,160,196);" />
-                <engine:VisualElement name="fate-effects" style="margin-bottom: 10px;">
-                    <engine:VisualElement class="effect-row effect-row--gain">
-                        <engine:VisualElement style="flex-grow: 1;">
-                            <engine:Label text="Fortune favors you" style="font-size: 12px; color: rgb(159,225,203);" />
-                            <engine:Label text="draw 3 cards from the common deck" style="font-size: 10px; color: rgb(138,172,154);" />
+            <engine:ScrollView class="card-modal__body-scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                <engine:VisualElement class="card-modal__body-scroll-content">
+                    <engine:Label text="the wheel turns — now" class="eyebrow" style="-unity-text-align: middle-center; color: rgb(127,160,196);" />
+                    <engine:VisualElement name="fate-effects" style="margin-bottom: 10px;">
+                        <engine:VisualElement class="effect-row effect-row--gain">
+                            <engine:VisualElement style="flex-grow: 1;">
+                                <engine:Label text="Fortune favors you" style="font-size: 12px; color: rgb(159,225,203);" />
+                                <engine:Label text="draw 3 cards from the common deck" style="font-size: 10px; color: rgb(138,172,154);" />
+                            </engine:VisualElement>
+                            <engine:Label text="+3" style="font-size: 13px; color: rgb(127, 196, 168); -unity-font-style: bold;" />
                         </engine:VisualElement>
-                        <engine:Label text="+3" style="font-size: 13px; color: rgb(127, 196, 168); -unity-font-style: bold;" />
+                        <engine:VisualElement class="effect-row effect-row--loss">
+                            <engine:VisualElement style="flex-grow: 1;">
+                                <engine:Label text="but the wheel takes too" style="font-size: 12px; color: rgb(240,168,160);" />
+                                <engine:Label text="a random reagent returns to the supply" style="font-size: 10px; color: rgb(196,144,144);" />
+                            </engine:VisualElement>
+                            <engine:Label text="&#8722;1" style="font-size: 13px; color: rgb(240, 144, 138); -unity-font-style: bold;" />
+                        </engine:VisualElement>
                     </engine:VisualElement>
-                    <engine:VisualElement class="effect-row effect-row--loss">
-                        <engine:VisualElement style="flex-grow: 1;">
-                            <engine:Label text="but the wheel takes too" style="font-size: 12px; color: rgb(240,168,160);" />
-                            <engine:Label text="a random reagent returns to the supply" style="font-size: 10px; color: rgb(196,144,144);" />
-                        </engine:VisualElement>
-                        <engine:Label text="&#8722;1" style="font-size: 13px; color: rgb(240, 144, 138); -unity-font-style: bold;" />
+
+                    <engine:VisualElement class="tip" style="background-color: rgb(26,32,48); border-width: 1px; border-color: rgb(58,74,106); margin-bottom: 10px;">
+                        <engine:Label text="Fates resolve the instant they're drawn — you don't choose when. After resolving, it stays face-up in your Arcanum."
+                                      class="tip__text" style="color: rgb(160,180,208);" />
                     </engine:VisualElement>
                 </engine:VisualElement>
+            </engine:ScrollView>
 
-                <engine:VisualElement class="tip" style="background-color: rgb(26,32,48); border-width: 1px; border-color: rgb(58,74,106); margin-bottom: 10px;">
-                    <engine:Label text="Fates resolve the instant they're drawn — you don't choose when. After resolving, it stays face-up in your Arcanum."
-                                  class="tip__text" style="color: rgb(160,180,208);" />
-                </engine:VisualElement>
-
+            <engine:VisualElement class="card-modal__footer">
                 <engine:Button name="fate-accept" text="Accept your fate" class="btn" style="background-color: rgb(22,51,90); border-color: rgb(90,138,192); color: rgb(188,216,240);" />
             </engine:VisualElement>
         </engine:VisualElement>
@@ -170,10 +178,15 @@
                 <engine:Label text="Meaningful Gift" class="tarot__name" style="color: rgb(188,216,240); font-size: 16px;" />
                 <engine:Label text="Select minor cards from Hand or Spread, and/or reagents to gift." style="font-size: 10px; color: rgb(127,160,196); white-space: normal; -unity-text-align: middle-center;" />
             </engine:VisualElement>
-            <engine:VisualElement class="card-modal__body card-modal__body--grow">
-                <engine:VisualElement name="moon-cards" class="fate-chip-row moon-cards" />
-                <engine:VisualElement name="moon-reagents" style="margin-top: 8px; margin-bottom: 8px;" />
-                <engine:Label name="moon-count" text="Gift: 0 items selected" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 8px; margin-bottom: 8px;" />
+            <engine:ScrollView class="card-modal__body-scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                <engine:VisualElement class="card-modal__body-scroll-content">
+                    <engine:VisualElement name="moon-cards" class="fate-chip-row moon-cards" />
+                    <engine:VisualElement name="moon-reagents" style="margin-top: 8px; margin-bottom: 8px;" />
+                    <engine:Label name="moon-count" text="Gift: 0 items selected" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 8px; margin-bottom: 8px;" />
+                </engine:VisualElement>
+            </engine:ScrollView>
+
+            <engine:VisualElement class="card-modal__footer">
                 <engine:Button name="moon-confirm" text="Confirm Gift" class="btn btn--primary" />
             </engine:VisualElement>
         </engine:VisualElement>
@@ -187,9 +200,14 @@
                 <engine:Label name="fool-altar-formula" text="" style="font-size: 10px; color: rgb(127,160,196); white-space: normal; -unity-text-align: middle-center;" />
                 <engine:Label name="fool-altar-slot" text="" style="font-size: 10px; color: rgb(184, 154, 110); white-space: normal; -unity-text-align: middle-center;" />
             </engine:VisualElement>
-            <engine:VisualElement class="card-modal__body card-modal__body--grow">
-                <engine:VisualElement name="fool-altar-cards" class="fate-chip-row moon-cards" />
-                <engine:Button name="fool-altar-confirm" text="Claim Altar Card" class="btn btn--primary" style="margin-top: 8px;" />
+            <engine:ScrollView class="card-modal__body-scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                <engine:VisualElement class="card-modal__body-scroll-content">
+                    <engine:VisualElement name="fool-altar-cards" class="fate-chip-row moon-cards" />
+                </engine:VisualElement>
+            </engine:ScrollView>
+
+            <engine:VisualElement class="card-modal__footer">
+                <engine:Button name="fool-altar-confirm" text="Claim Altar Card" class="btn btn--primary" />
             </engine:VisualElement>
         </engine:VisualElement>
 
@@ -201,10 +219,15 @@
                 <engine:Label text="Imperial Protection" class="tarot__name" style="color: rgb(224,200,240); font-size: 16px;" />
                 <engine:Label name="emperor-subtitle" text="Select 2 minor cards from your Spread." style="font-size: 10px; color: rgb(168,144,192); white-space: normal; -unity-text-align: middle-center;" />
             </engine:VisualElement>
-            <engine:VisualElement class="card-modal__body card-modal__body--grow">
-                <engine:VisualElement name="emperor-cards" class="fate-chip-row moon-cards" />
-                <engine:Label name="emperor-count" text="0 / 2 selected" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 8px; margin-bottom: 8px;" />
-                <engine:VisualElement style="flex-direction: row;">
+            <engine:ScrollView class="card-modal__body-scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                <engine:VisualElement class="card-modal__body-scroll-content">
+                    <engine:VisualElement name="emperor-cards" class="fate-chip-row moon-cards" />
+                    <engine:Label name="emperor-count" text="0 / 2 selected" style="font-size: 10px; color: rgb(184, 154, 110); margin-top: 8px; margin-bottom: 8px;" />
+                </engine:VisualElement>
+            </engine:ScrollView>
+
+            <engine:VisualElement class="card-modal__footer">
+                <engine:VisualElement class="card-modal__footer-actions">
                     <engine:Button name="emperor-cancel" text="Cancel" class="btn btn--secondary" style="flex-grow: 1; margin-right: 8px;" />
                     <engine:Button name="emperor-confirm" text="Protect Cards" class="btn btn--primary" style="flex-grow: 1.4;" />
                 </engine:VisualElement>
@@ -221,10 +244,12 @@
                 <engine:Label name="reagent-card-name" text="The Fool." class="tarot__name" style="color: rgb(188,216,240);" />
                 <engine:Label name="reagent-card-description" text="Draw 2 cards. Your Opponents receive 1 Reagent of their choice." class="card-modal__description" />
             </engine:VisualElement>
-            <engine:VisualElement class="card-modal__body">
-                <engine:Label name="reagent-prompt" text="Choose 1 Reagent" class="card-modal__prompt" />
-                <engine:VisualElement name="reagent-buttons" class="fate-reagent-grid" />
-            </engine:VisualElement>
+            <engine:ScrollView class="card-modal__body-scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                <engine:VisualElement class="card-modal__body-scroll-content">
+                    <engine:Label name="reagent-prompt" text="Choose 1 Reagent" class="card-modal__prompt" />
+                    <engine:VisualElement name="reagent-buttons" class="fate-reagent-grid" />
+                </engine:VisualElement>
+            </engine:ScrollView>
         </engine:VisualElement>
 
         <!-- ===== The Lovers — pick target ===== -->
@@ -235,9 +260,11 @@
                 <engine:Label text="Pick who chooses" class="tarot__name" style="color: rgb(224,200,240); font-size: 16px;" />
                 <engine:Label text="An opponent will decide your reward." style="font-size: 10px; color: rgb(168,144,192); white-space: normal; -unity-text-align: middle-center;" />
             </engine:VisualElement>
-            <engine:VisualElement class="card-modal__body">
-                <engine:VisualElement name="lovers-target-buttons" />
-            </engine:VisualElement>
+            <engine:ScrollView class="card-modal__body-scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                <engine:VisualElement class="card-modal__body-scroll-content">
+                    <engine:VisualElement name="lovers-target-buttons" />
+                </engine:VisualElement>
+            </engine:ScrollView>
         </engine:VisualElement>
 
         <!-- ===== The Lovers — target chooses reward ===== -->
@@ -247,11 +274,13 @@
                 <engine:Label text="The Lovers" class="eyebrow" style="color: rgb(176,144,208); -unity-text-align: middle-center;" />
                 <engine:Label name="lovers-choice-sub" text="Choose their reward" class="tarot__name" style="color: rgb(224,200,240); font-size: 16px;" />
             </engine:VisualElement>
-            <engine:VisualElement class="card-modal__body">
-                <engine:Button name="lovers-draw-btn" text="Drawer draws 2 cards" class="btn btn--secondary" style="margin-bottom: 8px;" />
-                <engine:Label text="— or one reagent —" style="font-size: 9px; color: rgb(168,144,192); -unity-text-align: middle-center; margin-bottom: 8px;" />
-                <engine:VisualElement name="lovers-reagent-buttons" class="fate-reagent-grid" />
-            </engine:VisualElement>
+            <engine:ScrollView class="card-modal__body-scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                <engine:VisualElement class="card-modal__body-scroll-content">
+                    <engine:Button name="lovers-draw-btn" text="Drawer draws 2 cards" class="btn btn--secondary" style="margin-bottom: 8px;" />
+                    <engine:Label text="— or one reagent —" style="font-size: 9px; color: rgb(168,144,192); -unity-text-align: middle-center; margin-bottom: 8px;" />
+                    <engine:VisualElement name="lovers-reagent-buttons" class="fate-reagent-grid" />
+                </engine:VisualElement>
+            </engine:ScrollView>
         </engine:VisualElement>
 
     </engine:VisualElement>

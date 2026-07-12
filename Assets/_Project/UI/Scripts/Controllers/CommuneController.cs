@@ -86,7 +86,7 @@ namespace Kismeta.UI.Controllers
             foreach (var id in player.Spread)
                 if (TapSwapBindings.IsMinorArcana(session, id)) _spreadIds.Add(id);
             foreach (var id in player.Hand)
-                if (TapSwapBindings.IsMinorArcana(session, id)) _spreadIds.Add(id);
+                if (TapSwapBindings.IsMinorArcana(session, id)) _handIds.Add(id);
             _initialized = true;
             _zonesBuilt = false;
         }

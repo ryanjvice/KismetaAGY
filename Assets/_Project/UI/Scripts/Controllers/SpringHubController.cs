@@ -49,6 +49,7 @@ namespace Kismeta.UI.Controllers
         bool _communeInitialized;
         bool _communeZonesBuilt;
         bool _communeSubviewOpen;
+        bool _communeLockSubmitted;
         int _communePlayerId = -1;
         VisualElement? _communeBuiltForRoot;
         DockZone _dockZone = DockZone.Spread;
@@ -75,6 +76,7 @@ namespace Kismeta.UI.Controllers
             _communeBuiltForRoot = null;
             _communePlayerId = -1;
             _communeSubviewOpen = false;
+            _communeLockSubmitted = false;
             _consultView = SummerConsultView.Table;
         }
 
@@ -168,7 +170,13 @@ namespace Kismeta.UI.Controllers
             bool showCommune = isCommune || (_communeSubviewOpen && isHub);
 
             if (!isHub && !isCommune)
+            {
                 _communeSubviewOpen = false;
+                _communeLockSubmitted = false;
+            }
+
+            if (!isCommune)
+                _communeLockSubmitted = false;
 
             MainSceneBindings.ApplySeasonClass(Root, session.Phase.CurrentSeason);
             HeaderOverlayBindings.RefreshHeader(
@@ -328,7 +336,7 @@ namespace Kismeta.UI.Controllers
                 _communeZonesBuilt = false;
             }
 
-            if (!_communeInitialized)
+            if (!_communeInitialized && !_communeLockSubmitted)
                 SeedCommuneFromPlayer(session, pid);
 
             RenderCommuneZonesIfNeeded(session);
@@ -498,6 +506,7 @@ namespace Kismeta.UI.Controllers
             if (_handIds.Count > handLimit) return;
             if (_bridge.TrySubmit(new CommuneCommand(pid, _spreadIds, _handIds)))
             {
+                _communeLockSubmitted = true;
                 _communeSubviewOpen = false;
                 _communeInitialized = false;
             }

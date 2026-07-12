@@ -48,8 +48,12 @@ namespace Kismeta.Core.Commands
         public CommuneCommand(int playerId, IReadOnlyList<string> spreadCards, IReadOnlyList<string> handCards)
         {
             PlayerId = playerId;
-            SpreadCardIds = spreadCards;
-            HandCardIds   = handCards;
+            SpreadCardIds = spreadCards is string[] spreadArray
+                ? spreadArray
+                : new List<string>(spreadCards);
+            HandCardIds = handCards is string[] handArray
+                ? handArray
+                : new List<string>(handCards);
         }
 
         /// <summary>Convenience: put all cards into Spread, nothing in Hand.</summary>

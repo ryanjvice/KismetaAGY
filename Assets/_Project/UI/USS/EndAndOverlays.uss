@@ -157,17 +157,44 @@
 }
 
 /* ---------- Card modals (inspect / adept / fate) ---------- */
+.overlay-clone-host--card-modals {
+    height: auto;
+    max-height: none;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    align-self: stretch;
+    padding-top: var(--space-sm);
+    padding-bottom: 0;
+    overflow: hidden;
+}
+
+.overlay-layer--card-modals {
+    justify-content: flex-start;
+}
+
 .overlay-clone-host > #card-modals {
     flex-grow: 1;
     flex-shrink: 1;
     min-height: 0;
     max-height: 100%;
+    height: 100%;
     overflow: hidden;
+}
+
+.overlay-clone-host--card-modals > #card-modals {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    height: 100%;
+    max-height: none;
+    min-height: 0;
 }
 
 .card-modals {
     width: 100%;
     min-width: 0;
+    height: 100%;
     flex-direction: column;
     align-items: stretch;
     flex-grow: 1;
@@ -178,8 +205,10 @@
 .card-modals > .card-modal {
     flex-grow: 1;
     flex-shrink: 1;
+    flex-basis: 0;
     min-height: 0;
     max-height: 100%;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -197,19 +226,14 @@
     border-color: rgb(74,58,106);
 }
 
-.card-modal__body--grow {
-    flex-grow: 0;
-    flex-shrink: 0;
-    min-height: 0;
-    overflow: visible;
-}
-
 .moon-cards {
+    flex-shrink: 0;
+}
+.card-modal__hero {
     flex-shrink: 0;
 }
 .card-modal__hero--inspect {
     background-color: rgb(36,16,16);
-    flex-shrink: 0;
 }
 .card-modal__hero--adept { background-color: rgb(46,26,68); }
 .card-modal__hero--fate { background-color: rgb(22,51,90); }
@@ -260,17 +284,6 @@
 
 .card-modal--adept #adept-actions {
     flex-shrink: 0;
-    margin-top: 4px;
-}
-
-.card-modal--adept .card-modal__body > * {
-    flex-shrink: 0;
-}
-
-.card-modal--adept .card-modal__body {
-    flex-shrink: 0;
-    flex-grow: 0;
-    overflow: visible;
 }
 
 .adept-payment__swap > .btn {
@@ -393,11 +406,39 @@
 }
 
 /* inspect modal layout */
+.card-modal > .modal__header {
+    flex-shrink: 0;
+}
+
+.card-modal > .card-modal__body-scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
 .card-modal__body-scroll {
     flex-grow: 1;
     flex-shrink: 1;
+    flex-basis: 0;
     min-height: 0;
     min-width: 0;
+    overflow: hidden;
+}
+
+.card-modal__body-scroll .unity-scroll-view__content-viewport {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-height: 0;
+}
+
+.card-modal__body-scroll .unity-scroll-view__content-container {
+    flex-shrink: 0;
+    flex-direction: column;
+    align-items: stretch;
 }
 
 .card-modal__body-scroll-content {
@@ -412,6 +453,12 @@
     padding: 0 var(--space-lg) var(--space-lg);
 }
 
+.card-modal__footer-actions {
+    flex-direction: row;
+    flex-shrink: 0;
+    width: 100%;
+}
+
 /* Clip header/hero fills to the modal's rounded frame */
 .card-modal > .modal__header:first-child,
 .card-modal > .card-modal__hero:first-child {
@@ -420,6 +467,7 @@
 }
 
 .card-modal > .card-modal__footer:last-child,
+.card-modal > .card-modal__body-scroll:last-child,
 .card-modal > .card-modal__body:last-child {
     border-bottom-left-radius: calc(var(--radius-xl) - 2px);
     border-bottom-right-radius: calc(var(--radius-xl) - 2px);

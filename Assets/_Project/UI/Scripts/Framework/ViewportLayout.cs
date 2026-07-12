@@ -31,6 +31,8 @@ namespace Kismeta.UI
         private VisualElement _overlayContentRoot;
         private EventCallback<GeometryChangedEvent>? _centeredOverlayFitHandler;
         private bool _centeredOverlayFitBound;
+        private EventCallback<GeometryChangedEvent>? _boundedOverlayFitHandler;
+        private bool _boundedOverlayFitBound;
 
         public VisualElement Root => _document != null ? _document.rootVisualElement : null;
 
@@ -138,36 +140,61 @@ namespace Kismeta.UI
             if (_overlayLayer == null || _overlayContentRoot == null || _overlayCloneHost == null)
                 return;
 
-            void Apply()
-            {
-                if (_overlayLayer == null || _overlayContentRoot == null || _overlayCloneHost == null)
-                    return;
+            BindBoundedOverlayFit();
+            _overlayLayer.schedule.Execute(TryApplyBoundedOverlaySizing).StartingIn(0);
+            _overlayLayer.schedule.Execute(TryApplyBoundedOverlaySizing).StartingIn(50);
+        }
 
-                float overlayH = _overlayLayer.resolvedStyle.height;
-                if (overlayH <= 0f)
-                    return;
+        void BindBoundedOverlayFit()
+        {
+            UnbindBoundedOverlayFit();
+            if (_overlayLayer == null)
+                return;
 
-                float padT = _overlayLayer.resolvedStyle.paddingTop;
-                float padB = _overlayLayer.resolvedStyle.paddingBottom;
-                float avail = overlayH - padT - padB - 8f;
-                if (avail <= 0f)
-                    return;
+            _boundedOverlayFitHandler = _ => TryApplyBoundedOverlaySizing();
+            _overlayLayer.RegisterCallback(_boundedOverlayFitHandler);
+            _boundedOverlayFitBound = true;
+        }
 
-                _overlayCloneHost.style.maxHeight = avail;
-                _overlayCloneHost.style.height = avail;
-                _overlayCloneHost.style.flexShrink = 1;
-                _overlayCloneHost.style.minHeight = 0;
-                _overlayCloneHost.style.overflow = Overflow.Hidden;
+        void UnbindBoundedOverlayFit()
+        {
+            if (!_boundedOverlayFitBound || _boundedOverlayFitHandler == null)
+                return;
 
-                _overlayContentRoot.style.height = Length.Percent(100);
-                _overlayContentRoot.style.maxHeight = Length.Percent(100);
-                _overlayContentRoot.style.flexGrow = 1;
-                _overlayContentRoot.style.flexShrink = 1;
-                _overlayContentRoot.style.minHeight = 0;
-            }
+            _overlayLayer?.UnregisterCallback(_boundedOverlayFitHandler);
+            _boundedOverlayFitHandler = null;
+            _boundedOverlayFitBound = false;
+        }
 
-            _overlayLayer.schedule.Execute(Apply).StartingIn(0);
-            _overlayLayer.schedule.Execute(Apply).StartingIn(50);
+        void TryApplyBoundedOverlaySizing()
+        {
+            if (_overlayLayer == null || _overlayContentRoot == null || _overlayCloneHost == null)
+                return;
+
+            float overlayH = _overlayLayer.resolvedStyle.height;
+            if (overlayH <= 0f)
+                return;
+
+            float padT = _overlayLayer.resolvedStyle.paddingTop;
+            float padB = _overlayLayer.resolvedStyle.paddingBottom;
+            float avail = overlayH - padT - padB - 8f;
+            if (avail <= 0f)
+                return;
+
+            _overlayCloneHost.style.maxHeight = avail;
+            _overlayCloneHost.style.height = avail;
+            _overlayCloneHost.style.flexShrink = 1;
+            _overlayCloneHost.style.minHeight = 0;
+            _overlayCloneHost.style.overflow = Overflow.Hidden;
+
+            _overlayContentRoot.style.height = StyleKeyword.Null;
+            _overlayContentRoot.style.maxHeight = StyleKeyword.Null;
+            _overlayContentRoot.style.flexGrow = 1;
+            _overlayContentRoot.style.flexShrink = 1;
+            _overlayContentRoot.style.flexBasis = 0;
+            _overlayContentRoot.style.minHeight = 0;
+
+            UnbindBoundedOverlayFit();
         }
 
         public enum SheetVerticalAlign
@@ -319,6 +346,7 @@ namespace Kismeta.UI
             if (_overlayLayer == null) return;
             ResetCenteredOverlayFit();
             UnbindCenteredOverlayFit();
+            UnbindBoundedOverlayFit();
             _overlayLayer.Clear();
             _overlayLayer.style.display = DisplayStyle.None;
             _overlayLayer.RemoveFromClassList("overlay-layer--sheet");

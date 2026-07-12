@@ -7,6 +7,7 @@ using Kismeta.Core.Players;
 using Kismeta.Core.Rules;
 using Kismeta.UI;
 using Kismeta.UI.Components;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kismeta.UI.Controllers
@@ -49,6 +50,7 @@ namespace Kismeta.UI.Controllers
 
         protected override void Wire()
         {
+            ApplyHostLayout(active: true);
             Btn("inspect-close")!.clicked += () => OnInspectDone?.Invoke();
             Btn("inspect-done")!.clicked += () => OnInspectDone?.Invoke();
             Btn("adept-place")!.clicked += OnAdeptPlace;
@@ -59,6 +61,41 @@ namespace Kismeta.UI.Controllers
             Btn("lovers-draw-btn")!.clicked += OnLoversDraw;
             Btn("emperor-confirm")!.clicked += OnEmperorConfirm;
             Btn("emperor-cancel")!.clicked += () => OnEmperorCompleted?.Invoke();
+        }
+
+        protected override void Unwire()
+        {
+            ApplyHostLayout(active: false);
+        }
+
+        void ApplyHostLayout(bool active)
+        {
+            var cloneHost = Root?.parent;
+            var overlayLayer = cloneHost?.parent;
+            cloneHost?.EnableInClassList("overlay-clone-host--card-modals", active);
+            overlayLayer?.EnableInClassList("overlay-layer--card-modals", active);
+
+            if (Root == null)
+                return;
+
+            if (active)
+            {
+                Root.style.flexGrow = 1;
+                Root.style.flexShrink = 1;
+                Root.style.flexBasis = 0;
+                Root.style.minHeight = 0;
+                Root.style.height = Length.Percent(100);
+                Root.style.maxHeight = StyleKeyword.Null;
+            }
+            else
+            {
+                Root.style.flexGrow = StyleKeyword.Null;
+                Root.style.flexShrink = StyleKeyword.Null;
+                Root.style.flexBasis = StyleKeyword.Null;
+                Root.style.minHeight = StyleKeyword.Null;
+                Root.style.height = StyleKeyword.Null;
+                Root.style.maxHeight = StyleKeyword.Null;
+            }
         }
 
         public void Show(Modal which)
@@ -82,6 +119,44 @@ namespace Kismeta.UI.Controllers
                 if (el != null)
                     el.style.display = name == active ? DisplayStyle.Flex : DisplayStyle.None;
             }
+
+            var modal = El(active);
+            EnsureModalFlexChain(modal);
+            ResetModalScroll(modal);
+            modal?.schedule.Execute(() =>
+            {
+                EnsureModalFlexChain(modal);
+                ResetModalScroll(modal);
+            }).StartingIn(0);
+        }
+
+        static void EnsureModalFlexChain(VisualElement? modal)
+        {
+            if (modal == null)
+                return;
+
+            modal.style.flexGrow = 1;
+            modal.style.flexShrink = 1;
+            modal.style.flexBasis = 0;
+            modal.style.minHeight = 0;
+            modal.style.height = Length.Percent(100);
+            modal.style.maxHeight = StyleKeyword.Null;
+            modal.style.overflow = Overflow.Hidden;
+        }
+
+        static void ResetModalScroll(VisualElement? modal)
+        {
+            if (modal == null) return;
+            var scroll = modal.Q<ScrollView>(className: "card-modal__body-scroll");
+            if (scroll == null) return;
+
+            scroll.scrollOffset = Vector2.zero;
+            scroll.verticalScroller.value = 0f;
+            scroll.schedule.Execute(() =>
+            {
+                scroll.scrollOffset = Vector2.zero;
+                scroll.verticalScroller.value = 0f;
+            }).StartingIn(0);
         }
 
         public void BindInspect(GameSession session, string cardInstanceId)
@@ -371,8 +446,8 @@ namespace Kismeta.UI.Controllers
 
             modal.Q("adept-payment-host")?.RemoveFromHierarchy();
 
-            var body = modal.Q(className: "card-modal__body");
-            if (body == null) return;
+            var scrollContent = modal.Q(className: "card-modal__body-scroll-content");
+            if (scrollContent == null) return;
 
             var host = new VisualElement { name = "adept-payment-host" };
             host.AddToClassList("adept-payment");
@@ -429,11 +504,7 @@ namespace Kismeta.UI.Controllers
                 host.Add(swapHost);
             }
 
-            var actionsRow = El("adept-actions");
-            if (actionsRow != null && actionsRow.parent == body)
-                body.Insert(body.IndexOf(actionsRow), host);
-            else
-                body.Add(host);
+            scrollContent.Add(host);
         }
 
         void AddPaymentChip(VisualElement chips, string id, ICardDatabase db)

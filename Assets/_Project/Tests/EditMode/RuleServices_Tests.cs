@@ -373,6 +373,47 @@ namespace Kismeta.Core.Tests
         }
 
         [Test]
+        public void CommuneCommand_SnapshotsLists_AgainstMutation()
+        {
+            var db = LoadDb();
+            var codexDb = LoadCodexDb();
+            var session = SetupSession(db, codexDb);
+            var player = session.Players[0];
+
+            var spreadCard = new CardInstance("commune-snap-spread", "minor.wands.four.1", CardZone.Spread, 0);
+            session.RegisterCard(spreadCard);
+            player.Spread.Add(spreadCard.InstanceId);
+
+            var handCards = new List<string>();
+            for (int i = 0; i < 4; i++)
+            {
+                string id = $"commune-snap-hand-{i}";
+                var inst = new CardInstance(id, "minor.cups.seven.1", CardZone.Hand, 0);
+                session.RegisterCard(inst);
+                player.Hand.Add(id);
+                handCards.Add(id);
+            }
+
+            var allToSpread = new List<string>(player.Spread);
+            allToSpread.AddRange(handCards);
+            int expectedSpreadCount = allToSpread.Count;
+            var emptyHand = new List<string>();
+            var cmd = new CommuneCommand(0, allToSpread, emptyHand);
+
+            allToSpread.Clear();
+            allToSpread.Add(spreadCard.InstanceId);
+            emptyHand.Clear();
+            emptyHand.AddRange(handCards);
+
+            var result = session.Apply(cmd);
+            Assert.IsTrue(result.IsOk, result.Message);
+            Assert.AreEqual(expectedSpreadCount, player.Spread.Count);
+            Assert.AreEqual(0, player.Hand.Count);
+            foreach (var id in handCards)
+                Assert.IsTrue(player.Spread.Contains(id), $"Expected {id} in Spread after lock.");
+        }
+
+        [Test]
         public void Commune_Allows_Spread_Above_Winter_Limit()
         {
             var db      = LoadDb();
